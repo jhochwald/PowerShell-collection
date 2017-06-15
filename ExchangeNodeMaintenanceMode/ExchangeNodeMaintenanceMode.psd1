@@ -4,7 +4,7 @@
 	RootModule = 'ExchangeNodeMaintenanceMode.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.0.0.1'
+	ModuleVersion = '1.0.0.3'
 	
 	# ID used to uniquely identify this module
 	GUID = '1293bb34-f68a-46cb-ad98-11ab9dff2f07'
@@ -61,22 +61,22 @@
 	NestedModules = @()
 	
 	# Functions to export from this module
-	FunctionsToExport = @('Invoke-Exchange2016Workaround, Set-ExchangeNodeMaintenanceModeOn, Set-ExchangeNodeMaintenanceModeOff, Test-ExchangeNodeMaintenanceMode')
+	FunctionsToExport = @('Invoke-Exchange2016Workaround', 'Set-ExchangeNodeMaintenanceModeOn', 'Set-ExchangeNodeMaintenanceModeOff', 'Test-ExchangeNodeMaintenanceMode')
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = @('Invoke-Exchange2016Workaround, Set-ExchangeNodeMaintenanceModeOn, Set-ExchangeNodeMaintenanceModeOff, Test-ExchangeNodeMaintenanceMode')
+	#CmdletsToExport = @()
 	
 	# Variables to export from this module
-	VariablesToExport = '*'
+	#VariablesToExport = '*'
 	
 	# Aliases to export from this module
-	AliasesToExport = '*'
+	#AliasesToExport = '*'
 	
 	# List of all modules packaged with this module
-	ModuleList = @()
+	#ModuleList = @()
 	
 	# List of all files packaged with this module
-	FileList = @()
+	#FileList = @()
 	
 	# Private data to pass to the module specified in ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 	PrivateData = @{
@@ -97,9 +97,15 @@
 			# IconUri = ''
 			
 			# ReleaseNotes of this module
-			ReleaseNotes = 'Initial Release'
+			ReleaseNotes = 'Tweak the Build Process (No code change)'
 			
 		} # End of PSData hashtable
 		
 	} # End of PrivateData hashtable
+
+# HelpInfo URI of this module
+# HelpInfoURI = ''
+
+# Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
+# DefaultCommandPrefix = ''
 }
