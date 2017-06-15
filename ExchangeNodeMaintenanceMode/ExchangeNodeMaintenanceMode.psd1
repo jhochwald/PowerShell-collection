@@ -1,7 +1,7 @@
 ﻿@{
 	
 	# Script module or binary module file associated with this manifest
-	ModuleToProcess = 'ExchangeNodeMaintenanceMode.psm1'
+	RootModule = 'ExchangeNodeMaintenanceMode.psm1'
 	
 	# Version number of this module.
 	ModuleVersion = '1.0.0.0'
@@ -85,7 +85,7 @@
 		PSData = @{
 			
 			# Tags applied to this module. These help with module discovery in online galleries.
-			Tags = @('Exchange','Exchange Node Maintenance Mode')
+			Tags = @('Exchange','ExchangeServer','ExchangeCluster')
 			
 			# A URL to the license for this module.
 			LicenseUri = 'https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE'
