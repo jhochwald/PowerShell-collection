@@ -61,16 +61,16 @@
 	NestedModules = @()
 	
 	# Functions to export from this module
-	FunctionsToExport = '*' #For performanace, list functions explicity
+	FunctionsToExport = 'Invoke-Exchange2016Workaround, Set-ExchangeNodeMaintenanceModeOn, Set-ExchangeNodeMaintenanceModeOff, Test-ExchangeNodeMaintenanceMode'
 	
 	# Cmdlets to export from this module
-	CmdletsToExport = '*' 
+	CmdletsToExport = 'Invoke-Exchange2016Workaround, Set-ExchangeNodeMaintenanceModeOn, Set-ExchangeNodeMaintenanceModeOff, Test-ExchangeNodeMaintenanceMode' 
 	
 	# Variables to export from this module
 	VariablesToExport = '*'
 	
 	# Aliases to export from this module
-	AliasesToExport = '*' #For performanace, list alias explicity
+	AliasesToExport = '*'
 	
 	# List of all modules packaged with this module
 	ModuleList = @()
