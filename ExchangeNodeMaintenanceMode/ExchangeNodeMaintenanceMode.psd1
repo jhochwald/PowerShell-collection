@@ -85,19 +85,19 @@
 		PSData = @{
 			
 			# Tags applied to this module. These help with module discovery in online galleries.
-			# Tags = @()
+			Tags = @('Exchange','Exchange Node Maintenance Mode')
 			
 			# A URL to the license for this module.
 			LicenseUri = 'https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE'
 			
 			# A URL to the main website for this project.
-			# ProjectUri = ''
+			ProjectUri = ''
 			
 			# A URL to an icon representing this module.
 			# IconUri = ''
 			
 			# ReleaseNotes of this module
-			# ReleaseNotes = ''
+			ReleaseNotes = 'Initial Release'
 			
 		} # End of PSData hashtable
 		
