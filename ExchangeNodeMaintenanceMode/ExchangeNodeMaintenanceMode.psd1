@@ -91,7 +91,7 @@
 			LicenseUri = 'https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE'
 			
 			# A URL to the main website for this project.
-			ProjectUri = ''
+			ProjectUri = 'https://github.com/jhochwald/PowerShell-collection'
 			
 			# A URL to an icon representing this module.
 			# IconUri = ''
