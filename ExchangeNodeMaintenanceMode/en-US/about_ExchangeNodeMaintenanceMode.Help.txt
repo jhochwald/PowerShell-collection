@@ -17,7 +17,12 @@ TROUBLESHOOTING NOTE
 	Open an Issue here: https://github.com/jhochwald/PowerShell-collection/issues
 
 EXAMPLES
-	Place examples here.
+	# Documented for each command. To find each command, use:
+	PS C:\> (Get-Command -Module ExchangeNodeMaintenanceMode).Name
+
+	# Then you might use:
+	PS C:\> Get-Help -Name Test-ExchangeNodeMaintenanceMode -Examples
+	
 
 KEYWORDS
 	Exchange, Exchange Node Maintenance Mode
