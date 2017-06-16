@@ -1,18 +1,5 @@
 ﻿#requires -Version 3.0 -Modules DnsClient, FailoverClusters
 
-<#	
-	===========================================================================
-	 Description:	Exchange Cluster Node Maintenance Mode Utilities
-	 Author:		Joerg Hochwald <joerg.hochwald@outlook.com>
-	 CompanyName:	Enabling Technology - http://www.enatec.io
-	 Filename:     	ExchangeNodeMaintenanceMode.psm1
-	 License:		BSD License - BSD 3-clause "New" or "Revised" License
-	 Link:			http://jhochwald.com
-	---------------------------------------------------------------------------
-	 Module Name: ExchangeNodeMaintenanceMode
-	===========================================================================
-#>
-
 function Invoke-Exchange2016Workaround
 {
 	<#
@@ -32,6 +19,7 @@ function Invoke-Exchange2016Workaround
 			Set-ExchangeNodeMaintenanceModeOn
 			Set-ExchangeNodeMaintenanceModeOff
 			Test-ExchangeNodeMaintenanceMode
+			Invoke-ApplyExchangeCumulativeUpdate
 	#>
 	
 	$paramGetCommand = @{
@@ -90,6 +78,7 @@ function Set-ExchangeNodeMaintenanceModeOn
 			Invoke-Exchange2016Workaround
 			Set-ExchangeNodeMaintenanceModeOff
 			Test-ExchangeNodeMaintenanceMode
+			Invoke-ApplyExchangeCumulativeUpdate
 	#>
 	
 	param
@@ -210,6 +199,7 @@ function Set-ExchangeNodeMaintenanceModeOff
 			Invoke-Exchange2016Workaround
 			Set-ExchangeNodeMaintenanceModeOn
 			Test-ExchangeNodeMaintenanceMode
+			Invoke-ApplyExchangeCumulativeUpdate
 	#>
 	
 	[OutputType([bool])]
@@ -295,7 +285,14 @@ function Test-ExchangeNodeMaintenanceMode
 			$true
 	
 			.NOTES
-			Additional information about the function.
+			TODO: The certificate handler is not perfect. Find a betetr solution!
+			TODO: Need a few more checks.
+	
+			. LINK
+			Invoke-Exchange2016Workaround
+			Set-ExchangeNodeMaintenanceModeOn
+			Set-ExchangeNodeMaintenanceModeOff
+			Invoke-ApplyExchangeCumulativeUpdate
 	#>
 	
 	[OutputType([bool])]
@@ -408,16 +405,173 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 	}
 }
 
-Export-ModuleMember -Function Invoke-Exchange2016Workaround, Set-ExchangeNodeMaintenanceModeOn, Set-ExchangeNodeMaintenanceModeOff, Test-ExchangeNodeMaintenanceMode
+function Invoke-ApplyExchangeCumulativeUpdate
+{
+	<#
+			.SYNOPSIS
+			Apply an Exchange Cumulative Update
+	
+			.DESCRIPTION
+			Apply an Exchange Cumulative Update, with the optional AD and Schema
+			update, and an optional UM language Update.
+	
+			.PARAMETER Source
+			Source Directory of the Exchange Cumulative Update, must exist.
+	
+			.PARAMETER Prepare
+			Run prepare of Schema, Active Directory and AD Domain.
+			Enabled by default
+	
+			.PARAMETER UMLangHandling
+			Handle the UMLangHandling.
+			Disabled by default
+	
+			.PARAMETER UMLangSource
+			Source Directory of the UM Lang Packs, must exist
+	
+			.PARAMETER UMLanguages
+			UM Languages to handle. This is one string that should contain all languages.
+	
+			.EXAMPLE
+			# Use the defaults to install the CU
+			PS C:\> Invoke-ApplyExchangeCumulativeUpdate
+	
+			.EXAMPLE
+			# Use the defaults to install the CU, where '\\SERVER\Share\' is the
+			# location of the CU (Sources)
+			PS C:\> Invoke-ApplyExchangeCumulativeUpdate -Source '\\SERVER\Share\'
+	
+			.EXAMPLE
+			# Install the the and the updates the default UM Languages from a given location
+			PS C:\> Invoke-ApplyExchangeCumulativeUpdate -Source '\\SERVER\Share\' -UMLangHandling -UMLangSource '\\SERVER\Share\UM-Updates\'
+	
+			.EXAMPLE
+			# Install the the and the updates the given UM Languages
+			PS C:\> Invoke-ApplyExchangeCumulativeUpdate -UMLangHandling -UMLanguages = 'es-MX,es-ES'
+	
+			.NOTES
+			TODO: Error handling. At the moment it is just a fire an forget thing!
+	
+			This function is just a wrapper for the default SETUP.EXE of the
+			Exchange Cumulative Update package.
+			You might tweak the directory variable. Or just use the parameter.
+	
+			. LINK
+			Invoke-Exchange2016Workaround
+			Set-ExchangeNodeMaintenanceModeOn
+			Set-ExchangeNodeMaintenanceModeOff
+			Test-ExchangeNodeMaintenanceMode
+	#>
+	
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(ValueFromPipeline = $true,
+				ValueFromPipelineByPropertyName = $true,
+		Position = 1)]
+		[ValidateNotNullOrEmpty()]
+		[string]
+		$Source = 'E:\',
+		[Parameter(ValueFromPipeline = $true,
+				ValueFromPipelineByPropertyName = $true,
+		Position = 2)]
+		[switch]
+		$Prepare = $true,
+		[Parameter(ValueFromPipeline = $true,
+				ValueFromPipelineByPropertyName = $true,
+		Position = 3)]
+		[switch]
+		$UMLangHandling = $null,
+		[Parameter(ValueFromPipeline = $true,
+				ValueFromPipelineByPropertyName = $true,
+		Position = 4)]
+		[string]
+		$UMLangSource = 'F:\',
+		[Parameter(ValueFromPipeline = $true,
+				ValueFromPipelineByPropertyName = $true,
+		Position = 5)]
+		[string]
+		$UMLanguages = 'de-DE,en-GB,en-US'
+	)
+	
+	BEGIN
+	{
+		# Check if the given Directory conains the setup
+		
+		if ($UMLangHandling)
+		{
+			# Check if the given directory exists
+		}
+		
+		if ($Prepare)
+		{
+			# Change to the Installer location
+			Push-Location -Path $Source
+			
+			# Start the Setup
+			.\Setup.exe /PrepareSchema /IAcceptExchangeServerLicenseTerms
+			.\Setup.exe /PrepareAD /IAcceptExchangeServerLicenseTerms
+			.\Setup.exe /PrepareDomain /IAcceptExchangeServerLicenseTerms
+			
+			# Return
+			Pop-Location
+		}
+	}
+	
+	PROCESS
+	{
+		if ($UMLangHandling)
+		{
+			# Remove the old UM Languages
+			# Change to the Installer location
+			Push-Location -Path $Source
+			
+			# Start the Setup
+			.\Setup.exe /RemoveUMLanguagePack:$UMLanguages
+			
+			# Return
+			Pop-Location
+		}
+		
+		# Default installation
+		# Change to the Installer location
+		Push-Location -Path $Source
+			
+		# Start the Setup
+		.\Setup.exe /PrepareSchema /IAcceptExchangeServerLicenseTerms
+		.\Setup.exe /PrepareAD /IAcceptExchangeServerLicenseTerms
+		.\Setup.exe /PrepareDomain /IAcceptExchangeServerLicenseTerms
+			
+		# Return
+		Pop-Location
+		
+		if ($UMLangHandling)
+		{
+			#
+			# Change to the Installer location
+			Push-Location -Path $Source
+			
+			# Start the Setup
+			.\Setup.exe /AddUMLanguagePack:$UMLanguages /s:$UMLangSource /IAcceptExchangeServerLicenseTerms
+			
+			# Return
+			Pop-Location
+		}
+	}
+	
+	END
+	{
+		# Cleanup
+	}
+}
 
-
-
+Export-ModuleMember -Function Invoke-Exchange2016Workaround, Set-ExchangeNodeMaintenanceModeOn, Set-ExchangeNodeMaintenanceModeOff, Test-ExchangeNodeMaintenanceMode, Invoke-ApplyExchangeCumulativeUpdate
 
 # SIG # Begin signature block
 # MIITegYJKoZIhvcNAQcCoIITazCCE2cCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQULdhI0c5Qo6zbmL5V+K00+X81
-# 1v2ggg4LMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUt0PhsYSC6gNgNL8nT8KuJ9QU
+# 2qCggg4LMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
 # VzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNV
 # BAsTB1Jvb3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xMTA0
 # MTMxMDAwMDBaFw0yODAxMjgxMjAwMDBaMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
@@ -497,25 +651,25 @@ Export-ModuleMember -Function Invoke-Exchange2016Workaround, Set-ExchangeNodeMai
 # QSBMaW1pdGVkMSMwIQYDVQQDExpDT01PRE8gUlNBIENvZGUgU2lnbmluZyBDQQIQ
 # FtT3Ux2bGCdP8iZzNFGAXDAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEKMAig
 # AoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgEL
-# MQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUq0PmLn7+NlCWtwKlTwY4
-# kJiJhvkwDQYJKoZIhvcNAQEBBQAEggEAeWMWUU7BXk1AD9doVHL6tCxyNBjYIav1
-# v0kYnAFrUWwfpPlOwciTQObrYp2JP0YGhg5GFYQFnTtki+s+clBGi/MktBeRu/Gw
-# FRuZtbgVuMKDT+zfIhMo58g0B4COVQ9e89do1SHrOEmkB74Sad/rtLaBBDEXPmgY
-# CyLU0OCY1xkisK2SvP1KmmqKpSbZ9P9roGkVHCmz47KpBl8H6MpCUJVw9ihSvjXF
-# PawzWajFbOuKBFidkD04VJU5wSFeTBoVGZS/sYekabyCAuxY9ra8NY1tkS1aZC5I
-# 0yfhCykkPbNTZ3ToNG4ONXTqOfT9SV0bQo7kRGFQ4Ja7RWVTtNa6qKGCAqIwggKe
+# MQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUuhrqH/M37MCPx0sgc1pm
+# J1gSd68wDQYJKoZIhvcNAQEBBQAEggEAPAlPN8JFQWrVU20pV8VDaT+nmMZjc5j+
+# traBgrtmfOt3ZP+4RsdbpfimDHJNQ1mnwgfJIfayBZVd4R6ds53fRIR9ZWmehqFY
+# S0+KOKlUJze83KiUJMmh5HNQQI+T3shQllBexNXVTlNiVuy/C68J0oTlNqM5v/yf
+# 7SIJ/LXs+rDn40MvZosxMqY2ApJ8/Xu+fkFuK9eOO/xv83zOshVM/pJZqdLN5DXl
+# VUg3o9DfaFfXjWkN4vqkKH05OAJ4+nHICFE02DkPP7tElqzZ1/n1INQEbFadyQd8
+# IP1Dfx+pRk/E56wyRtsLoixn8T/orsKUJgFVdBFDr2W9ULrC5aNt1qGCAqIwggKe
 # BgkqhkiG9w0BCQYxggKPMIICiwIBATBoMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
 # ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIFRpbWVzdGFt
 # cGluZyBDQSAtIEcyAhIRIdaZp2SXPvH4Qn7pGcxTQRQwCQYFKw4DAhoFAKCB/TAY
-# BgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xNzA2MTUy
-# MTIzMTNaMCMGCSqGSIb3DQEJBDEWBBR53Oxiyoikdq5J70V279iZ6O/ObDCBnQYL
+# BgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xNzA2MTYx
+# MDU0NDNaMCMGCSqGSIb3DQEJBDEWBBSRGuTTxVN72NjUomv59tCCUJLl2TCBnQYL
 # KoZIhvcNAQkQAgwxgY0wgYowgYcwgYQEFGO4L6th9YOQlpUFCwAknFApM+x5MGww
 # VqRUMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgw
 # JgYDVQQDEx9HbG9iYWxTaWduIFRpbWVzdGFtcGluZyBDQSAtIEcyAhIRIdaZp2SX
-# PvH4Qn7pGcxTQRQwDQYJKoZIhvcNAQEBBQAEggEAmHDFOEv1yC72p/bJNPM/6qWg
-# yOFZJgH6z6g2w4cfY4RwO5T6qvjtWwp0FApqV0OzxE7lYBNiQO+HY7lNvot568x3
-# GBZ07FXFwz7ly7shZcVz/NZJ4MAQhBkhrQwc6otklDuOwZbuv5I5CRbFD3YzTmDY
-# f/Z2nE47rEPxTplLk85R8YEvB0ZoWAspmO6RmxGWQzVhp6wVTIBVZc7+QFE19xdW
-# wmdRs/HSMPV8a2bdQF8QGEU6HL9Cy9PDHnz0+fwrm4ykMT36qpUrc73ltQ9j8osJ
-# wqE3b27dHgiatV8C+NGu8cixyc5o4Q9SE+mTTsMezj6zJSssyXwaVEDL2itzUQ==
+# PvH4Qn7pGcxTQRQwDQYJKoZIhvcNAQEBBQAEggEAg6OHBxAZ9rmdmtlnOB2odvWo
+# 3W/YLKZsE4/bkTbMQhsGVajU25Vx48IrIMKdUk+QQVWFDJPpc0QGFyW0UFleqB3n
+# PEmyQAsd2plBiEv3oQrb2/RjybIXSomW6I8723fg7cp0FJ/sLYkv3uIwqVfLClpS
+# jeb9Ttbdvk46DyXJepVw8bachCnO48rkCgPV+O38s64XirfKpDGkSZuW19ni0EOJ
+# TlL+309oYYEoGByRsCZuVTII8mBhPTOPR6+X+4d7extPsBq6m3Pbo/5IhZlk8U0T
+# RhINqaKDBU0kkCbQbM8HvHCTXrlgiB4mBj3RgLR9ETdIdkDMaMPQOviDsCAsIQ==
 # SIG # End signature block

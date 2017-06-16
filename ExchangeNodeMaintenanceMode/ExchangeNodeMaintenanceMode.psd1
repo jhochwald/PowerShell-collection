@@ -4,7 +4,7 @@
 	RootModule = 'ExchangeNodeMaintenanceMode.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.0.0.3'
+	ModuleVersion = '1.0.0.4'
 	
 	# ID used to uniquely identify this module
 	GUID = '1293bb34-f68a-46cb-ad98-11ab9dff2f07'
@@ -61,7 +61,7 @@
 	NestedModules = @()
 	
 	# Functions to export from this module
-	FunctionsToExport = @('Invoke-Exchange2016Workaround', 'Set-ExchangeNodeMaintenanceModeOn', 'Set-ExchangeNodeMaintenanceModeOff', 'Test-ExchangeNodeMaintenanceMode')
+	FunctionsToExport = @('Invoke-Exchange2016Workaround', 'Set-ExchangeNodeMaintenanceModeOn', 'Set-ExchangeNodeMaintenanceModeOff', 'Test-ExchangeNodeMaintenanceMode', 'Invoke-ApplyExchangeCumulativeUpdate')
 	
 	# Cmdlets to export from this module
 	#CmdletsToExport = @()
@@ -97,7 +97,7 @@
 			# IconUri = ''
 			
 			# ReleaseNotes of this module
-			ReleaseNotes = 'Tweak the Build Process (No code change)'
+			ReleaseNotes = 'Add: Invoke-ApplyExchangeCumulativeUpdate - Apply an Exchange Cumulative Update'
 			
 		} # End of PSData hashtable
 		
