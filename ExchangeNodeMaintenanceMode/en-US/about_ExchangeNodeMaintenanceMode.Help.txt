@@ -1,25 +1,26 @@
-﻿TOPIC 
+﻿TOPIC
 	about_ExchangeNodeMaintenanceMode
-	
-SHORT DESCRIPTION	
-	This is a short description of the file.
-	
+
+SHORT DESCRIPTION
+	Exchange Cluster Node Maintenance Mode Utilities
+
 LONG DESCRIPTION
-	This is a long description of the file.
-	
+	Exchange Cluster Node Maintenance Mode Utilities
+
 NOTE
-	This is a note.
-	
+	At the moment this is hardcoded to support an Exchange Two Node Cluster.
+	If your Exchange Cluster has more then Two (2) Nodes you will need to tweak the Module.
+
+	TODO: Find a better solution for the certificate check issue
+
 TROUBLESHOOTING NOTE
-	
-	
-	
+	Open an Issue here: https://github.com/jhochwald/PowerShell-collection/issues
+
 EXAMPLES
 	Place examples here.
-	
+
 KEYWORDS
-	
-	
-	
+	Exchange, Exchange Node Maintenance Mode
+
 SEE ALSO
-	Place related topics here.
+	Exchange
