@@ -21,7 +21,7 @@ Powershell Gallery (PS 5.0, Preferred method)
 `install-module ExchangeNodeMaintenanceMode`
 
 Manual Installation
-`iex (New-Object Net.WebClient).DownloadString("https://github.com/jhochwald/PowerShell-collection/raw/master/Install.ps1")`
+`iex (New-Object Net.WebClient).DownloadString("https://raw.githubusercontent.com/jhochwald/PowerShell-collection/master/ExchangeNodeMaintenanceMode/Install.ps1")`
 
 Or clone this repository to your local machine, extract, go to the .\releases\ExchangeNodeMaintenanceMode directory
 and import the module to your session to test, but not install this module.
