@@ -1,0 +1,354 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpItems xmlns="http://msh" schema="maml">
+
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>Invoke-ApplyExchangeCumulativeUpdate</command:name>
+<command:verb>Invoke</command:verb>
+<command:noun>ApplyExchangeCumulativeUpdate</command:noun>
+<maml:description><maml:para>Apply an Exchange Cumulative Update
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>Apply an Exchange Cumulative Update, with the optional AD and Schema update, and an optional UM language Update.
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>Invoke-ApplyExchangeCumulativeUpdate</maml:name>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>Source</maml:name>
+<maml:Description><maml:para>Source Directory of the Exchange Cumulative Update, must exist.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>E:\</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="none"><maml:name>Prepare</maml:name>
+<maml:Description><maml:para>Run prepare of Schema, Active Directory and AD Domain. Enabled by default
+</maml:para>
+</maml:Description>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>True</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="none"><maml:name>UMLangHandling</maml:name>
+<maml:Description><maml:para>Handle the UMLangHandling. Disabled by default
+</maml:para>
+</maml:Description>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>False</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="5" aliases="none"><maml:name>UMLangSource</maml:name>
+<maml:Description><maml:para>Source Directory of the UM Lang Packs, must exist
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>F:\</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="6" aliases="none"><maml:name>UMLanguages</maml:name>
+<maml:Description><maml:para>UM Languages to handle. This is one string that should contain all languages.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>De-DE,en-GB,en-US</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>Source</maml:name>
+<maml:Description><maml:para>Source Directory of the Exchange Cumulative Update, must exist.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>E:\</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="none"><maml:name>Prepare</maml:name>
+<maml:Description><maml:para>Run prepare of Schema, Active Directory and AD Domain. Enabled by default
+</maml:para>
+</maml:Description>
+<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>True</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="none"><maml:name>UMLangHandling</maml:name>
+<maml:Description><maml:para>Handle the UMLangHandling. Disabled by default
+</maml:para>
+</maml:Description>
+<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+<dev:type><maml:name>SwitchParameter</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>False</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="5" aliases="none"><maml:name>UMLangSource</maml:name>
+<maml:Description><maml:para>Source Directory of the UM Lang Packs, must exist
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>F:\</dev:defaultValue>
+</command:parameter>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="6" aliases="none"><maml:name>UMLanguages</maml:name>
+<maml:Description><maml:para>UM Languages to handle. This is one string that should contain all languages.
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>De-DE,en-GB,en-US</dev:defaultValue>
+</command:parameter>
+</command:parameters>
+<command:inputTypes></command:inputTypes>
+<command:returnValues></command:returnValues>
+<maml:alertSet><maml:alert><maml:para>TODO: Error handling. At the moment it is just a fire an forget thing!
+</maml:para>
+<maml:para>This function is just a wrapper for the default SETUP.EXE of the Exchange Cumulative Update package. You might tweak the directory variable. Or just use the parameter.
+</maml:para>
+<maml:para>. LINK Invoke-Exchange2016Workaround Set-ExchangeNodeMaintenanceModeOn Set-ExchangeNodeMaintenanceModeOff Test-ExchangeNodeMaintenanceMode
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+<dev:code># Use the defaults to install the CU</dev:code>
+<dev:remarks><maml:para>PS &gt; Invoke-ApplyExchangeCumulativeUpdate
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+<dev:code># Use the defaults to install the CU, where '\\SERVER\Share\' is the location of the CU (Sources)</dev:code>
+<dev:remarks><maml:para>PS &gt; Invoke-ApplyExchangeCumulativeUpdate -Source '\\SERVER\Share\'
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+<dev:code># Install the the and the updates the default UM Languages from a given location</dev:code>
+<dev:remarks><maml:para>PS &gt; Invoke-ApplyExchangeCumulativeUpdate -Source '\\SERVER\Share\' -UMLangHandling -UMLangSource '\\SERVER\Share\UM-Updates\'
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+<dev:code># Install the the and the updates the given UM Languages</dev:code>
+<dev:remarks><maml:para>PS &gt; Invoke-ApplyExchangeCumulativeUpdate -UMLangHandling -UMLanguages = 'es-MX,es-ES'
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks></command:relatedLinks>
+</command:command>
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>Invoke-Exchange2016Workaround</command:name>
+<command:verb>Invoke</command:verb>
+<command:noun>Exchange2016Workaround</command:noun>
+<maml:description><maml:para>Workaround for Exchange 2016 on Windows Server 2016
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>Workaround for Exchange 2016 on Windows Server 2016
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>Invoke-Exchange2016Workaround</maml:name>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters></command:parameters>
+<command:inputTypes></command:inputTypes>
+<command:returnValues></command:returnValues>
+<maml:alertSet><maml:alert><maml:para>This is a quick an dirty one :)
+</maml:para>
+<maml:para>. LINK Set-ExchangeNodeMaintenanceModeOn Set-ExchangeNodeMaintenanceModeOff Test-ExchangeNodeMaintenanceMode Invoke-ApplyExchangeCumulativeUpdate
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+<dev:code>Invoke-Exchange2016Workaround</dev:code>
+<dev:remarks><maml:para>
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks></command:relatedLinks>
+</command:command>
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>Set-ExchangeNodeMaintenanceModeOff</command:name>
+<command:verb>Set</command:verb>
+<command:noun>ExchangeNodeMaintenanceModeOff</command:noun>
+<maml:description><maml:para>Return Exchange Node to normal operation
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>Return Exchange Node to normal operation
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>Set-ExchangeNodeMaintenanceModeOff</maml:name>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>ComputerName</maml:name>
+<maml:Description><maml:para>Name of the Exchange Node, default is local system
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>$env:COMPUTERNAME</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>ComputerName</maml:name>
+<maml:Description><maml:para>Name of the Exchange Node, default is local system
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>$env:COMPUTERNAME</dev:defaultValue>
+</command:parameter>
+</command:parameters>
+<command:inputTypes></command:inputTypes>
+<command:returnValues><command:returnValue><dev:type><maml:name>System.Boolean</maml:name>
+</dev:type>
+<maml:description><maml:para>
+</maml:para>
+</maml:description>
+</command:returnValue>
+</command:returnValues>
+<maml:alertSet><maml:alert><maml:para>. LINK Invoke-Exchange2016Workaround Set-ExchangeNodeMaintenanceModeOn Test-ExchangeNodeMaintenanceMode Invoke-ApplyExchangeCumulativeUpdate
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+<dev:code># Enable normal operations</dev:code>
+<dev:remarks><maml:para>PS &gt; Set-ExchangeNodeMaintenanceModeOff $true
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+<dev:code># Fails to enable noprmal operations</dev:code>
+<dev:remarks><maml:para>PS &gt; Set-ExchangeNodeMaintenanceModeOff $false
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks></command:relatedLinks>
+</command:command>
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>Set-ExchangeNodeMaintenanceModeOn</command:name>
+<command:verb>Set</command:verb>
+<command:noun>ExchangeNodeMaintenanceModeOn</command:noun>
+<maml:description><maml:para>Set the Exchange Node to Service
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>Set the Exchange Node to Service
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>Set-ExchangeNodeMaintenanceModeOn</maml:name>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>ComputerName</maml:name>
+<maml:Description><maml:para>Name of the Exchange Node, default is local system
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>$env:COMPUTERNAME</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>ComputerName</maml:name>
+<maml:Description><maml:para>Name of the Exchange Node, default is local system
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>$env:COMPUTERNAME</dev:defaultValue>
+</command:parameter>
+</command:parameters>
+<command:inputTypes></command:inputTypes>
+<command:returnValues></command:returnValues>
+<maml:alertSet><maml:alert><maml:para>TODO: Find a detection for the Workaround TODO: Find a better solution for the certificate check issue
+</maml:para>
+<maml:para>. LINK Invoke-Exchange2016Workaround Set-ExchangeNodeMaintenanceModeOff Test-ExchangeNodeMaintenanceMode Invoke-ApplyExchangeCumulativeUpdate
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+<dev:code># Node is in Maintenance Mode</dev:code>
+<dev:remarks><maml:para>PS &gt; Set-ExchangeNodeMaintenanceModeOn $false
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+<dev:code># Node is not in Maintenance Mode</dev:code>
+<dev:remarks><maml:para>PS &gt; Set-ExchangeNodeMaintenanceModeOn $true
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks></command:relatedLinks>
+</command:command>
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+<command:details><command:name>Test-ExchangeNodeMaintenanceMode</command:name>
+<command:verb>Test</command:verb>
+<command:noun>ExchangeNodeMaintenanceMode</command:noun>
+<maml:description><maml:para>Check if the exchange node is in maintenance mode
+</maml:para>
+</maml:description>
+</command:details>
+<maml:description><maml:para>Check if the exchange node is in maintenance mode
+</maml:para>
+</maml:description>
+<command:syntax><command:syntaxItem><maml:name>Test-ExchangeNodeMaintenanceMode</maml:name>
+<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>ComputerName</maml:name>
+<maml:Description><maml:para>Name of the Exchange Node, default is local system
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>$env:COMPUTERNAME</dev:defaultValue>
+</command:parameter>
+</command:syntaxItem>
+</command:syntax>
+<command:parameters><command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="none"><maml:name>ComputerName</maml:name>
+<maml:Description><maml:para>Name of the Exchange Node, default is local system
+</maml:para>
+</maml:Description>
+<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+<dev:type><maml:name>String</maml:name>
+<maml:uri /></dev:type>
+<dev:defaultValue>$env:COMPUTERNAME</dev:defaultValue>
+</command:parameter>
+</command:parameters>
+<command:inputTypes></command:inputTypes>
+<command:returnValues><command:returnValue><dev:type><maml:name>System.Boolean</maml:name>
+</dev:type>
+<maml:description><maml:para>
+</maml:para>
+</maml:description>
+</command:returnValue>
+</command:returnValues>
+<maml:alertSet><maml:alert><maml:para>TODO: The certificate handler is not perfect. Find a betetr solution! TODO: Need a few more checks.
+</maml:para>
+<maml:para>. LINK Invoke-Exchange2016Workaround Set-ExchangeNodeMaintenanceModeOn Set-ExchangeNodeMaintenanceModeOff Invoke-ApplyExchangeCumulativeUpdate
+</maml:para>
+</maml:alert>
+</maml:alertSet>
+<command:examples><command:example><maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+<dev:code># Given node is in normal operation mode</dev:code>
+<dev:remarks><maml:para>PS &gt; Test-ExchangeNodeMaintenanceMode $false
+</maml:para>
+</dev:remarks>
+</command:example>
+<command:example><maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+<dev:code># Given node is in maintenance mode</dev:code>
+<dev:remarks><maml:para>PS &gt; Test-ExchangeNodeMaintenanceMode $true
+</maml:para>
+</dev:remarks>
+</command:example>
+</command:examples>
+<command:relatedLinks></command:relatedLinks>
+</command:command>
+</helpItems>
