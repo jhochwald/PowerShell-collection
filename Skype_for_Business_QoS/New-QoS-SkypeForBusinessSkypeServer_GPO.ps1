@@ -2,15 +2,15 @@
 
 <#
 		.SYNOPSIS
-		DSCP markings for Lync/Skype for Business client traffic.
+		DSCP markings for Lync/Skype for Business Server traffic.
 
 		.DESCRIPTION
-		Creates a new GPO for DSCP markings for Lync/Skype for Business client traffic.
+		Creates a new GPO for DSCP markings for Lync/Skype for Business Server traffic.
 
 		.EXAMPLE
 		PS C:\> .\New-QoS-SkypeForBusinessSkypeServer_GPO.ps1
 
-		# Creates a new GPO for DSCP markings for Lync/Skype for Business client traffic.
+		# Creates a new GPO for DSCP markings for Lync/Skype for Business Server traffic.
 
 		.NOTES
 		Copyright (c) 2017 Joerg Hochwald (http://jhochwald.com). All rights reserved.
@@ -45,7 +45,7 @@
 param ()
 
 #region Variables
-$GPOName = 'QoS - Skype for Business Client'
+$GPOName = 'QoS - Skype for Business Server'
 $SC = 'SilentlyContinue'
 $STP = 'Stop'
 #endregion Variables
@@ -87,7 +87,7 @@ try
 {
 	$paramNewGPO = @{
 		Name          = $GPOName
-		Comment       = 'DSCP markings for Lync/Skype for Business client traffic.'
+		Comment       = 'DSCP markings for Lync/Skype for Business Server traffic.'
 		ErrorAction   = $STP
 		WarningAction = $SC
 	}
@@ -133,7 +133,7 @@ try
 {
 	$paramSetGPRegistryValue = @{
 		Name          = $GPOName
-		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Client SIP Signaling QoS'
+		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Server SIP Signaling QoS'
 		ValueName     = 'Version', 'Application Name', 'Protocol', 'Local Port', 'Local IP', 'Local IP Prefix Length', 'Remote Port', 'Remote IP', 'Remote IP Prefix Length', 'DSCP Value', 'Throttle Rate'
 		Type          = 'String'
 		Value         = '1.0', '*', '*', '5060:5069', '*', '*', '*', '*', '*', '40', '-1'
@@ -148,12 +148,12 @@ catch
 }
 #endregion SIPSignallingQoS
 
-#region ClientAudioQoS
+#region ServerAudioQoS
 try
 {
 	$paramSetGPRegistryValue = @{
 		Name          = $GPOName
-		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Client Audio QoS'
+		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Server Audio QoS'
 		ValueName     = 'Version', 'Application Name', 'Protocol', 'Local Port', 'Local IP', 'Local IP Prefix Length', 'Remote Port', 'Remote IP', 'Remote IP Prefix Length', 'DSCP Value', 'Throttle Rate'
 		Type          = 'String'
 		Value         = '1.0', '*', '*', '50020:50039', '*', '*', '*', '*', '*', '46', '-1'
@@ -164,16 +164,16 @@ try
 }
 catch
 {
-	Write-Warning 'Unable to create Client Audio QoS'
+	Write-Warning 'Unable to create Server Audio QoS'
 }
-#endregion ClientAudioQoS
+#endregion ServerAudioQoS
 
-#region ClientVideoQoS
+#region ServerVideoQoS
 try
 {
 	$paramSetGPRegistryValue = @{
 		Name          = $GPOName
-		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Client Video QoS'
+		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Server Video QoS'
 		ValueName     = 'Version', 'Application Name', 'Protocol', 'Local Port', 'Local IP', 'Local IP Prefix Length', 'Remote Port', 'Remote IP', 'Remote IP Prefix Length', 'DSCP Value', 'Throttle Rate'
 		Type          = 'String'
 		Value         = '1.0', '*', '*', '58000:58019', '*', '*', '*', '*', '*', '34', '-1'
@@ -184,16 +184,16 @@ try
 }
 catch
 {
-	Write-Warning 'Unable to create Client Video QoS'
+	Write-Warning 'Unable to create Server Video QoS'
 }
-#endregion ClientVideoQoS
+#endregion ServerVideoQoS
 
-#region ClientApplicationSharingQoS
+#region ServerApplicationSharingQoS
 try
 {
 	$paramSetGPRegistryValue = @{
 		Name          = $GPOName
-		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Client Application Sharing QoS'
+		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Server Application Sharing QoS'
 		ValueName     = 'Version', 'Application Name', 'Protocol', 'Local Port', 'Local IP', 'Local IP Prefix Length', 'Remote Port', 'Remote IP', 'Remote IP Prefix Length', 'DSCP Value', 'Throttle Rate'
 		Type          = 'String'
 		Value         = '1.0', '*', '*', '42000:42019', '*', '*', '*', '*', '*', '24', '-1'
@@ -204,26 +204,6 @@ try
 }
 catch
 {
-	Write-Warning 'Unable to create Client Application Sharing QoS'
+	Write-Warning 'Unable to create Server Application Sharing QoS'
 }
-#endregion ClientApplicationSharingQoS
-
-#region ClientMediaPortQoS
-try
-{
-	$paramSetGPRegistryValue = @{
-		Name          = $GPOName
-		Key           = 'HKLM\SOFTWARE\Policies\Microsoft\Windows\QoS\Skype for Business Client Media Port QoS'
-		ValueName     = 'Version', 'Application Name', 'Protocol', 'Local Port', 'Local IP', 'Local IP Prefix Length', 'Remote Port', 'Remote IP', 'Remote IP Prefix Length', 'DSCP Value', 'Throttle Rate'
-		Type          = 'String'
-		Value         = '1.0', '*', '*', '5350:5389', '*', '*', '*', '*', '*', '34', '-1'
-		ErrorAction   = $STP
-		WarningAction = $SC
-	}
-	$null = (Set-GPRegistryValue @paramSetGPRegistryValue)
-}
-catch
-{
-	Write-Warning 'Unable to create Client Media Port QoS'
-}
-#endregion ClientMediaPortQoS
+#endregion ServerApplicationSharingQoS
