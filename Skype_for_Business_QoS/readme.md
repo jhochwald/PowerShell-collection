@@ -55,6 +55,9 @@ Are you kidding me? This is free software. Take it, or leave it!
 
 ## Final remarks
 You Network Equipment must support QoS End-to-End!
+
 Teams is not supported (yet).
+
 Some of the new ports for Skype for Business Online (SfBO) are still missing. I might provide an updated version for them soon.
+
 Hybrid with Skype for Business Online (SfBO) will work! But if you want to use QoS End-To-End, Fast Track might be required. Ask Microsoft!
