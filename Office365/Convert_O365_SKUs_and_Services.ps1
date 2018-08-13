@@ -15,14 +15,14 @@ function Get-ServicePlanFriendlyList
 {
   <#
       .SYNOPSIS
-      A Hashtable of Office 365 Service Plans and there Human understandable desctiption
-	
+      A Hashtable of Office 365 Service Plans and there Human understandable description
+
       .DESCRIPTION
       Helper function to make the Office 365 Service Plans as returned from scripts understandable for humans
-	
+
       .EXAMPLE
       PS C:\> Get-ServicePlanFriendlyList
-	
+
       .NOTES
       Internal Helper
 
@@ -30,11 +30,11 @@ function Get-ServicePlanFriendlyList
       Author: Joerg Hochwald <http://jhochwald.com>
       License: The 3-Clause BSD License <https://opensource.org/licenses/BSD-3-Clause>
   #>
-	
+
   [CmdletBinding()]
   [OutputType([hashtable])]
   param ()
-	
+
   BEGIN
   {
     # Cleanup
@@ -133,7 +133,7 @@ function Get-ServicePlanFriendlyList
       'MCOMEETADV'                       = 'Teams/Skype for Business PSTN Conferencing'
     }
   }
-	
+
   end
   {
     # Dump
@@ -145,14 +145,14 @@ function Get-SkuPartNumberFriendlyNameList
 {
   <#
       .SYNOPSIS
-      A Hashtable of Office 365 SKUs and there Human understandable desctiption
-	
+      A Hashtable of Office 365 SKUs and there Human understandable description
+
       .DESCRIPTION
       Helper function to make the Office 365 SKUs as returned from scripts understandable for humans
-	
+
       .EXAMPLE
       PS C:\> Get-SkuPartNumberFriendlyNameList
-	
+
       .NOTES
       Internal Helper
 
@@ -160,17 +160,17 @@ function Get-SkuPartNumberFriendlyNameList
       Author: Joerg Hochwald <http://jhochwald.com>
       License: The 3-Clause BSD License <https://opensource.org/licenses/BSD-3-Clause>
   #>
-	
+
   [CmdletBinding()]
   [OutputType([hashtable])]
   param ()
-	
+
   BEGIN
   {
     # Cleanup
     $SkuPartNumberFriendlyNameList = $null
   }
-	
+
   PROCESS
   {
     # Build the HashTable
@@ -308,7 +308,7 @@ function Get-SkuPartNumberFriendlyNameList
       'ENTERPRISEPREMIUM'                = 'Office 365 Enterprise E5'
     }
   }
-	
+
   END
   {
     # Dump
@@ -323,17 +323,17 @@ function Convert-MsolServicePlanName
   <#
       .SYNOPSIS
       Convert between the Office 365 ServicePlanName from Get-MsolAccountSku to a human understandable format. It works in both directions
-	
+
       .DESCRIPTION
       Coverts the Office 365 ServicePlanName from Get-MsolAccountSku to a human understandable format (as viewed in the Office 365 Admin Portal).
       I use this for reporting and other licence related scripts to make the output understandable for the user.
-	
+
       .PARAMETER ServicePlanName
       ServicePlanName from PowerShell query, e.g. Intune
-	
+
       .PARAMETER ServicePlanFriendlyName
       Human underandable description of a plan, e.g. Azure Multi-Factor Authentication
-	
+
       .EXAMPLE
       # Get all availible Services in a Human understanable Format
       PS> Get-MsolAccountSku | Select-Object -Property @{
@@ -401,12 +401,12 @@ function Convert-MsolServicePlanName
   {
     # Moved to a dedicated function
     $ServicePlanFriendlyList = (Get-ServicePlanFriendlyList)
-		
+
     if ($ServicePlanName)
     {
       $ServicePlanFriendlyList["$ServicePlanName"]
     }
-		
+
     if ($ServicePlanFriendlyName)
     {
       ($ServicePlanFriendlyList.GetEnumerator() | Where-Object -FilterScript {
@@ -421,21 +421,21 @@ function Convert-MsolAccountSkuName
   <#
       .SYNOPSIS
       Convert between the Office 365 SKU Name from Get-MsolAccountSku to a human understandable format. It works in both directions
-	
+
       .DESCRIPTION
       Coverts the Office 365 SKU Name from Get-MsolAccountSku to a human understandable format (as viewed in the Office 365 Admin Portal).
       I use this for reporting and other licence related scripts to make the output understandable for the user.
-	
+
       .PARAMETER SkuPartNumber
       ServicePlanName from scripted query, e.g. EXCHANGEENTERPRISE
-	
+
       .PARAMETER SkuPartNumberFriendlyName
       human understandable format of a plan, e.g. Exchange Plan 1
-	
+
       .EXAMPLE
       # Get a human understandable output for all existing SKUs
       Get-MsolAccountSku | Select-Object -ExpandProperty SkuPartNumber | Convert-MsolAccountSkuName
-	
+
       Power BI
       Office 365 Plan E1
 
@@ -476,17 +476,17 @@ function Convert-MsolAccountSkuName
     [string]
     $SkuPartNumberFriendlyName
   )
-	
+
   process
   {
     # Moved to a dedicated function
     $SkuPartNumberFriendlyNameList = (Get-SkuPartNumberFriendlyNameList)
-		
+
     if ($SkuPartNumber)
     {
       $SkuPartNumberFriendlyNameList["$SkuPartNumber"]
     }
-		
+
     if ($SkuPartNumberFriendlyName)
     {
       ($SkuPartNumberFriendlyNameList.GetEnumerator() | Where-Object -FilterScript {
