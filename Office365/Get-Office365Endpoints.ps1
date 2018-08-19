@@ -5,7 +5,10 @@
 
     .DESCRIPTION
     Microsoft updates the Office 365 IP address and FQDN entries at the end of each month and occasionally out of the cycle for operational or support requirements.
+
     This function uses the new JSON based Webserice instead of the old XML based one; the XML based service will be retired soon by Microsoft.
+
+    The Function will compare the last downloaded version with the latest available online version, if there is no update available, the function does nothing. If there is an update, the function will do what you told it to. If you want to enforce the download, just delete the O365_endpoints_*_latestversion.txt in your $Env:TEMP Directory. The * is a placeholder, for the Instance name.
 
     .PARAMETER Instance
     The short name of the Office 365 service instance.
@@ -14,8 +17,8 @@
 
     .PARAMETER Services
     Valid items are All, Common, Exchange, SharePoint, Skype.
+    Because Common service area items are a prerequisite for all other service areas it is included every time - Adopted that from the Microsoft Statement; nevertheless, we disagree with the selection of Microsoft. There are way to many endpoints included here!
     The default is: All
-    Because Common service area items are a prerequisite for all other service areas
 
     .PARAMETER Tenant
     Your Office 365 tenant name.
@@ -25,7 +28,6 @@
     .PARAMETER NoIPv6
     Query string parameter. Set this to true to exclude IPv6 addresses from the output, for example, if you don't use IPv6 in your network.
     The default is FALSE
-    TODO: Not iomplemented yet! - Might be dropped in the near future, but it could speed up things by not getting IPv6 info if we do not need them.
 
     .PARAMETER ExpressRoute
     Only display endpoints that could be routed over ExpressRoute.
@@ -103,6 +105,11 @@
 
     Get a List of IPv6 addresses for ExpressRoute configuration. Please note: IPv6 is not supported with ExpressRoute in every Instance, (example: Germany)
 
+    .EXAMPLE
+    PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -NoIPv6).ip | Sort-Object -Unique) -join "," | Out-String
+
+    Get a list of IP addreses and exclude IPv6. The benefit of this parameter is the NoIPv6 parameter: The call will exclude the IPv6 Data from the response, and that might be smarter than filter it. It might be handy if you do NOT use IPv6 within your network - If this is the case, you might miss the future of networking! Think about that, before ignoring IPv6.
+
     .NOTES
     Initial Version that uses the new Microsoft Service. A few things are still missing or not rock solid. 
     However, we needed a solution to configure ExpressRoute now, so we started with some rework to use the new Webservice.
@@ -166,13 +173,26 @@ param
 
 begin
 {
-  if (! $Category -or $Category -eq 'All') 
+  #region MakeIPv6Plausible
+  if (($NoIPv6) -and ($Output -eq 'IPv6'))
+  {
+    # This makes no sense, and we totally ignore to do it!
+    Write-Error -Message 'The selected parameters make no sense; we cannot continue!' -ErrorAction Stop
+
+    # We should never reach this point!
+    Break
+  }
+  #endregion MakeIPv6Plausible
+
+  #region CategoryTweaker
+  if ((! $Category) -or ($Category -eq 'All')) 
   {
     # Set to all
     $Category += 'Optimize', 'Allow', 'Default'
   }
+  #endregion CategoryTweaker
 
-  # Tweak our Output
+  #region TweakOutputHandler
   # TODO: Make a simpler solution for that!
   switch ($Output)
   {
@@ -201,13 +221,19 @@ begin
       $outURLs = $true
     }
   }
+  #endregion TweakOutputHandler
 	
+  #region ConfigurationVariables
   # Webservice root URL
   $BaseURI = 'https://endpoints.office.com'
 	
   # Path where client ID and latest version number will be stored
-  $datapath = $Env:TEMP + '\endpoints_clientid_' + $Instance + '_latestversion.txt'
-	
+  # TODO: Move the Location wo a parameter
+  $datapath = $Env:TEMP + '\O365_endpoints_' + $Instance + '_latestversion.txt'
+  #endregion ConfigurationVariables
+
+  #region LocalVersionChecker
+
   # fetch client ID and version if data file exists; otherwise create new file
   if (Test-Path -Path $datapath)
   {
@@ -246,7 +272,9 @@ begin
       Break
     }
   }
-	
+  #region LocalVersionChecker
+
+  #region RemoteVersionChecker
   # Call version method to check the latest version, and pull new data if version number is different
   try
   {
@@ -269,10 +297,12 @@ begin
     # We should never reach this point!
     break
   }
+  #endregion RemoteVersionChecker
 }
 
 process
 {
+  #region VersionCompare
   if ($version.latest -gt $lastVersion)
   {
     Write-Verbose -Message ('New version of Office 365 {0} endpoints detected' -f $Instance)
@@ -293,9 +323,9 @@ process
       # We should never reach this point!
       Break
     }
+    #endregion VersionCompare
 		
-		
-    # Invoke endpoints method to get the new data
+    #region GetTheEndpoints
     try
     {
       # Set the default URI
@@ -335,6 +365,14 @@ process
         $requestURI = ($requestURI + '&TenantName=' + $Tenant)
       }
 
+      if ($NoIPv6)
+      {
+        # Append to the URI - Exclude IPv6 addresses from the output
+        $requestURI = ($requestURI + '&NoIPv6')
+
+        Write-Verbose 'IPv6 addresses are excluded from the output! IPv6 is the future, think about an adoption soon.'
+      }
+
       # Do our job and get the data via Rest Request
       Write-Verbose -Message ('We request the following URI: {0}' -f $requestURI)
 
@@ -357,8 +395,10 @@ process
       # We should never reach this point!
       break
     }
+    #endregion GetTheEndpoints
 
-    # Filter results for Allow and Optimize endpoints, and transform these into custom objects with port and category
+    #region FilterURLs
+
     if ($outURLs)
     {
       $flatUrls = $endpointSets | ForEach-Object -Process {
@@ -415,7 +455,9 @@ process
         $urlCustomObjects
       }
     }
-		
+    #endregion FilterURLs
+
+    #region FilterIPv4
     if ($outIPv4)
     {
       $flatIpv4 = $endpointSets | ForEach-Object -Process {
@@ -461,7 +503,9 @@ process
         $ipCustomObjects
       }
     }
-		
+    #endregion FilterIPv4
+
+    #region FilterIPv6
     if ($outIPv6)
     {
       $flatIpv6 = $endpointSets | ForEach-Object -Process {
@@ -507,6 +551,7 @@ process
         $ipCustomObjects
       }
     }
+    #endregion FilterIPv4
   }
 }
 
@@ -514,35 +559,56 @@ end
 {
   if ($version.latest -gt $lastVersion)
   {
+    #region DumpIPv4
     if ($outIPv4)
     {
       Write-Verbose -Message 'Office 365 IPv4 IP Address Ranges'
       ($flatIpv4 | Sort-Object -Property id)
     }
-		
+    #endregion DumpIPv4
+
+    #region DumpIPv6
     if ($outIPv6)
     {
       Write-Verbose -Message 'Office 365 IPv6 IP Address Ranges'
       ($flatIpv6 | Sort-Object -Property id)
     }
-		
+    #endregion DumpIPv6
+
+    #region DumpURLs
     if ($outURLs)
     {
       Write-Verbose -Message 'Office 365 URLs'
       ($flatUrls | Sort-Object -Property id)
     }
+    #endregion DumpURLs
   }
   else
   {
+    #region DumpInfo
     Write-Output -InputObject 'Office 365 worldwide commercial service instance endpoints are up-to-date'
+    #endregion DumpInfo
   }
 }
 
 <#
     CHANGELOG:
+    0.8.2 - 2018-08-19:
+    [ADD] Regions added to make the code more readable within code editors
+    [FIX] A few typos in the descriptions where fixed - No change to any code or logic
 
-    0.8.1 - 2018-08-19: [FIX] Add missing OutputType
-    0.8.0 - 2018-08-18: Intitial 
+    0.8.1 - 2018-08-19:
+    [FIX] Add missing OutputType
+    [CHANGE] datafile name tweaked
+    [ADD] Missing NoIPv6 switch funtion implemented
+    [ADD] New Example for NoIPv6 switch
+    [ADD] A few more links
+    [ADD] Info about the datafile
+    [ADD] Embed a few things as comment - Due to the separation from the Module
+    [ADD] This changelog within the code - Reflect the changes within the dedicated function
+
+    0.8.0 - 2018-08-18:
+    [INIT] Intitial public release
 #>
 
 <#
@@ -561,4 +627,14 @@ end
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     By using the Software, you agree to the License, Terms and Conditions above!
+#>
+
+<#
+    DISCLAIMER:
+
+    - Use at your own risk, etc.
+    - This is a third-party Software!
+    - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+    - The Software is not supported by Microsoft Corp (MSFT)!
+    - By using the Software, you agree to the License, Terms and Conditions above!
 #>
