@@ -115,6 +115,7 @@
     https://support.office.com/en-us/article/managing-office-365-endpoints-99cab9d4-ef59-4207-9f2b-3728eb46bf9a#webservice
 #>
 [CmdletBinding()]
+[OutputType([psobject])]
 param
 (
   [Parameter(ValueFromPipeline = $true,
@@ -160,6 +161,7 @@ begin
   }
 
   # Tweak our Output
+  # TODO: Make a simpler solution for that!
   switch ($Output)
   {
     'All'
