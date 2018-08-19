@@ -105,14 +105,26 @@
 
     .NOTES
     Initial Version that uses the new Microsoft Service. A few things are still missing or not rock solid. 
-    However, we needed a solution to configure ExpressRoute now, so we started with some rework to use the new Webservice. 
+    However, we needed a solution to configure ExpressRoute now, so we started with some rework to use the new Webservice.
+
+    This function is part of the commercial en.Office365 PowerShell Module - Distributed separately as OpenSouce with a very flexible license (See below)
+
     Some parts of the script are based upon the example that Microsoft published on the info page of the new Webservice!
+
+    .LINK
+    https://github.com/jhochwald/PowerShell-collection/blob/master/Office365/Get-Office365Endpoints.ps1
+
+    .LINK
+    https://hochwald.net/powershell-get-the-office-365-endpoint-information-from-microsoft/
 
     .LINK
     https://hochwald.net/powershell-function-to-get-the-office-365-urls-and-ip-address-ranges/
 
     .LINK
     https://support.office.com/en-us/article/managing-office-365-endpoints-99cab9d4-ef59-4207-9f2b-3728eb46bf9a#webservice
+
+    .LINK
+    https://techcommunity.microsoft.com/t5/Office-365-Blog/Announcing-Office-365-endpoint-categories-and-Office-365-IP/ba-p/177638
 #>
 [CmdletBinding()]
 [OutputType([psobject])]
@@ -527,6 +539,15 @@ end
 }
 
 <#
+    CHANGELOG:
+
+    0.8.1 - 2018-08-19: [FIX] Add missing OutputType
+    0.8.0 - 2018-08-18: Intitial 
+#>
+
+<#
+    LICENSE:
+
     Copyright 2018 by enabling Technology - http://enatec.io
 
     Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
