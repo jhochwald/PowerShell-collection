@@ -81,17 +81,17 @@
     It just dumps the URLs in a comma separated (CSV) format. Useful for Proxy Servers.
 
     .EXAMPLE
-    PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv4) | Where-Object -FilterScript {$_.tcpPorts -eq '587'}).ip | Sort-Object -Unique) -join "," | Out-String
+    PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv4) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '587'}).ip | Sort-Object -Unique) -join "," | Out-String
 
     It gets the International (Worldwide) Office 365 IPv4 addresses for Exchange Submission (SMTP) Servers who use Port 587. It dumps a comma separated (CSV) format. Useful for Firewalls.
 
     .EXAMPLE
-    PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv6) | Where-Object -FilterScript {$_.tcpPorts -eq '25'}).ip | Sort-Object -Unique) -join "," | Out-String
+    PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv6) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '25'}).ip | Sort-Object -Unique) -join "," | Out-String
 
     It gets the International (Worldwide) Office 365 IPv4 addresses for Exchange SMTP Servers who use Port 25. It dumps a comma separated (CSV) format. Useful for Firewalls.
 
     .EXAMPLE
-    PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output URLs) | Where-Object -FilterScript {$_.notes -like '*Exchange Hybrid Configuration Wizard*' }).url | Sort-Object -Unique) -join "," | Out-String
+    PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output URLs) | Where-Object -FilterScript {$PSItem.notes -like '*Exchange Hybrid Configuration Wizard*' }).url | Sort-Object -Unique) -join "," | Out-String
 
     Get a List of Exchange Online URLs that you might need if you want to run the Exchange Hybrid Configuration Wizard.
 
@@ -109,6 +109,17 @@
     PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -NoIPv6).ip | Sort-Object -Unique) -join "," | Out-String
 
     Get a list of IP addreses and exclude IPv6. The benefit of this parameter is the NoIPv6 parameter: The call will exclude the IPv6 Data from the response, and that might be smarter than filter it. It might be handy if you do NOT use IPv6 within your network - If this is the case, you might miss the future of networking! Think about that, before ignoring IPv6.
+
+    .EXAMPLE
+    $ExchangeOnlineSMTPEndpoints = (.\Get-Office365Endpoints.ps1 -Services Exchange) | Where-Object -FilterScript {
+    $PSItem.ip -and
+    $PSItem.DisplayName -eq 'Exchange Online' -and
+    $PSItem.tcpPorts -contains '25'
+    }
+    $ExchangeOnlineSMTPEndpoints.ip
+
+    Retrieve endpoints for Exchange Online and filter on TCP port 25
+    This is based on the following idea: http://www.powershell.no/exchange/online,office/365,powershell/2018/08/26/automate-office365-ip-address-handling.html
 
     .NOTES
     Initial Version that uses the new Microsoft Service. A few things are still missing or not rock solid. 
@@ -187,6 +198,8 @@ begin
   #region CategoryTweaker
   if ((! $Category) -or ($Category -eq 'All')) 
   {
+    Write-Verbose -Message 'We get all categories.'
+
     # Set to all
     $Category += 'Optimize', 'Allow', 'Default'
   }
@@ -198,24 +211,32 @@ begin
   {
     'All'
     {
+      Write-Verbose -Message 'Dump all Infos (IPv4, IPv6, and URLs)'
+
       $outIPv4 = $true
       $outIPv6 = $true
       $outURLs = $true
     }
     'IPv4'
     {
+      Write-Verbose -Message 'Dump IPv4 Infos'
+
       $outIPv4 = $true
       $outIPv6 = $false
       $outURLs = $false
     }
     'IPv6'
     {
+      Write-Verbose -Message 'Dump IPv6 Infos'
+
       $outIPv4 = $false
       $outIPv6 = $true
       $outURLs = $false
     }
     'URLs'
     {
+      Write-Verbose -Message 'Dump URLs Infos'
+
       $outIPv4 = $false
       $outIPv6 = $false
       $outURLs = $true
@@ -224,12 +245,16 @@ begin
   #endregion TweakOutputHandler
 	
   #region ConfigurationVariables
+
   # Webservice root URL
   $BaseURI = 'https://endpoints.office.com'
+  Write-Verbose -Message ('We use {0} as Base URL' -f $BaseURI)
 	
   # Path where client ID and latest version number will be stored
   # TODO: Move the Location wo a parameter
   $datapath = $Env:TEMP + '\O365_endpoints_' + $Instance + '_latestversion.txt'
+
+  Write-Verbose -Message ('We save the Endpoint Version Information to {0}' -f $datapath)
   #endregion ConfigurationVariables
 
   #region LocalVersionChecker
@@ -237,6 +262,8 @@ begin
   # fetch client ID and version if data file exists; otherwise create new file
   if (Test-Path -Path $datapath)
   {
+    Write-Verbose -Message 'We get the information from Microsoft...'
+
     # Read the File
     $content = (Get-Content -Path $datapath)
 		
@@ -249,6 +276,8 @@ begin
   }
   else
   {
+    Write-Verbose -Message 'Old version information file exists, start to gather the Info!'
+
     # Create a GUID
     $clientRequestId = [GUID]::NewGuid().Guid
 		
@@ -284,6 +313,9 @@ begin
       ErrorAction   = 'Stop'
       WarningAction = 'SilentlyContinue'
     }
+
+    Write-Verbose -Message ('We use {0} as request URI.' -f ($GetVersionParams.Uri))
+
     $version = (Invoke-RestMethod @GetVersionParams)
   }
   catch
@@ -370,7 +402,7 @@ process
         # Append to the URI - Exclude IPv6 addresses from the output
         $requestURI = ($requestURI + '&NoIPv6')
 
-        Write-Verbose 'IPv6 addresses are excluded from the output! IPv6 is the future, think about an adoption soon.'
+        Write-Verbose -Message 'IPv6 addresses are excluded from the output! IPv6 is the future, think about an adoption soon.'
       }
 
       # Do our job and get the data via Rest Request
@@ -402,7 +434,7 @@ process
     if ($outURLs)
     {
       $flatUrls = $endpointSets | ForEach-Object -Process {
-        $endpointSet = $_
+        $endpointSet = $PSItem
         $urls = $(if ($endpointSet.urls.Count -gt 0)
           {
             $endpointSet.urls
@@ -424,7 +456,7 @@ process
               id           = $endpointSet.id
               serviceArea  = $endpointSet.serviceArea
               DisplayName  = $endpointSet.serviceAreaDisplayName
-              url          = $_
+              url          = $PSItem
               tcpPorts     = $endpointSet.tcpPorts
               udpPorts     = $endpointSet.udpPorts
               expressRoute = $endpointSet.expressRoute
@@ -461,7 +493,7 @@ process
     if ($outIPv4)
     {
       $flatIpv4 = $endpointSets | ForEach-Object -Process {
-        $endpointSet = $_
+        $endpointSet = $PSItem
         $ips = $(if ($endpointSet.ips.Count -gt 0)
           {
             $endpointSet.ips
@@ -474,7 +506,7 @@ process
 				
         # IPv4 strings have dots while IPv6 strings have colons
         $IPv4 = $ips | Where-Object -FilterScript {
-          $_ -like '*.*'
+          $PSItem -like '*.*'
         }
 				
         # Cleanup
@@ -488,7 +520,7 @@ process
               id           = $endpointSet.id
               serviceArea  = $endpointSet.serviceArea
               DisplayName  = $endpointSet.serviceAreaDisplayName
-              ip           = $_
+              ip           = $PSItem
               tcpPorts     = $endpointSet.tcpPorts
               udpPorts     = $endpointSet.udpPorts
               expressRoute = $endpointSet.expressRoute
@@ -509,7 +541,7 @@ process
     if ($outIPv6)
     {
       $flatIpv6 = $endpointSets | ForEach-Object -Process {
-        $endpointSet = $_
+        $endpointSet = $PSItem
         $ips = $(if ($endpointSet.ips.Count -gt 0)
           {
             $endpointSet.ips
@@ -522,7 +554,7 @@ process
 				
         # IPv4 strings have dots while IPv6 strings have colons
         $IPv6 = $ips | Where-Object -FilterScript {
-          $_ -like '*:*'
+          $PSItem -like '*:*'
         }
 				
         # Cleanup
@@ -536,7 +568,7 @@ process
               id           = $endpointSet.id
               serviceArea  = $endpointSet.serviceArea
               DisplayName  = $endpointSet.serviceAreaDisplayName
-              ip           = $_
+              ip           = $PSItem
               tcpPorts     = $endpointSet.tcpPorts
               udpPorts     = $endpointSet.udpPorts
               expressRoute = $endpointSet.expressRoute
@@ -585,27 +617,42 @@ end
   }
   else
   {
-    #region DumpInfo
+    #region DumpInfoNothing
+    <#
+        The local version is the same as the one available from Microsoft.
+        So we do nothing, at not yet.
+        
+        This 'else' loop is here as a placeholder for future versions where we might want to do something with it. 
+    #>
+
     Write-Output -InputObject 'Office 365 worldwide commercial service instance endpoints are up-to-date'
-    #endregion DumpInfo
+    #endregion DumpInfoNothing
   }
 }
 
 <#
     CHANGELOG:
+    0.8.4 - 2018-08-29:
+    [ADD] Exchange Online Example added (Source http://www.powershell.no/exchange/online,office/365,powershell/2018/08/26/automate-office365-ip-address-handling.html)
+    [CHANGE] Tweaks (after internal code review and refactoring)
+
+    0.8.3 - 2018-08-20 - Unreleased:
+    [ADD] We added a few more verbose outputs. Verbose Implementation us based upon request. (PSMO365-43)
+    [CHANGE] Region name change
+
     0.8.2 - 2018-08-19:
-    [ADD] Regions added to make the code more readable within code editors
+    [ADD] Regions added to make the code more readable within code editors (PSMO365-47)
     [FIX] A few typos in the descriptions where fixed - No change to any code or logic
 
     0.8.1 - 2018-08-19:
-    [FIX] Add missing OutputType
-    [CHANGE] datafile name tweaked
-    [ADD] Missing NoIPv6 switch funtion implemented
-    [ADD] New Example for NoIPv6 switch
+    [FIX] Add missing OutputType (PSMO365-41)
+    [CHANGE] datafile name tweaked (PSMO365-42)
+    [ADD] Missing NoIPv6 switch function implemented (PSMO365-44)
+    [ADD] New Example for NoIPv6 switch (PSMO365-45)
     [ADD] A few more links
-    [ADD] Info about the datafile
+    [ADD] Info about the datafile (PSMO365-42)
     [ADD] Embed a few things as comment - Due to the separation from the Module
-    [ADD] This changelog within the code - Reflect the changes within the dedicated function
+    [ADD] This changelog within the code - Reflect the changes within the dedicated function (PSMO365-46)
 
     0.8.0 - 2018-08-18:
     [INIT] Intitial public release
@@ -630,8 +677,10 @@ end
     DISCLAIMER:
 
     - Use at your own risk, etc.
-    - This is a third-party Software!
+    - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+    - This is a third-party Software
     - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-    - The Software is not supported by Microsoft Corp (MSFT)!
-    - By using the Software, you agree to the License, Terms and Conditions above!
+    - The Software is not supported by Microsoft Corp (MSFT)
+    - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+    - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
 #>
