@@ -74,7 +74,7 @@
     The Tenant based URLs are generated and not checked, so please make sure you use the correct name!
 
     .EXAMPLE
-    PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Tenant 'kreativsign' -Output URLs -Required).url | Sort-Object -Unique) -join "," | Out-String
+    PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required).url | Sort-Object -Unique) -join "," | Out-String
 
     It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
     The Tenant based URLs are generated and not checked, so please make sure you use the correct name! !
@@ -625,13 +625,16 @@ end
         This 'else' loop is here as a placeholder for future versions where we might want to do something with it. 
     #>
 
-    Write-Output -InputObject 'Office 365 worldwide commercial service instance endpoints are up-to-date'
+    Write-Output -InputObject "Office 365 $Instance endpoints are up-to-date"
     #endregion DumpInfoNothing
   }
 }
 
 <#
     CHANGELOG:
+    0.8.5 - 2018-10-04:
+    [FIX] Fix the Output to reflect the correct Instance name (PSMO365-48)
+
     0.8.4 - 2018-08-29:
     [ADD] Exchange Online Example added (Source http://www.powershell.no/exchange/online,office/365,powershell/2018/08/26/automate-office365-ip-address-handling.html)
     [CHANGE] Tweaks (after internal code review and refactoring)
