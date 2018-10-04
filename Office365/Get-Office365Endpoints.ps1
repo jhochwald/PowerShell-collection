@@ -2,114 +2,125 @@
 <#
     .SYNOPSIS
     Get the Office 365 Endpoint Information from Microsoft via the new RestFull Webservice (JSON)
-
+	
     .DESCRIPTION
     Microsoft updates the Office 365 IP address and FQDN entries at the end of each month and occasionally out of the cycle for operational or support requirements.
-
+		
     This function uses the new JSON based Webserice instead of the old XML based one; the XML based service will be retired soon by Microsoft.
-
+		
     The Function will compare the last downloaded version with the latest available online version, if there is no update available, the function does nothing. If there is an update, the function will do what you told it to. If you want to enforce the download, just delete the O365_endpoints_*_latestversion.txt in your $Env:TEMP Directory. The * is a placeholder, for the Instance name.
-
+	
     .PARAMETER Instance
     The short name of the Office 365 service instance.
     Valid: Worldwide, USGovDoD, USGovGCCHigh, China, Germany
     The default is: Worldwide
-
+	
     .PARAMETER Services
     Valid items are All, Common, Exchange, SharePoint, Skype.
     Because Common service area items are a prerequisite for all other service areas it is included every time - Adopted that from the Microsoft Statement; nevertheless, we disagree with the selection of Microsoft. There are way to many endpoints included here!
     The default is: All
-
+	
     .PARAMETER Tenant
     Your Office 365 tenant name.
     The web service takes your provided name and inserts it in parts of URLs that include the tenant name.
     If you don't provide a tenant name, those parts of URLs have the wildcard character (*).
-
+	
     .PARAMETER NoIPv6
     Query string parameter. Set this to true to exclude IPv6 addresses from the output, for example, if you don't use IPv6 in your network.
     The default is FALSE
-
+	
     .PARAMETER ExpressRoute
     Only display endpoints that could be routed over ExpressRoute.
     Default is: FALSE - All endpoints will be exported
-
+	
     .PARAMETER Category
     The connectivity category for the endpoint set.
     Valid values are: All, Optimize, Allow, and Default.
     Default is: 'All'
-
+	
     .PARAMETER Required
-    This endpoint set is required to have connectivity for Office 365 to be supported. 
+    This endpoint set is required to have connectivity for Office 365 to be supported.
     Default is: FALSE
-
+	
     .PARAMETER Output
     What to return?
     Values are: All, IPv4, IPv6, URLs
     Default is: All
-
+	
+    .PARAMETER SkipVersionCheck
+    Force the download and ignore the existing version information
+	
     .EXAMPLE
     PS C:\> .\Get-Office365Endpoints.ps1
-
+		
     It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges.
-
+	
     .EXAMPLE
     PS C:\> .\Get-Office365Endpoints.ps1 -Instance Germany
-
+		
     It gets the Office 365 Germany URLs, IPv4 address ranges. It would also return IPv6, but IPv6 is not supported, at least not yet.
-
+	
     .EXAMPLE
     PS C:\> .\Get-Office365Endpoints.ps1 -Instance Germany -Category Optimize
-
+		
     It gets the Office 365 Germany URLs, IPv4 address ranges. Only in the category 'Optimize'. It would also return IPv6, but IPv6 is not supported, at least not yet.
-
+	
     .EXAMPLE
     PS C:\> .\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Required
-
+		
     It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services).
-
+	
     .EXAMPLE
     PS C:\> .\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Required -Tenant 'contoso'
-
+		
     It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
     The Tenant based URLs are generated and not checked, so please make sure you use the correct name!
-
+	
     .EXAMPLE
     PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required).url | Sort-Object -Unique) -join "," | Out-String
-
+		
     It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
     The Tenant based URLs are generated and not checked, so please make sure you use the correct name! !
     It just dumps the URLs in a comma separated (CSV) format. Useful for Proxy Servers.
 
     .EXAMPLE
+    PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required -SkipVersionCheck).url | Sort-Object -Unique) -join "," | Out-String
+		
+    It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
+    The Tenant based URLs are generated and not checked, so please make sure you use the correct name! !
+    It just dumps the URLs in a comma separated (CSV) format. Useful for Proxy Servers.
+    The SkipVersionCheck Switch enforce the Download, without checking the local version.
+
+    .EXAMPLE
     PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv4) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '587'}).ip | Sort-Object -Unique) -join "," | Out-String
-
+		
     It gets the International (Worldwide) Office 365 IPv4 addresses for Exchange Submission (SMTP) Servers who use Port 587. It dumps a comma separated (CSV) format. Useful for Firewalls.
-
+	
     .EXAMPLE
     PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv6) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '25'}).ip | Sort-Object -Unique) -join "," | Out-String
-
+		
     It gets the International (Worldwide) Office 365 IPv4 addresses for Exchange SMTP Servers who use Port 25. It dumps a comma separated (CSV) format. Useful for Firewalls.
-
+	
     .EXAMPLE
     PS C:\> (((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output URLs) | Where-Object -FilterScript {$PSItem.notes -like '*Exchange Hybrid Configuration Wizard*' }).url | Sort-Object -Unique) -join "," | Out-String
-
+		
     Get a List of Exchange Online URLs that you might need if you want to run the Exchange Hybrid Configuration Wizard.
-
+	
     .EXAMPLE
     PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Output 'IPv4' -ExpressRoute).ip | Sort-Object -Unique) -join "," | Out-String
-
+		
     Get a List of IPv4 addresses for ExpressRoute configuration.
-
+	
     .EXAMPLE
     PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -Output 'IPv6' -ExpressRoute).ip | Sort-Object -Unique) -join "," | Out-String
-
+		
     Get a List of IPv6 addresses for ExpressRoute configuration. Please note: IPv6 is not supported with ExpressRoute in every Instance, (example: Germany)
-
+	
     .EXAMPLE
     PS C:\> ((.\Get-Office365Endpoints.ps1 -Instance Worldwide -NoIPv6).ip | Sort-Object -Unique) -join "," | Out-String
-
+		
     Get a list of IP addreses and exclude IPv6. The benefit of this parameter is the NoIPv6 parameter: The call will exclude the IPv6 Data from the response, and that might be smarter than filter it. It might be handy if you do NOT use IPv6 within your network - If this is the case, you might miss the future of networking! Think about that, before ignoring IPv6.
-
+	
     .EXAMPLE
     $ExchangeOnlineSMTPEndpoints = (.\Get-Office365Endpoints.ps1 -Services Exchange) | Where-Object -FilterScript {
     $PSItem.ip -and
@@ -117,30 +128,30 @@
     $PSItem.tcpPorts -contains '25'
     }
     $ExchangeOnlineSMTPEndpoints.ip
-
+		
     Retrieve endpoints for Exchange Online and filter on TCP port 25
     This is based on the following idea: http://www.powershell.no/exchange/online,office/365,powershell/2018/08/26/automate-office365-ip-address-handling.html
-
+	
     .NOTES
-    Initial Version that uses the new Microsoft Service. A few things are still missing or not rock solid. 
+    Function that uses the new Microsoft Service. A few things are still missing or not rock solid.
     However, we needed a solution to configure ExpressRoute now, so we started with some rework to use the new Webservice.
-
+		
     This function is part of the commercial en.Office365 PowerShell Module - Distributed separately as OpenSouce with a very flexible license (See below)
-
+		
     Some parts of the script are based upon the example that Microsoft published on the info page of the new Webservice!
-
+	
     .LINK
     https://github.com/jhochwald/PowerShell-collection/blob/master/Office365/Get-Office365Endpoints.ps1
-
+	
     .LINK
     https://hochwald.net/powershell-get-the-office-365-endpoint-information-from-microsoft/
-
+	
     .LINK
     https://hochwald.net/powershell-function-to-get-the-office-365-urls-and-ip-address-ranges/
-
+	
     .LINK
     https://support.office.com/en-us/article/managing-office-365-endpoints-99cab9d4-ef59-4207-9f2b-3728eb46bf9a#webservice
-
+	
     .LINK
     https://techcommunity.microsoft.com/t5/Office-365-Blog/Announcing-Office-365-endpoint-categories-and-Office-365-IP/ba-p/177638
 #>
@@ -150,13 +161,13 @@ param
 (
   [Parameter(ValueFromPipeline = $true,
   ValueFromPipelineByPropertyName = $true)]
-  [ValidateNotNullOrEmpty()]
   [ValidateSet('Worldwide', 'USGovDoD', 'USGovGCCHigh', 'China', 'Germany', IgnoreCase = $true)]
+  [ValidateNotNullOrEmpty()]
   [string]
   $Instance = 'Worldwide',
   [Parameter(ValueFromPipeline = $true)]
-  [ValidateNotNullOrEmpty()]
   [ValidateSet('All', 'Common', 'Exchange', 'SharePoint', 'Skype', IgnoreCase = $true)]
+  [ValidateNotNullOrEmpty()]
   [Alias('ServiceAreas')]
   [string]
   $Services = 'All',
@@ -179,7 +190,12 @@ param
   [Parameter(ValueFromPipeline = $true)]
   [ValidateSet('All', 'IPv4', 'IPv6', 'URLs', IgnoreCase = $true)]
   [string]
-  $Output = 'All'
+  $Output = 'All',
+  [Parameter(ValueFromPipeline = $true,
+  ValueFromPipelineByPropertyName = $true)]
+  [Alias('ForceDownload')]
+  [switch]
+  $SkipVersionCheck = $false
 )
 
 begin
@@ -206,7 +222,10 @@ begin
   #endregion CategoryTweaker
 
   #region TweakOutputHandler
-  # TODO: Make a simpler solution for that!
+
+  <#
+    TODO: Make a simpler solution for that!
+  #>
   switch ($Output)
   {
     'All'
@@ -245,20 +264,20 @@ begin
   #endregion TweakOutputHandler
 	
   #region ConfigurationVariables
-
   # Webservice root URL
   $BaseURI = 'https://endpoints.office.com'
   Write-Verbose -Message ('We use {0} as Base URL' -f $BaseURI)
 	
   # Path where client ID and latest version number will be stored
-  # TODO: Move the Location wo a parameter
+  <#
+    TODO: Move the Location to a parameter
+  #>
   $datapath = $Env:TEMP + '\O365_endpoints_' + $Instance + '_latestversion.txt'
 
   Write-Verbose -Message ('We save the Endpoint Version Information to {0}' -f $datapath)
   #endregion ConfigurationVariables
 
   #region LocalVersionChecker
-
   # fetch client ID and version if data file exists; otherwise create new file
   if (Test-Path -Path $datapath)
   {
@@ -301,12 +320,13 @@ begin
       Break
     }
   }
-  #region LocalVersionChecker
+  #endregion LocalVersionChecker
 
   #region RemoteVersionChecker
   # Call version method to check the latest version, and pull new data if version number is different
   try
   {
+    # Splat the parameters
     $GetVersionParams = @{
       Uri           = ($BaseURI + '/version/' + $Instance + '?clientRequestId=' + $clientRequestId)
       Method        = 'Get'
@@ -335,7 +355,7 @@ begin
 process
 {
   #region VersionCompare
-  if ($version.latest -gt $lastVersion)
+  if (($SkipVersionCheck -eq $true) -or ($version.latest -gt $lastVersion))
   {
     Write-Verbose -Message ('New version of Office 365 {0} endpoints detected' -f $Instance)
 		
@@ -589,7 +609,7 @@ process
 
 end
 {
-  if ($version.latest -gt $lastVersion)
+  if (($SkipVersionCheck -eq $true) -or ($version.latest -gt $lastVersion))
   {
     #region DumpIPv4
     if ($outIPv4)
@@ -619,13 +639,11 @@ end
   {
     #region DumpInfoNothing
     <#
-        The local version is the same as the one available from Microsoft.
-        So we do nothing, at not yet.
-        
-        This 'else' loop is here as a placeholder for future versions where we might want to do something with it. 
+        This 'else' loop is here as a placeholder in this script!
+        We use this in the comemrcial version (function within the commercial module) 
     #>
 
-    Write-Output -InputObject "Office 365 $Instance endpoints are up-to-date"
+    Write-Output -InputObject ('The {0} Office 365 endpoints are up-to-date' -f $Instance)
     #endregion DumpInfoNothing
   }
 }
@@ -634,6 +652,8 @@ end
     CHANGELOG:
     0.8.5 - 2018-10-04:
     [FIX] Fix the Output to reflect the correct Instance name (PSMO365-48)
+    [ADD] Add -SkipVersionCheck Switch to force the download. As request by @mikes-gh in #4 in GitHub (PSMO365-49)
+    [FIX] Fix a view typos and errors
 
     0.8.4 - 2018-08-29:
     [ADD] Exchange Online Example added (Source http://www.powershell.no/exchange/online,office/365,powershell/2018/08/26/automate-office365-ip-address-handling.html)
