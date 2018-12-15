@@ -4,13 +4,29 @@ PowerShell Scripts, Tools, and Modules that have no other place. Mostly related 
 
 Most of the stuff here is also available as a Gist or on my personal [blog](http://hochwald.net).
 
+## What is here?
+
+The stuff here is mostly related to:
+
+- Exchange (On Premises)
+- Exchange Online (Part of Office 365)
+- Office Related (Office Suite)
+- Office 365 and Azure AD
+- Skype for Business (Client and server stuff)
+- Skype for Business Quality of Service (QoS)
+- Windows Server Update Services (WSUS)
+
 ### Please note
 
-Some, or better most, of the stuff here was a function. This is because I like functions more (my personal preference). I converted most to single files. You can convert them back if you like. 
+Some, or better most, of the stuff here was a function. This is because I like functions more (my personal preference). I converted most to single files. You can convert them back if you like.
+
+#### Why so detailed?
+
+I was asked why all my scripts contain so many comments, and why they are so well formatted... I hope you do not just download them and let them run (What is dangerous anyway). They should show you how to build and create your own tooling! That is the main reason why I try to avoid the usage of aliases within my scripts and use splatting to make them more human readable.
 
 ### Found a bug or Issue?
 
-If you find something bad (like a bug, error, or any issue), please report it here by open an Issue.
+If you find something bad (like a bug, error, or any issue), please report it here by open an [Issue](https://github.com/jhochwald/PowerShell-collection/issues).
 
 Or even better: Fork the Repository, fix it and submit a merge request, so others can participate to!
 
@@ -18,7 +34,7 @@ Or even better: Fork the Repository, fix it and submit a merge request, so other
 
 If think something is missing, or if you really need an extension to anything here, there are two (2) options:
 
-1. Open an Issue and request the feature.
+1. Open an [Issue](https://github.com/jhochwald/PowerShell-collection/issues) and request the feature.
 2. Clone/Fork the Repository and create the feature.
 
 If you choose 2. (What I think is the best way to do), please submit a merge request, so others can participate as well.
