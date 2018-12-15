@@ -1,8 +1,8 @@
-# Josh's PowerShell
+# Josh's PowerShell collection
 
-PowerShell Scripts, Tools, and Modules that have no other place. Mostly related to some projects, work, or just a blog post.
+A collection of PowerShell Scripts, Tools, and Modules. Mostly related to some of my projects, my work, or just a blog post of me.
 
-Most of the stuff here is also available as a Gist or on my personal [blog](http://hochwald.net).
+Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.net).
 
 ## What is here?
 
