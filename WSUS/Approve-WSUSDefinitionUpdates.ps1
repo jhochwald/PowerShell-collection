@@ -61,23 +61,20 @@ begin
 {
   try 
   {
+    # Set the Defaults
+    $paramGetWsusServer = @{
+      ErrorAction   = 'Stop'
+      WarningAction = 'Continue'
+    }
+
     if ($Name) 
     {
-      Write-Verbose -Message "Use $Name as WSUS Server"
-      $paramGetWsusServer = @{
-        Name          = $Name
-        ErrorAction   = 'Stop'
-        WarningAction = 'Continue'
-      }
+      Write-Verbose -Message ('Use {0} as WSUS Server' -f $Name)
+
+      # Add the Name field with the given value to the Hashtable (Command Splat)
+      $paramGetWsusServer['Name'] = $Name
     }
-    else 
-    {
-      Write-Verbose -Message 'Use the default WSUS Server'
-      $paramGetWsusServer = @{
-        ErrorAction   = 'Stop'
-        WarningAction = 'Continue'
-      }
-    }
+
     $WSUS = (Get-WsusServer @paramGetWsusServer)
   }
   catch 
