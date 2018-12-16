@@ -57,28 +57,31 @@ begin
   }
   catch 
   {
-    # get error record
-    [Management.Automation.ErrorRecord]$e = $_
+  # Get error record
+  [Management.Automation.ErrorRecord]$e = $_
 
-    # retrieve information about runtime error
-    $info = [PSCustomObject]@{
-      Exception = $e.Exception.Message
-      Reason    = $e.CategoryInfo.Reason
-      Target    = $e.CategoryInfo.TargetName
-      Script    = $e.InvocationInfo.ScriptName
-      Line      = $e.InvocationInfo.ScriptLineNumber
-      Column    = $e.InvocationInfo.OffsetInLine
-    }
-      
-    # output information. Post-process collected info, and log info (optional)
-    $info
-
-    Write-Error -Message 'No WSUS Server was found!' -ErrorAction Stop
-
-    break
-
-    exit 1
+  # Retrieve information about the error
+  $info = [PSCustomObject]@{
+    Exception = $e.Exception.Message
+    Reason    = $e.CategoryInfo.Reason
+    Target    = $e.CategoryInfo.TargetName
+    Script    = $e.InvocationInfo.ScriptName
+    Line      = $e.InvocationInfo.ScriptLineNumber
+    Column    = $e.InvocationInfo.OffsetInLine
   }
+      
+  # Do some verbose stuff for troubleshooting
+  Write-Verbose -Message $info
+
+  # Thow the error and go...
+  Write-Error -Message "$info.Exception" -ErrorAction Stop
+
+  # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
+  break
+
+  # OK, now we have reached a point the we would never, never ever, see
+  exit 1
+}
 
   $unapprovedUpdates = $null
   $unapprovedUpdates = $WSUS.getupdates() | Where-Object -FilterScript {

@@ -79,10 +79,10 @@ begin
   }
   catch 
   {
-    # get error record
+    # Get error record
     [Management.Automation.ErrorRecord]$e = $_
 
-    # retrieve information about runtime error
+    # Retrieve information about the error
     $info = [PSCustomObject]@{
       Exception = $e.Exception.Message
       Reason    = $e.CategoryInfo.Reason
@@ -92,13 +92,16 @@ begin
       Column    = $e.InvocationInfo.OffsetInLine
     }
       
-    # output information. Post-process collected info, and log info (optional)
-    $info
+    # Do some verbose stuff for troubleshooting
+    Write-Verbose -Message $info
 
-    Write-Error -Message 'No WSUS Server was found!' -ErrorAction Stop
+    # Thow the error and go...
+    Write-Error -Message "$info.Exception" -ErrorAction Stop
 
+    # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
     break
 
+    # OK, now we have reached a point the we would never, never ever, see
     exit 1
   }
 
@@ -123,10 +126,13 @@ begin
 
   if (-not $AllDefinitionUpdates) 
   {
+    # Thow the error and go...
     Write-Error -Message 'No Definition Updates found!!!' -ErrorAction Stop
 
+    # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
     break
 
+    # OK, now we have reached a point the we would never, never ever, see
     exit 1
   }
 
@@ -160,10 +166,10 @@ process
       }
       catch 
       {
-        # get error record
+        # Get error record
         [Management.Automation.ErrorRecord]$e = $_
 
-        # retrieve information about runtime error
+        # Retrieve information about the error
         $info = [PSCustomObject]@{
           Exception = $e.Exception.Message
           Reason    = $e.CategoryInfo.Reason
@@ -173,8 +179,11 @@ process
           Column    = $e.InvocationInfo.OffsetInLine
         }
       
-        # FYI
-        $info
+        # Do some verbose stuff for troubleshooting
+        Write-Verbose -Message $info
+
+        # A simple warning is OK here
+        Write-Warning -Message "$info.Exception" -WarningAction Continue -ErrorAction Continue
       }
     }
   }
