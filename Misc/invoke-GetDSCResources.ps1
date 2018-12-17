@@ -1,169 +1,169 @@
 ﻿#requires -Modules PowerShellGet -Version 2.0 -RunAsAdministrator
 
 <#
-		.SYNOPSIS
-		Install some DSC Resources
+    .SYNOPSIS
+    Install some DSC Resources
 	
-		.DESCRIPTION
-		Getting, install, or update DSC Resources I want to have. 
-		It could be used to install every Module from the Gallery. 
-		However, this is something I do with DSC afterwards!
+    .DESCRIPTION
+    Getting, install, or update DSC Resources I want to have. 
+    It could be used to install every Module from the Gallery. 
+    However, this is something I do with DSC afterwards!
 	
-		.EXAMPLE
-		PS C:\> .\invoke-GetDSCResources.ps1
+    .EXAMPLE
+    PS C:\> .\invoke-GetDSCResources.ps1
 
-		.EXAMPLE
-		PS C:\> .\invoke-GetDSCResources.ps1 -verbose
-		VERBOSE: Populating RepositorySourceLocation property for module PSDscResources.
-		VERBOSE: Try to update PSDscResources
-		VERBOSE: Updated PSDscResources
+    .EXAMPLE
+    PS C:\> .\invoke-GetDSCResources.ps1 -verbose
+    VERBOSE: Populating RepositorySourceLocation property for module PSDscResources.
+    VERBOSE: Try to update PSDscResources
+    VERBOSE: Updated PSDscResources
 	
-		.NOTES
-		Small script I created for myself.
-		I have to prepare DSC systems from time to time, and I want to have the same set of DSC resources on all of them.
-		Mainly because I'm lazy, but I'm an old-school Unix guy: Never type something more than two times: AUTOMATE.
+    .NOTES
+    Small script I created for myself.
+    I have to prepare DSC systems from time to time, and I want to have the same set of DSC resources on all of them.
+    Mainly because I'm lazy, but I'm an old-school Unix guy: Never type something more than two times: AUTOMATE.
 
-		I install the resources system wide!
-		That is why we have the Elevated Shell requirement (#Requires -RunAsAdministrator).
-		If you want to use it just for the current user, change the Scope in $paramInstallModule from 'AllUsers' to 'CurrentUser'.
+    I install the resources system wide!
+    That is why we have the Elevated Shell requirement (#Requires -RunAsAdministrator).
+    If you want to use it just for the current user, change the Scope in $paramInstallModule from 'AllUsers' to 'CurrentUser'.
 
-		TODO: Pester Test is missing
-		DONE: Make it more robust
+    TODO: Pester Test is missing
+    DONE: Make it more robust
 
-		Disclaimer: The code is provided 'as is,' with all possible faults, defects or errors, and without warranty of any kind.
+    Disclaimer: The code is provided 'as is,' with all possible faults, defects or errors, and without warranty of any kind.
 
-		Author: Joerg Hochwald
+    Author: Joerg Hochwald
 
-		.LINK
-		Author http://jhochwald.com
+    .LINK
+    Author http://jhochwald.com
 #>
 [CmdletBinding()]
 param ()
 
 BEGIN
 {
-	# Define some defaults
-	$STP = 'Stop'
-	$SC = 'SilentlyContinue'
+  # Define some defaults
+  $STP = 'Stop'
+  $SC = 'SilentlyContinue'
 
-	# Suppressing the PowerShell Progress Bar
-	$script:ProgressPreference = $SC
+  # Suppressing the PowerShell Progress Bar
+  $script:ProgressPreference = $SC
 
-	# Create a list of the DSC Resources I want
-	$NewDSCModules = @(
-		'PSDscResources', 
-		'xNetworking', 
-		'xPSDesiredStateConfiguration', 
-		'xWebAdministration', 
-		'xCertificate', 
-		'xComputerManagement', 
-		'xActiveDirectory', 
-		'SystemLocaleDsc', 
-		'xRemoteDesktopAdmin', 
-		'xPendingReboot', 
-		'xSmbShare', 
-		'xWindowsUpdate', 
-		'xDscDiagnostics', 
-		'xCredSSP', 
-		'xDnsServer', 
-		'xWinEventLog', 
-		'xDhcpServer', 
-		'xHyper-V', 
-		'xStorage', 
-		'xWebDeploy'
-		'xRemoteDesktopSessionHost', 
-		'xDismFeature', 
-		'xSystemSecurity', 
-		'WebAdministrationDsc', 
-		'OfficeOnlineServerDsc', 
-		'AuditPolicyDsc', 
-		'xDFS', 
-		'SecurityPolicyDsc', 
-		'xReleaseManagement', 
-		'xExchange', 
-		'xDefender', 
-		'xWindowsEventForwarding', 
-		'cHyper-V'
-	)
+  # Create a list of the DSC Resources I want
+  $NewDSCModules = @(
+    'PSDscResources', 
+    'xNetworking', 
+    'xPSDesiredStateConfiguration', 
+    'xWebAdministration', 
+    'xCertificate', 
+    'xComputerManagement', 
+    'xActiveDirectory', 
+    'SystemLocaleDsc', 
+    'xRemoteDesktopAdmin', 
+    'xPendingReboot', 
+    'xSmbShare', 
+    'xWindowsUpdate', 
+    'xDscDiagnostics', 
+    'xCredSSP', 
+    'xDnsServer', 
+    'xWinEventLog', 
+    'xDhcpServer', 
+    'xHyper-V', 
+    'xStorage', 
+    'xWebDeploy'
+    'xRemoteDesktopSessionHost', 
+    'xDismFeature', 
+    'xSystemSecurity', 
+    'WebAdministrationDsc', 
+    'OfficeOnlineServerDsc', 
+    'AuditPolicyDsc', 
+    'xDFS', 
+    'SecurityPolicyDsc', 
+    'xReleaseManagement', 
+    'xExchange', 
+    'xDefender', 
+    'xWindowsEventForwarding', 
+    'cHyper-V'
+  )
 }
 
 PROCESS
 {
-	foreach ($NewDSCModule in $NewDSCModules)
-	{
-		# Cleanup
-		$ModuleIsAvailable = $null
+  foreach ($NewDSCModule in $NewDSCModules)
+  {
+    # Cleanup
+    $ModuleIsAvailable = $null
 
-		# Check: Do I have the resource?
-		$paramGetModule = @{
-			ListAvailable = $true
-			Name          = $NewDSCModule
-			ErrorAction   = $SC
-			WarningAction = $SC
-		}
-		$ModuleIsAvailable = (Get-Module @paramGetModule)
+    # Check: Do I have the resource?
+    $paramGetModule = @{
+      ListAvailable = $true
+      Name          = $NewDSCModule
+      ErrorAction   = $SC
+      WarningAction = $SC
+    }
+    $ModuleIsAvailable = (Get-Module @paramGetModule)
 		
-		if (-not ($ModuleIsAvailable))
-		{
-			# Nope: Install the resource
-			try
-			{
-				Write-Verbose -Message ('Try to install {0}' -f $NewDSCModule)
+    if (-not ($ModuleIsAvailable))
+    {
+      # Nope: Install the resource
+      try
+      {
+        Write-Verbose -Message ('Try to install {0}' -f $NewDSCModule)
 
-				$paramInstallModule = @{
-					Name          = $NewDSCModule
-					Scope         = AllUsers
-					Force         = $true
-					ErrorAction   = $STP
-					WarningAction = $SC
-				}
-				$null = (Install-Module @paramInstallModule)
+        $paramInstallModule = @{
+          Name          = $NewDSCModule
+          Scope         = AllUsers
+          Force         = $true
+          ErrorAction   = $STP
+          WarningAction = $SC
+        }
+        $null = (Install-Module @paramInstallModule)
 
-				Write-Verbose -Message ('Installed {0}' -f $NewDSCModule)
-			}
-			catch
-			{
-				# Whoopsie
-				$paramWriteWarning = @{
-					Message     = ('Sorry, unable to install {0}' -f $NewDSCModule)
-					ErrorAction = $SC
-				}
-				Write-Warning @paramWriteWarning
-			}
-		}
-		else
-		{
-			try
-			{
-				Write-Verbose -Message ('Try to update {0}' -f $NewDSCModule)
+        Write-Verbose -Message ('Installed {0}' -f $NewDSCModule)
+      }
+      catch
+      {
+        # Whoopsie
+        $paramWriteWarning = @{
+          Message     = ('Sorry, unable to install {0}' -f $NewDSCModule)
+          ErrorAction = $SC
+        }
+        Write-Warning @paramWriteWarning
+      }
+    }
+    else
+    {
+      try
+      {
+        Write-Verbose -Message ('Try to update {0}' -f $NewDSCModule)
 
-				# TODO: Implement the check from invoke-ModuleUpdates.ps1 to prevent the unneeded update tries.
-				$paramUpdateModule = @{
-					Name          = $NewDSCModule
-					Confirm       = $false
-					ErrorAction   = $STP
-					WarningAction = $SC
-				}
-				$null = (Update-Module @paramUpdateModule)
+        # TODO: Implement the check from invoke-ModuleUpdates.ps1 to prevent the unneeded update tries.
+        $paramUpdateModule = @{
+          Name          = $NewDSCModule
+          Confirm       = $false
+          ErrorAction   = $STP
+          WarningAction = $SC
+        }
+        $null = (Update-Module @paramUpdateModule)
 
-				Write-Verbose -Message ('Updated {0}' -f $NewDSCModule)
-			}
-			catch
-			{
-				# Whoopsie
-				$paramWriteWarning = @{
-					Message     = ('Sorry, unable to update {0}' -f $NewDSCModule)
-					ErrorAction = $SC
-				}
-				Write-Warning @paramWriteWarning
-			}
-		}
-	}
+        Write-Verbose -Message ('Updated {0}' -f $NewDSCModule)
+      }
+      catch
+      {
+        # Whoopsie
+        $paramWriteWarning = @{
+          Message     = ('Sorry, unable to update {0}' -f $NewDSCModule)
+          ErrorAction = $SC
+        }
+        Write-Warning @paramWriteWarning
+      }
+    }
+  }
 }
 
 END {
-	# No longer suppressing the PowerShell Progress Bar
-	$script:ProgressPreference = 'Continue'
+  # No longer suppressing the PowerShell Progress Bar
+  $script:ProgressPreference = 'Continue'
 }
 
 #region License
