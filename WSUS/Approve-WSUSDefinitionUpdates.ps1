@@ -105,12 +105,12 @@ begin
     exit 1
   }
 
-  $FPClass = $null
-  $FPClass = $WSUS.GetUpdateClassifications() | Where-Object -FilterScript {
+  $DefinitionUpdates = $null
+  $DefinitionUpdates = $WSUS.GetUpdateClassifications() | Where-Object -FilterScript {
     $_.Title -eq 'Definition Updates'
   }
 
-  if (-not $FPClass) 
+  if (-not $DefinitionUpdates) 
   {
     Write-Error -Message 'No Definition Updates found!' -ErrorAction Stop
 
@@ -120,8 +120,8 @@ begin
   }
 
   $AllDefinitionUpdates = $null
-  $AllDefinitionUpdates = $FPClass.GetUpdates() | Where-Object -FilterScript {
-    ($_.Title -like 'Definition Update for Microsoft Security Essentials*') -or ($_.Title -like 'Update for Windows Defender Antivirus antimalware platforms*')
+  $AllDefinitionUpdates = $DefinitionUpdates.GetUpdates() | Where-Object -FilterScript {
+    ($_.Title -like 'Definition Update for Microsoft Security Essentials*') -or ($_.Title -like 'Update for Windows Defender Antivirus antimalware platforms*') -or ($_.Title -like 'Definition Update for Windows Defender Antivirus*')
   }
 
   if (-not $AllDefinitionUpdates) 
