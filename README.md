@@ -8,13 +8,14 @@ Most of the stuff here is also available as a [Gist](https://gist.github.com/jho
 
 The stuff here is mostly related to:
 
+- Active Directory
 - Exchange (On Premises)
 - Exchange Online (Part of Office 365)
 - Office Related (Office Suite)
 - Office 365 and Azure AD
 - Skype for Business (Client and server stuff)
-- Skype for Business Quality of Service (QoS)
 - Windows Server Update Services (WSUS)
+- Misc Tools and Scripts that might come handy
 
 ### Please note
 
