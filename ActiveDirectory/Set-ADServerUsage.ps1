@@ -37,8 +37,8 @@ function Set-ADServerUsage
 	
   param
   (
-    [Parameter(ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName = $true,
+    [Parameter(ValueFromPipeline,
+        ValueFromPipelineByPropertyName,
     Position = 1)]
     [switch]
     $pdc
@@ -61,7 +61,7 @@ function Set-ADServerUsage
         But I don't want any error messages, so I decided to use this old-school way to figure 
         out if we are capable do what I want.
     #>
-    if ((Get-Command Get-ADDomain -ErrorAction $SC) -and (Get-Command Get-ADDomainController -ErrorAction $SC) ) 
+    if ((Get-Command -Name Get-ADDomain -ErrorAction $SC) -and (Get-Command -Name Get-ADDomainController -ErrorAction $SC) ) 
     {
       if ($pdc)
       {
