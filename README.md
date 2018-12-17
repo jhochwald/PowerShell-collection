@@ -31,14 +31,11 @@ If you find something bad (like a bug, error, or any issue), please report it he
 
 Or even better: Fork the Repository, fix it and submit a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls), so others can participate to!
 
-### Request a feature
+See the [Contribution Guide](CONTRIBUTING.md) for more details!
 
-If think something is missing, or if you really need an extension to anything here, there are two (2) options:
+### Contribution
 
-1. Open an [Issue](https://github.com/jhochwald/PowerShell-collection/issues) and request the feature.
-2. Clone/Fork the Repository and create the feature.
-
-If you choose 2. (What I think is the best way to do), please submit a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls), so others can participate as well.
+More then welcoem! Please see the [Contribution Guide](CONTRIBUTING.md) for more details!
 
 ### Default License
 
