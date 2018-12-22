@@ -1,4 +1,6 @@
-﻿<#
+﻿#requires -Version 3.0
+
+<#
     .SYNOPSIS
     List all active Lync/Skype for Business conferences
 	
@@ -48,7 +50,7 @@ begin
         UTC Time Format datetime
 	
         .EXAMPLE
-        Convert-UTCtoLocal -UTCTime Value
+        PS C:\> Convert-UTCtoLocal -UTCTime Value
         Convert UTC to Local timezone
 	
         .OUTPUTS

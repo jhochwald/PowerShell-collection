@@ -44,7 +44,7 @@ function Set-ADServerUsage
     $pdc
   )
 	
-  Begin
+  begin
   {
     # Defaults
     $SC = 'SilentlyContinue'
@@ -53,7 +53,7 @@ function Set-ADServerUsage
     $dc = $null
   }
 	
-  Process
+  process
   {
     <#
         The following would do the trick: 

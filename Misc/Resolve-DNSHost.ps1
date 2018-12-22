@@ -1,4 +1,5 @@
 ﻿#requires -Version 3.0
+
 function Resolve-DNSHost
 {
   <#
@@ -85,6 +86,6 @@ function Resolve-DNSHost
   end
   {
     # Dump to the console
-    return $Object
+    $Object
   }
 }

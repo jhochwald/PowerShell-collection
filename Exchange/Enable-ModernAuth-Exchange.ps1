@@ -22,42 +22,42 @@ param ()
 
 begin
 {
-  # The Exchange Online URL
-  $ExoURL = 'https://outlook.office365.com/powershell-liveid/'
-
-  # Same as above, but for the German Office 365 (MCD)
-  #$ExoURL = 'https://outlook.office.de/powershell-liveid/'
-
-  # The Exchange Online Authentication method
-  $ExoAuth = 'Basic'
+	# The Exchange Online URL
+	$ExoURL = 'https://outlook.office365.com/powershell-liveid/'
+	
+	# Same as above, but for the German Office 365 (MCD)
+	#$ExoURL = 'https://outlook.office.de/powershell-liveid/'
+	
+	# The Exchange Online Authentication method
+	$ExoAuth = 'Basic'
 }
 
 process
 {
-  # Get the Credeantials (Could also be imported if you have dem saved)
-  $credentials = Get-Credential
-
-  # Create the new session
-  $paramNewPSSession = @{
-    ConfigurationName = 'Microsoft.Exchange'
-    ConnectionUri     = $ExoURL
-    Credential        = $credentials
-    Authentication    = $ExoAuth
-    AllowRedirection  = $true
-  }
-  $ExoSession = (New-PSSession @paramNewPSSession)
-
-  # Start the Session by importing it to the PowerShell Session
-  $null = (Import-PSSession -Session $ExoSession)
-
-  # Enable Modern Authentication, use $false to disable it
-  $null = (Set-OrganizationConfig -OAuth2ClientProfileEnabled $true)
+	# Get the Credeantials (Could also be imported if you have dem saved)
+	$credentials = (Get-Credential)
+	
+	# Create the new session
+	$paramNewPSSession = @{
+		ConfigurationName = 'Microsoft.Exchange'
+		ConnectionUri	   = $ExoURL
+		Credential		   = $credentials
+		Authentication	   = $ExoAuth
+		AllowRedirection  = $true
+	}
+	$ExoSession = (New-PSSession @paramNewPSSession)
+	
+	# Start the Session by importing it to the PowerShell Session
+	$null = (Import-PSSession -Session $ExoSession)
+	
+	# Enable Modern Authentication, use $false to disable it
+	$null = (Set-OrganizationConfig -OAuth2ClientProfileEnabled $true)
 }
 
 end
 {
-  # Cleanup
-  $ExoSession = $null
+	# Cleanup
+	$ExoSession = $null
 }
 
 #region License

@@ -30,18 +30,18 @@ function Get-ServicePlanFriendlyList
       Author: Joerg Hochwald <http://jhochwald.com>
       License: The 3-Clause BSD License <https://opensource.org/licenses/BSD-3-Clause>
   #>
-
+	
   [CmdletBinding()]
   [OutputType([hashtable])]
   param ()
-
-  BEGIN
+	
+  begin
   {
     # Cleanup
     $ServicePlanFriendlyList = $null
   }
-
-  PROCESS
+	
+  process
   {
     # Build the HashTable
     $ServicePlanFriendlyList = @{
@@ -133,7 +133,7 @@ function Get-ServicePlanFriendlyList
       'MCOMEETADV'                       = 'Teams/Skype for Business PSTN Conferencing'
     }
   }
-
+	
   end
   {
     # Dump
@@ -160,18 +160,18 @@ function Get-SkuPartNumberFriendlyNameList
       Author: Joerg Hochwald <http://jhochwald.com>
       License: The 3-Clause BSD License <https://opensource.org/licenses/BSD-3-Clause>
   #>
-
+	
   [CmdletBinding()]
   [OutputType([hashtable])]
   param ()
-
-  BEGIN
+	
+  begin
   {
     # Cleanup
     $SkuPartNumberFriendlyNameList = $null
   }
-
-  PROCESS
+	
+  process
   {
     # Build the HashTable
     $SkuPartNumberFriendlyNameList = @{
@@ -308,8 +308,8 @@ function Get-SkuPartNumberFriendlyNameList
       'ENTERPRISEPREMIUM'                = 'Office 365 Enterprise E5'
     }
   }
-
-  END
+	
+  end
   {
     # Dump
     $SkuPartNumberFriendlyNameList
@@ -396,17 +396,17 @@ function Convert-MsolServicePlanName
     [string]
     $ServicePlanFriendlyName
   )
-
+	
   process
   {
     # Moved to a dedicated function
     $ServicePlanFriendlyList = (Get-ServicePlanFriendlyList)
-
+		
     if ($ServicePlanName)
     {
       $ServicePlanFriendlyList["$ServicePlanName"]
     }
-
+		
     if ($ServicePlanFriendlyName)
     {
       ($ServicePlanFriendlyList.GetEnumerator() | Where-Object -FilterScript {
@@ -476,17 +476,17 @@ function Convert-MsolAccountSkuName
     [string]
     $SkuPartNumberFriendlyName
   )
-
+	
   process
   {
     # Moved to a dedicated function
     $SkuPartNumberFriendlyNameList = (Get-SkuPartNumberFriendlyNameList)
-
+		
     if ($SkuPartNumber)
     {
       $SkuPartNumberFriendlyNameList["$SkuPartNumber"]
     }
-
+		
     if ($SkuPartNumberFriendlyName)
     {
       ($SkuPartNumberFriendlyNameList.GetEnumerator() | Where-Object -FilterScript {

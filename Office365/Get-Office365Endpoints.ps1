@@ -1,4 +1,5 @@
 ﻿#requires -Version 3.0
+
 <#
     .SYNOPSIS
     Get the Office 365 Endpoint Information from Microsoft via the new RestFull Webservice (JSON)
@@ -8,7 +9,8 @@
 		
     This function uses the new JSON based Webserice instead of the old XML based one; the XML based service will be retired soon by Microsoft.
 		
-    The Function will compare the last downloaded version with the latest available online version, if there is no update available, the function does nothing. If there is an update, the function will do what you told it to. If you want to enforce the download, just delete the O365_endpoints_*_latestversion.txt in your $Env:TEMP Directory. The * is a placeholder, for the Instance name.
+    The Function will compare the last downloaded version with the latest available online version, if there is no update available, the function does nothing.
+    If there is an update, the function will do what you told it to. If you want to enforce the download, just delete the O365_endpoints_*_latestversion.txt in your $Env:TEMP Directory. The * is a placeholder, for the Instance name.
 	
     .PARAMETER Instance
     The short name of the Office 365 service instance.
@@ -205,33 +207,33 @@ begin
   {
     # This makes no sense, and we totally ignore to do it!
     Write-Error -Message 'The selected parameters make no sense; we cannot continue!' -ErrorAction Stop
-
+		
     # We should never reach this point!
-    Break
+    break
   }
   #endregion MakeIPv6Plausible
-
+	
   #region CategoryTweaker
-  if ((! $Category) -or ($Category -eq 'All')) 
+  if ((! $Category) -or ($Category -eq 'All'))
   {
     Write-Verbose -Message 'We get all categories.'
-
+		
     # Set to all
     $Category += 'Optimize', 'Allow', 'Default'
   }
   #endregion CategoryTweaker
-
+	
   #region TweakOutputHandler
-
+	
   <#
-    TODO: Make a simpler solution for that!
+      TODO: Make a simpler solution for that!
   #>
   switch ($Output)
   {
     'All'
     {
       Write-Verbose -Message 'Dump all Infos (IPv4, IPv6, and URLs)'
-
+			
       $outIPv4 = $true
       $outIPv6 = $true
       $outURLs = $true
@@ -239,7 +241,7 @@ begin
     'IPv4'
     {
       Write-Verbose -Message 'Dump IPv4 Infos'
-
+			
       $outIPv4 = $true
       $outIPv6 = $false
       $outURLs = $false
@@ -247,7 +249,7 @@ begin
     'IPv6'
     {
       Write-Verbose -Message 'Dump IPv6 Infos'
-
+			
       $outIPv4 = $false
       $outIPv6 = $true
       $outURLs = $false
@@ -255,7 +257,7 @@ begin
     'URLs'
     {
       Write-Verbose -Message 'Dump URLs Infos'
-
+			
       $outIPv4 = $false
       $outIPv6 = $false
       $outURLs = $true
@@ -270,19 +272,19 @@ begin
 	
   # Path where client ID and latest version number will be stored
   <#
-    TODO: Move the Location to a parameter
+      TODO: Move the Location to a parameter
   #>
   $datapath = $Env:TEMP + '\O365_endpoints_' + $Instance + '_latestversion.txt'
-
+	
   Write-Verbose -Message ('We save the Endpoint Version Information to {0}' -f $datapath)
   #endregion ConfigurationVariables
-
+	
   #region LocalVersionChecker
   # fetch client ID and version if data file exists; otherwise create new file
   if (Test-Path -Path $datapath)
   {
     Write-Verbose -Message 'We get the information from Microsoft...'
-
+		
     # Read the File
     $content = (Get-Content -Path $datapath)
 		
@@ -296,7 +298,7 @@ begin
   else
   {
     Write-Verbose -Message 'Old version information file exists, start to gather the Info!'
-
+		
     # Create a GUID
     $clientRequestId = [GUID]::NewGuid().Guid
 		
@@ -312,16 +314,16 @@ begin
     {
       # Write the complete error if we have verbose turned on
       Write-Verbose -Message $_
-
+			
       # Our Error test
       Write-Error -Message ('Unable to write Datafile: {0}' -f $datapath) -ErrorAction Stop
-
+			
       # We should never reach this point!
-      Break
+      break
     }
   }
   #endregion LocalVersionChecker
-
+	
   #region RemoteVersionChecker
   # Call version method to check the latest version, and pull new data if version number is different
   try
@@ -333,19 +335,19 @@ begin
       ErrorAction   = 'Stop'
       WarningAction = 'SilentlyContinue'
     }
-
+		
     Write-Verbose -Message ('We use {0} as request URI.' -f ($GetVersionParams.Uri))
-
+		
     $version = (Invoke-RestMethod @GetVersionParams)
   }
   catch
   {
     # Write the complete error if we have verbose turned on
     Write-Verbose -Message $_
-
+		
     # Our Error test
     Write-Error -Message 'Unable to get the new Office 365 Endpoint Information' -ErrorAction Stop
-
+		
     # We should never reach this point!
     break
   }
@@ -368,12 +370,12 @@ process
     {
       # Write the complete error if we have verbose turned on
       Write-Verbose -Message $_
-
+			
       # Our Error test
       Write-Error -Message ('Unable to write Datafile: {0}' -f $datapath) -ErrorAction Stop
-
+			
       # We should never reach this point!
-      Break
+      break
     }
     #endregion VersionCompare
 		
@@ -410,24 +412,24 @@ process
           $requestURI = ($requestURI + '&ServiceAreas=Skype')
         }
       }
-
+			
       if ($Tenant)
       {
         # Append to the URI - Build URL for the Tenant
         $requestURI = ($requestURI + '&TenantName=' + $Tenant)
       }
-
+			
       if ($NoIPv6)
       {
         # Append to the URI - Exclude IPv6 addresses from the output
         $requestURI = ($requestURI + '&NoIPv6')
-
+				
         Write-Verbose -Message 'IPv6 addresses are excluded from the output! IPv6 is the future, think about an adoption soon.'
       }
-
+			
       # Do our job and get the data via Rest Request
       Write-Verbose -Message ('We request the following URI: {0}' -f $requestURI)
-
+			
       $endpointSetsParams = @{
         Uri           = $requestURI
         Method        = 'Get'
@@ -440,17 +442,17 @@ process
     {
       # Write the complete error if we have verbose turned on
       Write-Verbose -Message $_
-
+			
       # Our Error test
       Write-Error -Message 'Unable to get the new Office 365 Endpoint Information' -ErrorAction Stop
-
+			
       # We should never reach this point!
       break
     }
     #endregion GetTheEndpoints
-
+		
     #region FilterURLs
-
+		
     if ($outURLs)
     {
       $flatUrls = $endpointSets | ForEach-Object -Process {
@@ -464,7 +466,7 @@ process
             @()
           }
         )
-
+				
         # Cleanup
         $urlCustomObjects = @()
 				
@@ -486,29 +488,29 @@ process
             }
           }
         }
-
+				
         # Only ExpressRoute enabled Objects?
-        if ($ExpressRoute) 
+        if ($ExpressRoute)
         {
           $urlCustomObjects = $urlCustomObjects | Where-Object -FilterScript {
             $urlCustomObjects.expressRoute -eq $true
           }
         }
-
+				
         # Only required to have connectivity for Office 365 to be supported
-        if ($Required) 
+        if ($Required)
         {
           $urlCustomObjects = $urlCustomObjects | Where-Object -FilterScript {
             $urlCustomObjects.required -eq $true
           }
         }
-
+				
         # Dump
         $urlCustomObjects
       }
     }
     #endregion FilterURLs
-
+		
     #region FilterIPv4
     if ($outIPv4)
     {
@@ -556,7 +558,7 @@ process
       }
     }
     #endregion FilterIPv4
-
+		
     #region FilterIPv6
     if ($outIPv6)
     {
@@ -615,22 +617,25 @@ end
     if ($outIPv4)
     {
       Write-Verbose -Message 'Office 365 IPv4 IP Address Ranges'
+
       ($flatIpv4 | Sort-Object -Property id)
     }
     #endregion DumpIPv4
-
+		
     #region DumpIPv6
     if ($outIPv6)
     {
       Write-Verbose -Message 'Office 365 IPv6 IP Address Ranges'
+
       ($flatIpv6 | Sort-Object -Property id)
     }
     #endregion DumpIPv6
-
+		
     #region DumpURLs
     if ($outURLs)
     {
       Write-Verbose -Message 'Office 365 URLs'
+
       ($flatUrls | Sort-Object -Property id)
     }
     #endregion DumpURLs
@@ -642,7 +647,7 @@ end
         This 'else' loop is here as a placeholder in this script!
         We use this in the comemrcial version (function within the commercial module) 
     #>
-
+		
     Write-Output -InputObject ('The {0} Office 365 endpoints are up-to-date' -f $Instance)
     #endregion DumpInfoNothing
   }

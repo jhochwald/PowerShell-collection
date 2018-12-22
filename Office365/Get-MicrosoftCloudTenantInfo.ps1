@@ -47,35 +47,35 @@ function Get-MicrosoftCloudTenantInfo
     $id
   )
 	
-  Begin
+  begin
   {
     # Define some defaults
     $ST = 'Stop'
     $SC = 'SilentlyContinue'
-
+		
     # Do not use SSLv3 for any kind of Web Requests
-    If ([Net.ServicePointManager]::SecurityProtocol -notmatch 'TLS12')
+    if ([Net.ServicePointManager]::SecurityProtocol -notmatch 'TLS12')
     {
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::TLS11
       [Net.ServicePointManager]::SecurityProtocol += [Net.SecurityProtocolType]::TLS12
     }
-
+		
     # Cleanup
     $available = $null
     $TenantID = $null
     $TenantLongName = $null
-
+		
     # Make the tenant name lowercase all the way, just in case!
     $name = $name.ToLower()
-
+		
     # Where to check
     $uri = 'https://portal.office.com/Signup/CheckDomainAvailability.ajax'
-
+		
     # OK, the Body looks creapy
     $body = 'p0=' + $name + '&assembly=BOX.Admin.UI%2C+Version%3D16.0.0.0%2C+Culture%3Dneutral%2C+PublicKeyToken%3Dnull&class=Microsoft.Online.BOX.Signup.UI.SignupServerCalls'
   }
-
-  Process
+	
+  process
   {
     # get the Info via Rest
     $paramInvokeRestMethod = $null
@@ -87,38 +87,38 @@ function Get-MicrosoftCloudTenantInfo
       WarningAction = $SC
     }
     $response = (Invoke-RestMethod @paramInvokeRestMethod)
-
+		
     # Error handler
     $valid = $response.Contains('SessionValid')
-
+		
     if ($valid -eq $false)
     {
       # Whoops
       Write-Error -Message $response -ErrorAction $ST
-      Exit
+      exit
     }
-
+		
     # Looks good
     $available = $response.Contains('<![CDATA[1]]>')
   }
-
-  End
+	
+  end
   {
     # Internal log Name
     $TenantLongName = $name + '.onmicrosoft.com'
-
-    if ($available) 
+		
+    if ($available)
     {
       Write-Output -InputObject ('The Tenant {0} ({1}) is available' -f $TenantLongName, $name)
     }
-    else 
+    else
     {
-      if ($id) 
+      if ($id)
       {
         # Cleanup
         $TenantID = $null
-
-        try 
+				
+        try
         {
           # Build the UIR
           $TenantIDURI = 'https://login.windows.net/' + $name + '.onmicrosoft.com/.well-known/openid-configuration'
@@ -129,23 +129,23 @@ function Get-MicrosoftCloudTenantInfo
             Uri         = $TenantIDURI
             ErrorAction = $ST
           }
-							
+					
           $TenantID = ((Invoke-WebRequest @paramInvokeWebRequest | ConvertFrom-Json -ErrorAction $ST).token_endpoint.Split('/')[3])
 					
           Write-Output -InputObject ('The Tenant ID of {0} ({1}) is {2}' -f $TenantLongName, $name, $TenantID)
         }
-        catch 
+        catch
         {
           # Whoops
           Write-Warning -Message 'The Tenant is taken, but we where unable to get the Tenant ID!!!'
         }
       }
-      else 
+      else
       {
         Write-Warning -Message ('The Tenant {0} ({1}) is taken!' -f $TenantLongName, $name)
       }
     }
-
+		
     # Cleanup
     $available = $null
     $TenantID = $null

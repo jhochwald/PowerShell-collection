@@ -83,15 +83,15 @@ function Invoke-DSCPerfReqConfigCheck
 	process
 	{
 		$InvokeCimMethodParams = @{
-  Namespace     = 'root/Microsoft/Windows/DesiredStateConfiguration'
-  ClassName     = 'MSFT_DSCLocalConfigurationManager'
-  MethodName    = 'PerformRequiredConfigurationChecks'
-  Arguments     = @{
-				Flags = [uint32] 1
-			}
-  ErrorAction   = $SC
-  WarningAction = $SC
-}
+      Namespace     = 'root/Microsoft/Windows/DesiredStateConfiguration'
+      ClassName     = 'MSFT_DSCLocalConfigurationManager'
+      MethodName    = 'PerformRequiredConfigurationChecks'
+      Arguments     = @{
+				    Flags = [uint32] 1
+			    }
+      ErrorAction   = $SC
+      WarningAction = $SC
+    }
 		
 		try
 		{
@@ -99,8 +99,8 @@ function Invoke-DSCPerfReqConfigCheck
 			
 			if ($Silent)
 			{
-$ProgressPreference = $null
-}
+        $ProgressPreference = $null
+      }
 		}
 		catch
 		{
@@ -121,8 +121,8 @@ $ProgressPreference = $null
 		
 		# TODO: That is fast, but the code looks bad!
 		$SuccessResult = (Get-WinEvent @GetWinEventParams | Group-Object -Property {
-$_.Properties[0].value
-}).Group.LevelDisplayName -notcontains 'Error'
+    $_.Properties[0].value
+    }).Group.LevelDisplayName -notcontains 'Error'
 	}
 	
 	end

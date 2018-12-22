@@ -32,16 +32,16 @@ param
   $disable
 )
 
-BEGIN 
+begin
 {
   # Define the defaults
   $SC = 'SilentlyContinue'
-
+	
   # Cleanup
   $S4BUsersToDisable = $null
 }
 
-PROCESS
+process
 {
   # Splat	
   $paramGetCsAdUser = @{
@@ -54,15 +54,15 @@ PROCESS
   } | Select-Object -Property Name, Enabled, SipAddress)
 }
 
-END
+end
 {
-  if ($disable) 
+  if ($disable)
   {
     # Disable all user found
-    foreach ($S4BUserToDisable in $S4BUsersToDisable) 
+    foreach ($S4BUserToDisable in $S4BUsersToDisable)
     {
       Write-Verbose -Message ('We try to disable {0} now' -f $S4BUserToDisable.SipAddress)
-      try 
+      try
       {
         # Splat
         $paramDisableCsUser = @{
@@ -70,21 +70,21 @@ END
           WarningAction = $SC
         }
         $null = ($S4BUserToDisable.SipAddress | Disable-CsUser @paramDisableCsUser)
-
+				
         Write-Verbose -Message ('The user {0} is now disabled' -f $S4BUserToDisable.SipAddress)
       }
-      catch 
+      catch
       {
         Write-Warning -Message ('We where unable to disable {0}' -f $S4BUserToDisable.SipAddress)
       }
     }
   }
-  else 
+  else
   {
     # Dump all Users
     $S4BUsersToDisable
   }
-
+	
   # Cleanup
   $S4BUsersToDisable = $null
 }

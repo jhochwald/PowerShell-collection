@@ -1,4 +1,6 @@
-﻿function Get-ADExchangeServers
+﻿#requires -Version 1.0
+
+function Get-ADExchangeServers
 {
 	<#
 			.SYNOPSIS
@@ -39,47 +41,47 @@
 	[OutputType([psobject])]
 	param ()
 	
-	BEGIN 
+	begin
 	{
 		# Define some defaults
 		$ErrorMessage = 'Unable to get the Exchange Information from the Active Directory!'
 		$SC = 'SilentlyContinue'
 		$STP = 'Stop'
-
+		
 		# Search configuration partition for Exchange Servers where the powershell virtual directory is enabled
-		try 
+		try
 		{
 			$ActiveDirectoryInfo = (New-Object -TypeName adsisearcher -ArgumentList ([adsi]"LDAP://$(([adsi]'LDAP://rootdse').configurationNamingContext)"), '(&(objectclass=msExchPowerShellVirtualDirectory)(msexchinternalhostname=*))')
 		}
 		catch
 		{
 			$paramWriteError = @{
-				Message       = $ErrorMessage
+				Message		  = $ErrorMessage
 				ErrorAction   = $STP
 				WarningAction = $SC
 			}
 			
-			Write-Error @paramWriteError 
+			Write-Error @paramWriteError
 			break
 		}
 		
 		if (-not ($ActiveDirectoryInfo))
 		{
 			$paramWriteError = @{
-				Message       = $ErrorMessage
+				Message		  = $ErrorMessage
 				ErrorAction   = $STP
 				WarningAction = $SC
 			}
 			
-			Write-Error @paramWriteError 
+			Write-Error @paramWriteError
 			break
 		}
 		
 		# Create a new Object
 		$ADExchangeInfo = @()
 	}
-
-	PROCESS
+	
+	process
 	{
 		try
 		{
@@ -89,7 +91,7 @@
 				# Define some defauts
 				$NONE = ' '
 				$COM = ','
-
+				
 				if ($_.properties.msexchinternalhostname[0])
 				{
 					if ($_.properties.distinguishedname[0])
@@ -151,9 +153,9 @@
 							$paramNewObject = @{
 								TypeName = 'psobject'
 								Property = @{
-									path    = $_.properties.msexchinternalhostname[0]
-									server  = $SingleServer
-									Site    = $SingleActiveDirectorySite
+									path = $_.properties.msexchinternalhostname[0]
+									server = $SingleServer
+									Site = $SingleActiveDirectorySite
 									version = $SingleShortVersion
 									Fullver = $SingleFullVersion
 								}
@@ -174,23 +176,23 @@
 			Write-Verbose -Message 'Something went wrong...'
 		}
 	}
-
-	END
+	
+	end
 	{
 		# Just dump the plain object
-		if ($ADExchangeInfo) 
+		if ($ADExchangeInfo)
 		{
 			$ADExchangeInfo
 		}
-		else 
+		else
 		{
 			$paramWriteError = @{
-				Message       = $ErrorMessage
+				Message		  = $ErrorMessage
 				ErrorAction   = $STP
 				WarningAction = $SC
 			}
 			
-			Write-Error @paramWriteError 
+			Write-Error @paramWriteError
 			break
 		}
 	}

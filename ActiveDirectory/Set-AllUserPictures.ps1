@@ -106,7 +106,7 @@ param
   $workaround = $false
 )
 
-BEGIN
+begin
 {
   if ($workaround)
   {
@@ -197,7 +197,7 @@ BEGIN
 		
         Author: Joerg Hochwald
     #>
-	
+		
     [OutputType([bool])]
     param
     (
@@ -207,13 +207,13 @@ BEGIN
       [string]
       $address
     )
-
+		
     process
     {
       ($address -as [mailaddress]).Address -eq $address -and $address -ne $null
     }
   }
-
+	
   #region License
   <#
       BSD 3-Clause License
@@ -234,7 +234,7 @@ BEGIN
       By using the Software, you agree to the License, Terms and Conditions above!
   #>
   #endregion License
-
+	
   #region Hints
   <#
       This is a third-party Software!
@@ -246,7 +246,7 @@ BEGIN
   #endregion Hints
 }
 
-PROCESS
+process
 {
   if (-not ($AddUserPixx.samaccountname))
   {
@@ -298,7 +298,7 @@ PROCESS
           WarningAction = 'SilentlyContinue'
         }
 				
-        If (Test-Path @paramTestPath)
+        if (Test-Path @paramTestPath)
         {
           try
           {
@@ -385,11 +385,11 @@ PROCESS
         WarningAction = 'SilentlyContinue'
       }
 			
-      try 
+      try
       {
         $null = (Remove-UserPhoto @paramSetUserPhoto)
       }
-      catch 
+      catch
       {
         $paramWriteWarning = @{
           Message     = ('Unable to handle {0} - Check that this user has a valid Mailbox!' -f $NoUser)
@@ -401,14 +401,14 @@ PROCESS
   }
 }
 
-END
+end
 {
   # Cleaniup
   $AddUserPixx = $null
   $NoUserPixx = $null
   $AddUserPixxCount = $null
   $NoUserPixxCount = $null
-
+	
   # Do a garbage collection: Call the .NET function to cleanup some stuff
   $null = ([GC]::Collect())
 }

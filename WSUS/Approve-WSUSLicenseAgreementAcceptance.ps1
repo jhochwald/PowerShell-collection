@@ -37,65 +37,65 @@ param
 
 begin
 {
-  try 
+  try
   {
     # Set the Defaults
     $paramGetWsusServer = @{
       ErrorAction   = 'Stop'
       WarningAction = 'Continue'
     }
-
-    if ($Name) 
+		
+    if ($Name)
     {
       Write-Verbose -Message ('Use {0} as WSUS Server' -f $Name)
-
+			
       # Add the Name field with the given value to the Hashtable (Command Splat)
       $paramGetWsusServer['Name'] = $Name
     }
-
+		
     $WSUS = (Get-WsusServer @paramGetWsusServer)
   }
-  catch 
+  catch
   {
-  # Get error record
-  [Management.Automation.ErrorRecord]$e = $_
-
-  # Retrieve information about the error
-  $info = [PSCustomObject]@{
-    Exception = $e.Exception.Message
-    Reason    = $e.CategoryInfo.Reason
-    Target    = $e.CategoryInfo.TargetName
-    Script    = $e.InvocationInfo.ScriptName
-    Line      = $e.InvocationInfo.ScriptLineNumber
-    Column    = $e.InvocationInfo.OffsetInLine
+    # Get error record
+    [Management.Automation.ErrorRecord]$e = $_
+		
+    # Retrieve information about the error
+    $info = [PSCustomObject]@{
+      Exception = $e.Exception.Message
+      Reason    = $e.CategoryInfo.Reason
+      Target    = $e.CategoryInfo.TargetName
+      Script    = $e.InvocationInfo.ScriptName
+      Line      = $e.InvocationInfo.ScriptLineNumber
+      Column    = $e.InvocationInfo.OffsetInLine
+    }
+		
+    # Do some verbose stuff for troubleshooting
+    Write-Verbose -Message $info
+		
+    # Thow the error and go...
+    Write-Error -Message "$info.Exception" -ErrorAction Stop
+		
+    # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
+    break
+		
+    # OK, now we have reached a point the we would never, never ever, see
+    exit 1
   }
-      
-  # Do some verbose stuff for troubleshooting
-  Write-Verbose -Message $info
-
-  # Thow the error and go...
-  Write-Error -Message "$info.Exception" -ErrorAction Stop
-
-  # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
-  break
-
-  # OK, now we have reached a point the we would never, never ever, see
-  exit 1
-}
-
+	
   $unapprovedUpdates = $null
   $unapprovedUpdates = $WSUS.getupdates() | Where-Object -FilterScript {
     $_.isdeclined -ne $true
   }
-
+	
   $license = $null
-  if ($unapprovedUpdates) 
+  if ($unapprovedUpdates)
   {
     $license = $unapprovedUpdates | Where-Object -FilterScript {
       $_.RequiresLicenseAgreementAcceptance
     }
   }
-  else 
+  else
   {
     Write-Verbose -Message 'Nothing left todo.'
   }
@@ -103,16 +103,16 @@ begin
 
 process
 {
-  if ($license) 
+  if ($license)
   {
-    if ($pscmdlet.ShouldProcess("$license", 'Accept License Agreement')) 
+    if ($pscmdlet.ShouldProcess("$license", 'Accept License Agreement'))
     {
       $license | ForEach-Object -Process {
         $_.AcceptLicenseAgreement()
       }
     }
   }
-  else 
+  else
   {
     Write-Verbose -Message 'Nothing left todo...'
   }
