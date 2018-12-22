@@ -1,4 +1,6 @@
-﻿function Publish-BitbucketDownload
+﻿#requires -Version 3.0
+
+function Publish-BitbucketDownload
 {
   <#
       .SYNOPSIS
