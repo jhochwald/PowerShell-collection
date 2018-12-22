@@ -1,4 +1,4 @@
-﻿#requires -Version 2.0 -Modules CimCmdlets
+﻿#requires -Version 3.0 -Modules CimCmdlets
 
 function Invoke-DSCPerfReqConfigCheck
 {
@@ -60,75 +60,75 @@ function Invoke-DSCPerfReqConfigCheck
       Write-Verbose
       Get-WinEvent
   #>
-
-  [OutputType([bool])]
-  param
-  (
-    [Parameter(ValueFromPipeline,
-    Position = 1)]
-    [switch]
-    $Silent = $null
-  )
-
-  BEGIN
-  {
-    $SC = 'SilentlyContinue'
+	
+	[OutputType([bool])]
+	param
+	(
+		[Parameter(ValueFromPipeline,
+					  Position = 1)]
+		[switch]
+		$Silent = $null
+	)
+	
+	begin
+	{
+		$SC = 'SilentlyContinue'
 		
-    if ($Silent)
-    {
+		if ($Silent)
+		{
       $ProgressPreference = $SC
     }
-  }
-
-  PROCESS
-  {
-    $InvokeCimMethodParams = @{
-      Namespace     = 'root/Microsoft/Windows/DesiredStateConfiguration'
-      ClassName     = 'MSFT_DSCLocalConfigurationManager'
-      MethodName    = 'PerformRequiredConfigurationChecks'
-      Arguments     = @{
-        Flags = [uint32] 1
-      }
-      ErrorAction   = $SC
-      WarningAction = $SC
-    }
-
-    try
-    {
-      $null = (Invoke-CimMethod @InvokeCimMethodParams)
+	}
+	
+	process
+	{
+		$InvokeCimMethodParams = @{
+  Namespace     = 'root/Microsoft/Windows/DesiredStateConfiguration'
+  ClassName     = 'MSFT_DSCLocalConfigurationManager'
+  MethodName    = 'PerformRequiredConfigurationChecks'
+  Arguments     = @{
+				Flags = [uint32] 1
+			}
+  ErrorAction   = $SC
+  WarningAction = $SC
+}
+		
+		try
+		{
+			$null = (Invoke-CimMethod @InvokeCimMethodParams)
 			
-      if ($Silent)
-      {
-        $ProgressPreference = $null
-      }
-    }
-    catch
-    {
-      $paramWriteVerbose = @{
+			if ($Silent)
+			{
+$ProgressPreference = $null
+}
+		}
+		catch
+		{
+			$paramWriteVerbose = @{
         Message       = "$_.Exception.Message - Line Number: $_.InvocationInfo.ScriptLineNumber"
         ErrorAction   = $SC
         WarningAction = $SC
       }
-      Write-Verbose @paramWriteVerbose
-    }
-
-    $GetWinEventParams = @{
+			Write-Verbose @paramWriteVerbose
+		}
+		
+		$GetWinEventParams = @{
       LogName       = 'Microsoft-Windows-Dsc/*'
       ErrorAction   = $SC
       WarningAction = $SC
       Oldest        = $true
     }
-
-    # TODO: That is fast, but the code looks bad!
-    $SuccessResult = (Get-WinEvent @GetWinEventParams | Group-Object -Property {
-        $_.Properties[0].value
-    }).Group.LevelDisplayName -notcontains 'Error'
-  }
-
-  END
-  {
-    Return $SuccessResult
-  }
+		
+		# TODO: That is fast, but the code looks bad!
+		$SuccessResult = (Get-WinEvent @GetWinEventParams | Group-Object -Property {
+$_.Properties[0].value
+}).Group.LevelDisplayName -notcontains 'Error'
+	}
+	
+	end
+	{
+		return $SuccessResult
+	}
 }
 
 Invoke-DSCPerfReqConfigCheck
