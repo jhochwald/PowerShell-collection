@@ -40,130 +40,131 @@
 [CmdletBinding()]
 param ()
 
-BEGIN
+begin
 {
-  # Define some defaults
-  $STP = 'Stop'
-  $SC = 'SilentlyContinue'
-
-  # Suppressing the PowerShell Progress Bar
-  $script:ProgressPreference = $SC
-
-  # Create a list of the DSC Resources I want
-  $NewDSCModules = @(
-    'PSDscResources', 
-    'xNetworking', 
-    'xPSDesiredStateConfiguration', 
-    'xWebAdministration', 
-    'xCertificate', 
-    'xComputerManagement', 
-    'xActiveDirectory', 
-    'SystemLocaleDsc', 
-    'xRemoteDesktopAdmin', 
-    'xPendingReboot', 
-    'xSmbShare', 
-    'xWindowsUpdate', 
-    'xDscDiagnostics', 
-    'xCredSSP', 
-    'xDnsServer', 
-    'xWinEventLog', 
-    'xDhcpServer', 
-    'xHyper-V', 
-    'xStorage', 
-    'xWebDeploy'
-    'xRemoteDesktopSessionHost', 
-    'xDismFeature', 
-    'xSystemSecurity', 
-    'WebAdministrationDsc', 
-    'OfficeOnlineServerDsc', 
-    'AuditPolicyDsc', 
-    'xDFS', 
-    'SecurityPolicyDsc', 
-    'xReleaseManagement', 
-    'xExchange', 
-    'xDefender', 
-    'xWindowsEventForwarding', 
-    'cHyper-V'
-  )
+	# Define some defaults
+	$STP = 'Stop'
+	$SC = 'SilentlyContinue'
+	
+	# Suppressing the PowerShell Progress Bar
+	$script:ProgressPreference = $SC
+	
+	# Create a list of the DSC Resources I want
+	$NewDSCModules = @(
+		'PSDscResources', 
+		'xNetworking', 
+		'xPSDesiredStateConfiguration', 
+		'xWebAdministration', 
+		'xCertificate', 
+		'xComputerManagement', 
+		'xActiveDirectory', 
+		'SystemLocaleDsc', 
+		'xRemoteDesktopAdmin', 
+		'xPendingReboot', 
+		'xSmbShare', 
+		'xWindowsUpdate', 
+		'xDscDiagnostics', 
+		'xCredSSP', 
+		'xDnsServer', 
+		'xWinEventLog', 
+		'xDhcpServer', 
+		'xHyper-V', 
+		'xStorage', 
+		'xWebDeploy'
+		'xRemoteDesktopSessionHost', 
+		'xDismFeature', 
+		'xSystemSecurity', 
+		'WebAdministrationDsc', 
+		'OfficeOnlineServerDsc', 
+		'AuditPolicyDsc', 
+		'xDFS', 
+		'SecurityPolicyDsc', 
+		'xReleaseManagement', 
+		'xExchange', 
+		'xDefender', 
+		'xWindowsEventForwarding', 
+		'cHyper-V'
+	)
 }
 
-PROCESS
+process
 {
-  foreach ($NewDSCModule in $NewDSCModules)
-  {
-    # Cleanup
-    $ModuleIsAvailable = $null
-
-    # Check: Do I have the resource?
-    $paramGetModule = @{
+	foreach ($NewDSCModule in $NewDSCModules)
+	{
+		# Cleanup
+		$ModuleIsAvailable = $null
+		
+		# Check: Do I have the resource?
+		$paramGetModule = @{
       ListAvailable = $true
       Name          = $NewDSCModule
       ErrorAction   = $SC
       WarningAction = $SC
     }
-    $ModuleIsAvailable = (Get-Module @paramGetModule)
+		$ModuleIsAvailable = (Get-Module @paramGetModule)
 		
-    if (-not ($ModuleIsAvailable))
-    {
-      # Nope: Install the resource
-      try
-      {
-        Write-Verbose -Message ('Try to install {0}' -f $NewDSCModule)
-
-        $paramInstallModule = @{
+		if (-not ($ModuleIsAvailable))
+		{
+			# Nope: Install the resource
+			try
+			{
+				Write-Verbose -Message ('Try to install {0}' -f $NewDSCModule)
+				
+				$paramInstallModule = @{
           Name          = $NewDSCModule
           Scope         = AllUsers
           Force         = $true
           ErrorAction   = $STP
           WarningAction = $SC
         }
-        $null = (Install-Module @paramInstallModule)
-
-        Write-Verbose -Message ('Installed {0}' -f $NewDSCModule)
-      }
-      catch
-      {
-        # Whoopsie
-        $paramWriteWarning = @{
+				$null = (Install-Module @paramInstallModule)
+				
+				Write-Verbose -Message ('Installed {0}' -f $NewDSCModule)
+			}
+			catch
+			{
+				# Whoopsie
+				$paramWriteWarning = @{
           Message     = ('Sorry, unable to install {0}' -f $NewDSCModule)
           ErrorAction = $SC
         }
-        Write-Warning @paramWriteWarning
-      }
-    }
-    else
-    {
-      try
-      {
-        Write-Verbose -Message ('Try to update {0}' -f $NewDSCModule)
-
-        # TODO: Implement the check from invoke-ModuleUpdates.ps1 to prevent the unneeded update tries.
-        $paramUpdateModule = @{
+				Write-Warning @paramWriteWarning
+			}
+		}
+		else
+		{
+			try
+			{
+				Write-Verbose -Message ('Try to update {0}' -f $NewDSCModule)
+				
+				# TODO: Implement the check from invoke-ModuleUpdates.ps1 to prevent the unneeded update tries.
+				$paramUpdateModule = @{
           Name          = $NewDSCModule
           Confirm       = $false
           ErrorAction   = $STP
           WarningAction = $SC
         }
-        $null = (Update-Module @paramUpdateModule)
-
-        Write-Verbose -Message ('Updated {0}' -f $NewDSCModule)
-      }
-      catch
-      {
-        # Whoopsie
-        $paramWriteWarning = @{
+				$null = (Update-Module @paramUpdateModule)
+				
+				Write-Verbose -Message ('Updated {0}' -f $NewDSCModule)
+			}
+			catch
+			{
+				# Whoopsie
+				$paramWriteWarning = @{
           Message     = ('Sorry, unable to update {0}' -f $NewDSCModule)
           ErrorAction = $SC
         }
-        Write-Warning @paramWriteWarning
-      }
-    }
-  }
+				Write-Warning @paramWriteWarning
+			}
+		}
+	}
 }
 
-END {
-  # No longer suppressing the PowerShell Progress Bar
-  $script:ProgressPreference = 'Continue'
+end
+{
+	# No longer suppressing the PowerShell Progress Bar
+	$script:ProgressPreference = 'Continue'
 }
 
 #region License
