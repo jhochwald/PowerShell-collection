@@ -54,6 +54,12 @@ I sign all files with a time stamp from an official [Timestamp Server](http://ti
 
 I sign all scripts, modules, executables, and installers. In addition, all scripts and modules will be available plain (without signature).
 
+#### Any ideas?
+
+I still search for a free code signing certificate for my open-source projects. So, does anyone know a source?
+
+Even if there is no "free" version for my open-source projects, I would also pay for a valid certificate (again). However, most of the sources I found are not cheap! Does anyone know a cheap source for a signing certificate?
+
 ### Installers
 
 In the past, I published a few things with a (signed) MSI installer package. These MSI installers were very basic; I know!
