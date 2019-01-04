@@ -42,6 +42,11 @@ If you want to contribute code, please try to:
 
 Once you have tried the above, create a GitHub [pull request](https://github.com/jhochwald/PowerShell-collection/pulls) to notify me of your changes.
 
+### Code Signing
+
+If you have a valid codesigning certificate, please sign the contributed file within the `signed` directory.
+If you don't have a valid codesigning certificate, just go ahead and contribute. I will take care about the signing for you.
+
 ## License
 
 Please specify your license terms! This only applies for new modules and/or scripts. You are not allowed to change the license terms of the existing code! There should be enough options out there.
