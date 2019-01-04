@@ -45,7 +45,14 @@ More then welcome! Please see the [Contribution Guide](CONTRIBUTING.md) for more
 
 ### Signed Code
 
-I started to sign all scripts and functions again. Thanks to [Ascertia.com](https://www.ascertia.com) for the certificate!
+I will sign all scripts with a valid certificate soon, again.
+
+In the meantime, I use a test certificate from [Ascertia.com](https://www.ascertia.com) for testing everything.
+Please note: The [Ascertia.com](https://www.ascertia.com) might throw error, caused by a missing root certificate trust! This is a known issue, but for mow I need a test certificate!
+
+I sign all files with a time stamp from an official [Timestamp Server](http://timestamp.digicert.com). A time stamp prevents the script from failing if the certificate expires because users and programs can verify that the certificate was valid at the time of signing.
+
+I sign all scripts, modules, executables, and installers. In addition, all scripts and modules will be available plain (without signature).
 
 ### Installers
 
