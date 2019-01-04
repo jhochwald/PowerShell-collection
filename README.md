@@ -50,13 +50,17 @@ I started to sign all scripts and functions again. Thanks to [Ascertia.com](http
 ### Installers
 
 In the past, I published a few things with a (signed) MSI installer package. These MSI installers were very basic; I know!
-Big thanks to the [Advanced Installer Team](http://www.advancedinstaller.com/): They provided a free [Advanced Installer Professional](https://www.advancedinstaller.com/top-professional-features.html) license for my open-source stuff. So things will change soon, and I will provide (much better) installers again in the very near future.
+
+But there is hope: The [Advanced Installer Team](http://www.advancedinstaller.com/) sponsored a _free_ [Advanced Installer Professional](https://www.advancedinstaller.com/top-professional-features.html) license for my open-source work. So things will change soon, and I will provide (much better) installers again in the very near future.
+
+I highly recommend [Advanced Installer](http://www.advancedinstaller.com/), because it's they have a great set of [features](https://www.advancedinstaller.com/top-exclusive-features.html), and it fits perfect to my tooling and existing workflow. I used the [free version](https://www.advancedinstaller.com/top-freeware-features.html) to build some of my basic installers before. I switched to the [Professional](https://www.advancedinstaller.com/top-professional-features.html) version only because it can do a few more things I really needed. Mainly the automated handling of digital signatures and the integration into my existing Continuous Integration chain.
 
 ### Continuous Deployment
 
 I will transfer this project to my existing [TeamCity](https://www.jetbrains.com/teamcity/) Continuous Integration (CI) chain soon. As part of that I started to tweak a bit further (under the hood), like creating a few basic pester tests. I will publish all the stuff that I use for it as well.
 
-My target is to automate the complete Continuous Integration (CI) and Continuous Delivery (CD) process like we did it within my old company. As a result, much better code should land here very soon.
+My goal is to automate the complete Continuous Integration (CI) and Continuous Delivery (CD) process like we did it within my old company. As a result, much better code should land here very soon.
+But: There is no timeframe planned, at least not yet!
 
 ### Default License
 
