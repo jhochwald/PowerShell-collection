@@ -1,0 +1,55 @@
+﻿TOPIC 
+	about_UniFiTooling
+	
+SHORT DESCRIPTION	
+	Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller
+	
+LONG DESCRIPTION
+	Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller
+	
+NOTE
+	Early beta version
+	
+TROUBLESHOOTING NOTE
+	Open a GitHub Issue
+
+EXAMPLES
+	PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
+	IPv4 CIDR Workaround for UBNT USG Firewall Rules
+	
+	PS C:\> Invoke-UniFiCidrWorkaroundV6 -CidrList $value1
+	IPv6 CIDR Workaround for UBNT USG Firewall Rules
+	
+	PS C:\> Get-UnifiFirewallGroupBody -UnfiFirewallGroup $value1 -UnifiCidrInput $value2
+	Build a Body for Set-UnifiFirewallGroup call
+	
+	PS C:\> Set-UniFiDefaultRequestHeader
+	Set the default Header for all UniFi Requests
+	
+	PS C:\> Get-UniFiConfig
+	Read the UniFi config file
+	
+	PS C:\> Get-UniFiCredentials
+	Read the API Credentials from the UniFi config file
+	
+	PS C:\> Invoke-UniFiApiLogin
+	Login to API of the Ubiquiti UniFi Controller
+	
+	PS C:\> Invoke-UniFiApiLogout
+	Logout from the API of the Ubiquiti UniFi Controller
+	
+	PS C:\> Get-UnifiFirewallGroups -UnifiSite 'Contoso'
+	Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
+	
+	PS C:\> Set-UnifiFirewallGroup -UnfiFirewallGroup 'Value1' -UnifiCidrInput $value2
+	Get a given Firewall Group via the API of the Ubiquiti UniFi Controller
+	
+KEYWORDS
+	UniFi, API, Automation, Ubiquiti,USG,RESTful
+	
+SEE ALSO
+	Get-UniFiConfig
+	Get-UniFiCredentials
+	Invoke-UniFiApiLogin
+	Set-IgnoreSelfSignedCerts
+	Set-UniFiDefaultRequestHeader
