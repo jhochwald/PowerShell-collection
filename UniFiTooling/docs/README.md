@@ -1,6 +1,6 @@
 # UniFiTooling
 
-This is an early beta version for an API Module for the Ubiquiti UniFi Controller.
+This is an early beta version for an PowerShell Module for the Ubiquiti UniFi Controller API.
 
 An sample use case is coming soon. This sample script is doing the following:
 Get the latest Office 365 Endpoint Information for Exchange Online via my own `Get-Office365Endpoints` function and modifies 4 existing UniFi Security Gateway Firewall Rules.
@@ -9,17 +9,21 @@ I use this script daily to update my own UniFi Security Gateway Firewalls (on tw
 
 I use this module for many automated updates for my UniFi Security Gateway Firewall Rules.
 
-### SHORT DESCRIPTION	
+### Feedback
 
-Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller
-	
-### LONG DESCRIPTION
+Any Feedback is appriciated! Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Bug report* if you find something not working.
 
-Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller.
-	
-### NOTE
+### Contribute
 
-Early beta version
+Anything missing? Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Feature request*. Suggest an idea for this Module will help to improve this module.
+
+### Description
+
+PowerShell Module for Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller
+
+### Note
+
+Early beta version, use at your own risk!
 
 ### Config
 
@@ -29,14 +33,14 @@ Here is a sample configuration:
 
 ```json
 {
-	"Login": {
-		"Username": "adminuser",
-		"Password": "AdminPassword"
-	},
-	"protocol": "https",
-	"SelfSignedCert": true,
-	"Hostname": "unifi.contoso.com",
-	"Port": 443
+   "Login": {
+      "Username": "adminuser",
+      "Password": "AdminPassword"
+   },
+   "protocol": "https",
+   "SelfSignedCert": true,
+   "Hostname": "unifi.contoso.com",
+   "Port": 443
 }
 ```
 
@@ -69,7 +73,7 @@ The Ubiquiti UniFi Controller you want to use. You can use a Fully-Qualified Hos
 
 The port number that you have configured on your Ubiquiti UniFi Controller.
 
-### EXAMPLES
+### Examples
 
 ##### IPv4 CIDR Workaround for UBNT USG Firewall Rules
 
@@ -113,10 +117,10 @@ PS C:\> Get-UniFiConfig
 PS C:\> Get-UniFiCredentials
 ```
 
-##### Login to API of the Ubiquiti UniFi Controller 
+##### Login to API of the Ubiquiti UniFi Controller
 
 ```powershell
-# Login to API of the Ubiquiti UniFi Controller 
+# Login to API of the Ubiquiti UniFi Controller
 PS C:\> Invoke-UniFiApiLogin
 ```
 
@@ -141,9 +145,13 @@ PS C:\> Get-UnifiFirewallGroups -UnifiSite 'Contoso'
 PS C:\> Set-UnifiFirewallGroup -UnfiFirewallGroup 'Value1' -UnifiCidrInput $value2
 ```
 
-### Author
+### Authors
 
 Joerg Hochwald - [http://hochwald.net](http://hochwald.net)
+
+### Contributors
+
+N.N. (could be you)
 
 ### Copyright
 
@@ -154,14 +162,6 @@ All rights reserved.
 
 BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE)
 
-### KEYWORDS
+### Keywords
 
-UniFi, API, Automation, Ubiquiti,USG,RESTful
-	
-### SEE ALSO
-
-* Get-UniFiConfig
-* Get-UniFiCredentials
-* Invoke-UniFiApiLogin
-* Set-IgnoreSelfSignedCerts
-* Set-UniFiDefaultRequestHeader
+UniFi, API, Automation, Ubiquiti,USG, RESTful, ubiquiti-unifi-controller, unifi-controller
