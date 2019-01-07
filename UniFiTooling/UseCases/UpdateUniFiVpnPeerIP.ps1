@@ -11,7 +11,8 @@
       Name of the UniFi VPN Network
 	
       .PARAMETER NewPeerIp
-      New IP address of the VPN peer (Remote) - IPv4 address
+      New IP address of the VPN peer (Remote)
+      IPv4 address onyl, the Controller rejects any other format.
 	
       .EXAMPLE
       PS C:\> .\UpdateUniFiVpnPeerIP.ps1 -VPN2Update 'JoshAtHomeVpn' -NewPeerIp 10.10.10.10
@@ -27,18 +28,18 @@
 [OutputType([bool])]
 param
 (
-   [Parameter(Mandatory = $true,
-         ValueFromPipeline = $true,
-         ValueFromPipelineByPropertyName = $true,
+   [Parameter(Mandatory,
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
          Position = 1,
    HelpMessage = 'Name of the UniFi VPN Network')]
    [ValidateNotNullOrEmpty()]
    [string]
    $VPN2Update,
-   [Parameter(Mandatory = $true,
+   [Parameter(Mandatory,
          HelpMessage = 'New IP address of the VPN peer (Remote)',
-         ValueFromPipeline = $true,
-         ValueFromPipelineByPropertyName = $true,
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
    Position = 2)]
    [ValidateNotNullOrEmpty()]
    [ipaddress]
@@ -50,7 +51,8 @@ begin
    # Login
    $null = (Invoke-UniFiApiLogin)
    
-   # Put the input to a new variable (I use [ipaddress] to let PowerShell do the input checks)
+   # Put the input to a new variable
+   # I use [ipaddress] above and let PowerShell do the input checks, because the Controlelr is a bit picky with the format
    $NewPeerIp2 = $NewPeerIp.IPAddressToString
 }
 
@@ -64,7 +66,7 @@ process
    # Get the details of the network we found
    $UnifiNetworkDetails = (Get-UnifiNetworkDetails -UnifiNetwork $UnifiNetwork)
 
-   # Replace the Peer IP
+   # Replace the Peer IP in the object
    $UnifiNetworkDetails.ipsec_peer_ip = $NewPeerIp2
 
    # Create a new Request Body
@@ -86,6 +88,7 @@ process
    if ($NewPeerIpUniFi -ne $NewPeerIp2)
    {
       Write-Warning -Message ('Peer address is {0} but it should be {1}' -f $NewPeerIpUniFi, $NewPeerIp2)
+
       $false
    }
    else
