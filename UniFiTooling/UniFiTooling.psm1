@@ -267,6 +267,7 @@ function Set-UniFiDefaultRequestHeader
 	
          .EXAMPLE
          PS C:\> Set-UniFiDefaultRequestHeader
+
          Set the default Header for all UniFi Requests
 	
          .NOTES
@@ -531,7 +532,7 @@ function Invoke-UniFiApiLogin
                Creates the JSON based request body for the UniFi Login
 	
                .EXAMPLE
-               PS C:\> Set-UniFiApiLoginBody
+               Set-UniFiApiLoginBody
 	
                Creates the JSON based request body for the UniFi Login
 	
@@ -701,6 +702,7 @@ function Invoke-UniFiApiLogout
          Logout from the API of the Ubiquiti UniFi Controller
 	
          .EXAMPLE
+         
          PS C:\> Invoke-UniFiApiLogout
 
          Logout from the API of the Ubiquiti UniFi Controller
@@ -969,17 +971,17 @@ function Get-UnifiNetworkDetails
    [OutputType([psobject])]
    param
    (
-      [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             Position = 1,
       HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiNetworkId', 'NetworkId')]
       [string]
       $UnifiNetwork,
-      [Parameter(ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
       Position = 2)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
@@ -1115,26 +1117,26 @@ function Set-UnifiNetworkDetails
    [OutputType([psobject])]
    param
    (
-      [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             Position = 1,
       HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiNetworkId', 'NetworkId')]
       [string]
       $UnifiNetwork,
-      [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             Position = 2,
       HelpMessage = 'JSON formed Body for the Request')]
       [ValidateNotNullOrEmpty()]
       [Alias('Body')]
       [string]
       $UniFiBody,
-      [Parameter(ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
       Position = 3)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
@@ -1377,25 +1379,24 @@ function Set-UnifiFirewallGroup
 	
          .EXAMPLE
          PS C:\> Set-UnifiFirewallGroup -UnfiFirewallGroup 'Value1' -UnifiCidrInput $value2
-
+		
          Get a given Firewall Group via the API of the Ubiquiti UniFi Controller
 	
          .NOTES
          Initial version of the Ubiquiti UniFi Controller automation function
-
+	
          .LINK
          Get-UnifiFirewallGroups
-
+	
          .LINK
          Get-UnifiFirewallGroupBody
-
+	
          .LINK
          Get-UniFiConfig
-
+	
          .LINK
          Set-UniFiDefaultRequestHeader
    #>
-	
    [CmdletBinding(ConfirmImpact = 'None')]
    param
    (
@@ -1431,25 +1432,25 @@ function Set-UnifiFirewallGroup
       # Cleanup
       $TargetFirewallGroup = $null
       $Session = $null
-
+		
       Write-Verbose -Message ('Check if {0} exists' -f $UnfiFirewallGroup)
       $TargetFirewallGroup = (Get-UnifiFirewallGroups | Where-Object -FilterScript {
             ($_.Name -eq $UnfiFirewallGroup)
       })
-
+		
       if (-not $TargetFirewallGroup)
       {
          # Verbose stuff
          $Script:line = $_.InvocationInfo.ScriptLineNumber
          Write-Verbose -Message ('Error was in Line {0}' -f $line)
-
+			
          Write-Error -Message ('Unable to find the Firewall Group {0}' -f $UnfiFirewallGroup) -ErrorAction Stop
-
+			
          # Only here to catch a global ErrorAction overwrite
          break
       }
       Write-Verbose -Message ('{0} exists' -f $UnfiFirewallGroup)
-
+		
       $UnfiFirewallGroupBody = (Get-UnifiFirewallGroupBody -UnfiFirewallGroup $TargetFirewallGroup -UnifiCidrInput $UnifiCidrInput)
    }
 	
@@ -1471,7 +1472,7 @@ function Set-UnifiFirewallGroup
          Write-Verbose -Message 'Create the Request URI'
          $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/firewallgroup/' + $TargetFirewallGroup._id
          Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
-
+			
          Write-Verbose -Message 'Send the Request'
          $paramInvokeRestMethod = @{
             Method        = 'Put'
