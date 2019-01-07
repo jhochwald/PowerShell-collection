@@ -668,6 +668,11 @@ function Invoke-UniFiApiLogin
          # Only here to catch a global ErrorAction overwrite
          break
       }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      }
 		
       # check result
       if ($Session.meta.rc -ne 'ok')
@@ -772,6 +777,11 @@ function Invoke-UniFiApiLogout
 			
          # Only here to catch a global ErrorAction overwrite
          break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
       }
 
       # check result
@@ -901,6 +911,11 @@ function Get-UnifiNetworkList
 			
          # Only here to catch a global ErrorAction overwrite
          break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
       }
 		
       # check result
@@ -1044,6 +1059,11 @@ function Get-UnifiNetworkDetails
 			
          # Only here to catch a global ErrorAction overwrite
          break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
       }
 		
       # check result
@@ -1201,6 +1221,11 @@ function Set-UnifiNetworkDetails
          # Only here to catch a global ErrorAction overwrite
          break
       }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      }
 		
       # check result
       if ($Session.meta.rc -ne 'ok')
@@ -1331,6 +1356,11 @@ function Get-UnifiFirewallGroups
 			
          # Only here to catch a global ErrorAction overwrite
          break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
       }
 		
       # check result
@@ -1504,6 +1534,11 @@ function Set-UnifiFirewallGroup
 			
          # Only here to catch a global ErrorAction overwrite
          break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
       }
 		
       # check result
