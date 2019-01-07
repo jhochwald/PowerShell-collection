@@ -11,7 +11,7 @@ I use this module for many automated updates for my UniFi Security Gateway Firew
 
 ### Feedback
 
-Any Feedback is appriciated! Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Bug report* if you find something not working.
+Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Bug report* if you find something not working.
 
 ### Contribute
 
