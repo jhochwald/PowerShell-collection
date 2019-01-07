@@ -798,13 +798,9 @@ Set-UnifiFirewallGroup</maml:para>
 				<maml:introduction>
 					<maml:para>PS C:\&gt;</maml:para>
 				</maml:introduction>
-				<dev:code>Introduction</dev:code>
+				<dev:code>Invoke-UniFiApiLogout</dev:code>
 				<dev:remarks>
-					<maml:para>PS ~&gt; Invoke-UniFiApiLogout
-
-Remarks
-
-Logout from the API of the Ubiquiti UniFi Controller</maml:para>
+					<maml:para>Logout from the API of the Ubiquiti UniFi Controller</maml:para>
 				</dev:remarks>
 			</command:example>
 		</command:examples>
