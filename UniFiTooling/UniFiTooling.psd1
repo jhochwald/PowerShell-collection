@@ -4,7 +4,7 @@
 	ModuleToProcess = 'UniFiTooling.psm1'
 	
 	# Version number of this module.
-	ModuleVersion = '1.0.1'
+	ModuleVersion = '1.0.2'
 	
 	# ID used to uniquely identify this module
 	GUID = '7fff91a0-02eb-4df2-84d5-c7d3cd7f7a5d'

@@ -434,7 +434,6 @@ function Get-UniFiCredentials
 
       Write-Verbose -Message 'Convert the JSON config File to a PSObject'
       $UnifiConfig = ($RawJson | ConvertFrom-Json -ErrorAction Stop -WarningAction SilentlyContinue)
-      $UnifiConfig
     }
     catch
     {
@@ -565,7 +564,7 @@ function Invoke-UniFiApiLogin
           username = $ApiUsername
           password = $ApiPassword
         }
-				
+
         # Convert the Body Object to JSON
         try
         {
