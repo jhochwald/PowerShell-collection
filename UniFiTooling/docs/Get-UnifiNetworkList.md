@@ -1,35 +1,35 @@
-﻿# Get-UnifiFirewallGroups
+﻿# Get-UnifiNetworkList
 
 ## SYNOPSIS
-Get a List Firewall Groups via the API of the UniFi Controller
+Get a List Networks via the API of the UniFi Controller
 
 ## SYNTAX
 
 ### Set 1
 ```
-Get-UnifiFirewallGroups [[-UnifiSite] <String>] [<CommonParameters>]
+Get-UnifiNetworkList [[-UnifiSite] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
+Get a List Networks via the API of the Ubiquiti UniFi Controller
 
 ## EXAMPLES
 
 ### -------------------------- EXAMPLE 1 --------------------------
 PS C:\\\>
 ```powershell
-Get-UnifiFirewallGroups
+Get-UnifiNetworkList
 ```
 
-Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
+Get a List Networks via the API of the UniFi Controller
 
 ### -------------------------- EXAMPLE 2 --------------------------
 PS C:\\\>
 ```powershell
-Get-UnifiFirewallGroups -UnifiSite 'Contoso'
+Get-UnifiNetworkList -UnifiSite 'Contoso'
 ```
 
-Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
+Get a List Networks on Site 'Contoso' via the API of the UniFi Controller
 
 ## PARAMETERS
 

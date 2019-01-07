@@ -1,40 +1,68 @@
-﻿# Get-UnifiFirewallGroups
+﻿# Set-UnifiNetworkDetails
 
 ## SYNOPSIS
-Get a List Firewall Groups via the API of the UniFi Controller
+Modifies one network via the API of the UniFi Controller
 
 ## SYNTAX
 
 ### Set 1
 ```
-Get-UnifiFirewallGroups [[-UnifiSite] <String>] [<CommonParameters>]
+Set-UnifiNetworkDetails [-UnifiNetwork] <String> [-UniFiBody] <String> [[-UnifiSite] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
+Modifies one network via the API of the UniFi Controller
 
 ## EXAMPLES
 
 ### -------------------------- EXAMPLE 1 --------------------------
 PS C:\\\>
 ```powershell
-Get-UnifiFirewallGroups
+Set-UnifiNetworkDetails -UnifiNetwork $value1
 ```
 
-Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
+Get the details about one network via the API of the UniFi Controller
 
 ### -------------------------- EXAMPLE 2 --------------------------
 PS C:\\\>
 ```powershell
-Get-UnifiFirewallGroups -UnifiSite 'Contoso'
+Set-UnifiNetworkDetails -UnifiNetwork $value1 -UnifiSite 'Contoso'
 ```
 
-Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
+Get the details about one network on Site 'Contoso' via the API of the UniFi Controller
 
 ## PARAMETERS
 
-### UnifiSite
+### UnifiNetwork
+The ID (network_id) of the network you would like to get detaild information about.
 
+```yaml
+Type: String
+Parameter Sets: Set 1
+Aliases: UnifiNetworkId , NetworkId
+
+Required: true
+Position: 1
+Default Value: 
+Pipeline Input: True (ByPropertyName, ByValue)
+```
+
+### UniFiBody
+JSON formed Body for the Request
+
+```yaml
+Type: String
+Parameter Sets: Set 1
+Aliases: Body
+
+Required: true
+Position: 2
+Default Value: 
+Pipeline Input: True (ByPropertyName, ByValue)
+```
+
+### UnifiSite
+UniFi Site as configured. The default is: default
 
 ```yaml
 Type: String
@@ -42,8 +70,8 @@ Parameter Sets: Set 1
 Aliases: Site
 
 Required: false
-Position: 1
-Default Value: 
+Position: 3
+Default Value: default
 Pipeline Input: True (ByPropertyName, ByValue)
 ```
 

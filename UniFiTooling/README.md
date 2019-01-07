@@ -9,6 +9,14 @@ I use this script daily to update my own UniFi Security Gateway Firewalls (on tw
 
 I use this module for many automated updates for my UniFi Security Gateway Firewall Rules.
 
+### Version
+
+This document is based on UniFiTooling version 1.0.3
+
+### PowerShell Gallery
+
+When the Module is stable, I will publish it on the PowerShell Gallery.
+
 ### Feedback
 
 Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Bug report* if you find something not working.
@@ -75,75 +83,7 @@ The port number that you have configured on your Ubiquiti UniFi Controller.
 
 ### Examples
 
-##### IPv4 CIDR Workaround for UBNT USG Firewall Rules
-
-```powershell
-# IPv4 CIDR Workaround for UBNT USG Firewall Rules
-PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
-```
-
-##### IPv6 CIDR Workaround for UBNT USG Firewall Rules
-
-```powershell
-# IPv6 CIDR Workaround for UBNT USG Firewall Rules
-PS C:\> Invoke-UniFiCidrWorkaroundV6 -CidrList $value1
-```
-
-##### Build a Body for Set-UnifiFirewallGroup call
-
-```powershell
-# Build a Body for Set-UnifiFirewallGroup call
-PS C:\> Get-UnifiFirewallGroupBody -UnfiFirewallGroup $value1 -UnifiCidrInput $value2
-```
-
-##### Set the default Header for all UniFi Requests
-
-```powershell
-# Set the default Header for all UniFi Requests
-PS C:\> Set-UniFiDefaultRequestHeader
-```
-
-##### Read the UniFi config file
-
-```powershell
-# Read the UniFi config file
-PS C:\> Get-UniFiConfig
-```
-
-##### Read the API Credentials from the UniFi config file
-
-```powershell
-# Read the API Credentials from the UniFi config file
-PS C:\> Get-UniFiCredentials
-```
-
-##### Login to API of the Ubiquiti UniFi Controller
-
-```powershell
-# Login to API of the Ubiquiti UniFi Controller
-PS C:\> Invoke-UniFiApiLogin
-```
-
-##### Logout from the API of the Ubiquiti UniFi Controller
-
-```powershell
-# Logout from the API of the Ubiquiti UniFi Controller
-PS C:\> Invoke-UniFiApiLogout
-```
-
-##### Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
-
-```powershell
-# Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
-PS C:\> Get-UnifiFirewallGroups -UnifiSite 'Contoso'
-```
-
-##### Get a given Firewall Group via the API of the Ubiquiti UniFi Controller
-
-```powershell
-# Get a given Firewall Group via the API of the Ubiquiti UniFi Controller
-PS C:\> Set-UnifiFirewallGroup -UnfiFirewallGroup 'Value1' -UnifiCidrInput $value2
-```
+I started to publich some dem use cases. So I decided to drop the samples here. 
 
 ### Authors
 
