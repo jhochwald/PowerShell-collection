@@ -1,297 +1,10 @@
-﻿function Invoke-UniFiCidrWorkaround
-{
-   <#
-         .SYNOPSIS
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules
-	
-         .DESCRIPTION
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32)
-	
-         .PARAMETER CidrList
-         Existing CIDR List Object
-	
-         .EXAMPLE
-         PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
+﻿## Pre-Loaded Module code ##
 
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules
+<#
+   This is an early beta version! I can't recommend using it in production.
+#>
 
-         .EXAMPLE
-         PS C:\> $value1 | Invoke-UniFiCidrWorkaround
-
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
-	
-         .NOTES
-         This is an internal helper function only
-
-         .LINK
-         Invoke-UniFiCidrWorkaroundV6
-   #>
-	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Existing CIDR List Object')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('UniFiCidrList')]
-      [psobject]
-      $CidrList
-   )
-	
-   begin
-   {
-      # Cleanup
-      $AddItem = @()
-   }
-	
-   process
-   {
-      # Loop over the new list
-      foreach ($NewInputItem in $CidrList)
-      {
-         # CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
-         if ($NewInputItem -match '/32')
-         {
-            $NewInputItem = $NewInputItem.Replace('/32', '')
-         }
-         # Add to the List
-         $AddItem = $AddItem + $NewInputItem
-      }
-   }
-	
-   end
-   {
-      # Dump
-      $AddItem
-
-      # Cleanup
-      $AddItem = $null
-   }
-}
-
-function Invoke-UniFiCidrWorkaroundV6
-{
-   <#
-         .SYNOPSIS
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules
-	
-         .DESCRIPTION
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
-	
-         .PARAMETER CidrList
-         Existing CIDR List Object
-	
-         .EXAMPLE
-         PS C:\> Invoke-UniFiCidrWorkaroundV6 -CidrList $value1
-
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules
-
-         .EXAMPLE
-         PS C:\> $value1 | Invoke-UniFiCidrWorkaroundV6
-
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
-	
-         .NOTES
-         This is an internal helper function only
-
-         .LINK
-         Invoke-UniFiCidrWorkaround
-   #>
-	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Existing CIDR List Object')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('UniFiCidrList')]
-      [psobject]
-      $CidrList
-   )
-	
-   begin
-   {
-      # Cleanup
-      $AddItem = @()
-   }
-	
-   process
-   {
-      # Loop over the new list
-      foreach ($NewInputItem in $CidrList)
-      {
-         # CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
-         if ($NewInputItem -match '/128')
-         {
-            $NewInputItem = $NewInputItem.Replace('/128', '')
-         }
-         # Add to the List
-         $AddItem = $AddItem + $NewInputItem
-      }
-   }
-	
-   end
-   {
-      # Dump
-      $AddItem
-
-      # Cleanup
-      $AddItem = $null
-   }
-}
-
-function Get-UnifiFirewallGroupBody
-{
-   <#
-         .SYNOPSIS
-         Build a Body for Set-UnifiFirewallGroup call
-	
-         .DESCRIPTION
-         Build a JSON based Body for Set-UnifiFirewallGroup call
-	
-         .PARAMETER UnfiFirewallGroup
-         Existing Unfi Firewall Group
-	
-         .PARAMETER UnifiCidrInput
-         IPv4 or IPv6 input List
-	
-         .EXAMPLE
-         PS C:\> Get-UnifiFirewallGroupBody -UnfiFirewallGroup $value1 -UnifiCidrInput $value2
-	
-         Build a Body for Set-UnifiFirewallGroup call
-
-         .NOTES
-         This is an internal helper function only
-
-         . LINK
-         Set-UnifiFirewallGroup
-   #>
-	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Existing Unfi Firewall Group')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('FirewallGroup')]
-      [psobject]
-      $UnfiFirewallGroup,
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 2,
-      HelpMessage = 'IPv4 or IPv6 input List')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('CidrInput')]
-      [psobject]
-      $UnifiCidrInput
-   )
-	
-   begin
-   {
-      Write-Verbose -Message 'Cleanup exitsing Group'
-      Write-Verbose -Message "Old Values: $UnfiFirewallGroup.group_members"
-      $UnfiFirewallGroup.group_members = $null
-   }
-	
-   process
-   {
-      Write-Verbose -Message 'Create a new Object'
-      $NewUnifiCidrItem = @()
-		
-      foreach ($UnifiCidrItem in $UnifiCidrInput)
-      {
-         $NewUnifiCidrItem = $NewUnifiCidrItem + $UnifiCidrItem
-      }
-		
-      # Add the new values
-      $paramAddMember = @{
-         MemberType = 'NoteProperty'
-         Name       = 'group_members'
-         Value      = $NewUnifiCidrItem
-         Force      = $true
-      }
-      $UnfiFirewallGroup | Add-Member @paramAddMember
-		
-      # Cleanup
-      $NewUnifiCidrItem = $null
-		
-      try
-      {
-         # Create a new Request Body
-         $paramConvertToJson = @{
-            InputObject   = $UnfiFirewallGroup
-            Depth         = 5
-            ErrorAction   = 'Stop'
-            WarningAction = 'SilentlyContinue'
-         }
-         $UnfiFirewallGroupJson = (ConvertTo-Json @paramConvertToJson)
-      }
-      catch
-      {
-         $null = (Invoke-InternalScriptVariables)
-			
-         Write-Error -Message 'Unable to convert new List to JSON' -ErrorAction Stop
-			
-         break
-      }
-   }
-	
-   end
-   {
-      # Dump
-      $UnfiFirewallGroupJson
-   }
-}
-
-function Set-UniFiDefaultRequestHeader
-{
-   <#
-         .SYNOPSIS
-         Set the default Header for all UniFi Requests
-	
-         .DESCRIPTION
-         Set the default Header for all UniFi Requests
-	
-         .EXAMPLE
-         PS C:\> Set-UniFiDefaultRequestHeader
-
-         Set the default Header for all UniFi Requests
-	
-         .NOTES
-         This is an internal helper function only
-   #>
-   [CmdletBinding(ConfirmImpact = 'None')]
-   param ()
-	
-   begin
-   {
-      # Cleanup
-      $RestHeader = $null
-   }
-
-   process
-   {
-      Write-Verbose -Message 'Create the Default Request Header'
-      $Global:RestHeader = @{
-         'charset'    = 'utf-8'
-         'Content-Type' = 'application/json'
-      }
-      Write-Verbose -Message ('Default Request Header is {0}' -f $RestHeader)
-   }
-}
+## PRIVATE MODULE FUNCTIONS AND DATA ##
 
 function Get-UniFiConfig
 {
@@ -484,45 +197,7 @@ function Get-UniFiCredentials
    }
 }
 
-function Invoke-UniFiApiLogin
-{
-   <#
-         .SYNOPSIS
-         Login to API of the UniFi Controller
-	
-         .DESCRIPTION
-         Login to API of the Ubiquiti UniFi Controller
-	
-         .EXAMPLE
-         PS C:\> Invoke-UniFiApiLogin
-
-         Login to API of the Ubiquiti UniFi Controller
-	
-         .NOTES
-         Initial version of the Ubiquiti UniFi Controller automation function
-
-         .LINK
-         Get-UniFiConfig
-
-         .LINK
-         Get-UniFiCredentials
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-
-         .LINK
-         Invoke-UniFiApiLogout
-   #>
-   [CmdletBinding(ConfirmImpact = 'None')]
-   param ()
-	
-   begin
-   {
-      # Cleanup
-      $RestSession = $null
-      $Session = $null
-		
-      function Set-UniFiApiLoginBody
+function Set-UniFiApiLoginBody
       {
          <#
                .SYNOPSIS
@@ -599,6 +274,611 @@ function Invoke-UniFiApiLogin
             $RestBody = $null
          }
       }
+
+function Set-UniFiDefaultRequestHeader
+{
+   <#
+         .SYNOPSIS
+         Set the default Header for all UniFi Requests
+	
+         .DESCRIPTION
+         Set the default Header for all UniFi Requests
+	
+         .EXAMPLE
+         PS C:\> Set-UniFiDefaultRequestHeader
+
+         Set the default Header for all UniFi Requests
+	
+         .NOTES
+         This is an internal helper function only
+   #>
+   [CmdletBinding(ConfirmImpact = 'None')]
+   param ()
+	
+   begin
+   {
+      # Cleanup
+      $RestHeader = $null
+   }
+
+   process
+   {
+      Write-Verbose -Message 'Create the Default Request Header'
+      $Global:RestHeader = @{
+         'charset'    = 'utf-8'
+         'Content-Type' = 'application/json'
+      }
+      Write-Verbose -Message ('Default Request Header is {0}' -f $RestHeader)
+   }
+}
+
+## PUBLIC MODULE FUNCTIONS AND DATA ##
+
+function Get-UnifiFirewallGroupBody
+{
+   <#
+         .SYNOPSIS
+         Build a Body for Set-UnifiFirewallGroup call
+	
+         .DESCRIPTION
+         Build a JSON based Body for Set-UnifiFirewallGroup call
+	
+         .PARAMETER UnfiFirewallGroup
+         Existing Unfi Firewall Group
+	
+         .PARAMETER UnifiCidrInput
+         IPv4 or IPv6 input List
+	
+         .EXAMPLE
+         PS C:\> Get-UnifiFirewallGroupBody -UnfiFirewallGroup $value1 -UnifiCidrInput $value2
+	
+         Build a Body for Set-UnifiFirewallGroup call
+
+         .NOTES
+         This is an internal helper function only
+
+         . LINK
+         Set-UnifiFirewallGroup
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            Position = 1,
+      HelpMessage = 'Existing Unfi Firewall Group')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('FirewallGroup')]
+      [psobject]
+      $UnfiFirewallGroup,
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            Position = 2,
+      HelpMessage = 'IPv4 or IPv6 input List')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('CidrInput')]
+      [psobject]
+      $UnifiCidrInput
+   )
+	
+   begin
+   {
+      Write-Verbose -Message 'Cleanup exitsing Group'
+      Write-Verbose -Message "Old Values: $UnfiFirewallGroup.group_members"
+      $UnfiFirewallGroup.group_members = $null
+   }
+	
+   process
+   {
+      Write-Verbose -Message 'Create a new Object'
+      $NewUnifiCidrItem = @()
+		
+      foreach ($UnifiCidrItem in $UnifiCidrInput)
+      {
+         $NewUnifiCidrItem = $NewUnifiCidrItem + $UnifiCidrItem
+      }
+		
+      # Add the new values
+      $paramAddMember = @{
+         MemberType = 'NoteProperty'
+         Name       = 'group_members'
+         Value      = $NewUnifiCidrItem
+         Force      = $true
+      }
+      $UnfiFirewallGroup | Add-Member @paramAddMember
+		
+      # Cleanup
+      $NewUnifiCidrItem = $null
+		
+      try
+      {
+         # Create a new Request Body
+         $paramConvertToJson = @{
+            InputObject   = $UnfiFirewallGroup
+            Depth         = 5
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+         $UnfiFirewallGroupJson = (ConvertTo-Json @paramConvertToJson)
+      }
+      catch
+      {
+         $null = (Invoke-InternalScriptVariables)
+			
+         Write-Error -Message 'Unable to convert new List to JSON' -ErrorAction Stop
+			
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump
+      $UnfiFirewallGroupJson
+   }
+}
+
+function Get-UnifiFirewallGroups
+{
+   <#
+         .SYNOPSIS
+         Get a List Firewall Groups via the API of the UniFi Controller
+	
+         .DESCRIPTION
+         Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
+	
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+	
+         .EXAMPLE
+         PS C:\> Get-UnifiFirewallGroups
+
+         Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Get-UnifiFirewallGroups -UnifiSite 'Contoso'
+
+         Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
+	
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 1)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default'
+   )
+	
+   begin
+   {
+      # Cleanup
+      $Session = $null
+   }
+	
+   process
+   {
+      try
+      {
+         Write-Verbose -Message 'Read the Config'
+         $null = (Get-UniFiConfig)
+			
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+			
+         Write-Verbose -Message 'Set the API Call default Header'
+         $null = (Set-UniFiDefaultRequestHeader)
+			
+         Write-Verbose -Message 'Create the Request URI'
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/list/firewallgroup'
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+			
+         Write-Verbose -Message 'Send the Request'
+         $paramInvokeRestMethod = @{
+            Method        = 'Get'
+            Uri           = $ApiRequestUri
+            Headers       = $RestHeader
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+      }
+      catch
+      {
+         # Try to Logout
+         $null = (Invoke-UniFiApiLogout)
+
+         # Remove the Body variable
+         $JsonBody = $null
+
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $_)
+			
+         # Error Message
+         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      }
+		
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
+			
+         # Error Message
+         Write-Error -Message 'Unable to Login' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump the Result
+      $Session.data
+		
+      # Cleanup
+      $Session = $null
+   }
+}
+
+function Get-UnifiNetworkDetails
+{
+   <#
+         .SYNOPSIS
+         Get the details about one network via the API of the UniFi Controller
+	
+         .DESCRIPTION
+         Get the details about one network via the API of the UniFi Controller
+	
+         .PARAMETER UnifiNetwork
+         The ID (network_id) of the network you would like to get detaild information about.
+	
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+	
+         .EXAMPLE
+         PS C:\> Get-UnifiNetworkDetails -UnifiNetwork $value1
+
+         Get the details about one network via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Get-UnifiNetworkDetails -UnifiNetwork $value1 -UnifiSite 'Contoso'
+
+         Get the details about one network on Site 'Contoso' via the API of the UniFi Controller
+	
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            Position = 1,
+      HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('UnifiNetworkId', 'NetworkId')]
+      [string]
+      $UnifiNetwork,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 2)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default'
+   )
+	
+   begin
+   {
+      # Cleanup
+      $Session = $null
+   }
+	
+   process
+   {
+      try
+      {
+         Write-Verbose -Message 'Read the Config'
+         $null = (Get-UniFiConfig)
+			
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+			
+         Write-Verbose -Message 'Set the API Call default Header'
+         $null = (Set-UniFiDefaultRequestHeader)
+			
+         Write-Verbose -Message 'Create the Request URI'
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/' + $UnifiNetwork
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+			
+         Write-Verbose -Message 'Send the Request'
+         $paramInvokeRestMethod = @{
+            Method        = 'Get'
+            Uri           = $ApiRequestUri
+            Headers       = $RestHeader
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+      }
+      catch
+      {
+         # Try to Logout
+         $null = (Invoke-UniFiApiLogout)
+			
+         # Remove the Body variable
+         $JsonBody = $null
+			
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $_)
+			
+         # Error Message
+         Write-Error -Message 'Unable to get the network details' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      }
+		
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
+			
+         # Error Message
+         Write-Error -Message 'Unable to Login' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump the Result
+      $Session.data
+		
+      # Cleanup
+      $Session = $null
+   }
+}
+
+function Get-UnifiNetworkList
+{
+   <#
+         .SYNOPSIS
+         Get a List Networks via the API of the UniFi Controller
+	
+         .DESCRIPTION
+         Get a List Networks via the API of the Ubiquiti UniFi Controller
+	
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+	
+         .EXAMPLE
+         PS C:\> Get-UnifiNetworkList
+
+         Get a List Networks via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Get-UnifiNetworkList -UnifiSite 'Contoso'
+
+         Get a List Networks on Site 'Contoso' via the API of the UniFi Controller
+	
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 1)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default'
+   )
+	
+   begin
+   {
+      # Cleanup
+      $Session = $null
+   }
+	
+   process
+   {
+      try
+      {
+         Write-Verbose -Message 'Read the Config'
+         $null = (Get-UniFiConfig)
+			
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+			
+         Write-Verbose -Message 'Set the API Call default Header'
+         $null = (Set-UniFiDefaultRequestHeader)
+			
+         Write-Verbose -Message 'Create the Request URI'
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/'
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+			
+         Write-Verbose -Message 'Send the Request'
+         $paramInvokeRestMethod = @{
+            Method        = 'Get'
+            Uri           = $ApiRequestUri
+            Headers       = $RestHeader
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+      }
+      catch
+      {
+         # Try to Logout
+         $null = (Invoke-UniFiApiLogout)
+
+         # Remove the Body variable
+         $JsonBody = $null
+
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $_)
+			
+         # Error Message
+         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      }
+		
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
+			
+         # Error Message
+         Write-Error -Message 'Unable to get the network list' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump the Result
+      $Session.data
+		
+      # Cleanup
+      $Session = $null
+   }
+}
+
+function Invoke-UniFiApiLogin
+{
+   <#
+         .SYNOPSIS
+         Login to API of the UniFi Controller
+	
+         .DESCRIPTION
+         Login to API of the Ubiquiti UniFi Controller
+	
+         .EXAMPLE
+         PS C:\> Invoke-UniFiApiLogin
+
+         Login to API of the Ubiquiti UniFi Controller
+	
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Get-UniFiCredentials
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Invoke-UniFiApiLogout
+   #>
+   [CmdletBinding(ConfirmImpact = 'None')]
+   param ()
+	
+   begin
+   {
+      # Cleanup
+      $RestSession = $null
+      $Session = $null
    }
 	
    process
@@ -808,178 +1088,33 @@ function Invoke-UniFiApiLogout
    }
 }
 
-function Get-UnifiNetworkList
+function Invoke-UniFiCidrWorkaround
 {
    <#
          .SYNOPSIS
-         Get a List Networks via the API of the UniFi Controller
+         IPv4 CIDR Workaround for UBNT USG Firewall Rules
 	
          .DESCRIPTION
-         Get a List Networks via the API of the Ubiquiti UniFi Controller
+         IPv4 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32)
 	
-         .PARAMETER UnifiSite
-         UniFi Site as configured. The default is: default
+         .PARAMETER CidrList
+         Existing CIDR List Object
 	
          .EXAMPLE
-         PS C:\> Get-UnifiNetworkList
+         PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
 
-         Get a List Networks via the API of the UniFi Controller
+         IPv4 CIDR Workaround for UBNT USG Firewall Rules
 
          .EXAMPLE
-         PS C:\> Get-UnifiNetworkList -UnifiSite 'Contoso'
+         PS C:\> $value1 | Invoke-UniFiCidrWorkaround
 
-         Get a List Networks on Site 'Contoso' via the API of the UniFi Controller
+         IPv4 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
 	
          .NOTES
-         Initial version of the Ubiquiti UniFi Controller automation function
+         This is an internal helper function only
 
          .LINK
-         Get-UniFiConfig
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-   #>
-	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
-      [ValidateNotNullOrEmpty()]
-      [Alias('Site')]
-      [string]
-      $UnifiSite = 'default'
-   )
-	
-   begin
-   {
-      # Cleanup
-      $Session = $null
-   }
-	
-   process
-   {
-      try
-      {
-         Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
-			
-         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
-            $ApiSelfSignedCert
-         }
-			
-         Write-Verbose -Message 'Set the API Call default Header'
-         $null = (Set-UniFiDefaultRequestHeader)
-			
-         Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/'
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
-			
-         Write-Verbose -Message 'Send the Request'
-         $paramInvokeRestMethod = @{
-            Method        = 'Get'
-            Uri           = $ApiRequestUri
-            Headers       = $RestHeader
-            ErrorAction   = 'SilentlyContinue'
-            WarningAction = 'SilentlyContinue'
-            WebSession    = $RestSession
-         }
-         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
-      }
-      catch
-      {
-         # Try to Logout
-         $null = (Invoke-UniFiApiLogout)
-
-         # Remove the Body variable
-         $JsonBody = $null
-
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
-			
-         # Error Message
-         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
-      }
-      finally
-      {
-         # Reset the SSL Trust (make sure everything is back to default)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
-      }
-		
-      # check result
-      if ($Session.meta.rc -ne 'ok')
-      {
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
-			
-         # Error Message
-         Write-Error -Message 'Unable to get the network list' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
-      }
-   }
-	
-   end
-   {
-      # Dump the Result
-      $Session.data
-		
-      # Cleanup
-      $Session = $null
-   }
-}
-
-function Get-UnifiNetworkDetails
-{
-   <#
-         .SYNOPSIS
-         Get the details about one network via the API of the UniFi Controller
-	
-         .DESCRIPTION
-         Get the details about one network via the API of the UniFi Controller
-	
-         .PARAMETER UnifiNetwork
-         The ID (network_id) of the network you would like to get detaild information about.
-	
-         .PARAMETER UnifiSite
-         UniFi Site as configured. The default is: default
-	
-         .EXAMPLE
-         PS C:\> Get-UnifiNetworkDetails -UnifiNetwork $value1
-
-         Get the details about one network via the API of the UniFi Controller
-
-         .EXAMPLE
-         PS C:\> Get-UnifiNetworkDetails -UnifiNetwork $value1 -UnifiSite 'Contoso'
-
-         Get the details about one network on Site 'Contoso' via the API of the UniFi Controller
-	
-         .NOTES
-         Initial version of the Ubiquiti UniFi Controller automation function
-
-         .LINK
-         Get-UniFiConfig
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
+         Invoke-UniFiCidrWorkaroundV6
    #>
 	
    [CmdletBinding(ConfirmImpact = 'None')]
@@ -990,147 +1125,71 @@ function Get-UnifiNetworkDetails
             ValueFromPipeline,
             ValueFromPipelineByPropertyName,
             Position = 1,
-      HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
+      HelpMessage = 'Existing CIDR List Object')]
       [ValidateNotNullOrEmpty()]
-      [Alias('UnifiNetworkId', 'NetworkId')]
-      [string]
-      $UnifiNetwork,
-      [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
-      [ValidateNotNullOrEmpty()]
-      [Alias('Site')]
-      [string]
-      $UnifiSite = 'default'
+      [Alias('UniFiCidrList')]
+      [psobject]
+      $CidrList
    )
 	
    begin
    {
       # Cleanup
-      $Session = $null
+      $AddItem = @()
    }
 	
    process
    {
-      try
+      # Loop over the new list
+      foreach ($NewInputItem in $CidrList)
       {
-         Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
-			
-         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
-            $ApiSelfSignedCert
+         # CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
+         if ($NewInputItem -match '/32')
+         {
+            $NewInputItem = $NewInputItem.Replace('/32', '')
          }
-			
-         Write-Verbose -Message 'Set the API Call default Header'
-         $null = (Set-UniFiDefaultRequestHeader)
-			
-         Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/' + $UnifiNetwork
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
-			
-         Write-Verbose -Message 'Send the Request'
-         $paramInvokeRestMethod = @{
-            Method        = 'Get'
-            Uri           = $ApiRequestUri
-            Headers       = $RestHeader
-            ErrorAction   = 'SilentlyContinue'
-            WarningAction = 'SilentlyContinue'
-            WebSession    = $RestSession
-         }
-         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
-      }
-      catch
-      {
-         # Try to Logout
-         $null = (Invoke-UniFiApiLogout)
-			
-         # Remove the Body variable
-         $JsonBody = $null
-			
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
-			
-         # Error Message
-         Write-Error -Message 'Unable to get the network details' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
-      }
-      finally
-      {
-         # Reset the SSL Trust (make sure everything is back to default)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
-      }
-		
-      # check result
-      if ($Session.meta.rc -ne 'ok')
-      {
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
-			
-         # Error Message
-         Write-Error -Message 'Unable to Login' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
+         # Add to the List
+         $AddItem = $AddItem + $NewInputItem
       }
    }
 	
    end
    {
-      # Dump the Result
-      $Session.data
-		
+      # Dump
+      $AddItem
+
       # Cleanup
-      $Session = $null
+      $AddItem = $null
    }
 }
 
-function Set-UnifiNetworkDetails
+function Invoke-UniFiCidrWorkaroundV6
 {
    <#
          .SYNOPSIS
-         Modifies one network via the API of the UniFi Controller
+         IPv6 CIDR Workaround for UBNT USG Firewall Rules
 	
          .DESCRIPTION
-         Modifies one network via the API of the UniFi Controller
+         IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
 	
-         .PARAMETER UnifiNetwork
-         The ID (network_id) of the network you would like to get detaild information about.
-
-         .PARAMETER UniFiBody
-         JSON formed Body for the Request
-	
-         .PARAMETER UnifiSite
-         UniFi Site as configured. The default is: default
+         .PARAMETER CidrList
+         Existing CIDR List Object
 	
          .EXAMPLE
-         PS C:\> Set-UnifiNetworkDetails -UnifiNetwork $value1
+         PS C:\> Invoke-UniFiCidrWorkaroundV6 -CidrList $value1
 
-         Get the details about one network via the API of the UniFi Controller
+         IPv6 CIDR Workaround for UBNT USG Firewall Rules
 
          .EXAMPLE
-         PS C:\> Set-UnifiNetworkDetails -UnifiNetwork $value1 -UnifiSite 'Contoso'
+         PS C:\> $value1 | Invoke-UniFiCidrWorkaroundV6
 
-         Get the details about one network on Site 'Contoso' via the API of the UniFi Controller
+         IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
 	
          .NOTES
-         Initial version of the Ubiquiti UniFi Controller automation function
+         This is an internal helper function only
 
          .LINK
-         Get-UniFiConfig
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
+         Invoke-UniFiCidrWorkaround
    #>
 	
    [CmdletBinding(ConfirmImpact = 'None')]
@@ -1141,251 +1200,41 @@ function Set-UnifiNetworkDetails
             ValueFromPipeline,
             ValueFromPipelineByPropertyName,
             Position = 1,
-      HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
+      HelpMessage = 'Existing CIDR List Object')]
       [ValidateNotNullOrEmpty()]
-      [Alias('UnifiNetworkId', 'NetworkId')]
-      [string]
-      $UnifiNetwork,
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 2,
-      HelpMessage = 'JSON formed Body for the Request')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('Body')]
-      [string]
-      $UniFiBody,
-      [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 3)]
-      [ValidateNotNullOrEmpty()]
-      [Alias('Site')]
-      [string]
-      $UnifiSite = 'default'
+      [Alias('UniFiCidrList')]
+      [psobject]
+      $CidrList
    )
 	
    begin
    {
       # Cleanup
-      $Session = $null
+      $AddItem = @()
    }
 	
    process
    {
-      try
+      # Loop over the new list
+      foreach ($NewInputItem in $CidrList)
       {
-         Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
-			
-         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
-            $ApiSelfSignedCert
+         # CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
+         if ($NewInputItem -match '/128')
+         {
+            $NewInputItem = $NewInputItem.Replace('/128', '')
          }
-			
-         Write-Verbose -Message 'Set the API Call default Header'
-         $null = (Set-UniFiDefaultRequestHeader)
-			
-         Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/' + $UnifiNetwork
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
-			
-         Write-Verbose -Message 'Send the Request'
-         $paramInvokeRestMethod = @{
-            Method        = 'Put'
-            Uri           = $ApiRequestUri
-            Body          = $UniFiBody
-            Headers       = $RestHeader
-            ErrorAction   = 'SilentlyContinue'
-            WarningAction = 'SilentlyContinue'
-            WebSession    = $RestSession
-         }
-         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
-      }
-      catch
-      {
-         # Try to Logout
-         $null = (Invoke-UniFiApiLogout)
-			
-         # Remove the Body variable
-         $JsonBody = $null
-			
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
-			
-         # Error Message
-         Write-Error -Message 'Unable to modify given network' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
-      }
-      finally
-      {
-         # Reset the SSL Trust (make sure everything is back to default)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
-      }
-		
-      # check result
-      if ($Session.meta.rc -ne 'ok')
-      {
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
-			
-         # Error Message
-         Write-Error -Message 'Unable to Login' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
+         # Add to the List
+         $AddItem = $AddItem + $NewInputItem
       }
    }
 	
    end
    {
-      # Dump the Result
-      $Session.data
-		
+      # Dump
+      $AddItem
+
       # Cleanup
-      $Session = $null
-   }
-}
-
-function Get-UnifiFirewallGroups
-{
-   <#
-         .SYNOPSIS
-         Get a List Firewall Groups via the API of the UniFi Controller
-	
-         .DESCRIPTION
-         Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
-	
-         .PARAMETER UnifiSite
-         UniFi Site as configured. The default is: default
-	
-         .EXAMPLE
-         PS C:\> Get-UnifiFirewallGroups
-
-         Get a List Firewall Groups via the API of the Ubiquiti UniFi Controller
-
-         .EXAMPLE
-         PS C:\> Get-UnifiFirewallGroups -UnifiSite 'Contoso'
-
-         Get a List Firewall Groups on Site 'Contoso' via the API of the Ubiquiti UniFi Controller
-	
-         .NOTES
-         Initial version of the Ubiquiti UniFi Controller automation function
-
-         .LINK
-         Get-UniFiConfig
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-
-         .LINK
-         Set-UniFiDefaultRequestHeader
-   #>
-	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
-      [ValidateNotNullOrEmpty()]
-      [Alias('Site')]
-      [string]
-      $UnifiSite = 'default'
-   )
-	
-   begin
-   {
-      # Cleanup
-      $Session = $null
-   }
-	
-   process
-   {
-      try
-      {
-         Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
-			
-         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
-            $ApiSelfSignedCert
-         }
-			
-         Write-Verbose -Message 'Set the API Call default Header'
-         $null = (Set-UniFiDefaultRequestHeader)
-			
-         Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/list/firewallgroup'
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
-			
-         Write-Verbose -Message 'Send the Request'
-         $paramInvokeRestMethod = @{
-            Method        = 'Get'
-            Uri           = $ApiRequestUri
-            Headers       = $RestHeader
-            ErrorAction   = 'SilentlyContinue'
-            WarningAction = 'SilentlyContinue'
-            WebSession    = $RestSession
-         }
-         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
-      }
-      catch
-      {
-         # Try to Logout
-         $null = (Invoke-UniFiApiLogout)
-
-         # Remove the Body variable
-         $JsonBody = $null
-
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
-			
-         # Error Message
-         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
-      }
-      finally
-      {
-         # Reset the SSL Trust (make sure everything is back to default)
-         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
-      }
-		
-      # check result
-      if ($Session.meta.rc -ne 'ok')
-      {
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
-			
-         # Error Message
-         Write-Error -Message 'Unable to Login' -ErrorAction Stop
-			
-         # Only here to catch a global ErrorAction overwrite
-         break
-      }
-   }
-	
-   end
-   {
-      # Dump the Result
-      $Session.data
-		
-      # Cleanup
-      $Session = $null
+      $AddItem = $null
    }
 }
 
@@ -1563,3 +1412,172 @@ function Set-UnifiFirewallGroup
       $Session = $null
    }
 }
+
+function Set-UnifiNetworkDetails
+{
+   <#
+         .SYNOPSIS
+         Modifies one network via the API of the UniFi Controller
+	
+         .DESCRIPTION
+         Modifies one network via the API of the UniFi Controller
+	
+         .PARAMETER UnifiNetwork
+         The ID (network_id) of the network you would like to get detaild information about.
+
+         .PARAMETER UniFiBody
+         JSON formed Body for the Request
+	
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+	
+         .EXAMPLE
+         PS C:\> Set-UnifiNetworkDetails -UnifiNetwork $value1
+
+         Get the details about one network via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Set-UnifiNetworkDetails -UnifiNetwork $value1 -UnifiSite 'Contoso'
+
+         Get the details about one network on Site 'Contoso' via the API of the UniFi Controller
+	
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            Position = 1,
+      HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('UnifiNetworkId', 'NetworkId')]
+      [string]
+      $UnifiNetwork,
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            Position = 2,
+      HelpMessage = 'JSON formed Body for the Request')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Body')]
+      [string]
+      $UniFiBody,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 3)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default'
+   )
+	
+   begin
+   {
+      # Cleanup
+      $Session = $null
+   }
+	
+   process
+   {
+      try
+      {
+         Write-Verbose -Message 'Read the Config'
+         $null = (Get-UniFiConfig)
+			
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+			
+         Write-Verbose -Message 'Set the API Call default Header'
+         $null = (Set-UniFiDefaultRequestHeader)
+			
+         Write-Verbose -Message 'Create the Request URI'
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/' + $UnifiNetwork
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+			
+         Write-Verbose -Message 'Send the Request'
+         $paramInvokeRestMethod = @{
+            Method        = 'Put'
+            Uri           = $ApiRequestUri
+            Body          = $UniFiBody
+            Headers       = $RestHeader
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+      }
+      catch
+      {
+         # Try to Logout
+         $null = (Invoke-UniFiApiLogout)
+			
+         # Remove the Body variable
+         $JsonBody = $null
+			
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $_)
+			
+         # Error Message
+         Write-Error -Message 'Unable to modify given network' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      finally
+      {
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      }
+		
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
+			
+         # Error Message
+         Write-Error -Message 'Unable to Login' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump the Result
+      $Session.data
+		
+      # Cleanup
+      $Session = $null
+   }
+}
+
+## Post-Load Module code ##
+
+
+$ThisModuleLoaded = $true
+
+
+
