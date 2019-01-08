@@ -4,6 +4,12 @@ This is an early beta version for an PowerShell Module for the Ubiquiti UniFi Co
 
 I use this module for many automated updates for my UniFi Security Gateway Firewall Rules and do a few other things automated.
 
+#### Will be moved soon
+
+**New dedicated [repository](https://github.com/jhochwald/UniFiTooling) is online!**
+
+I found several issues with my build system, so I delayed the move for a few days... But I'm still working on it ^^
+
 ### Use Cases
 
 Please see the [UseCases](UseCases) directory.
