@@ -33,6 +33,15 @@
 	
          .NOTES
          enabling Technology internal Build helper function
+
+         .LINK
+         Get-etModuleVersion
+
+         .LINK
+         Compare-enModuleVersions
+
+         .LINK
+         Find-Module
    #>
 	
    [CmdletBinding(ConfirmImpact = 'None')]
