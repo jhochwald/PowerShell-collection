@@ -1,7 +1,7 @@
 ﻿---
 Module Name: UniFiTooling
 Module Guid: 7fff91a0-02eb-4df2-84d5-c7d3cd7f7a5d
-Download Help Link: https://github.com/jhochwald/UniFiTooling/tree/master/docs/UniFiTooling.md
+Download Help Link: https://github.com/jhochwald/UniFiTooling/raw/master/docs/UniFiTooling.md
 Help Version: 1.0.6
 Locale: en-US
 ---
