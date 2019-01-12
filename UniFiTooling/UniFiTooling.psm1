@@ -473,6 +473,10 @@ function Get-UnifiFirewallGroups
    {
       # Cleanup
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
    }
 	
    process
@@ -554,6 +558,9 @@ function Get-UnifiFirewallGroups
 		
       # Cleanup
       $Session = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 
@@ -621,6 +628,10 @@ function Get-UnifiNetworkDetails
    {
       # Cleanup
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
    }
 	
    process
@@ -702,6 +713,9 @@ function Get-UnifiNetworkDetails
 		
       # Cleanup
       $Session = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 
@@ -757,6 +771,10 @@ function Get-UnifiNetworkList
    {
       # Cleanup
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
    }
 	
    process
@@ -838,6 +856,9 @@ function Get-UnifiNetworkList
 		
       # Cleanup
       $Session = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 
@@ -878,6 +899,10 @@ function Invoke-UniFiApiLogin
       # Cleanup
       $RestSession = $null
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
    }
 	
    process
@@ -973,6 +998,9 @@ function Invoke-UniFiApiLogin
    {
       # Cleanup
       $Session = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 
@@ -1010,6 +1038,10 @@ function Invoke-UniFiApiLogout
    {
       # Cleanup
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
    }
 	
    process
@@ -1084,6 +1116,9 @@ function Invoke-UniFiApiLogout
       # Cleanup
       $Session = $null
       $RestSession = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 
@@ -1266,8 +1301,13 @@ function Set-UnifiFirewallGroup
       # Cleanup
       $TargetFirewallGroup = $null
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
 		
       Write-Verbose -Message ('Check if {0} exists' -f $UnfiFirewallGroup)
+
       $TargetFirewallGroup = (Get-UnifiFirewallGroups | Where-Object -FilterScript {
             ($_.Name -eq $UnfiFirewallGroup)
       })
@@ -1283,6 +1323,7 @@ function Set-UnifiFirewallGroup
          # Only here to catch a global ErrorAction overwrite
          break
       }
+
       Write-Verbose -Message ('{0} exists' -f $UnfiFirewallGroup)
 		
       $UnfiFirewallGroupBody = (Get-UnifiFirewallGroupBody -UnfiFirewallGroup $TargetFirewallGroup -UnifiCidrInput $UnifiCidrInput)
@@ -1293,21 +1334,27 @@ function Set-UnifiFirewallGroup
       try
       {
          Write-Verbose -Message 'Read the Config'
+
          $null = (Get-UniFiConfig)
 			
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
 			
          Write-Verbose -Message 'Set the API Call default Header'
+
          $null = (Set-UniFiDefaultRequestHeader)
 			
          Write-Verbose -Message 'Create the Request URI'
+
          $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/firewallgroup/' + $TargetFirewallGroup._id
+
          Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
 			
          Write-Verbose -Message 'Send the Request'
+
          $paramInvokeRestMethod = @{
             Method        = 'Put'
             Uri           = $ApiRequestUri
@@ -1318,6 +1365,7 @@ function Set-UnifiFirewallGroup
             WebSession    = $RestSession
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+
          Write-Verbose -Message ('Session Info: {0}' -f $Session)
       }
       catch
@@ -1365,6 +1413,9 @@ function Set-UnifiFirewallGroup
    {
       # Cleanup
       $Session = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 
@@ -1444,6 +1495,10 @@ function Set-UnifiNetworkDetails
    {
       # Cleanup
       $Session = $null
+      
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
    }
 	
    process
@@ -1526,6 +1581,9 @@ function Set-UnifiNetworkDetails
 		
       # Cleanup
       $Session = $null
+      
+      # Restore ProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
    }
 }
 #endregion ModulePublicFunctions
