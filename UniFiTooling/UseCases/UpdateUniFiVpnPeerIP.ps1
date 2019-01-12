@@ -54,6 +54,10 @@ begin
    # Put the input to a new variable
    # I use [ipaddress] above and let PowerShell do the input checks, because the Controlelr is a bit picky with the format
    $NewPeerIp2 = $NewPeerIp.IPAddressToString
+   
+   # Safe ProgressPreference and Setup SilentlyContinue for the function
+   $ExistingProgressPreference = ($ProgressPreference)
+   $ProgressPreference = 'SilentlyContinue'
 }
 
 process
@@ -101,6 +105,9 @@ end
 {
    # Logoff
    $null = (Invoke-UniFiApiLogout)
+   
+   # Restore ProgressPreference
+   $ProgressPreference = $ExistingProgressPreference
 }
 
 

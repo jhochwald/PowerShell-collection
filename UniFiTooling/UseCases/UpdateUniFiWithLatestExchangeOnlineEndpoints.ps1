@@ -39,6 +39,10 @@ begin
 
    # Login
    $null = (Invoke-UniFiApiLogin)
+   
+   # Safe ProgressPreference and Setup SilentlyContinue for the function
+   $ExistingProgressPreference = ($ProgressPreference)
+   $ProgressPreference = 'SilentlyContinue'
 }
 
 process
@@ -139,4 +143,7 @@ end
 {
    # Logoff
    $null = (Invoke-UniFiApiLogout)
+   
+   # Restore ProgressPreference
+   $ProgressPreference = $ExistingProgressPreference
 }
