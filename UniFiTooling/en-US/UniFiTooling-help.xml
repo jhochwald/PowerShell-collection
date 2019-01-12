@@ -522,11 +522,11 @@
       <command:verb>Invoke</command:verb>
       <command:noun>UniFiCidrWorkaround</command:noun>
       <maml:description>
-        <maml:para>IPv4 CIDR Workaround for UBNT USG Firewall Rules</maml:para>
+        <maml:para>IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>IPv4 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32)</maml:para>
+      <maml:para>IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32 OR single IPv6 has to be without /128)</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -543,6 +543,17 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="IPv6, V6">
+          <maml:name>6</maml:name>
+          <maml:Description>
+            <maml:para>Process IPv6 CIDR (Single IPv6 has to be without /128)</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -558,6 +569,18 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="IPv6, V6">
+        <maml:name>6</maml:name>
+        <maml:Description>
+          <maml:para>Process IPv6 CIDR (Single IPv6 has to be without /128)</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
     </command:parameters>
     <command:inputTypes />
     <command:returnValues>
@@ -572,7 +595,7 @@
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para>This is an internal helper function only</maml:para>
+        <maml:para>This is an internal helper function only (Will be moved to the private functions soon)</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
@@ -585,9 +608,23 @@
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Invoke-UniFiCidrWorkaround -6 -CidrList $value1</dev:code>
+        <dev:remarks>
+          <maml:para>IPv6 CIDR Workaround for UBNT USG Firewall Rules</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
         <dev:code>$value1 | Invoke-UniFiCidrWorkaround</dev:code>
         <dev:remarks>
-          <maml:para>IPv4 CIDR Workaround for UBNT USG Firewall Rules via Pipeline</maml:para>
+          <maml:para>IPv4 or IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>$value1 | Invoke-UniFiCidrWorkaround -6</dev:code>
+        <dev:remarks>
+          <maml:para>IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -597,8 +634,8 @@
         <maml:uri>https://github.com/jhochwald/UniFiTooling/docs/Invoke-UniFiCidrWorkaround.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
-        <maml:linkText>Invoke-UniFiCidrWorkaroundV6</maml:linkText>
-        <maml:uri></maml:uri>
+        <maml:linkText>https://github.com/jhochwald/UniFiTooling/issues/5</maml:linkText>
+        <maml:uri>https://github.com/jhochwald/UniFiTooling/issues/5</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -678,10 +715,6 @@
       </command:example>
     </command:examples>
     <command:relatedLinks>
-      <maml:navigationLink>
-        <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/docs/Invoke-UniFiCidrWorkaroundV6.md</maml:uri>
-      </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Invoke-UniFiCidrWorkaround</maml:linkText>
         <maml:uri></maml:uri>

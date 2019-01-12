@@ -1089,152 +1089,108 @@ function Invoke-UniFiApiLogout
 
 function Invoke-UniFiCidrWorkaround
 {
-   <#
-         .SYNOPSIS
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules
+<#
+	.SYNOPSIS
+		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules
 	
-         .DESCRIPTION
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32)
+	.DESCRIPTION
+		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32 OR single IPv6 has to be without /128)
 	
-         .PARAMETER CidrList
-         Existing CIDR List Object
+	.PARAMETER CidrList
+		Existing CIDR List Object
 	
-         .EXAMPLE
-         PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
-
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules
-
-         .EXAMPLE
-         PS C:\> $value1 | Invoke-UniFiCidrWorkaround
-
-         IPv4 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
+	.PARAMETER 6
+		Process IPv6 CIDR (Single IPv6 has to be without /128)
 	
-         .NOTES
-         This is an internal helper function only
-
-         .LINK
-         Invoke-UniFiCidrWorkaroundV6
-   #>
+	.EXAMPLE
+		PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
+		
+		IPv4 CIDR Workaround for UBNT USG Firewall Rules
 	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Existing CIDR List Object')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('UniFiCidrList')]
-      [psobject]
-      $CidrList
-   )
+	.EXAMPLE
+		PS C:\> Invoke-UniFiCidrWorkaround -6 -CidrList $value1
+		
+		IPv6 CIDR Workaround for UBNT USG Firewall Rules
 	
-   begin
-   {
-      # Cleanup
-      $AddItem = @()
-   }
+	.EXAMPLE
+		PS C:\> $value1 | Invoke-UniFiCidrWorkaround
+		
+		IPv4 or IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
 	
-   process
-   {
-      # Loop over the new list
-      foreach ($NewInputItem in $CidrList)
-      {
-         # CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
-         if ($NewInputItem -match '/32')
-         {
-            $NewInputItem = $NewInputItem.Replace('/32', '')
-         }
-         # Add to the List
-         $AddItem = $AddItem + $NewInputItem
-      }
-   }
+	.EXAMPLE
+		PS C:\> $value1 | Invoke-UniFiCidrWorkaround -6
+		
+		IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
 	
-   end
-   {
-      # Dump
-      $AddItem
-
-      # Cleanup
-      $AddItem = $null
-   }
-}
-
-function Invoke-UniFiCidrWorkaroundV6
-{
-   <#
-         .SYNOPSIS
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules
+	.NOTES
+		This is an internal helper function only (Will be moved to the private functions soon)
 	
-         .DESCRIPTION
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
+	.LINK
+		https://github.com/jhochwald/UniFiTooling/issues/5
+#>
 	
-         .PARAMETER CidrList
-         Existing CIDR List Object
+	[CmdletBinding(ConfirmImpact = 'None')]
+	[OutputType([psobject])]
+	param
+	(
+		[Parameter(Mandatory = $true,
+				   ValueFromPipeline = $true,
+				   ValueFromPipelineByPropertyName = $true,
+				   Position = 1,
+				   HelpMessage = 'Existing CIDR List Object')]
+		[ValidateNotNullOrEmpty()]
+		[Alias('UniFiCidrList')]
+		[psobject]
+		$CidrList,
+		[Parameter(ValueFromPipeline = $true,
+				   ValueFromPipelineByPropertyName = $true,
+				   Position = 2)]
+		[Alias('IPv6', 'V6')]
+		[switch]
+		$6 = $false
+	)
 	
-         .EXAMPLE
-         PS C:\> Invoke-UniFiCidrWorkaroundV6 -CidrList $value1
-
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules
-
-         .EXAMPLE
-         PS C:\> $value1 | Invoke-UniFiCidrWorkaroundV6
-
-         IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
+	begin
+	{
+		# Cleanup
+		$AddItem = @()
+	}
 	
-         .NOTES
-         This is an internal helper function only
-
-         .LINK
-         Invoke-UniFiCidrWorkaround
-   #>
+	process
+	{
+		# Loop over the new list
+		foreach ($NewInputItem in $CidrList)
+		{
+			if ($6)
+			{
+				# CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
+				if ($NewInputItem -match '/128')
+				{
+					$NewInputItem = $NewInputItem.Replace('/128', '')
+				}
+			}
+			else
+			{
+				# CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
+				if ($NewInputItem -match '/32')
+				{
+					$NewInputItem = $NewInputItem.Replace('/32', '')
+				}
+			}
+			
+			# Add to the List
+			$AddItem = $AddItem + $NewInputItem
+		}
+	}
 	
-   [CmdletBinding(ConfirmImpact = 'None')]
-   [OutputType([psobject])]
-   param
-   (
-      [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Existing CIDR List Object')]
-      [ValidateNotNullOrEmpty()]
-      [Alias('UniFiCidrList')]
-      [psobject]
-      $CidrList
-   )
-	
-   begin
-   {
-      # Cleanup
-      $AddItem = @()
-   }
-	
-   process
-   {
-      # Loop over the new list
-      foreach ($NewInputItem in $CidrList)
-      {
-         # CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
-         if ($NewInputItem -match '/128')
-         {
-            $NewInputItem = $NewInputItem.Replace('/128', '')
-         }
-         # Add to the List
-         $AddItem = $AddItem + $NewInputItem
-      }
-   }
-	
-   end
-   {
-      # Dump
-      $AddItem
-
-      # Cleanup
-      $AddItem = $null
-   }
+	end
+	{
+		# Dump
+		$AddItem
+		
+		# Cleanup
+		$AddItem = $null
+	}
 }
 
 function Set-UnifiFirewallGroup

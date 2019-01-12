@@ -6,7 +6,7 @@ I use this module for many automated updates for my UniFi Security Gateway Firew
 
 ### Use Cases
 
-Please see the [UseCases](UseCases) directory.
+Please see the [UseCases](https://github.com/jhochwald/UniFiTooling/tree/master/release/UniFiTooling/UseCases) directory.
 
 ### Version
 
@@ -18,11 +18,11 @@ When the Module is stable, I will publish it on the PowerShell Gallery.
 
 ### Feedback
 
-Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Bug report* if you find something not working.
+Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/jhochwald/UniFiTooling/issues/issues/new/choose) as *Bug report* if you find something not working.
 
 ### Contribute
 
-Anything missing? Please open a [GitHub issue](https://github.com/jhochwald/PowerShell-collection/issues/new/choose) as *Feature request*. Suggest an idea for this Module will help to improve this module.
+Anything missing? Please open a [GitHub issue](https://github.com/jhochwald/UniFiTooling/issues/issues/new/choose) as *Feature request*. Suggest an idea for this Module will help to improve this module.
 
 ### Description
 
@@ -108,7 +108,7 @@ All rights reserved.
 
 ### License
 
-BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE)
+BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/UniFiTooling/blob/master/LICENSE)
 
 ### Keywords
 

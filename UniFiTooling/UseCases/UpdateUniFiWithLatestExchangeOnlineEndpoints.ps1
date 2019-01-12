@@ -73,7 +73,7 @@ process
       }
 
       # Create a Ubiquiti UniFi compatible IPv6 List
-      $NewExo587EndpointsIPv6 = ($NewExo587EndpointsIPv6 | Sort-Object -Unique | Invoke-UniFiCidrWorkaroundV6)
+      $NewExo587EndpointsIPv6 = ($NewExo587EndpointsIPv6 | Sort-Object -Unique | Invoke-UniFiCidrWorkaround -6)
 
       # Modify the existing group
       $null = (Set-UnifiFirewallGroup -UnfiFirewallGroup 'ExchangeOnline-Sumission-IPv6' -UnifiCidrInput $NewExo587EndpointsIPv6)
@@ -104,7 +104,7 @@ process
       }
 
       # Create a Ubiquiti UniFi compatible IPv6 List
-      $NewExo25EndpointsIPv6 = ($NewExo25EndpointsIPv6 | Sort-Object -Unique | Invoke-UniFiCidrWorkaroundV6)
+      $NewExo25EndpointsIPv6 = ($NewExo25EndpointsIPv6 | Sort-Object -Unique | Invoke-UniFiCidrWorkaround -6)
 
       # Modify the existing group
       $null = (Set-UnifiFirewallGroup -UnfiFirewallGroup 'ExchangeOnline-SMTP-IPv6' -UnifiCidrInput $NewExo25EndpointsIPv6)
