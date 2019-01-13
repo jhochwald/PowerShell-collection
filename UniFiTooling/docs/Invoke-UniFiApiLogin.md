@@ -7,7 +7,7 @@ Module Name: UniFiTooling
 online version: https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UniFiApiLogin.md
 schema: 2.0.0
 tags: OnlineHelp PowerShell
-timestamp: 2019-01-12
+timestamp: 2019-01-13
 title: Invoke-UniFiApiLogin
 ---
 
