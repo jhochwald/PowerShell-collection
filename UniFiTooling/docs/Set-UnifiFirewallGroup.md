@@ -1,14 +1,11 @@
 ﻿---
-author: Joerg Hochwald
-category: UNIFITOOLING
 external help file: UniFiTooling-help.xml
-layout: post
+HelpVersion: 1.0.8
+Locale: en-US
+Module Guid: 7fff91a0-02eb-4df2-84d5-c7d3cd7f7a5d
 Module Name: UniFiTooling
 online version: https://github.com/jhochwald/UniFiTooling/raw/master/docs/Set-UnifiFirewallGroup.md
 schema: 2.0.0
-tags: OnlineHelp PowerShell
-timestamp: 2019-01-13
-title: Set-UnifiFirewallGroup
 ---
 
 # Set-UnifiFirewallGroup
@@ -46,7 +43,7 @@ Parameter Sets: (All)
 Aliases: FirewallGroup
 
 Required: True
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -61,7 +58,7 @@ Parameter Sets: (All)
 Aliases: CidrInput
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -77,7 +74,7 @@ Parameter Sets: (All)
 Aliases: Site
 
 Required: False
-Position: 4
+Position: 3
 Default value: Default
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False

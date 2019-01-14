@@ -1,14 +1,11 @@
 ﻿---
-author: Joerg Hochwald
-category: UNIFITOOLING
 external help file: UniFiTooling-help.xml
-layout: post
+HelpVersion: 1.0.8
+Locale: en-US
+Module Guid: 7fff91a0-02eb-4df2-84d5-c7d3cd7f7a5d
 Module Name: UniFiTooling
 online version: https://github.com/jhochwald/UniFiTooling/raw/master/docs/Set-UnifiNetworkDetails.md
 schema: 2.0.0
-tags: OnlineHelp PowerShell
-timestamp: 2019-01-13
-title: Set-UnifiNetworkDetails
 ---
 
 # Set-UnifiNetworkDetails
@@ -45,7 +42,7 @@ Get the details about one network on Site 'Contoso' via the API of the UniFi Con
 ## PARAMETERS
 
 ### -UnifiNetwork
-The ID (network_id) of the network you would like to get detaild information about.
+The ID (network_id) of the network you would like to get detailed information about.
 
 ```yaml
 Type: String
@@ -53,7 +50,7 @@ Parameter Sets: (All)
 Aliases: UnifiNetworkId, NetworkId
 
 Required: True
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -68,7 +65,7 @@ Parameter Sets: (All)
 Aliases: Body
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -84,7 +81,7 @@ Parameter Sets: (All)
 Aliases: Site
 
 Required: False
-Position: 4
+Position: 3
 Default value: Default
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -105,8 +102,6 @@ Initial version of the Ubiquiti UniFi Controller automation function
 ## RELATED LINKS
 
 [Get-UniFiConfig]()
-
-[Set-UniFiDefaultRequestHeader]()
 
 [Set-UniFiDefaultRequestHeader]()
 

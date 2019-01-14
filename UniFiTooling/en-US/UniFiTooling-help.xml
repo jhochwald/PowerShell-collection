@@ -2,69 +2,108 @@
 <helpItems schema="maml" xmlns="http://msh">
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-      <command:name>Get-UnifiFirewallGroupBody</command:name>
+      <command:name>Get-UnifiFirewallGroupDetails</command:name>
       <command:verb>Get</command:verb>
-      <command:noun>UnifiFirewallGroupBody</command:noun>
+      <command:noun>UnifiFirewallGroupDetails</command:noun>
       <maml:description>
-        <maml:para>Build a Body for Set-UnifiFirewallGroup call</maml:para>
+        <maml:para>Get the details about one Firewall Group via the API of the UniFi Controller</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Build a JSON based Body for Set-UnifiFirewallGroup call</maml:para>
+      <maml:para>Get the details about one Firewall Group via the API of the UniFi Controller</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Get-UnifiFirewallGroupBody</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="FirewallGroup">
-          <maml:name>UnfiFirewallGroup</maml:name>
+        <maml:name>Get-UnifiFirewallGroupDetails</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="FirewallGroupId">
+          <maml:name>Id</maml:name>
           <maml:Description>
-            <maml:para>Existing Unfi Firewall Group</maml:para>
+            <maml:para>The ID (_id) of the Firewall Group you would like to get detaild information about. Multiple values are supported.</maml:para>
           </maml:Description>
-          <command:parameterValue required="true" variableLength="false">PSObject</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
-            <maml:name>PSObject</maml:name>
+            <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="CidrInput">
-          <maml:name>UnifiCidrInput</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+          <maml:name>UnifiSite</maml:name>
           <maml:Description>
-            <maml:para>IPv4 or IPv6 input List</maml:para>
+            <maml:para>UniFi Site as configured. The default is: default</maml:para>
           </maml:Description>
-          <command:parameterValue required="true" variableLength="false">PSObject</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
-            <maml:name>PSObject</maml:name>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Default</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-UnifiFirewallGroupDetails</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="FirewallGroupName">
+          <maml:name>Name</maml:name>
+          <maml:Description>
+            <maml:para>The Name (not the _id) of the Firewall Group you would like to get detaild information about. Multiple values are supported.</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+          <maml:name>UnifiSite</maml:name>
+          <maml:Description>
+            <maml:para>UniFi Site as configured. The default is: default</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Default</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="FirewallGroup">
-        <maml:name>UnfiFirewallGroup</maml:name>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="FirewallGroupId">
+        <maml:name>Id</maml:name>
         <maml:Description>
-          <maml:para>Existing Unfi Firewall Group</maml:para>
+          <maml:para>The ID (_id) of the Firewall Group you would like to get detaild information about. Multiple values are supported.</maml:para>
         </maml:Description>
-        <command:parameterValue required="true" variableLength="false">PSObject</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
-          <maml:name>PSObject</maml:name>
+          <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="CidrInput">
-        <maml:name>UnifiCidrInput</maml:name>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="FirewallGroupName">
+        <maml:name>Name</maml:name>
         <maml:Description>
-          <maml:para>IPv4 or IPv6 input List</maml:para>
+          <maml:para>The Name (not the _id) of the Firewall Group you would like to get detaild information about. Multiple values are supported.</maml:para>
         </maml:Description>
-        <command:parameterValue required="true" variableLength="false">PSObject</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
-          <maml:name>PSObject</maml:name>
+          <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+        <maml:name>UnifiSite</maml:name>
+        <maml:Description>
+          <maml:para>UniFi Site as configured. The default is: default</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>Default</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes />
@@ -80,23 +119,69 @@
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para>This is an internal helper function only</maml:para>
-        <maml:para>. LINK Set-UnifiFirewallGroup</maml:para>
+        <maml:para>Initial Release with 1.0.7</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-UnifiFirewallGroupBody -UnfiFirewallGroup $value1 -UnifiCidrInput $value2</dev:code>
+        <dev:code>Get-UnifiFirewallGroupDetails -id 'ba7e58be13574ef4881a79c3'</dev:code>
         <dev:remarks>
-          <maml:para>Build a Body for Set-UnifiFirewallGroup call</maml:para>
+          <maml:para>Get the details about the Firewall Group with ID ba7e58be13574ef4881a79c3 via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-UnifiFirewallGroupDetails -name 'MyExtDNS'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the Firewall Group MyExtDNS via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>Get-UnifiFirewallGroupDetails -name 'MyExtDNS', 'MailHost'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the Firewall Groups MyExtDNS and MailHost via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>Get-UnifiFirewallGroupDetails -id 'ba7e58be13574ef4881a79c3', '2437bdf7fdf04f1a96c0fd32'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the Firewall Groups with IDs ba7e58be13574ef4881a79c3 and 2437bdf7fdf04f1a96c0fd32 via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <dev:code>Get-UnifiFirewallGroupDetails -id 'ba7e58be13574ef4881a79c3' -UnifiSite 'Contoso'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the Firewall Groups with ID ba7e58be13574ef4881a79c3 on Site 'Contoso' via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 6 --------------------------</maml:title>
+        <dev:code>Get-UnifiFirewallGroupDetails -name 'MailHost' -UnifiSite 'Contoso'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the Firewall Groups MailHost on Site 'Contoso' via the API of the UniFi Controller</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroupBody.md</maml:uri>
+        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroupDetails.md</maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-UnifiFirewallGroups</maml:linkText>
+        <maml:uri></maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Set-UniFiDefaultRequestHeader</maml:linkText>
+        <maml:uri></maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/jhochwald/UniFiTooling/issues/10</maml:linkText>
+        <maml:uri>https://github.com/jhochwald/UniFiTooling/issues/10</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -115,7 +200,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-UnifiFirewallGroups</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="Site">
           <maml:name>UnifiSite</maml:name>
           <maml:Description>
             <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -130,7 +215,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="Site">
         <maml:name>UnifiSite</maml:name>
         <maml:Description>
           <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -209,19 +294,46 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-UnifiNetworkDetails</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="UnifiNetworkId, NetworkId">
-          <maml:name>UnifiNetwork</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UnifiNetwork, UnifiNetworkId, NetworkId">
+          <maml:name>Id</maml:name>
           <maml:Description>
-            <maml:para>The ID (network_id) of the network you would like to get detaild information about.</maml:para>
+            <maml:para>The ID (network_id) of the network you would like to get detaild information about. Multiple values are supported.</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>String[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+          <maml:name>UnifiSite</maml:name>
+          <maml:Description>
+            <maml:para>UniFi Site as configured. The default is: default</maml:para>
           </maml:Description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
+          <dev:defaultValue>Default</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-UnifiNetworkDetails</maml:name>
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UnifiNetworkName, NetworkName">
+          <maml:name>Name</maml:name>
+          <maml:Description>
+            <maml:para>The Name (not the ID/network_id) of the network you would like to get detaild information about. Multiple values are supported.</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>String[]</maml:name>
+            <maml:uri />
+          </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Site">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
           <maml:name>UnifiSite</maml:name>
           <maml:Description>
             <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -236,19 +348,31 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="UnifiNetworkId, NetworkId">
-        <maml:name>UnifiNetwork</maml:name>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UnifiNetwork, UnifiNetworkId, NetworkId">
+        <maml:name>Id</maml:name>
         <maml:Description>
-          <maml:para>The ID (network_id) of the network you would like to get detaild information about.</maml:para>
+          <maml:para>The ID (network_id) of the network you would like to get detaild information about. Multiple values are supported.</maml:para>
         </maml:Description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Site">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UnifiNetworkName, NetworkName">
+        <maml:name>Name</maml:name>
+        <maml:Description>
+          <maml:para>The Name (not the ID/network_id) of the network you would like to get detaild information about. Multiple values are supported.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
         <maml:name>UnifiSite</maml:name>
         <maml:Description>
           <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -274,22 +398,57 @@
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Initial version of the Ubiquiti UniFi Controller automation function</maml:para>
+        <maml:para>The parameter UnifiNetwork is now an Alias. If the UnifiNetwork parameter is used, it must(!) be the ID (network_id). This was necessary to make it a non breaking change.</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-UnifiNetworkDetails -UnifiNetwork $value1</dev:code>
+        <dev:code>Get-UnifiNetworkDetails -id 'ba7e58be13574ef4881a79c3'</dev:code>
         <dev:remarks>
-          <maml:para>Get the details about one network via the API of the UniFi Controller</maml:para>
+          <maml:para>Get the details about the network with ID ba7e58be13574ef4881a79c3 via the API of the UniFi Controller</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Get-UnifiNetworkDetails -UnifiNetwork $value1 -UnifiSite 'Contoso'</dev:code>
+        <dev:code>Get-UnifiNetworkDetails -UnifiNetwork 'ba7e58be13574ef4881a79c3'</dev:code>
         <dev:remarks>
-          <maml:para>Get the details about one network on Site 'Contoso' via the API of the UniFi Controller</maml:para>
+          <maml:para>Same as above, with the legacy parameter alias used.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>Get-UnifiNetworkDetails -name 'JoshHome'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the network JoshHome via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>Get-UnifiNetworkDetails -name 'JoshHome', 'JohnHome'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the networks JoshHome and JohnHome via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <dev:code>Get-UnifiNetworkDetails -id 'ba7e58be13574ef4881a79c3', '2437bdf7fdf04f1a96c0fd32'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the networks with IDs ba7e58be13574ef4881a79c3 and 2437bdf7fdf04f1a96c0fd32 via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 6 --------------------------</maml:title>
+        <dev:code>Get-UnifiNetworkDetails -id 'ba7e58be13574ef4881a79c3' -UnifiSite 'Contoso'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the network with ID ba7e58be13574ef4881a79c3 on Site 'Contoso' via the API of the UniFi Controller</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 7 --------------------------</maml:title>
+        <dev:code>Get-UnifiNetworkDetails -name 'JoshHome' -UnifiSite 'Contoso'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the details about the network JoshHome on Site 'Contoso' via the API of the UniFi Controller</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -303,7 +462,7 @@
         <maml:uri></maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
-        <maml:linkText>Set-UniFiDefaultRequestHeader</maml:linkText>
+        <maml:linkText>Get-UnifiNetworkList</maml:linkText>
         <maml:uri></maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
@@ -327,7 +486,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-UnifiNetworkList</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="Site">
           <maml:name>UnifiSite</maml:name>
           <maml:Description>
             <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -342,7 +501,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Site">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="Site">
         <maml:name>UnifiSite</maml:name>
         <maml:Description>
           <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -531,7 +690,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Invoke-UniFiCidrWorkaround</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="UniFiCidrList">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UniFiCidrList">
           <maml:name>CidrList</maml:name>
           <maml:Description>
             <maml:para>Existing CIDR List Object</maml:para>
@@ -543,7 +702,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="IPv6, V6">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="IPv6, V6">
           <maml:name>6</maml:name>
           <maml:Description>
             <maml:para>Process IPv6 CIDR (Single IPv6 has to be without /128)</maml:para>
@@ -557,7 +716,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="UniFiCidrList">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UniFiCidrList">
         <maml:name>CidrList</maml:name>
         <maml:Description>
           <maml:para>Existing CIDR List Object</maml:para>
@@ -569,7 +728,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="IPv6, V6">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="IPv6, V6">
         <maml:name>6</maml:name>
         <maml:Description>
           <maml:para>Process IPv6 CIDR (Single IPv6 has to be without /128)</maml:para>
@@ -641,6 +800,307 @@
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
+      <command:name>New-UniFiConfig</command:name>
+      <command:verb>New</command:verb>
+      <command:noun>UniFiConfig</command:noun>
+      <maml:description>
+        <maml:para>Creates the UniFi config JSON file</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Creates the UniFi config JSON file. If no input is given it creates one with all the defaults.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>New-UniFiConfig</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="enUniFiUsername">
+          <maml:name>UniFiUsername</maml:name>
+          <maml:Description>
+            <maml:para>The login of a UniFi User with admin rights</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Unfi.admin.user</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="enUniFiPassword">
+          <maml:name>UniFiPassword</maml:name>
+          <maml:Description>
+            <maml:para>The password for the user given above. It is clear text for now. I know... But the Ubiquiti UniFi Controller seems to understand plain text only.</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>MySuperSecretPassworHere</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="enUniFiProtocol">
+          <maml:name>UniFiProtocol</maml:name>
+          <maml:Description>
+            <maml:para>Valid is http and https. default is https Please note: http is untested and it might not even work!</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Https</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="enUniFiSelfSignedCert">
+          <maml:name>UniFiSelfSignedCert</maml:name>
+          <maml:Description>
+            <maml:para>If you use a self signed certificate and/or a certificate from an untrusted CA, you might want to use true here. Default is FALSE</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+          <dev:type>
+            <maml:name>Boolean</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="5" aliases="enUniFiHostname">
+          <maml:name>UniFiHostname</maml:name>
+          <maml:Description>
+            <maml:para>The Ubiquiti UniFi Controller you want to use. You can use a Fully-Qualified Host Name (FQHN) or an IP address.</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Unifi.contoso.com</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="6" aliases="enUniFiPort">
+          <maml:name>UniFiPort</maml:name>
+          <maml:Description>
+            <maml:para>The port number that you have configured on your Ubiquiti UniFi Controller. The default is 8443</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>8443</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="7" aliases="enConfigPath, ConfigPath">
+          <maml:name>Path</maml:name>
+          <maml:Description>
+            <maml:para>Where to safe the JSON config. Default is the directory where you call the function. e.g. .\UniFiConfig.json</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>.\UniFiConfig.json</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="8" aliases="none">
+          <maml:name>force</maml:name>
+          <maml:Description>
+            <maml:para>Replaces the contents of a file, even if the file is read-only. Without this parameter, read-only files are not changed.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
+          <maml:name>WhatIf</maml:name>
+          <maml:Description>
+            <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
+          <maml:name>Confirm</maml:name>
+          <maml:Description>
+            <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="enUniFiUsername">
+        <maml:name>UniFiUsername</maml:name>
+        <maml:Description>
+          <maml:para>The login of a UniFi User with admin rights</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>Unfi.admin.user</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="enUniFiPassword">
+        <maml:name>UniFiPassword</maml:name>
+        <maml:Description>
+          <maml:para>The password for the user given above. It is clear text for now. I know... But the Ubiquiti UniFi Controller seems to understand plain text only.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>MySuperSecretPassworHere</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="enUniFiProtocol">
+        <maml:name>UniFiProtocol</maml:name>
+        <maml:Description>
+          <maml:para>Valid is http and https. default is https Please note: http is untested and it might not even work!</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>Https</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="enUniFiSelfSignedCert">
+        <maml:name>UniFiSelfSignedCert</maml:name>
+        <maml:Description>
+          <maml:para>If you use a self signed certificate and/or a certificate from an untrusted CA, you might want to use true here. Default is FALSE</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+        <dev:type>
+          <maml:name>Boolean</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="5" aliases="enUniFiHostname">
+        <maml:name>UniFiHostname</maml:name>
+        <maml:Description>
+          <maml:para>The Ubiquiti UniFi Controller you want to use. You can use a Fully-Qualified Host Name (FQHN) or an IP address.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>Unifi.contoso.com</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="6" aliases="enUniFiPort">
+        <maml:name>UniFiPort</maml:name>
+        <maml:Description>
+          <maml:para>The port number that you have configured on your Ubiquiti UniFi Controller. The default is 8443</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+        <dev:type>
+          <maml:name>Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>8443</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="7" aliases="enConfigPath, ConfigPath">
+        <maml:name>Path</maml:name>
+        <maml:Description>
+          <maml:para>Where to safe the JSON config. Default is the directory where you call the function. e.g. .\UniFiConfig.json</maml:para>
+        </maml:Description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>.\UniFiConfig.json</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="8" aliases="none">
+        <maml:name>force</maml:name>
+        <maml:Description>
+          <maml:para>Replaces the contents of a file, even if the file is read-only. Without this parameter, read-only files are not changed.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="wi">
+        <maml:name>WhatIf</maml:name>
+        <maml:Description>
+          <maml:para>Shows what would happen if the cmdlet runs. The cmdlet is not run.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="cf">
+        <maml:name>Confirm</maml:name>
+        <maml:Description>
+          <maml:para>Prompts you for confirmation before running the cmdlet.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes />
+    <command:returnValues />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para>Just an helper function to create a JSON config</maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>New-UniFiConfig</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>New-UniFiConfig -UniFiUsername 'unfi.admin.user' -UniFiPassword 'mySuperSecretPassworHere' -UniFiProtocol 'https' -UniFiSelfSignedCert $true -UniFiHostname 'unifi.contoso.com' -UniFiPort '8443' -Path '.\UniFiConfig.json'</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>New-UniFiConfig -UniFiUsername 'unfi.admin.user' -UniFiPassword 'mySuperSecretPassworHere' -UniFiProtocol 'https' -UniFiSelfSignedCert $true -UniFiHostname 'unifi.contoso.com' -UniFiPort '8443' -Path '.\UniFiConfig.json' -force</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/New-UniFiConfig.md</maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-UniFiConfig</maml:linkText>
+        <maml:uri></maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-UniFiCredentials</maml:linkText>
+        <maml:uri></maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
       <command:name>Set-UnifiFirewallGroup</command:name>
       <command:verb>Set</command:verb>
       <command:noun>UnifiFirewallGroup</command:noun>
@@ -654,7 +1114,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-UnifiFirewallGroup</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="FirewallGroup">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="FirewallGroup">
           <maml:name>UnfiFirewallGroup</maml:name>
           <maml:Description>
             <maml:para>Unfi Firewall Group</maml:para>
@@ -666,7 +1126,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="CidrInput">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="CidrInput">
           <maml:name>UnifiCidrInput</maml:name>
           <maml:Description>
             <maml:para>IPv4 or IPv6 input List (PSObject)</maml:para>
@@ -678,7 +1138,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="Site">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Site">
           <maml:name>UnifiSite</maml:name>
           <maml:Description>
             <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -693,7 +1153,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="FirewallGroup">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="FirewallGroup">
         <maml:name>UnfiFirewallGroup</maml:name>
         <maml:Description>
           <maml:para>Unfi Firewall Group</maml:para>
@@ -705,7 +1165,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="CidrInput">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="CidrInput">
         <maml:name>UnifiCidrInput</maml:name>
         <maml:Description>
           <maml:para>IPv4 or IPv6 input List (PSObject)</maml:para>
@@ -717,7 +1177,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="Site">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Site">
         <maml:name>UnifiSite</maml:name>
         <maml:Description>
           <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -784,10 +1244,10 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-UnifiNetworkDetails</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="UnifiNetworkId, NetworkId">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UnifiNetworkId, NetworkId">
           <maml:name>UnifiNetwork</maml:name>
           <maml:Description>
-            <maml:para>The ID (network_id) of the network you would like to get detaild information about.</maml:para>
+            <maml:para>The ID (network_id) of the network you would like to get detailed information about.</maml:para>
           </maml:Description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -796,7 +1256,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Body">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Body">
           <maml:name>UniFiBody</maml:name>
           <maml:Description>
             <maml:para>JSON formed Body for the Request</maml:para>
@@ -808,7 +1268,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="Site">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Site">
           <maml:name>UnifiSite</maml:name>
           <maml:Description>
             <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -823,10 +1283,10 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="UnifiNetworkId, NetworkId">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="1" aliases="UnifiNetworkId, NetworkId">
         <maml:name>UnifiNetwork</maml:name>
         <maml:Description>
-          <maml:para>The ID (network_id) of the network you would like to get detaild information about.</maml:para>
+          <maml:para>The ID (network_id) of the network you would like to get detailed information about.</maml:para>
         </maml:Description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -835,7 +1295,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Body">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="2" aliases="Body">
         <maml:name>UniFiBody</maml:name>
         <maml:Description>
           <maml:para>JSON formed Body for the Request</maml:para>
@@ -847,7 +1307,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="4" aliases="Site">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByPropertyName, ByValue)" position="3" aliases="Site">
         <maml:name>UnifiSite</maml:name>
         <maml:Description>
           <maml:para>UniFi Site as configured. The default is: default</maml:para>
@@ -899,10 +1359,6 @@
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
-        <maml:uri></maml:uri>
-      </maml:navigationLink>
-      <maml:navigationLink>
-        <maml:linkText>Set-UniFiDefaultRequestHeader</maml:linkText>
         <maml:uri></maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>

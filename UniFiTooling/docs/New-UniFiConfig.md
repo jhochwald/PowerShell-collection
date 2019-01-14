@@ -1,14 +1,11 @@
 ﻿---
-author: Joerg Hochwald
-category: UNIFITOOLING
-external help file:
-layout: post
-Module Name:
+external help file: UniFiTooling-help.xml
+HelpVersion: 1.0.8
+Locale: en-US
+Module Guid: 7fff91a0-02eb-4df2-84d5-c7d3cd7f7a5d
+Module Name: UniFiTooling
 online version: https://github.com/jhochwald/UniFiTooling/raw/master/docs/New-UniFiConfig.md
 schema: 2.0.0
-tags: OnlineHelp PowerShell
-timestamp: 2019-01-13
-title: New-UniFiConfig
 ---
 
 # New-UniFiConfig
@@ -56,7 +53,7 @@ Parameter Sets: (All)
 Aliases: enUniFiUsername
 
 Required: False
-Position: 2
+Position: 1
 Default value: Unfi.admin.user
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -74,7 +71,7 @@ Parameter Sets: (All)
 Aliases: enUniFiPassword
 
 Required: False
-Position: 3
+Position: 2
 Default value: MySuperSecretPassworHere
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -91,7 +88,7 @@ Parameter Sets: (All)
 Aliases: enUniFiProtocol
 
 Required: False
-Position: 4
+Position: 3
 Default value: Https
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -107,7 +104,7 @@ Parameter Sets: (All)
 Aliases: enUniFiSelfSignedCert
 
 Required: False
-Position: 5
+Position: 4
 Default value: False
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -123,7 +120,7 @@ Parameter Sets: (All)
 Aliases: enUniFiHostname
 
 Required: False
-Position: 6
+Position: 5
 Default value: Unifi.contoso.com
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -139,7 +136,7 @@ Parameter Sets: (All)
 Aliases: enUniFiPort
 
 Required: False
-Position: 7
+Position: 6
 Default value: 8443
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -157,7 +154,7 @@ Parameter Sets: (All)
 Aliases: enConfigPath, ConfigPath
 
 Required: False
-Position: 8
+Position: 7
 Default value: .\UniFiConfig.json
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
@@ -173,7 +170,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 8
 Default value: False
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False

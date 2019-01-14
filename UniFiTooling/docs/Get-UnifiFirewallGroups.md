@@ -1,14 +1,11 @@
 ﻿---
-author: Joerg Hochwald
-category: UNIFITOOLING
 external help file: UniFiTooling-help.xml
-layout: post
+HelpVersion: 1.0.8
+Locale: en-US
+Module Guid: 7fff91a0-02eb-4df2-84d5-c7d3cd7f7a5d
 Module Name: UniFiTooling
 online version: https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroups.md
 schema: 2.0.0
-tags: OnlineHelp PowerShell
-timestamp: 2019-01-13
-title: Get-UnifiFirewallGroups
 ---
 
 # Get-UnifiFirewallGroups
@@ -53,7 +50,7 @@ Parameter Sets: (All)
 Aliases: Site
 
 Required: False
-Position: 2
+Position: 1
 Default value: Default
 Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
