@@ -19,6 +19,7 @@ PowerShell 5.0, or later. Desktop or Core.
 ### Installation
 
 Install the module with PowerShellGet directly from the Powershell Gallery, Preferred method!
+
 [![Powershell Gallery](https://img.shields.io/powershellgallery/vpre/UniFiTooling.svg)](https://www.powershellgallery.com/packages/UniFiTooling/) [![Powershell Gallery](https://img.shields.io/powershellgallery/dt/UniFiTooling.svg)](https://www.powershellgallery.com/packages/UniFiTooling/)
 
 #### With PowerShellGet
@@ -28,7 +29,8 @@ Install the module with PowerShellGet directly from the Powershell Gallery, Pref
 # Run in a regular or administrative PowerShell prompt (Elevated).
 PS C:\> Install-Module -Name 'UniFiTooling' -Scope CurrentUser
 
-# Install the module for the All Users with PowerShellGet directly from the Powershell Gallery, Preferred method.# Run this in an administrative PowerShell prompt (Elevated).
+# Install the module for the All Users with PowerShellGet directly from the Powershell Gallery, Preferred method.
+# Run this in an administrative PowerShell prompt (Elevated).
 PS C:\> Install-Module -Name 'UniFiTooling' -Scope AllUsers
 ```
 
@@ -131,7 +133,7 @@ All rights reserved.
 
 ### License
 
-BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/UniFiTooling/raw/master/LICENSE)
+BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/UniFiTooling/wiki/License)
 
 ---
 

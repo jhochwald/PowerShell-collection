@@ -71,7 +71,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND AN
 
 #### BSD-3-Clause
 
-This is the **BSD-3-Clause** license.
+BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/UniFiTooling/wiki/License)
 
 ### Your Name
 
