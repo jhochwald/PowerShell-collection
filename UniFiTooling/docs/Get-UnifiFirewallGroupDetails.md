@@ -136,9 +136,13 @@ Initial Release with 1.0.7
 
 ## RELATED LINKS
 
-[Get-UnifiFirewallGroups]()
+[Get-UniFiConfig]()
 
 [Set-UniFiDefaultRequestHeader]()
+
+[Invoke-UniFiApiLogin]()
+
+[Invoke-RestMethod]()
 
 [https://github.com/jhochwald/UniFiTooling/issues/10](https://github.com/jhochwald/UniFiTooling/issues/10)
 

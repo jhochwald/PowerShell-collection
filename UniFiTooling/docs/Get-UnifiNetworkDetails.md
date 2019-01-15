@@ -145,9 +145,13 @@ This was necessary to make it a non breaking change.
 
 ## RELATED LINKS
 
-[Get-UniFiConfig]()
-
 [Get-UnifiNetworkList]()
 
+[Get-UniFiConfig]()
+
 [Set-UniFiDefaultRequestHeader]()
+
+[Invoke-UniFiApiLogin]()
+
+[Invoke-RestMethod]()
 

@@ -74,5 +74,7 @@ Initial version of the Ubiquiti UniFi Controller automation function
 
 [Set-UniFiDefaultRequestHeader]()
 
-[Set-UniFiDefaultRequestHeader]()
+[Invoke-UniFiApiLogin]()
+
+[Invoke-RestMethod]()
 
