@@ -1,8 +1,10 @@
 # UniFiTooling
 
-This is an early beta version for an PowerShell Module for the Ubiquiti UniFi Controller API.
+This is an early beta version for an PowerShell Module for the Ubiquiti (UBNT) UniFi Controller API.
 
-I use this module for many automated updates for my UniFi Security Gateway Firewall Rules and do a few other things automated.
+I started this module as an internal helper for many automated updates for my UniFi Security Gateway Firewall Rules and do a few other things (automated). I migrated everything into a regular module and published it as open source after using it for a while.
+
+I plan to release versions that cover more and more functions. However, I need to refactor and document the code before doing so.
 
 ### Use Cases
 
@@ -12,23 +14,37 @@ Please see the [UseCases](https://github.com/jhochwald/UniFiTooling/tree/master/
 
 This document is based on UniFiTooling version 1.0.8 (Development)
 
+### Status
+
+Early version - Work in progress.
+
+Please remember this before using it in production. You have been warned :)
+
 ### Requirements
 
-PowerShell 5.0, or later. Desktop or Core.
+PowerShell 5.1, or later. Desktop or Core.
 
 ### Installation
 
-Install the module with PowerShellGet directly from the Powershell Gallery, Preferred method!
+There are several ways to get, install, and use this module!
+
+#### With PowerShellGet
+
+Install the module with PowerShellGet directly from the Powershell Gallery, this is the recommended method!
 
 [![Powershell Gallery](https://img.shields.io/powershellgallery/vpre/UniFiTooling.svg)](https://www.powershellgallery.com/packages/UniFiTooling/) [![Powershell Gallery](https://img.shields.io/powershellgallery/dt/UniFiTooling.svg)](https://www.powershellgallery.com/packages/UniFiTooling/)
 
-#### With PowerShellGet
+##### Just for you
 
 ```powershell
 # Install the module for the Current User with PowerShellGet directly from the Powershell Gallery, Preferred method
 # Run in a regular or administrative PowerShell prompt (Elevated).
 PS C:\> Install-Module -Name 'UniFiTooling' -Scope CurrentUser
+```
 
+##### Systemwide
+
+```powershell
 # Install the module for the All Users with PowerShellGet directly from the Powershell Gallery, Preferred method.
 # Run this in an administrative PowerShell prompt (Elevated).
 PS C:\> Install-Module -Name 'UniFiTooling' -Scope AllUsers
@@ -50,6 +66,52 @@ You will find tha latest version in the [release page](https://github.com/jhochw
 
 Or clone this [GitHub repository](https://github.com/jhochwald/UniFiTooling/) to your local machine, extract, go to the `.\releases\UniFiTooling` directory and import the module to your session to test, but not install this module.
 
+### Get started
+
+After installation of the Module, open a PowerShell Session (regular or elevated).
+
+#### Config
+
+```powershell
+PS C:\> New-UniFiConfig -UniFiUsername 'user' -UniFiPassword 'password' -UniFiProtocol 'https' -UniFiSelfSignedCert $true -UniFiHostname 'unifi.contoso.com' -UniFiPort '8443' -Path '.\UniFiConfig.json'
+```
+
+Replace the values with your needs. Please also see the detailed description below.
+
+#### Connect
+
+Before using any command, you need to login to the controller.
+
+```powershell
+PS C:\> Invoke-UniFiApiLogin
+```
+
+In version 1.0.8, this will change: You no longer need to login/authenticate. All commands will do a check and login/authenticate when needed.
+
+##### Troubleshooting
+
+This will show you the real error-message:
+
+```powershell
+PS C:\> Invoke-UniFiApiLogin -verbose
+```
+
+#### Execute any command
+
+Execute any command now...
+
+```powershell
+PS C:\> Get-UnifiNetworkList
+```
+
+#### Logoff
+
+You should logoff after you are done! The session will timeout, but this will clean up everything for you.
+
+```powershell
+PS C:\> Invoke-UniFiApiLogout
+```
+
 ### Feedback
 
 Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/jhochwald/UniFiTooling/issues/new/choose) as *Bug report* if you find something not working.
@@ -64,8 +126,6 @@ Suggest an idea for this Module will help to improve this module.
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub pull-requests](https://img.shields.io/github/issues-pr/jhochwald/UniFiTooling.svg)](https://GitHub.com/jhochwald/UniFiTooling/pull/) [![GitHub pull-requests closed](https://img.shields.io/github/issues-pr-closed/jhochwald/UniFiTooling.svg)](https://github.com/jhochwald/UniFiTooling/pulls?q=is%3Apr+is%3Aclosed)
 
 Please read our [Contribution Guide](https://github.com/jhochwald/UniFiTooling/blob/master/CONTRIBUTING.md) and [Code of Conduct](https://github.com/jhochwald/UniFiTooling/blob/master/CODE_OF_CONDUCT.md).
-
-
 
 ### Note
 

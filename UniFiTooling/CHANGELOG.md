@@ -8,6 +8,15 @@ All notable changes to the **UniFiTooling** project will be documented in this f
 
 Mainly a bugfix and refactoring release
 
+#### Added
+
+- `Get-UniFiIsAlive` - Use a simple API call to see if the session is alive (internal not exported function)
+
+#### Changed
+
+- All commands now use `Get-UniFiIsAlive` internally. That should make things easier for new users.
+- Refactored some of the code that handles all errors.
+
 ### 1.0.7 - 2019-01-14
 
 Mainly a bugfix and refactoring release

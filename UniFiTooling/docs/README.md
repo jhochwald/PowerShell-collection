@@ -29,9 +29,6 @@ Login to API of the UniFi Controller
 ### [Invoke-UniFiApiLogout](Invoke-UniFiApiLogout.md)
 Logout from the API of the UniFi Controller
 
-### [Invoke-UniFiCidrWorkaround](Invoke-UniFiCidrWorkaround.md)
-IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules
-
 ### [New-UniFiConfig](New-UniFiConfig.md)
 Creates the UniFi config JSON file
 

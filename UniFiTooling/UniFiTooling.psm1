@@ -329,7 +329,7 @@ function Get-UniFiIsAlive
          Use a simple API call to see if the session is alive on Site 'Contoso'
 
          .NOTES
-         Dummy Function
+         Internal Helper Function
 
          .LINK
          Get-UniFiConfig
@@ -375,7 +375,7 @@ function Get-UniFiIsAlive
       try
       {
          Write-Verbose -Message 'Read the Config'
-         
+
          $null = (Get-UniFiConfig)
 
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
@@ -383,7 +383,7 @@ function Get-UniFiIsAlive
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
-         
+
          $null = (Invoke-UniFiApiLogin -ErrorAction SilentlyContinue)
 
          Write-Verbose -Message 'Set the API Call default Header'
@@ -409,25 +409,25 @@ function Get-UniFiIsAlive
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
 
          Write-Verbose -Message ('Session Info: {0}' -f $Session)
-         
+
          $SessionStatus = $true
       }
       catch
       {
          # Try to Logout
-         try 
+         try
          {
             $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
          }
-         catch 
-         { 
+         catch
+         {
             # We don't care about that
             Write-Verbose -Message 'Logout failed'
          }
 
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
 
@@ -440,7 +440,7 @@ function Get-UniFiIsAlive
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
 
@@ -458,13 +458,119 @@ function Get-UniFiIsAlive
 
       # Restore ProgressPreference
       $ProgressPreference = $ExistingProgressPreference
-         
+
       # Reset the SSL Trust (make sure everything is back to default)
       [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
-      
+
       # Dump the Result
       Return $SessionStatus
    }
+}
+
+function Invoke-UniFiCidrWorkaround
+{
+<#
+	.SYNOPSIS
+		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules
+
+	.DESCRIPTION
+		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32 OR single IPv6 has to be without /128)
+
+	.PARAMETER CidrList
+		Existing CIDR List Object
+
+	.PARAMETER 6
+		Process IPv6 CIDR (Single IPv6 has to be without /128)
+
+	.EXAMPLE
+		PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
+
+		IPv4 CIDR Workaround for UBNT USG Firewall Rules
+
+	.EXAMPLE
+		PS C:\> Invoke-UniFiCidrWorkaround -6 -CidrList $value1
+
+		IPv6 CIDR Workaround for UBNT USG Firewall Rules
+
+	.EXAMPLE
+		PS C:\> $value1 | Invoke-UniFiCidrWorkaround
+
+		IPv4 or IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
+
+	.EXAMPLE
+		PS C:\> $value1 | Invoke-UniFiCidrWorkaround -6
+
+		IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
+
+	.NOTES
+		This is an internal helper function only (Will be moved to the private functions soon)
+
+	.LINK
+		https://github.com/jhochwald/UniFiTooling/issues/5
+#>
+
+	[CmdletBinding(ConfirmImpact = 'None')]
+	[OutputType([psobject])]
+	param
+	(
+		[Parameter(Mandatory = $true,
+				   ValueFromPipeline = $true,
+				   ValueFromPipelineByPropertyName = $true,
+				   Position = 0,
+				   HelpMessage = 'Existing CIDR List Object')]
+		[ValidateNotNullOrEmpty()]
+		[Alias('UniFiCidrList')]
+		[psobject]
+		$CidrList,
+		[Parameter(ValueFromPipeline = $true,
+				   ValueFromPipelineByPropertyName = $true,
+				   Position = 1)]
+		[Alias('IPv6', 'V6')]
+		[switch]
+		$6 = $false
+	)
+
+	begin
+	{
+		# Cleanup
+		$AddItem = @()
+	}
+
+	process
+	{
+		# Loop over the new list
+		foreach ($NewInputItem in $CidrList)
+		{
+			if ($6)
+			{
+				# CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
+				if ($NewInputItem -match '/128')
+				{
+					$NewInputItem = $NewInputItem.Replace('/128', '')
+				}
+			}
+			else
+			{
+				# CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
+				if ($NewInputItem -match '/32')
+				{
+					$NewInputItem = $NewInputItem.Replace('/32', '')
+				}
+			}
+
+			# Add to the List
+			$AddItem = $AddItem + $NewInputItem
+		}
+	}
+
+	end
+	{
+		# Dump
+		$AddItem
+
+		# Cleanup
+		$AddItem = $null
+	}
 }
 
 function Set-UniFiApiLoginBody
@@ -702,23 +808,23 @@ function Get-UnifiFirewallGroupDetails
          $RetryLoop = $false
          [int]$RetryCounter = '0'
          # Original code/idea was by Thomas Maurer
-         do 
+         do
          {
-            try 
+            try
             {
                # Try to Logout
-               try 
+               try
                {
                   if (-not (Get-UniFiIsAlive)) { Throw }
                }
-               catch 
-               { 
+               catch
+               {
                   # We don't care about that
                   Write-Verbose -Message 'Logout failed'
                }
 
                # Try a Session check (login is inherited here within the helper function)
-               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue)) 
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
                {
                   Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
                }
@@ -726,7 +832,7 @@ function Get-UnifiFirewallGroupDetails
                # End the Loop
                $RetryLoop = $true
             }
-            catch 
+            catch
             {
                if ($RetryCounter -gt $NumberOfRetries)
                {
@@ -735,17 +841,17 @@ function Get-UnifiFirewallGroupDetails
                   # Stay in the Loop
                   $RetryLoop = $true
                }
-               else 
+               else
                {
                   if ($RetryCounter -eq 0)
                   {
                      Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
                   }
-                  else 
+                  else
                   {
                      Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
                   }
-         
+
                   $null = (Start-Sleep -Seconds $RetryTimer)
 
                   $RetryCounter = $RetryCounter + 1
@@ -762,9 +868,9 @@ function Get-UnifiFirewallGroupDetails
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
-         
+
          # Only here to catch a global ErrorAction overwrite
          break
       }
@@ -998,23 +1104,23 @@ function Get-UnifiFirewallGroups
          $RetryLoop = $false
          [int]$RetryCounter = '0'
          # Original code/idea was by Thomas Maurer
-         do 
+         do
          {
-            try 
+            try
             {
                # Try to Logout
-               try 
+               try
                {
                   if (-not (Get-UniFiIsAlive)) { Throw }
                }
-               catch 
-               { 
+               catch
+               {
                   # We don't care about that
                   Write-Verbose -Message 'Logout failed'
                }
 
                # Try a Session check (login is inherited here within the helper function)
-               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue)) 
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
                {
                   Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
                }
@@ -1022,7 +1128,7 @@ function Get-UnifiFirewallGroups
                # End the Loop
                $RetryLoop = $true
             }
-            catch 
+            catch
             {
                if ($RetryCounter -gt $NumberOfRetries)
                {
@@ -1031,17 +1137,17 @@ function Get-UnifiFirewallGroups
                   # Stay in the Loop
                   $RetryLoop = $true
                }
-               else 
+               else
                {
                   if ($RetryCounter -eq 0)
                   {
                      Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
                   }
-                  else 
+                  else
                   {
                      Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
                   }
-         
+
                   $null = (Start-Sleep -Seconds $RetryTimer)
 
                   $RetryCounter = $RetryCounter + 1
@@ -1058,9 +1164,9 @@ function Get-UnifiFirewallGroups
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
-         
+
          # Only here to catch a global ErrorAction overwrite
          break
       }
@@ -1101,12 +1207,12 @@ function Get-UnifiFirewallGroups
       catch
       {
          # Try to Logout
-         try 
+         try
          {
             $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
          }
-         catch 
-         { 
+         catch
+         {
             # We don't care about that
             Write-Verbose -Message 'Logout failed'
          }
@@ -1281,23 +1387,23 @@ function Get-UnifiNetworkDetails
          $RetryLoop = $false
          [int]$RetryCounter = '0'
          # Original code/idea was by Thomas Maurer
-         do 
+         do
          {
-            try 
+            try
             {
                # Try to Logout
-               try 
+               try
                {
                   if (-not (Get-UniFiIsAlive)) { Throw }
                }
-               catch 
-               { 
+               catch
+               {
                   # We don't care about that
                   Write-Verbose -Message 'Logout failed'
                }
 
                # Try a Session check (login is inherited here within the helper function)
-               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue)) 
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
                {
                   Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
                }
@@ -1305,7 +1411,7 @@ function Get-UnifiNetworkDetails
                # End the Loop
                $RetryLoop = $true
             }
-            catch 
+            catch
             {
                if ($RetryCounter -gt $NumberOfRetries)
                {
@@ -1314,17 +1420,17 @@ function Get-UnifiNetworkDetails
                   # Stay in the Loop
                   $RetryLoop = $true
                }
-               else 
+               else
                {
                   if ($RetryCounter -eq 0)
                   {
                      Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
                   }
-                  else 
+                  else
                   {
                      Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
                   }
-         
+
                   $null = (Start-Sleep -Seconds $RetryTimer)
 
                   $RetryCounter = $RetryCounter + 1
@@ -1341,9 +1447,9 @@ function Get-UnifiNetworkDetails
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
-         
+
          # Only here to catch a global ErrorAction overwrite
          break
       }
@@ -1472,12 +1578,12 @@ function Get-UnifiNetworkDetails
       catch
       {
          # Try to Logout
-         try 
+         try
          {
             $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
          }
-         catch 
-         { 
+         catch
+         {
             # We don't care about that
             Write-Verbose -Message 'Logout failed'
          }
@@ -1585,23 +1691,23 @@ function Get-UnifiNetworkList
          $RetryLoop = $false
          [int]$RetryCounter = '0'
          # Original code/idea was by Thomas Maurer
-         do 
+         do
          {
-            try 
+            try
             {
                # Try to Logout
-               try 
+               try
                {
                   if (-not (Get-UniFiIsAlive)) { Throw }
                }
-               catch 
-               { 
+               catch
+               {
                   # We don't care about that
                   Write-Verbose -Message 'Logout failed'
                }
 
                # Try a Session check (login is inherited here within the helper function)
-               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue)) 
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
                {
                   Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
                }
@@ -1609,7 +1715,7 @@ function Get-UnifiNetworkList
                # End the Loop
                $RetryLoop = $true
             }
-            catch 
+            catch
             {
                if ($RetryCounter -gt $NumberOfRetries)
                {
@@ -1618,17 +1724,17 @@ function Get-UnifiNetworkList
                   # Stay in the Loop
                   $RetryLoop = $true
                }
-               else 
+               else
                {
                   if ($RetryCounter -eq 0)
                   {
                      Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
                   }
-                  else 
+                  else
                   {
                      Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
                   }
-         
+
                   $null = (Start-Sleep -Seconds $RetryTimer)
 
                   $RetryCounter = $RetryCounter + 1
@@ -1645,9 +1751,9 @@ function Get-UnifiNetworkList
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
-         
+
          # Only here to catch a global ErrorAction overwrite
          break
       }
@@ -1659,7 +1765,7 @@ function Get-UnifiNetworkList
       try
       {
          Write-Verbose -Message 'Read the Config'
-         
+
          $null = (Get-UniFiConfig)
 
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
@@ -1695,12 +1801,12 @@ function Get-UnifiNetworkList
       catch
       {
          # Try to Logout
-         try 
+         try
          {
             $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
          }
-         catch 
-         { 
+         catch
+         {
             # We don't care about that
             Write-Verbose -Message 'Logout failed'
          }
@@ -2012,112 +2118,6 @@ function Invoke-UniFiApiLogout
    }
 }
 
-function Invoke-UniFiCidrWorkaround
-{
-<#
-	.SYNOPSIS
-		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules
-
-	.DESCRIPTION
-		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32 OR single IPv6 has to be without /128)
-
-	.PARAMETER CidrList
-		Existing CIDR List Object
-
-	.PARAMETER 6
-		Process IPv6 CIDR (Single IPv6 has to be without /128)
-
-	.EXAMPLE
-		PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
-
-		IPv4 CIDR Workaround for UBNT USG Firewall Rules
-
-	.EXAMPLE
-		PS C:\> Invoke-UniFiCidrWorkaround -6 -CidrList $value1
-
-		IPv6 CIDR Workaround for UBNT USG Firewall Rules
-
-	.EXAMPLE
-		PS C:\> $value1 | Invoke-UniFiCidrWorkaround
-
-		IPv4 or IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
-
-	.EXAMPLE
-		PS C:\> $value1 | Invoke-UniFiCidrWorkaround -6
-
-		IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
-
-	.NOTES
-		This is an internal helper function only (Will be moved to the private functions soon)
-
-	.LINK
-		https://github.com/jhochwald/UniFiTooling/issues/5
-#>
-
-	[CmdletBinding(ConfirmImpact = 'None')]
-	[OutputType([psobject])]
-	param
-	(
-		[Parameter(Mandatory = $true,
-				   ValueFromPipeline = $true,
-				   ValueFromPipelineByPropertyName = $true,
-				   Position = 0,
-				   HelpMessage = 'Existing CIDR List Object')]
-		[ValidateNotNullOrEmpty()]
-		[Alias('UniFiCidrList')]
-		[psobject]
-		$CidrList,
-		[Parameter(ValueFromPipeline = $true,
-				   ValueFromPipelineByPropertyName = $true,
-				   Position = 1)]
-		[Alias('IPv6', 'V6')]
-		[switch]
-		$6 = $false
-	)
-
-	begin
-	{
-		# Cleanup
-		$AddItem = @()
-	}
-
-	process
-	{
-		# Loop over the new list
-		foreach ($NewInputItem in $CidrList)
-		{
-			if ($6)
-			{
-				# CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
-				if ($NewInputItem -match '/128')
-				{
-					$NewInputItem = $NewInputItem.Replace('/128', '')
-				}
-			}
-			else
-			{
-				# CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
-				if ($NewInputItem -match '/32')
-				{
-					$NewInputItem = $NewInputItem.Replace('/32', '')
-				}
-			}
-
-			# Add to the List
-			$AddItem = $AddItem + $NewInputItem
-		}
-	}
-
-	end
-	{
-		# Dump
-		$AddItem
-
-		# Cleanup
-		$AddItem = $null
-	}
-}
-
 function New-UniFiConfig
 {
    <#
@@ -2382,23 +2382,23 @@ function Set-UnifiFirewallGroup
          $RetryLoop = $false
          [int]$RetryCounter = '0'
          # Original code/idea was by Thomas Maurer
-         do 
+         do
          {
-            try 
+            try
             {
                # Try to Logout
-               try 
+               try
                {
                   if (-not (Get-UniFiIsAlive)) { Throw }
                }
-               catch 
-               { 
+               catch
+               {
                   # We don't care about that
                   Write-Verbose -Message 'Logout failed'
                }
 
                # Try a Session check (login is inherited here within the helper function)
-               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue)) 
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
                {
                   Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
                }
@@ -2406,7 +2406,7 @@ function Set-UnifiFirewallGroup
                # End the Loop
                $RetryLoop = $true
             }
-            catch 
+            catch
             {
                if ($RetryCounter -gt $NumberOfRetries)
                {
@@ -2415,17 +2415,17 @@ function Set-UnifiFirewallGroup
                   # Stay in the Loop
                   $RetryLoop = $true
                }
-               else 
+               else
                {
                   if ($RetryCounter -eq 0)
                   {
                      Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
                   }
-                  else 
+                  else
                   {
                      Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
                   }
-         
+
                   $null = (Start-Sleep -Seconds $RetryTimer)
 
                   $RetryCounter = $RetryCounter + 1
@@ -2442,9 +2442,9 @@ function Set-UnifiFirewallGroup
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
-         
+
          # Only here to catch a global ErrorAction overwrite
          break
       }
@@ -2515,12 +2515,12 @@ function Set-UnifiFirewallGroup
       catch
       {
          # Try to Logout
-         try 
+         try
          {
             $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
          }
-         catch 
-         { 
+         catch
+         {
             # We don't care about that
             Write-Verbose -Message 'Logout failed'
          }
@@ -2663,23 +2663,23 @@ function Set-UnifiNetworkDetails
          $RetryLoop = $false
          [int]$RetryCounter = '0'
          # Original code/idea was by Thomas Maurer
-         do 
+         do
          {
-            try 
+            try
             {
                # Try to Logout
-               try 
+               try
                {
                   if (-not (Get-UniFiIsAlive)) { Throw }
                }
-               catch 
-               { 
+               catch
+               {
                   # We don't care about that
                   Write-Verbose -Message 'Logout failed'
                }
 
                # Try a Session check (login is inherited here within the helper function)
-               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue)) 
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
                {
                   Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
                }
@@ -2687,7 +2687,7 @@ function Set-UnifiNetworkDetails
                # End the Loop
                $RetryLoop = $true
             }
-            catch 
+            catch
             {
                if ($RetryCounter -gt $NumberOfRetries)
                {
@@ -2696,17 +2696,17 @@ function Set-UnifiNetworkDetails
                   # Stay in the Loop
                   $RetryLoop = $true
                }
-               else 
+               else
                {
                   if ($RetryCounter -eq 0)
                   {
                      Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
                   }
-                  else 
+                  else
                   {
                      Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
                   }
-         
+
                   $null = (Start-Sleep -Seconds $RetryTimer)
 
                   $RetryCounter = $RetryCounter + 1
@@ -2723,9 +2723,9 @@ function Set-UnifiNetworkDetails
       {
          # Restore ProgressPreference
          $ProgressPreference = $ExistingProgressPreference
-         
+
          Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
-         
+
          # Only here to catch a global ErrorAction overwrite
          break
       }
@@ -2767,12 +2767,12 @@ function Set-UnifiNetworkDetails
       catch
       {
          # Try to Logout
-         try 
+         try
          {
             $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
          }
-         catch 
-         { 
+         catch
+         {
             # We don't care about that
             Write-Verbose -Message 'Logout failed'
          }
