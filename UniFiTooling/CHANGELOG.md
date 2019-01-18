@@ -11,6 +11,11 @@ Mainly a bugfix and refactoring release
 #### Added
 
 - `Get-UniFiIsAlive` - Use a simple API call to see if the session is alive (internal not exported function)
+- `ConvertTo-UnixTimeStamp` - ConvertTo-UnixTimeStamp (Helper)
+- `ConvertFrom-UnixTimeStamp` - Converts a Timestamp (Epochdate) into Datetime (Helper)
+- `Get-HostsFile` - Print the HOSTS File in a more clean format (Helper)
+- `Remove-HostsEntry` - Removes a single Hosts Entry from the HOSTS File (Helper)
+- `Add-HostsEntry` - Add a single Hosts Entry to the HOSTS File (Helper)
 
 #### Changed
 
