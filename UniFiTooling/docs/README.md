@@ -23,6 +23,9 @@ Get the details about one network via the API of the UniFi Controller
 ### [Get-UnifiNetworkList](Get-UnifiNetworkList.md)
 Get a List Networks via the API of the UniFi Controller
 
+### [Get-UnifiSpeedTestResult](Get-UnifiSpeedTestResult.md)
+Get the UniFi Security Gateway (USG) Speed Test results
+
 ### [Invoke-UniFiApiLogin](Invoke-UniFiApiLogin.md)
 Login to API of the UniFi Controller
 

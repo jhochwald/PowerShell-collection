@@ -4,7 +4,7 @@ All notable changes to the **UniFiTooling** project will be documented in this f
 
 ---
 
-### 1.0.8 - [Unreleased]
+### 1.0.8 - 2019-01-19
 
 Mainly a bugfix and refactoring release
 
@@ -16,10 +16,12 @@ Mainly a bugfix and refactoring release
 - `Get-HostsFile` - Print the HOSTS File in a more clean format (Helper)
 - `Remove-HostsEntry` - Removes a single Hosts Entry from the HOSTS File (Helper)
 - `Add-HostsEntry` - Add a single Hosts Entry to the HOSTS File (Helper)
+- `Get-UnifiSpeedTestResult` - Get the UniFi Security Gateway (USG) Speed Test results
 
 #### Changed
 
-- All commands now use `Get-UniFiIsAlive` internally. That should make things easier for new users.
+- `Get-UnifiSpeedTestResult` has now filtering and returns values human readable
+- All commands now use `Get-UniFiIsAlive` internally. That should make it easier for new users.
 - Refactored some of the code that handles all errors.
 
 ### 1.0.7 - 2019-01-14
