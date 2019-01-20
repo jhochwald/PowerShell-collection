@@ -1,6 +1,12 @@
 # Acknowledgements
 
-This project owes some acknowlegement to others. Here are some other authors, projects, and companies which have made this project possible. If you believe you or a project should be included in this list please let us know.
+This project owes some acknowlegement to others. Here are some other authors, projects, and companies which have made this project possible.
+
+If you believe you or a project should be included in this list please let us know.
+
+### Idea
+
+This project is based on the idea of the [PHP API client class](https://github.com/Art-of-WiFi/UniFi-API-client) implementation from [Art of WiFi](http://artofwifi.net/). If you want to implement a PHP based solution, take a look at the GitHub project of the [PHP API client class](https://github.com/Art-of-WiFi/UniFi-API-client) implementation from [Art of WiFi](http://artofwifi.net/).
 
 ### PowerShell
 

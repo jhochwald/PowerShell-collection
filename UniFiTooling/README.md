@@ -1,32 +1,50 @@
 # UniFiTooling
 
-This is an early beta version for an PowerShell Module for the Ubiquiti (UBNT) UniFi Controller API.
+This is an beta version for an PowerShell Module for the Ubiquiti [UBNT SDN Controller API](https://unifi-sdn.ui.com/).
+
+
 
 I started this module as an internal helper for many automated updates for my UniFi Security Gateway Firewall Rules and do a few other things (automated). I migrated everything into a regular module and published it as open source after using it for a while.
+
+
 
 I plan to release versions that cover more and more functions. However, I need to refactor and document the code before doing so.
 
 ### Use Cases
 
-Please see the [UseCases](https://github.com/jhochwald/UniFiTooling/tree/master/release/UniFiTooling/UseCases) directory.
+You will find some demo use cases within the [UseCases](https://github.com/jhochwald/UniFiTooling/tree/master/release/UniFiTooling/UseCases) directory.
 
 ### Version
 
-This document is based on UniFiTooling version 1.0.9 (**Development**)
+This document is based on UniFiTooling version 1.0.9
 
 ### Status
 
-Early version - Work in progress.
+Beta version - Work still in progress.
 
-Please remember this before using it in production. You have been warned :)
+*Please remember this before using it in production. You have been warned :)*
 
 ### Requirements
 
-PowerShell 5.1, or later. Desktop or Core.
+- PowerShell 5.1, or later. Desktop or Core.
+
+  - *Tested on Windows with PowerShell Desktop Version 5.1*
+
+  - *Tested on Windows with PowerShell Core Version 6.1.1*
+
+  - *Tested on macOS with PowerShell Core Version 6.1.2*
+
+  - *Tested on CentOS Linux release 7.6 with PowerShell Core Version 6.1.2*
+
+- Ubiquiti [UBNT SDN Controller](https://unifi-sdn.ui.com/), Version 5.9.32
+
+  - *This is the only tested version*
+
+  - *Olders Ubiquiti [UBNT SDN Controller](https://unifi-sdn.ui.com/) Versions might work*
 
 ### Installation
 
-There are several ways to get, install, and use this module!
+There are several ways to get, install, and use this module.
 
 #### With PowerShellGet
 
@@ -37,7 +55,8 @@ Install the module with PowerShellGet directly from the Powershell Gallery, this
 ##### Just for you
 
 ```powershell
-# Install the module for the Current User with PowerShellGet directly from the Powershell Gallery, Preferred method
+# Install the module for the Current User
+# with PowerShellGet directly from the Powershell Gallery, Preferred method
 # Run in a regular or administrative PowerShell prompt (Elevated).
 PS C:\> Install-Module -Name 'UniFiTooling' -Scope CurrentUser
 ```
@@ -45,7 +64,8 @@ PS C:\> Install-Module -Name 'UniFiTooling' -Scope CurrentUser
 ##### Systemwide
 
 ```powershell
-# Install the module for the All Users with PowerShellGet directly from the Powershell Gallery, Preferred method.
+# Install the module for the All Users
+# with PowerShellGet directly from the Powershell Gallery, Preferred method.
 # Run this in an administrative PowerShell prompt (Elevated).
 PS C:\> Install-Module -Name 'UniFiTooling' -Scope AllUsers
 ```
@@ -149,6 +169,7 @@ Here is a sample configuration:
    "Port": 443
 }
 ```
+
 #### Username
 
 The login of a UniFi User with admin rights
@@ -193,11 +214,9 @@ All rights reserved.
 
 ### License
 
-BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/UniFiTooling/wiki/License)
+BSD 3-Clause "New" or "Revised" License.
+Here is the the [online](https://github.com/jhochwald/UniFiTooling/wiki/License) version of the License.
 
 ---
 
 [![GitHub license](https://img.shields.io/github/license/jhochwald/UniFiTooling.svg)](https://github.com/jhochwald/UniFiTooling/blob/master/LICENSE) [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org) [![Open Source Love png1](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
-
-
-

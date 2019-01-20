@@ -10,13 +10,15 @@ Mainly a feature release with some bugfixes and refactoring.
 
 #### Added
 
-  - `Get-UnifiSpeedTestResult` has now a -last parameter to get only the latest result
-  - `Invoke-UnifiAuthorizeGuest` - Authorize a client device via the API of the UniFi Controller
-  - `Invoke-UnifiUnauthorizeGuest` - Unauthorize a client device via the API of the UniFi Controller
-  - `Invoke-UnifiReconnectClient` - Reconnect a client device via the API of the UniFi Controller
+- `Get-UnifiSpeedTestResult` has now a -last parameter to get only the latest result
+- `Invoke-UnifiAuthorizeGuest` - Authorize a client device via the API of the UniFi Controller
+- `Invoke-UnifiUnauthorizeGuest` - Unauthorize a client device via the API of the UniFi Controller
+- `Invoke-UnifiReconnectClient` - Reconnect a client device via the API of the UniFi Controller
+- `Invoke-UnifiBlockClient` - Block a client device via the API of the UniFi Controller
+- `Invoke-UnifiUnblockClient` - Unblock a client device via the API of the UniFi Controller
+- `Invoke-UnifiForgetClient` - Forget one or more client devices via the API of the UniFi Controller
 
 - #### Changed
-
   - Refactored a lot of code.
   - Change the Verbose output (Detailed connection details)
   - Change some links to the GitHub Wiki

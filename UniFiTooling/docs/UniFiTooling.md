@@ -35,11 +35,20 @@ Logout from the API of the UniFi Controller
 ### [Invoke-UnifiAuthorizeGuest](Invoke-UnifiAuthorizeGuest.md)
 Authorize a client device via the API of the UniFi Controller
 
+### [Invoke-UnifiBlockClient](Invoke-UnifiBlockClient.md)
+Block a client device via the API of the UniFi Controller
+
+### [Invoke-UnifiForgetClient](Invoke-UnifiForgetClient.md)
+Forget one or more client devices via the API of the UniFi Controller
+
 ### [Invoke-UnifiReconnectClient](Invoke-UnifiReconnectClient.md)
 Reconnect a client device via the API of the UniFi Controller
 
 ### [Invoke-UnifiUnauthorizeGuest](Invoke-UnifiUnauthorizeGuest.md)
 Unauthorize a client device via the API of the UniFi Controller
+
+### [Invoke-UnifiUnblockClient](Invoke-UnifiUnblockClient.md)
+Unblock a client device via the API of the UniFi Controller
 
 ### [New-UniFiConfig](New-UniFiConfig.md)
 Creates the UniFi config JSON file
