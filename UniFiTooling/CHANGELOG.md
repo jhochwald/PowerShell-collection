@@ -4,7 +4,7 @@ All notable changes to the **UniFiTooling** project will be documented in this f
 
 ---
 
-### 1.0.9 - 2019-01-19 **`[Unreleased]`**
+### 1.0.9 - 2019-01-20
 
 Mainly a feature release with some bugfixes and refactoring.
 
