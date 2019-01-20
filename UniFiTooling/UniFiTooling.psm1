@@ -85,7 +85,7 @@ function Add-HostsEntry
       $Path = "$env:windir\System32\drivers\etc\hosts"
    )
    begin {
-      Write-Verbose -Message 'Start'
+      Write-Verbose -Message 'Start Add-HostsEntry'
    }
 
    process {
@@ -155,7 +155,7 @@ function Add-HostsEntry
    }
 
    end {
-      Write-Verbose -Message 'Done'
+      Write-Verbose -Message 'Done Add-HostsEntry'
    }
 }
 
@@ -210,7 +210,9 @@ function ConvertFrom-UnixTimeStamp
 
    begin
    {
-      # Set some defaults
+      Write-Verbose -Message 'Start ConvertFrom-UnixTimeStamp'
+
+      # Set some defaults (Never change this!!!)
       $UnixStartTime = '1/1/1970'
 
       # Cleanup
@@ -240,6 +242,7 @@ function ConvertFrom-UnixTimeStamp
       }
       catch
       {
+         #region ErrorHandler
          # get error record
          [Management.Automation.ErrorRecord]$e = $_
 
@@ -249,7 +252,7 @@ function ConvertFrom-UnixTimeStamp
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line      = $e.InvocationInfo.ScriptLineNumber
+            Line	  = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -259,12 +262,16 @@ function ConvertFrom-UnixTimeStamp
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
    }
 
    end
    {
+      # Dump to the Console
       $Result
+
+      Write-Verbose -Message 'Done ConvertFrom-UnixTimeStamp'
    }
 }
 
@@ -328,7 +335,9 @@ function ConvertTo-UnixTimeStamp
 
    begin
    {
-      # Set some defaults
+      Write-Verbose -Message 'Start ConvertTo-UnixTimeStamp'
+
+      # Set some defaults (Never change this!!!)
       $UnixStartTime = '1/1/1970'
 
       # Cleanup
@@ -350,6 +359,7 @@ function ConvertTo-UnixTimeStamp
       }
       catch
       {
+         #region ErrorHandler
          # get error record
          [Management.Automation.ErrorRecord]$e = $_
 
@@ -359,7 +369,7 @@ function ConvertTo-UnixTimeStamp
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line      = $e.InvocationInfo.ScriptLineNumber
+            Line	  = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -369,12 +379,16 @@ function ConvertTo-UnixTimeStamp
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
    }
 
    end
    {
+      # Dump to the Console
       $Result
+
+      Write-Verbose -Message 'Done ConvertTo-UnixTimeStamp'
    }
 }
 
@@ -436,7 +450,44 @@ function Get-HostsFile
 
    begin
    {
-      $HostsFileContent = Get-Content -Path $Path
+      Write-Verbose -Message 'Start Get-HostsFile'
+
+      try
+      {
+         # Get a clean (end of) file
+         $paramGetContent = @{
+            Path          = $Path
+            Raw           = $true
+            Force         = $true
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+         $HostsFileContent = (Get-Content @paramGetContent )
+      }
+      catch
+      {
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
+
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+         #endregion ErrorHandler
+      }
    }
 
    process
@@ -461,6 +512,10 @@ function Get-HostsFile
             }
          }
       }
+   }
+
+   end {
+      Write-Verbose -Message 'Done Get-HostsFile'
    }
 }
 
@@ -501,6 +556,8 @@ function Get-UniFiConfig
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UniFiConfig'
+
       # Cleanup
       $RawJson = $null
       $UnifiConfig = $null
@@ -511,22 +568,36 @@ function Get-UniFiConfig
       try
       {
          Write-Verbose -Message 'Read the Config File'
+
          $RawJson = (Get-Content -Path $Path -Force -ErrorAction Stop -WarningAction SilentlyContinue)
 
          Write-Verbose -Message 'Convert the JSON config File to a PSObject'
+
          $UnifiConfig = ($RawJson | ConvertFrom-Json -ErrorAction Stop -WarningAction SilentlyContinue)
       }
       catch
       {
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Default error handling: Re-Throw the error
-         Write-Error -Message ('Error was {0}' -f $_) -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
 
       # Cleanup
@@ -534,19 +605,24 @@ function Get-UniFiConfig
 
       # Set the config for later use
       $Global:ApiProto = $UnifiConfig.protocol
+
       Write-Verbose -Message ('ApiProto is {0}' -f $ApiProto)
 
       $Global:ApiHost = $UnifiConfig.Hostname
+
       Write-Verbose -Message ('ApiHost is {0}' -f $ApiHost)
 
       $Global:ApiPort = $UnifiConfig.Port
+
       Write-Verbose -Message ('ApiPort is {0}' -f $ApiPort)
 
       $Global:ApiSelfSignedCert = $UnifiConfig.SelfSignedCert
+
       Write-Verbose -Message ('ApiSelfSignedCert is {0}' -f $ApiSelfSignedCert)
 
       # Build the Base URI String
       $Global:ApiUri = $ApiProto + '://' + $ApiHost + ':' + $ApiPort + '/api/'
+
       Write-Verbose -Message ('ApiUri is {0}' -f $ApiUri)
    }
 
@@ -556,7 +632,7 @@ function Get-UniFiConfig
       $RawJson = $null
       $UnifiConfig = $null
 
-      Write-Verbose -Message 'Get-UniFiConfig done'
+      Write-Verbose -Message 'Done Get-UniFiConfig'
    }
 }
 
@@ -594,6 +670,8 @@ function Get-UniFiCredentials
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UniFiCredentials'
+
       # Cleanup
       $RawJson = $null
       $UnifiConfig = $null
@@ -611,15 +689,27 @@ function Get-UniFiCredentials
       }
       catch
       {
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Default error handling: Re-Throw the error
-         Write-Error -Message ('Error was {0}' -f $_) -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
 
       # Cleanup
@@ -654,6 +744,7 @@ function Get-UniFiCredentials
       $RawJson = $null
       $UnifiConfig = $null
 
+      Write-Verbose -Message 'Start Get-UniFiCredentials'
    }
 }
 
@@ -710,35 +801,39 @@ function Get-UnifiFirewallGroupBody
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UnifiFirewallGroupBody'
+
       Write-Verbose -Message 'Cleanup exitsing Group'
       Write-Verbose -Message "Old Values: $UnfiFirewallGroup.group_members"
+
       $UnfiFirewallGroup.group_members = $null
    }
 
    process
    {
-      Write-Verbose -Message 'Create a new Object'
-      $NewUnifiCidrItem = @()
-
-      foreach ($UnifiCidrItem in $UnifiCidrInput)
-      {
-         $NewUnifiCidrItem = $NewUnifiCidrItem + $UnifiCidrItem
-      }
-
-      # Add the new values
-      $paramAddMember = @{
-         MemberType = 'NoteProperty'
-         Name       = 'group_members'
-         Value      = $NewUnifiCidrItem
-         Force      = $true
-      }
-      $UnfiFirewallGroup | Add-Member @paramAddMember
-
-      # Cleanup
-      $NewUnifiCidrItem = $null
-
       try
       {
+         Write-Verbose -Message 'Create a new Object'
+
+         $NewUnifiCidrItem = @()
+
+         foreach ($UnifiCidrItem in $UnifiCidrInput)
+         {
+            $NewUnifiCidrItem = $NewUnifiCidrItem + $UnifiCidrItem
+         }
+
+         # Add the new values
+         $paramAddMember = @{
+            MemberType = 'NoteProperty'
+            Name       = 'group_members'
+            Value      = $NewUnifiCidrItem
+            Force      = $true
+         }
+         $UnfiFirewallGroup | Add-Member @paramAddMember
+
+         # Cleanup
+         $NewUnifiCidrItem = $null
+
          # Create a new Request Body
          $paramConvertToJson = @{
             InputObject   = $UnfiFirewallGroup
@@ -752,8 +847,24 @@ function Get-UnifiFirewallGroupBody
       {
          $null = (Invoke-InternalScriptVariables)
 
-         Write-Error -Message 'Unable to convert new List to JSON' -ErrorAction Stop
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
          break
       }
    }
@@ -762,6 +873,8 @@ function Get-UnifiFirewallGroupBody
    {
       # Dump
       $UnfiFirewallGroupJson
+
+      Write-Verbose -Message 'Done Get-UnifiFirewallGroupBody'
    }
 }
 
@@ -818,12 +931,16 @@ function Get-UniFiIsAlive
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UniFiIsAlive'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       # Set the default to FALSE
       $SessionStatus = $false
@@ -833,28 +950,39 @@ function Get-UniFiIsAlive
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
 
          $null = (Get-UniFiConfig)
+         #endregion ReadConfig
 
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
 
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region UniFiApiLogin
          $null = (Invoke-UniFiApiLogin -ErrorAction SilentlyContinue)
+         #endregion UniFiApiLogin
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
 
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
 
          $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/self'
 
          Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
 
+         #region Request
          Write-Verbose -Message 'Send the Request'
 
          $paramInvokeRestMethod = @{
@@ -870,6 +998,7 @@ function Get-UniFiIsAlive
          Write-Verbose -Message ('Session Info: {0}' -f $Session)
 
          $SessionStatus = $true
+         #endregion Request
       }
       catch
       {
@@ -915,121 +1044,130 @@ function Get-UniFiIsAlive
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
-      $ProgressPreference = $ExistingProgressPreference
-
+      #region ResetSslTrust
       # Reset the SSL Trust (make sure everything is back to default)
       [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+      #endregion ResetSslTrust
+
+      #region RestoreProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
 
       # Dump the Result
-      Return $SessionStatus
+      $SessionStatus
+
+      Write-Verbose -Message 'Start Get-UniFiIsAlive'
    }
 }
 
 function Invoke-UniFiCidrWorkaround
 {
-<#
-	.SYNOPSIS
-		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules
+   <#
+         .SYNOPSIS
+         IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules
 
-	.DESCRIPTION
-		IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32 OR single IPv6 has to be without /128)
+         .DESCRIPTION
+         IPv4 and IPv6 CIDR Workaround for UBNT USG Firewall Rules (Single IPv4 has to be without /32 OR single IPv6 has to be without /128)
 
-	.PARAMETER CidrList
-		Existing CIDR List Object
+         .PARAMETER CidrList
+         Existing CIDR List Object
 
-	.PARAMETER 6
-		Process IPv6 CIDR (Single IPv6 has to be without /128)
+         .PARAMETER 6
+         Process IPv6 CIDR (Single IPv6 has to be without /128)
 
-	.EXAMPLE
-		PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
+         .EXAMPLE
+         PS C:\> Invoke-UniFiCidrWorkaround -CidrList $value1
 
-		IPv4 CIDR Workaround for UBNT USG Firewall Rules
+         IPv4 CIDR Workaround for UBNT USG Firewall Rules
 
-	.EXAMPLE
-		PS C:\> Invoke-UniFiCidrWorkaround -6 -CidrList $value1
+         .EXAMPLE
+         PS C:\> Invoke-UniFiCidrWorkaround -6 -CidrList $value1
 
-		IPv6 CIDR Workaround for UBNT USG Firewall Rules
+         IPv6 CIDR Workaround for UBNT USG Firewall Rules
 
-	.EXAMPLE
-		PS C:\> $value1 | Invoke-UniFiCidrWorkaround
+         .EXAMPLE
+         PS C:\> $value1 | Invoke-UniFiCidrWorkaround
 
-		IPv4 or IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
+         IPv4 or IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
 
-	.EXAMPLE
-		PS C:\> $value1 | Invoke-UniFiCidrWorkaround -6
+         .EXAMPLE
+         PS C:\> $value1 | Invoke-UniFiCidrWorkaround -6
 
-		IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
+         IPv6 CIDR Workaround for UBNT USG Firewall Rules via Pipeline
 
-	.NOTES
-		This is an internal helper function only (Will be moved to the private functions soon)
+         .NOTES
+         This is an internal helper function only (Will be moved to the private functions soon)
 
-	.LINK
-		https://github.com/jhochwald/UniFiTooling/issues/5
-#>
+         .LINK
+         https://github.com/jhochwald/UniFiTooling/issues/5
+   #>
 
-	[CmdletBinding(ConfirmImpact = 'None')]
-	[OutputType([psobject])]
-	param
-	(
-		[Parameter(Mandatory = $true,
-				   ValueFromPipeline = $true,
-				   ValueFromPipelineByPropertyName = $true,
-				   Position = 0,
-				   HelpMessage = 'Existing CIDR List Object')]
-		[ValidateNotNullOrEmpty()]
-		[Alias('UniFiCidrList')]
-		[psobject]
-		$CidrList,
-		[Parameter(ValueFromPipeline = $true,
-				   ValueFromPipelineByPropertyName = $true,
-				   Position = 1)]
-		[Alias('IPv6', 'V6')]
-		[switch]
-		$6 = $false
-	)
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(Mandatory = $true,
+               ValueFromPipeline = $true,
+               ValueFromPipelineByPropertyName = $true,
+               Position = 0,
+               HelpMessage = 'Existing CIDR List Object')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('UniFiCidrList')]
+      [psobject]
+      $CidrList,
+      [Parameter(ValueFromPipeline = $true,
+               ValueFromPipelineByPropertyName = $true,
+               Position = 1)]
+      [Alias('IPv6', 'V6')]
+      [switch]
+      $6 = $false
+   )
 
-	begin
-	{
-		# Cleanup
-		$AddItem = @()
-	}
+   begin
+   {
+      Write-Verbose -Message 'Start Invoke-UniFiCidrWorkaround'
 
-	process
-	{
-		# Loop over the new list
-		foreach ($NewInputItem in $CidrList)
-		{
-			if ($6)
-			{
-				# CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
-				if ($NewInputItem -match '/128')
-				{
-					$NewInputItem = $NewInputItem.Replace('/128', '')
-				}
-			}
-			else
-			{
-				# CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
-				if ($NewInputItem -match '/32')
-				{
-					$NewInputItem = $NewInputItem.Replace('/32', '')
-				}
-			}
+      # Cleanup
+      $AddItem = @()
+   }
 
-			# Add to the List
-			$AddItem = $AddItem + $NewInputItem
-		}
-	}
+   process
+   {
+      # Loop over the new list
+      foreach ($NewInputItem in $CidrList)
+      {
+         if ($6)
+         {
+            # CIDR Workaround for UBNT USG Firewall Rules (Single IPv6 has to be without /128)
+            if ($NewInputItem -match '/128')
+            {
+               $NewInputItem = $NewInputItem.Replace('/128', '')
+            }
+         }
+         else
+         {
+            # CIDR Workaround for UBNT USG Firewall Rules (Single IP has to be without /32)
+            if ($NewInputItem -match '/32')
+            {
+               $NewInputItem = $NewInputItem.Replace('/32', '')
+            }
+         }
 
-	end
-	{
-		# Dump
-		$AddItem
+         # Add to the List
+         $AddItem = $AddItem + $NewInputItem
+      }
+   }
 
-		# Cleanup
-		$AddItem = $null
-	}
+   end
+   {
+      # Dump
+      $AddItem
+
+      # Cleanup
+      $AddItem = $null
+
+      Write-Verbose -Message 'Done Invoke-UniFiCidrWorkaround'
+   }
 }
 
 function Remove-HostsEntry
@@ -1088,7 +1226,7 @@ function Remove-HostsEntry
    )
 
    begin {
-      Write-Verbose -Message 'Start'
+      Write-Verbose -Message 'Start Remove-HostsEntry'
 
       try
       {
@@ -1195,7 +1333,7 @@ function Remove-HostsEntry
    }
 
    end {
-      Write-Verbose -Message 'Done'
+      Write-Verbose -Message 'Donw Remove-HostsEntry'
    }
 }
 
@@ -1221,6 +1359,8 @@ function Set-UniFiApiLoginBody
 
          begin
          {
+            Write-Verbose -Message 'Start Set-UniFiApiLoginBody'
+
             # Cleanup
             $RestBody = $null
             $JsonBody = $null
@@ -1228,7 +1368,7 @@ function Set-UniFiApiLoginBody
             Write-Verbose -Message 'Check for API Credentials'
             if ((-not $ApiUsername) -or (-not $ApiPassword))
             {
-               Write-Error -Message 'Please set the UniFi API Credentials'
+               Write-Error -Message 'Please set the UniFi API Credentials' -ErrorAction Stop
 
                # Only here to catch a global ErrorAction overwrite
                break
@@ -1238,6 +1378,7 @@ function Set-UniFiApiLoginBody
          process
          {
             Write-Verbose -Message 'Create the Body Object'
+
             $RestBody = [PSCustomObject][ordered]@{
                username = $ApiUsername
                password = $ApiPassword
@@ -1256,12 +1397,22 @@ function Set-UniFiApiLoginBody
             }
             catch
             {
-               # Verbose stuff
-               $Script:line = $_.InvocationInfo.ScriptLineNumber
-               Write-Verbose -Message ('Error was in Line {0}' -f $line)
+               # get error record
+               [Management.Automation.ErrorRecord]$e = $_
 
-               # Default error handling: Re-Throw the error
-               Write-Error -Message ('Error was {0}' -f $_) -ErrorAction Stop
+               # retrieve information about runtime error
+               $info = [PSCustomObject]@{
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+               }
+
+               Write-Verbose -Message $info
+
+               Write-Error -Message ($info.Exception) -ErrorAction Stop
 
                # Only here to catch a global ErrorAction overwrite
                break
@@ -1274,6 +1425,8 @@ function Set-UniFiApiLoginBody
 
             # Cleanup
             $RestBody = $null
+
+            Write-Verbose -Message 'Done Set-UniFiApiLoginBody'
          }
       }
 
@@ -1299,6 +1452,8 @@ function Set-UniFiDefaultRequestHeader
 
    begin
    {
+      Write-Verbose -Message 'Start Set-UniFiDefaultRequestHeader'
+
       # Cleanup
       $RestHeader = $null
    }
@@ -1306,11 +1461,17 @@ function Set-UniFiDefaultRequestHeader
    process
    {
       Write-Verbose -Message 'Create the Default Request Header'
+
       $Global:RestHeader = @{
          'charset'    = 'utf-8'
          'Content-Type' = 'application/json'
       }
+
       Write-Verbose -Message ('Default Request Header is {0}' -f $RestHeader)
+   }
+
+   end {
+      Write-Verbose -Message 'Done Set-UniFiDefaultRequestHeader'
    }
 }
 #endregion ModulePrivateFunctions
@@ -1416,12 +1577,16 @@ function Get-UnifiFirewallGroupDetails
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UnifiFirewallGroupDetails'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -1510,16 +1675,25 @@ function Get-UnifiFirewallGroupDetails
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
+
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
          switch ($PsCmdlet.ParameterSetName)
          {
@@ -1548,7 +1722,8 @@ function Get-UnifiFirewallGroupDetails
                   }
                   $Session = (Invoke-RestMethod @paramInvokeRestMethod)
 
-                  Write-Verbose -Message ('Session Info: {0}' -f $Session)
+                  Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+                  Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
 
                   # check result
                   if ($Session.meta.rc -ne 'ok')
@@ -1627,21 +1802,38 @@ function Get-UnifiFirewallGroupDetails
          # Try to Logout
          $null = (Invoke-UniFiApiLogout)
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to get the Firewall Group details' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
       }
    }
 
@@ -1653,11 +1845,13 @@ function Get-UnifiFirewallGroupDetails
       # Cleanup
       $SessionData = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Done Get-UnifiFirewallGroupDetails'
    }
 }
-#get-help Get-UnifiFirewallGroupDetails -Detailed
 
 function Get-UnifiFirewallGroups
 {
@@ -1712,12 +1906,16 @@ function Get-UnifiFirewallGroups
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UnifiFirewallGroups'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -1803,21 +2001,33 @@ function Get-UnifiFirewallGroups
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
-         $null = (Set-UniFiDefaultRequestHeader)
 
+         $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
+
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
          $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/list/firewallgroup'
          Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
 
+         #region Request
          Write-Verbose -Message 'Send the Request'
          $paramInvokeRestMethod = @{
             Method        = 'Get'
@@ -1828,7 +2038,9 @@ function Get-UnifiFirewallGroups
             WebSession    = $RestSession
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
       }
       catch
       {
@@ -1843,21 +2055,38 @@ function Get-UnifiFirewallGroups
             Write-Verbose -Message 'Logout failed'
          }
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
       }
 
       # check result
@@ -1884,8 +2113,11 @@ function Get-UnifiFirewallGroups
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Done Get-UnifiFirewallGroups'
    }
 }
 
@@ -1995,12 +2227,16 @@ function Get-UnifiNetworkDetails
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UnifiNetworkDetails'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -2089,16 +2325,25 @@ function Get-UnifiNetworkDetails
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
+
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
          switch ($PsCmdlet.ParameterSetName)
          {
@@ -2127,7 +2372,8 @@ function Get-UnifiNetworkDetails
                   }
                   $Session = (Invoke-RestMethod @paramInvokeRestMethod)
 
-                  Write-Verbose -Message ('Session Info: {0}' -f $Session)
+                  Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+                  Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
 
                   # check result
                   if ($Session.meta.rc -ne 'ok')
@@ -2214,21 +2460,38 @@ function Get-UnifiNetworkDetails
             Write-Verbose -Message 'Logout failed'
          }
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to get the network details' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
       }
    }
 
@@ -2240,11 +2503,13 @@ function Get-UnifiNetworkDetails
       # Cleanup
       $SessionData = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Start Get-UnifiNetworkDetails'
    }
 }
-#get-help Get-UnifiNetworkDetails -Detailed
 
 function Get-UnifiNetworkList
 {
@@ -2299,12 +2564,16 @@ function Get-UnifiNetworkList
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UnifiNetworkList'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -2390,26 +2659,35 @@ function Get-UnifiNetworkList
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
 
          $null = (Get-UniFiConfig)
+         #endregion ReadConfig
 
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
 
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
 
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
 
          $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/'
 
          Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
 
+         #region Request
          Write-Verbose -Message 'Send the Request'
 
          $paramInvokeRestMethod = @{
@@ -2422,7 +2700,9 @@ function Get-UnifiNetworkList
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
 
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
       }
       catch
       {
@@ -2437,21 +2717,38 @@ function Get-UnifiNetworkList
             Write-Verbose -Message 'Logout failed'
          }
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
       }
 
       # check result
@@ -2479,8 +2776,11 @@ function Get-UnifiNetworkList
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Start Get-UnifiNetworkList'
    }
 }
 
@@ -2512,10 +2812,23 @@ function Get-UnifiSpeedTestResult
          .PARAMETER UniFiValues
          Show results without modifications, like the UniFi Controller creates them
 
+         .PARAMETER last
+         Only test latest Speed Test Result will be displayed
+
+         .EXAMPLE
+         PS C:\> Get-UnifiSpeedTestResult -last
+
+         Only test latest Speed Test Result will be displayed
+
          .EXAMPLE
          PS C:\> Get-UnifiSpeedTestResult -all
 
          Get all the UniFi Security Gateway (USG) Speed Test results
+
+         .EXAMPLE
+         PS C:\> Get-UnifiSpeedTestResult -all | Sort-Object -Property time
+
+         Get all the UniFi Security Gateway (USG) Speed Test results, sorted by date
 
          .EXAMPLE
          PS C:\> Get-UnifiSpeedTestResult | Select-Object -Property *
@@ -2600,17 +2913,26 @@ function Get-UnifiSpeedTestResult
             ValueFromPipelineByPropertyName,
       Position = 4)]
       [switch]
-      $UniFiValues = $false
+      $UniFiValues = $false,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 4)]
+      [switch]
+      $last = $false
    )
 
    begin
    {
+      Write-Verbose -Message 'Start Get-UnifiSpeedTestResult'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -2743,7 +3065,7 @@ function Get-UnifiSpeedTestResult
       [string]$FilterStartDate = (ConvertTo-UnixTimestamp -Date $StartDate -Milliseconds)
       [string]$FilterEndDate = (ConvertTo-UnixTimestamp -Date $EndDate -Milliseconds)
 
-      if ($all)
+      if (($all) -or ($last))
       {
          $FilterStartDate = $null
          $FilterEndDate = $null
@@ -2755,21 +3077,35 @@ function Get-UnifiSpeedTestResult
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
+
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/stat/report/archive.speedtest'
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
 
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/stat/report/archive.speedtest'
+
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+
+         #region ApiRequestBodyInput
          $Script:ApiRequestBodyInput = [PSCustomObject][ordered]@{
             attrs = @(
                'xput_download',
@@ -2780,7 +3116,9 @@ function Get-UnifiSpeedTestResult
             start = $FilterStartDate
             end   = $FilterEndDate
          }
+         #endregion ApiRequestBodyInput
 
+         #region ApiRequestBody
          $paramConvertToJson = @{
             InputObject   = $ApiRequestBodyInput
             Depth         = 5
@@ -2791,7 +3129,9 @@ function Get-UnifiSpeedTestResult
          $ApiRequestBodyInput = $null
 
          $Script:ApiRequestBody = (ConvertTo-Json @paramConvertToJson)
+         #endregion ApiRequestBody
 
+         #region Request
          Write-Verbose -Message 'Send the Request'
 
          $paramInvokeRestMethod = @{
@@ -2805,7 +3145,9 @@ function Get-UnifiSpeedTestResult
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
 
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
       }
       catch
       {
@@ -2820,21 +3162,34 @@ function Get-UnifiSpeedTestResult
             Write-Verbose -Message 'Logout failed'
          }
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
       }
 
       # check result
@@ -2886,12 +3241,20 @@ function Get-UnifiSpeedTestResult
                [math]::Round($item.xput_upload,1)
             }
          }
-         $Result = $Result + $Object
+         $Result = ($Result + $Object)
       }
 
       # Give this object a unique typename
-      $Result.PSObject.TypeNames.Insert(0,'Speedtest.Result')
-      $Result | Add-Member MemberSet PSStandardMembers $PSStandardMembers
+      $null = ($Result.PSObject.TypeNames.Insert(0,'Speedtest.Result'))
+      $null = ($Result | Add-Member MemberSet PSStandardMembers $PSStandardMembers)
+
+      #region IfLast
+      if ($last)
+      {
+         $Result = ($Result | Sort-Object -Property time | Select-Object -Last 1)
+      }
+      #endregion IfLast
+
    }
 
    end
@@ -2902,8 +3265,11 @@ function Get-UnifiSpeedTestResult
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Start Get-UnifiSpeedTestResult'
    }
 }
 
@@ -2941,50 +3307,74 @@ function Invoke-UniFiApiLogin
 
    begin
    {
+      Write-Verbose -Message 'Start Invoke-UniFiApiLogin'
+
       # Cleanup
       $RestSession = $null
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
    }
 
    process
    {
-      # Login
       try
       {
-         #
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
-         $null = (Set-UniFiDefaultRequestHeader)
 
+         $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
+
+         #region ReadCredentials
          Write-Verbose -Message 'Read the Credentials'
          $null = (Get-UniFiCredentials)
+         #endregion
 
+         #region
          Write-Verbose -Message 'Create the Body'
          $null = (Set-UniFiApiLoginBody)
+         #endregion
 
-         Write-Verbose -Message 'Cleanup the credentials variables'
-         $ApiUsername = $null
-         $ApiPassword = $null
-
+         #region Cleanup
          # Cleanup
          $Session = $null
 
-         Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 'login'
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         Write-Verbose -Message 'Cleanup the credentials variables'
 
+         $ApiUsername = $null
+         $ApiPassword = $null
+         #endregion Cleanup
+
+         #region SetRequestURI
+         Write-Verbose -Message 'Create the Request URI'
+
+         $ApiRequestUri = $ApiUri + 'login'
+
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+
+         #region Request
          Write-Verbose -Message 'Send the Request to Login'
+
          $paramInvokeRestMethod = @{
             Method          = 'Post'
             Uri             = $ApiRequestUri
@@ -2995,32 +3385,53 @@ function Invoke-UniFiApiLogin
             SessionVariable = 'RestSession'
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+
+         if ($Session.data)
+         {
+            Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         }
 
          $Global:RestSession = $RestSession
 
          # Remove the Body variable
          $JsonBody = $null
+         #endregion Request
       }
       catch
       {
-         # Remove the Body variable
-         $JsonBody = $null
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to Login' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         # Remove the Body variable
+         $JsonBody = $null
+
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
       }
 
       # check result
@@ -3044,8 +3455,11 @@ function Invoke-UniFiApiLogin
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Done Invoke-UniFiApiLogin'
    }
 }
 
@@ -3081,34 +3495,53 @@ function Invoke-UniFiApiLogout
 
    begin
    {
+      Write-Verbose -Message 'Start Invoke-UniFiApiLogout'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
    }
 
    process
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
+
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 'logout'
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
 
+         $ApiRequestUri = $ApiUri + 'logout'
+
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+
+         #region Request
          Write-Verbose -Message 'Send the Request to Login'
+
          $paramInvokeRestMethod = @{
             Method        = 'Post'
             Uri           = $ApiRequestUri
@@ -3117,27 +3550,48 @@ function Invoke-UniFiApiLogout
             WebSession    = $RestSession
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+
+         if ($Session.data)
+         {
+            Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         }
+         #region Request
       }
       catch
       {
-         # Remove the Body variable
-         $JsonBody = $null
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to Logout' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         # Remove the Body variable
+         $JsonBody = $null
+
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
       }
 
       # check result
@@ -3162,8 +3616,1161 @@ function Invoke-UniFiApiLogout
       $Session = $null
       $RestSession = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Start Invoke-UniFiApiLogout'
+   }
+}
+
+function Invoke-UnifiAuthorizeGuest
+{
+   <#
+         .SYNOPSIS
+         Authorize a client device via the API of the UniFi Controller
+
+         .DESCRIPTION
+         Authorize a client device via the API of the Ubiquiti UniFi Controller
+
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+
+         .PARAMETER Mac
+         Client MAC address
+
+         .PARAMETER Minutes
+         Minutes (from now) until authorization expires, the default is 60 (1 hour)
+
+         .PARAMETER Up
+         Upload speed limit in Kilobit per second (kbit/s)
+
+         .PARAMETER Down
+         Download speed limit in Kilobit per second (kbit/s)
+
+         .PARAMETER Limit
+         Data transfer limit in megabytes (MB), upload and download will be combined.
+         The default is unlimited
+
+         .PARAMETER AccessPoint
+         MAC address of the Access Point to which client is connected, should result in a much faster authorization
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiAuthorizeGuest -Mac '84:3a:4b:cd:88:2D'
+
+         Authorize a client device via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiAuthorizeGuest -Mac '84:3a:4b:cd:88:2D' -AccessPoint '788a2059c699'
+
+         Authorize a client device via the API of the UniFi Controller, it used the AccessPoint with the Mac address 78:8a:20:59:c6:99 directly for a faster authorization
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiAuthorizeGuest -Mac '843a4bcd882D' -Minutes 180
+
+         Authorize a client device for 180 minutes via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiAuthorizeGuest -Mac '843a4bcd882D' -Up 1024 -Down 2048
+
+         Authorize a client device with a restriction of 1024 kbit/s upload rate and 2048 kbit/s download rate via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiAuthorizeGuest -Mac '843a4bcd882D' -Limit 102400
+
+         Authorize a client device with a limitation of  via 102400 megabytes of traffic (combined) the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiAuthorizeGuest '84-3a-4b-cd-88-2D' -UnifiSite 'Contoso'
+
+         Authorize a client device on site 'Contoso' via the API of the UniFi Controller (The function will normalize the MAC Address for us)
+
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Invoke-UniFiApiLogin
+
+         .LINK
+         Invoke-RestMethod
+   #>
+
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([bool])]
+   param
+   (
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 0)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default',
+      [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            Position = 1,
+      HelpMessage = 'Client MAC address')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('UniFiMac', 'MacAddress')]
+      [string]
+      $Mac,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 2)]
+      [Alias('UniFiMinutes')]
+      [int]
+      $Minutes = 60,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 3)]
+      [Alias('UniFiUp')]
+      [int]
+      $Up = $null,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 4)]
+      [int]
+      $Down = $null,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 5)]
+      [Alias('MBytes', 'UniFiLimit', 'UniFiMBytes')]
+      [int]
+      $Limit = $null,
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 6)]
+      [Alias('UniFiAccessPoint', 'ApMac', 'UniFiApMac', 'ap_mac')]
+      [string]
+      $AccessPoint = $null
+   )
+
+   begin
+   {
+      Write-Verbose -Message 'Start Invoke-UnifiAuthorizeGuest'
+
+      # Cleanup
+      $Session = $null
+
+      #region MacHandler
+      <#
+            Make sure we have the right format
+      #>
+      $regex = '((\d|([a-f]|[A-F])){2}){6}'
+      [string]$Mac = $Mac.Trim().Replace(':', '').Replace('.', '').Replace('-', '')
+      if (($Mac.Length -eq 12) -and ($Mac -match $regex))
+      {
+         [string]$Mac = ($Mac -replace '..(?!$)', '$&:')
+      }
+      else
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+
+         # Error Message
+         Write-Error -Message ('Sorry, but {0} is a format that the UniFi Controller will nor understand' -f $Mac) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      #endregion MacHandler
+
+      #region AccessPointMacHandler
+      <#
+            Make sure we have the right format
+      #>
+      if ($AccessPoint)
+      {
+         $regex = '((\d|([a-f]|[A-F])){2}){6}'
+         [string]$AccessPoint = $AccessPoint.Trim().Replace(':', '').Replace('.', '').Replace('-', '')
+         if (($AccessPoint.Length -eq 12) -and ($AccessPoint -match $regex))
+         {
+            [string]$AccessPoint = ($AccessPoint -replace '..(?!$)', '$&:')
+         }
+         else
+         {
+            # Verbose stuff
+            $Script:line = $_.InvocationInfo.ScriptLineNumber
+
+            Write-Verbose -Message ('Error was in Line {0}' -f $line)
+
+            # Error Message
+            Write-Error -Message ('Sorry, but {0} is a format that the UniFi Controller will nor understand' -f $AccessPoint) -ErrorAction Stop
+
+            # Only here to catch a global ErrorAction overwrite
+            break
+         }
+      }
+      #endregion AccessPointMacHandler
+
+      #region SafeProgressPreference
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
+
+      #region CheckSession
+      if (-not (Get-UniFiIsAlive))
+      {
+         #region LoginCheckLoop
+         # TODO: Move to config
+         [int]$NumberOfRetries = '3'
+         [int]$RetryTimer = '5'
+         # Setup the Loop itself
+         $RetryLoop = $false
+         [int]$RetryCounter = '0'
+         # Original code/idea was by Thomas Maurer
+         do
+         {
+            try
+            {
+               # Try to Logout
+               try
+               {
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     throw
+                  }
+               }
+               catch
+               {
+                  # We don't care about that
+                  Write-Verbose -Message 'Logout failed'
+               }
+
+               # Try a Session check (login is inherited here within the helper function)
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
+               {
+                  Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
+               }
+
+               # End the Loop
+               $RetryLoop = $true
+            }
+            catch
+            {
+               if ($RetryCounter -gt $NumberOfRetries)
+               {
+                  Write-Warning -Message ('Could still not login, after {0} retries.' -f $NumberOfRetries)
+
+                  # Stay in the Loop
+                  $RetryLoop = $true
+               }
+               else
+               {
+                  if ($RetryCounter -eq 0)
+                  {
+                     Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
+                  }
+                  else
+                  {
+                     Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
+                  }
+
+                  $null = (Start-Sleep -Seconds $RetryTimer)
+
+                  $RetryCounter = $RetryCounter + 1
+               }
+            }
+         }
+         while ($RetryLoop -eq $false)
+         #endregion LoginCheckLoop
+      }
+      #endregion CheckSession
+
+      #region ReCheckSession
+      if (-not ($RestSession))
+      {
+         # Restore ProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+
+         Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      #endregion ReCheckSession
+
+      #region ApiRequestBodyInput
+      $Script:ApiRequestBodyInput = [PSCustomObject][ordered]@{
+         cmd     = 'authorize-guest'
+         mac     = $Mac
+         minutes = $Minutes
+      }
+
+      if ($Up)
+      {
+         Write-Verbose -Message ('Add upload speed limit: {0}' -f $Up)
+         $ApiRequestBodyInput | Add-Member -MemberType NoteProperty -Name up -Value $Up -Force
+      }
+
+      if ($Down)
+      {
+         Write-Verbose -Message ('Add download speed limit: {0}' -f $Down)
+         $ApiRequestBodyInput | Add-Member -MemberType NoteProperty -Name down -Value $Down -Force
+      }
+
+      if ($Limit)
+      {
+         Write-Verbose -Message ('Add data transfer limit: {0}' -f $Limit)
+         $ApiRequestBodyInput | Add-Member -MemberType NoteProperty -Name bytes -Value $Limit -Force
+      }
+
+      if ($AccessPoint)
+      {
+         Write-Verbose -Message ('Use AP MAC address: {0}' -f $AccessPoint)
+         $ApiRequestBodyInput | Add-Member -MemberType NoteProperty -Name ap_mac -Value $AccessPoint -Force
+      }
+      #endregion ApiRequestBodyInput
+   }
+
+   process
+   {
+      try
+      {
+         #region ReadConfig
+         Write-Verbose -Message 'Read the Config'
+
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+         #endregion CertificateHandler
+
+         #region SetRequestHeader
+         Write-Verbose -Message 'Set the API Call default Header'
+
+         $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
+
+         #region SetRequestURI
+         Write-Verbose -Message 'Create the Request URI'
+
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/cmd/stamgr'
+
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+
+         #region ApiRequestBody
+         $paramConvertToJson = @{
+            InputObject   = $ApiRequestBodyInput
+            Depth         = 5
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+
+         $ApiRequestBodyInput = $null
+
+         $Script:ApiRequestBody = (ConvertTo-Json @paramConvertToJson)
+         #endregion ApiRequestBody
+
+         #region Request
+         Write-Verbose -Message 'Send the Request'
+
+         $paramInvokeRestMethod = @{
+            Method        = 'Post'
+            Uri           = $ApiRequestUri
+            Headers       = $RestHeader
+            Body          = $ApiRequestBody
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+
+         if ($Session.data)
+         {
+            Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+            $Result = $true
+         } else {
+            $Result = $false
+         }
+         #endregion Request
+      }
+      catch
+      {
+         # Try to Logout
+         try
+         {
+            $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
+         }
+         catch
+         {
+            # We don't care about that
+            Write-Verbose -Message 'Logout failed'
+         }
+
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
+
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+         #endregion ErrorHandler
+      }
+      finally
+      {
+         #region ResetSslTrust
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
+      }
+
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+         Write-Verbose -Message ('Error was {0}' -f $Session.meta.rc)
+
+         # Error Message
+         Write-Error -Message 'Unable to get the network list' -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+
+   end
+   {
+      # Dump the Result
+      Write-Output -InputObject $true
+
+      # Cleanup
+      $Session = $null
+
+      #region RestoreProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Start Invoke-UnifiAuthorizeGuest'
+   }
+}
+
+function Invoke-UnifiReconnectClient
+{
+   <#
+         .SYNOPSIS
+         Reconnect a client device via the API of the UniFi Controller
+
+         .DESCRIPTION
+         Reconnect a client device via the API of the Ubiquiti UniFi Controller
+
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+	
+         .PARAMETER Mac
+         Client MAC address
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiReconnectClient -Mac '84:3a:4b:cd:88:2D'
+
+         Reconnect a client device via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiReconnectClient -Mac '84:3a:4b:cd:88:2D' -UnifiSite 'Contoso'
+
+         Reconnect a client device on Site 'Contoso' via the API of the UniFi Controller
+
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Invoke-UniFiApiLogin
+
+         .LINK
+         Invoke-RestMethod
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([bool])]
+   param
+   (
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 0)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default',
+      [Parameter(Mandatory = $true,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            Position = 1,
+      HelpMessage = 'Client MAC address')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('UniFiMac', 'MacAddress')]
+      [string]
+      $Mac
+   )
+	
+   begin
+   {
+      Write-Verbose -Message 'Start Invoke-UnifiReconnectClient'
+		
+      # Cleanup
+      $Session = $null
+		
+      #region MacHandler
+      $Mac = $Mac.ToLower()
+      #endregion MacHandler
+		
+      #region SafeProgressPreference
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
+		
+      #region CheckSession
+      if (-not (Get-UniFiIsAlive))
+      {
+         #region LoginCheckLoop
+         # TODO: Move to config
+         [int]$NumberOfRetries = '3'
+         [int]$RetryTimer = '5'
+         # Setup the Loop itself
+         $RetryLoop = $false
+         [int]$RetryCounter = '0'
+         # Original code/idea was by Thomas Maurer
+         do
+         {
+            try
+            {
+               # Try to Logout
+               try
+               {
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     throw
+                  }
+               }
+               catch
+               {
+                  # We don't care about that
+                  Write-Verbose -Message 'Logout failed'
+               }
+					
+               # Try a Session check (login is inherited here within the helper function)
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
+               {
+                  Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
+               }
+					
+               # End the Loop
+               $RetryLoop = $true
+            }
+            catch
+            {
+               if ($RetryCounter -gt $NumberOfRetries)
+               {
+                  Write-Warning -Message ('Could still not login, after {0} retries.' -f $NumberOfRetries)
+						
+                  # Stay in the Loop
+                  $RetryLoop = $true
+               }
+               else
+               {
+                  if ($RetryCounter -eq 0)
+                  {
+                     Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
+                  }
+                  else
+                  {
+                     Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
+                  }
+						
+                  $null = (Start-Sleep -Seconds $RetryTimer)
+						
+                  $RetryCounter = $RetryCounter + 1
+               }
+            }
+         }
+         while ($RetryLoop -eq $false)
+         #endregion LoginCheckLoop
+      }
+      #endregion CheckSession
+		
+      #region ReCheckSession
+      if (-not ($RestSession))
+      {
+         # Restore ProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+			
+         Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      #endregion ReCheckSession
+
+      #region MacHandler
+      <#
+            Make sure we have the right format
+      #>
+      $regex = '((\d|([a-f]|[A-F])){2}){6}'
+      [string]$Mac = $Mac.Trim().Replace(':', '').Replace('.', '').Replace('-', '')
+      if (($Mac.Length -eq 12) -and ($Mac -match $regex))
+      {
+         [string]$Mac = ($Mac -replace '..(?!$)', '$&:')
+      }
+      else
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+
+         # Error Message
+         Write-Error -Message ('Sorry, but {0} is a format that the UniFi Controller will nor understand' -f $Mac) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      #endregion MacHandler
+      
+      #region ApiRequestBodyInput
+      $Script:ApiRequestBodyInput = [PSCustomObject][ordered]@{
+         cmd = 'kick-sta'
+         mac = $Mac
+      }
+      #endregion ApiRequestBodyInput
+   }
+	
+   process
+   {
+      try
+      {
+         #region ReadConfig
+         Write-Verbose -Message 'Read the Config'
+			
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+			
+         #region CertificateHandler
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+			
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+         #endregion CertificateHandler
+			
+         #region SetRequestHeader
+         Write-Verbose -Message 'Set the API Call default Header'
+			
+         $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
+			
+         #region SetRequestURI
+         Write-Verbose -Message 'Create the Request URI'
+			
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/cmd/stamgr'
+			
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+         
+         #region ApiRequestBody
+         $paramConvertToJson = @{
+            InputObject   = $ApiRequestBodyInput
+            Depth         = 5
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+
+         $ApiRequestBodyInput = $null
+
+         $Script:ApiRequestBody = (ConvertTo-Json @paramConvertToJson)
+         #endregion ApiRequestBody
+
+         #region Request
+         Write-Verbose -Message 'Send the Request'
+
+         $paramInvokeRestMethod = @{
+            Method        = 'Post'
+            Uri           = $ApiRequestUri
+            Headers       = $RestHeader
+            Body          = $ApiRequestBody
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
+      }
+      catch
+      {
+         # Try to Logout
+         try
+         {
+            $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
+         }
+         catch
+         {
+            # We don't care about that
+            Write-Verbose -Message 'Logout failed'
+         }
+			
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
+			
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+			
+         Write-Verbose -Message $info
+			
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+         #endregion ErrorHandler
+      }
+      finally
+      {
+         #region ResetSslTrust
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+			
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
+      }
+		
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+			
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+
+         if ($Session.data)
+         {
+            Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         }
+
+         # Error Message
+         Write-Error -Message 'Unable to get the network list' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump the Result
+      Write-Output -InputObject $true
+		
+      # Cleanup
+      $Session = $null
+		
+      #region RestoreProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+		
+      Write-Verbose -Message 'Start Invoke-UnifiReconnectClient'
+   }
+}
+
+function Invoke-UnifiUnauthorizeGuest
+{
+   <#
+         .SYNOPSIS
+         Unauthorize a client device via the API of the UniFi Controller
+
+         .DESCRIPTION
+         Unauthorize a client device via the API of the Ubiquiti UniFi Controller
+
+         .PARAMETER UnifiSite
+         UniFi Site as configured. The default is: default
+	
+         .PARAMETER Mac
+         Client MAC address
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiUnauthorizeGuest -Mac '84:3a:4b:cd:88:2D'
+
+         Unauthorize a client device via the API of the UniFi Controller
+
+         .EXAMPLE
+         PS C:\> Invoke-UnifiUnauthorizeGuest -Mac '84:3a:4b:cd:88:2D' -UnifiSite 'Contoso'
+
+         Unauthorize a client device on Site 'Contoso' via the API of the UniFi Controller
+
+         .NOTES
+         Initial version of the Ubiquiti UniFi Controller automation function
+
+         .LINK
+         Get-UniFiConfig
+
+         .LINK
+         Set-UniFiDefaultRequestHeader
+
+         .LINK
+         Invoke-UniFiApiLogin
+
+         .LINK
+         Invoke-RestMethod
+   #>
+	
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([bool])]
+   param
+   (
+      [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+      Position = 0)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('Site')]
+      [string]
+      $UnifiSite = 'default',
+      [Parameter(Mandatory = $true,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            Position = 1,
+      HelpMessage = 'Client MAC address')]
+      [ValidateNotNullOrEmpty()]
+      [Alias('UniFiMac', 'MacAddress')]
+      [string]
+      $Mac
+   )
+	
+   begin
+   {
+      Write-Verbose -Message 'Start Invoke-UnifiUnauthorizeGuest'
+		
+      # Cleanup
+      $Session = $null
+		
+      #region MacHandler
+      $Mac = $Mac.ToLower()
+      #endregion MacHandler
+		
+      #region SafeProgressPreference
+      # Safe ProgressPreference and Setup SilentlyContinue for the function
+      $ExistingProgressPreference = ($ProgressPreference)
+      $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
+		
+      #region CheckSession
+      if (-not (Get-UniFiIsAlive))
+      {
+         #region LoginCheckLoop
+         # TODO: Move to config
+         [int]$NumberOfRetries = '3'
+         [int]$RetryTimer = '5'
+         # Setup the Loop itself
+         $RetryLoop = $false
+         [int]$RetryCounter = '0'
+         # Original code/idea was by Thomas Maurer
+         do
+         {
+            try
+            {
+               # Try to Logout
+               try
+               {
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     throw
+                  }
+               }
+               catch
+               {
+                  # We don't care about that
+                  Write-Verbose -Message 'Logout failed'
+               }
+					
+               # Try a Session check (login is inherited here within the helper function)
+               if (-not (Get-UniFiIsAlive -ErrorAction Stop -WarningAction SilentlyContinue))
+               {
+                  Write-Error -Message 'Login failed' -ErrorAction Stop -Category AuthenticationError
+               }
+					
+               # End the Loop
+               $RetryLoop = $true
+            }
+            catch
+            {
+               if ($RetryCounter -gt $NumberOfRetries)
+               {
+                  Write-Warning -Message ('Could still not login, after {0} retries.' -f $NumberOfRetries)
+						
+                  # Stay in the Loop
+                  $RetryLoop = $true
+               }
+               else
+               {
+                  if ($RetryCounter -eq 0)
+                  {
+                     Write-Warning -Message ('Could not login! Retrying in {0} seconds.' -f $RetryTimer)
+                  }
+                  else
+                  {
+                     Write-Warning -Message ('Retry {0} of {1} failed. Retrying in {2} seconds.' -f $RetryCounter, $NumberOfRetries, $RetryTimer)
+                  }
+						
+                  $null = (Start-Sleep -Seconds $RetryTimer)
+						
+                  $RetryCounter = $RetryCounter + 1
+               }
+            }
+         }
+         while ($RetryLoop -eq $false)
+         #endregion LoginCheckLoop
+      }
+      #endregion CheckSession
+		
+      #region ReCheckSession
+      if (-not ($RestSession))
+      {
+         # Restore ProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+			
+         Write-Error -Message 'Unable to login! Check the connection to the controller, SSL certificates, and your credentials!' -ErrorAction Stop -Category AuthenticationError
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      #endregion ReCheckSession
+
+      #region MacHandler
+      <#
+            Make sure we have the right format
+      #>
+      $regex = '((\d|([a-f]|[A-F])){2}){6}'
+      [string]$Mac = $Mac.Trim().Replace(':', '').Replace('.', '').Replace('-', '')
+      if (($Mac.Length -eq 12) -and ($Mac -match $regex))
+      {
+         [string]$Mac = ($Mac -replace '..(?!$)', '$&:')
+      }
+      else
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+
+         # Error Message
+         Write-Error -Message ('Sorry, but {0} is a format that the UniFi Controller will nor understand' -f $Mac) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+      #endregion MacHandler
+      
+      #region ApiRequestBodyInput
+      $Script:ApiRequestBodyInput = [PSCustomObject][ordered]@{
+         cmd = 'unauthorize-guest'
+         mac = $Mac
+      }
+      #endregion ApiRequestBodyInput
+   }
+	
+   process
+   {
+      try
+      {
+         #region ReadConfig
+         Write-Verbose -Message 'Read the Config'
+			
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+			
+         #region CertificateHandler
+         Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+			
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = {
+            $ApiSelfSignedCert
+         }
+         #endregion CertificateHandler
+			
+         #region SetRequestHeader
+         Write-Verbose -Message 'Set the API Call default Header'
+			
+         $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
+			
+         #region SetRequestURI
+         Write-Verbose -Message 'Create the Request URI'
+			
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/cmd/stamgr'
+			
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+         
+         #region ApiRequestBody
+         $paramConvertToJson = @{
+            InputObject   = $ApiRequestBodyInput
+            Depth         = 5
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+
+         $ApiRequestBodyInput = $null
+
+         $Script:ApiRequestBody = (ConvertTo-Json @paramConvertToJson)
+         #endregion ApiRequestBody
+
+         #region Request
+         Write-Verbose -Message 'Send the Request'
+
+         $paramInvokeRestMethod = @{
+            Method        = 'Post'
+            Uri           = $ApiRequestUri
+            Headers       = $RestHeader
+            Body          = $ApiRequestBody
+            ErrorAction   = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+            WebSession    = $RestSession
+         }
+         $Session = (Invoke-RestMethod @paramInvokeRestMethod)
+
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
+      }
+      catch
+      {
+         # Try to Logout
+         try
+         {
+            $null = (Invoke-UniFiApiLogout -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
+         }
+         catch
+         {
+            # We don't care about that
+            Write-Verbose -Message 'Logout failed'
+         }
+			
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
+			
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+			
+         Write-Verbose -Message $info
+			
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+         #endregion ErrorHandler
+      }
+      finally
+      {
+         #region ResetSslTrust
+         # Reset the SSL Trust (make sure everything is back to default)
+         [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
+			
+         #region RestoreProgressPreference
+         $ProgressPreference = $ExistingProgressPreference
+         #endregion RestoreProgressPreference
+      }
+		
+      # check result
+      if ($Session.meta.rc -ne 'ok')
+      {
+         # Verbose stuff
+         $Script:line = $_.InvocationInfo.ScriptLineNumber
+			
+         Write-Verbose -Message ('Error was in Line {0}' -f $line)
+
+         if ($Session.data)
+         {
+            Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+            $Result = $true
+         }
+         else 
+         {
+            $Result = $false
+         }
+
+         # Error Message
+         Write-Error -Message 'Unable to get the network list' -ErrorAction Stop
+			
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+	
+   end
+   {
+      # Dump the Result
+      Write-Output -InputObject $Result
+		
+      # Cleanup
+      $Session = $null
+		
+      #region RestoreProgressPreference
+      $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+		
+      Write-Verbose -Message 'Start Invoke-UnifiUnauthorizeGuest'
    }
 }
 
@@ -3286,6 +4893,8 @@ function New-UniFiConfig
 
    begin
    {
+      Write-Verbose -Message 'Start New-UniFiConfig'
+
       #region JsonInputData
       $JsonInputData = [PSCustomObject][ordered]@{
          Login          = [PSCustomObject][ordered]@{
@@ -3302,27 +4911,54 @@ function New-UniFiConfig
 
    process
    {
-      #region JsonData
-      $paramConvertToJson = @{
-         InputObject   = $JsonInputData
-         Depth         = 2
-         ErrorAction   = 'Stop'
-         WarningAction = 'SilentlyContinue'
-      }
-      $JsonData = (ConvertTo-Json @paramConvertToJson)
-
-      $paramSetContent = @{
-         Value         = $JsonData
-         Path          = $Path
-         PassThru      = $true
-         Force         = $force
-         Confirm       = $false
-         ErrorAction   = 'Stop'
-         WarningAction = 'SilentlyContinue'
-      }
-      if ($pscmdlet.ShouldProcess($Path, 'Create'))
+      try
       {
-         $null = (Set-Content @paramSetContent)
+         #region JsonData
+         $paramConvertToJson = @{
+            InputObject   = $JsonInputData
+            Depth         = 2
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+         $JsonData = (ConvertTo-Json @paramConvertToJson)
+
+         $paramSetContent = @{
+            Value         = $JsonData
+            Path          = $Path
+            PassThru      = $true
+            Force         = $force
+            Confirm       = $false
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+         if ($pscmdlet.ShouldProcess($Path, 'Create'))
+         {
+            $null = (Set-Content @paramSetContent)
+         }
+      }
+      catch
+      {
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
+
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+         #endregion ErrorHandler
       }
    }
 
@@ -3332,7 +4968,7 @@ function New-UniFiConfig
       $JsonInputData = $null
       $paramConvertToJson = $null
 
-      Write-Verbose -Message 'New-UniFiConfig done'
+      Write-Verbose -Message 'Done New-UniFiConfig'
    }
 }
 
@@ -3412,13 +5048,17 @@ function Set-UnifiFirewallGroup
 
    begin
    {
+      Write-Verbose -Message 'Start Set-UnifiFirewallGroup'
+
       # Cleanup
       $TargetFirewallGroup = $null
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -3526,26 +5166,35 @@ function Set-UnifiFirewallGroup
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
 
          $null = (Get-UniFiConfig)
+         #endregion ReadConfig
 
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
 
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
 
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
 
          $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/firewallgroup/' + $TargetFirewallGroup._id
 
          Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
 
+         #region Request
          Write-Verbose -Message 'Send the Request'
 
          $paramInvokeRestMethod = @{
@@ -3559,7 +5208,9 @@ function Set-UnifiFirewallGroup
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
 
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
       }
       catch
       {
@@ -3574,21 +5225,34 @@ function Set-UnifiFirewallGroup
             Write-Verbose -Message 'Logout failed'
          }
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to get Firewall Groups' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
       }
 
       # check result
@@ -3612,8 +5276,11 @@ function Set-UnifiFirewallGroup
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Done Set-UnifiFirewallGroup'
    }
 }
 
@@ -3694,12 +5361,16 @@ function Set-UnifiNetworkDetails
 
    begin
    {
+      Write-Verbose -Message 'Start Set-UnifiNetworkDetails'
+
       # Cleanup
       $Session = $null
 
+      #region SafeProgressPreference
       # Safe ProgressPreference and Setup SilentlyContinue for the function
       $ExistingProgressPreference = ($ProgressPreference)
       $ProgressPreference = 'SilentlyContinue'
+      #endregion SafeProgressPreference
 
       #region CheckSession
       if (-not (Get-UniFiIsAlive))
@@ -3785,21 +5456,35 @@ function Set-UnifiNetworkDetails
    {
       try
       {
+         #region ReadConfig
          Write-Verbose -Message 'Read the Config'
-         $null = (Get-UniFiConfig)
 
+         $null = (Get-UniFiConfig)
+         #endregion ReadConfig
+
+         #region CertificateHandler
          Write-Verbose -Message ('Certificate check - Should be {0}' -f $ApiSelfSignedCert)
+
          [Net.ServicePointManager]::ServerCertificateValidationCallback = {
             $ApiSelfSignedCert
          }
+         #endregion CertificateHandler
 
+         #region SetRequestHeader
          Write-Verbose -Message 'Set the API Call default Header'
+
          $null = (Set-UniFiDefaultRequestHeader)
+         #endregion SetRequestHeader
 
+         #region SetRequestURI
          Write-Verbose -Message 'Create the Request URI'
-         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/' + $UnifiNetwork
-         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
 
+         $ApiRequestUri = $ApiUri + 's/' + $UnifiSite + '/rest/networkconf/' + $UnifiNetwork
+
+         Write-Verbose -Message ('URI: {0}' -f $ApiRequestUri)
+         #endregion SetRequestURI
+
+         #region Request
          Write-Verbose -Message 'Send the Request'
          $paramInvokeRestMethod = @{
             Method        = 'Put'
@@ -3811,7 +5496,10 @@ function Set-UnifiNetworkDetails
             WebSession    = $RestSession
          }
          $Session = (Invoke-RestMethod @paramInvokeRestMethod)
-         Write-Verbose -Message ('Session Info: {0}' -f $Session)
+
+         Write-Verbose -Message "Session Meta: $(($Session.meta.rc | Out-String).Trim())"
+         Write-Verbose -Message "Session Data: $("`n" + ($Session.data | Out-String).Trim())"
+         #endregion Request
       }
       catch
       {
@@ -3826,21 +5514,34 @@ function Set-UnifiNetworkDetails
             Write-Verbose -Message 'Logout failed'
          }
 
-         # Verbose stuff
-         $Script:line = $_.InvocationInfo.ScriptLineNumber
-         Write-Verbose -Message ('Error was in Line {0}' -f $line)
-         Write-Verbose -Message ('Error was {0}' -f $_)
+         #region ErrorHandler
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
 
-         # Error Message
-         Write-Error -Message 'Unable to modify given network' -ErrorAction Stop
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
 
          # Only here to catch a global ErrorAction overwrite
          break
+         #endregion ErrorHandler
       }
       finally
       {
+         #region ResetSslTrust
          # Reset the SSL Trust (make sure everything is back to default)
          [Net.ServicePointManager]::ServerCertificateValidationCallback = $null
+         #endregion ResetSslTrust
       }
 
       # check result
@@ -3867,8 +5568,11 @@ function Set-UnifiNetworkDetails
       # Cleanup
       $Session = $null
 
-      # Restore ProgressPreference
+      #region RestoreProgressPreference
       $ProgressPreference = $ExistingProgressPreference
+      #endregion RestoreProgressPreference
+
+      Write-Verbose -Message 'Done Set-UnifiNetworkDetails'
    }
 }
 #endregion ModulePublicFunctions

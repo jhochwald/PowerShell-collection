@@ -4,6 +4,23 @@ All notable changes to the **UniFiTooling** project will be documented in this f
 
 ---
 
+### 1.0.9 - 2019-01-19 **`[Unreleased]`**
+
+Mainly a feature release with some bugfixes and refactoring.
+
+#### Added
+
+  - `Get-UnifiSpeedTestResult` has now a -last parameter to get only the latest result
+  - `Invoke-UnifiAuthorizeGuest` - Authorize a client device via the API of the UniFi Controller
+  - `Invoke-UnifiUnauthorizeGuest` - Unauthorize a client device via the API of the UniFi Controller
+  - `Invoke-UnifiReconnectClient` - Reconnect a client device via the API of the UniFi Controller
+
+- #### Changed
+
+  - Refactored a lot of code.
+  - Change the Verbose output (Detailed connection details)
+  - Change some links to the GitHub Wiki
+
 ### 1.0.8 - 2019-01-19
 
 Mainly a bugfix and refactoring release
@@ -46,8 +63,8 @@ Mainly a bugfix and refactoring release
 - Git Ignore extended
 - Add Multi valued inputs to `Get-UnifiNetworkDetails`
 - Add `-Id` parameter to `Get-UnifiNetworkDetails`. This replaced the -UnifiNetworkName` parameter - Related to #9
- - `-UnifiNetworkName` is now a legacy alias, necessary to make it a non breaking change
- - For the parameter `-UnifiNetworkName` an ID (`network_id`) must be used, necessary to make it a non breaking change
+  - `-UnifiNetworkName` is now a legacy alias, necessary to make it a non breaking change
+  - For the parameter `-UnifiNetworkName` an ID (`network_id`) must be used, necessary to make it a non breaking change
 - Add `-name` parameter to `Get-UnifiNetworkDetails` - Related to #9
 - Moved `Get-UnifiFirewallGroupBody` from Public to Private (No longer exported as command)
 

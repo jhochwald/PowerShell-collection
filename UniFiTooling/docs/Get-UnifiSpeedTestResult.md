@@ -18,13 +18,13 @@ Get the UniFi Security Gateway (USG) Speed Test results
 ### DateSet (Default)
 ```
 Get-UnifiSpeedTestResult [[-StartDate] <DateTime>] [[-EndDate] <DateTime>] [[-UnifiSite] <String>] [-all]
- [-UniFiValues] [<CommonParameters>]
+ [-UniFiValues] [-last] [<CommonParameters>]
 ```
 
 ### TimeFrameSet
 ```
 Get-UnifiSpeedTestResult [[-StartDate] <DateTime>] [[-Timeframe] <Int32>] [[-UnifiSite] <String>] [-all]
- [-UniFiValues] [<CommonParameters>]
+ [-UniFiValues] [-last] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,33 +34,47 @@ Get the UniFi Security Gateway (USG) Speed Test results
 
 ### EXAMPLE 1
 ```
+Get-UnifiSpeedTestResult -last
+```
+
+Only test latest Speed Test Result will be displayed
+
+### EXAMPLE 2
+```
 Get-UnifiSpeedTestResult -all
 ```
 
 Get all the UniFi Security Gateway (USG) Speed Test results
 
-### EXAMPLE 2
+### EXAMPLE 3
+```
+Get-UnifiSpeedTestResult -all | Sort-Object -Property time
+```
+
+Get all the UniFi Security Gateway (USG) Speed Test results, sorted by date
+
+### EXAMPLE 4
 ```
 Get-UnifiSpeedTestResult | Select-Object -Property *
 ```
 
 Get the UniFi Security Gateway (USG) Speed Test results from the last 24 hours (default), returns all values
 
-### EXAMPLE 3
+### EXAMPLE 5
 ```
 Get-UnifiSpeedTestResult -UnifiSite 'Contoso'
 ```
 
 Get the UniFi Security Gateway (USG) Speed Test results from the last 24 hours (default)
 
-### EXAMPLE 4
+### EXAMPLE 6
 ```
 Get-UnifiSpeedTestResult -Timeframe 48
 ```
 
 Get the UniFi Security Gateway (USG) Speed Test results of the last 48 hours
 
-### EXAMPLE 5
+### EXAMPLE 7
 ```
 Get-UnifiSpeedTestResult -StartDate '1/16/2019 12:00 AM' -EndDate '1/16/2019 11:59:59 PM'
 ```
@@ -149,6 +163,21 @@ Accept wildcard characters: False
 
 ### -UniFiValues
 Show results without modifications, like the UniFi Controller creates them
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: False
+Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -last
+Only test latest Speed Test Result will be displayed
 
 ```yaml
 Type: SwitchParameter
