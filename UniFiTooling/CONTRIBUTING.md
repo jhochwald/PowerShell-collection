@@ -2,7 +2,7 @@
 
 This is a guide for everyone interested in contributing to our open source projects. It's based on well known community workflows.
 
-I love PowerShell, and i love to share knowledge, you are encouraged to fork all my open source repositories and make adjustments according to your own preferences. If you really want to contribute, you should consider a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls), this will help me to improve and to share this improvement with the community.
+I love PowerShell, and i love to share knowledge, you are encouraged to fork all my open source repositories and make adjustments according to your own preferences. If you really want to contribute, you should consider a [pull request](https://github.com/Enatec/UniFiTooling/pulls), this will help me to improve and to share this improvement with the community.
 
 ## General Bug Report
 
@@ -40,7 +40,7 @@ If you want to contribute code, please try to:
 * Write [good commit messages](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html), explain what your patch does, and why it is needed.
 * Keep it simple: Any patch that changes a lot of code or is difficult to understand should be discussed before you put in the effort. We can discuss that right here in the Issue tracker.
 
-Once you have tried the above, create a GitHub [pull request](https://github.com/jhochwald/PowerShell-collection/pulls) to notify me of your changes.
+Once you have tried the above, create a GitHub [pull request](https://github.com/Enatec/UniFiTooling/pulls) to notify me of your changes.
 
 ### Code Signing
 
@@ -71,7 +71,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND AN
 
 #### BSD-3-Clause
 
-BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/jhochwald/UniFiTooling/wiki/License)
+BSD 3-Clause "New" or "Revised" License. - [Online](https://github.com/Enatec/UniFiTooling/wiki/License)
 
 ### Your Name
 

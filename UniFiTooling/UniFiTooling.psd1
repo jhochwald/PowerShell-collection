@@ -69,13 +69,13 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-UnifiFirewallGroupDetails', 'Get-UnifiFirewallGroups', 
-               'Get-UnifiNetworkDetails', 'Get-UnifiNetworkList', 
-               'Get-UnifiSpeedTestResult', 'Invoke-UniFiApiLogin', 
-               'Invoke-UniFiApiLogout', 'Invoke-UnifiAuthorizeGuest', 
-               'Invoke-UnifiBlockClient', 'Invoke-UnifiForgetClient', 
-               'Invoke-UnifiReconnectClient', 'Invoke-UnifiUnauthorizeGuest', 
-               'Invoke-UnifiUnblockClient', 'New-UniFiConfig', 
+FunctionsToExport = 'Get-UnifiFirewallGroupDetails', 'Get-UnifiFirewallGroups',
+               'Get-UnifiNetworkDetails', 'Get-UnifiNetworkList',
+               'Get-UnifiSpeedTestResult', 'Invoke-UniFiApiLogin',
+               'Invoke-UniFiApiLogout', 'Invoke-UnifiAuthorizeGuest',
+               'Invoke-UnifiBlockClient', 'Invoke-UnifiForgetClient',
+               'Invoke-UnifiReconnectClient', 'Invoke-UnifiUnauthorizeGuest',
+               'Invoke-UnifiUnblockClient', 'New-UniFiConfig',
                'Set-UnifiFirewallGroup', 'Set-UnifiNetworkDetails'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -105,16 +105,16 @@ PrivateData = @{
         Tags = 'UniFi','API','Automation','Ubiquiti','UBNT','USG','RESTful'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/jhochwald/UniFiTooling/wiki/License'
+        LicenseUri = 'https://github.com/Enatec/UniFiTooling/wiki/License'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/jhochwald/UniFiTooling'
+        ProjectUri = 'https://github.com/Enatec/UniFiTooling'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://github.com/jhochwald/UniFiTooling/raw/master/src/other/powershell-project.png'
+        IconUri = 'https://github.com/Enatec/UniFiTooling/raw/master/src/other/powershell-project.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'A feature release.'
+        ReleaseNotes = 'Project repository moved, URLs changed to the new home.'
 
         # Prerelease string of this module
         # Prerelease = ''

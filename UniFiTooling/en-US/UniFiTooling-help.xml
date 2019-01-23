@@ -169,7 +169,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroupDetails.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroupDetails.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -271,7 +271,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroups.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Get-UnifiFirewallGroups.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -467,7 +467,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiNetworkDetails.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Get-UnifiNetworkDetails.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UnifiNetworkList</maml:linkText>
@@ -569,7 +569,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiNetworkList.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Get-UnifiNetworkList.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -903,7 +903,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Get-UnifiSpeedTestResult.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Get-UnifiSpeedTestResult.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -968,7 +968,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UniFiApiLogin.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UniFiApiLogin.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -1025,7 +1025,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UniFiApiLogout.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UniFiApiLogout.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -1291,7 +1291,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UnifiAuthorizeGuest.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UnifiAuthorizeGuest.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -1413,7 +1413,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UnifiBlockClient.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UnifiBlockClient.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -1658,7 +1658,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UnifiForgetClient.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UnifiForgetClient.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -1780,7 +1780,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UnifiReconnectClient.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UnifiReconnectClient.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -1902,7 +1902,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UnifiUnauthorizeGuest.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UnifiUnauthorizeGuest.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -2024,7 +2024,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Invoke-UnifiUnblockClient.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Invoke-UnifiUnblockClient.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -2333,7 +2333,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/New-UniFiConfig.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/New-UniFiConfig.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>
@@ -2455,7 +2455,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Set-UnifiFirewallGroup.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Set-UnifiFirewallGroup.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UnifiFirewallGroups</maml:linkText>
@@ -2609,7 +2609,7 @@
     <command:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://github.com/jhochwald/UniFiTooling/raw/master/docs/Set-UnifiNetworkDetails.md</maml:uri>
+        <maml:uri>https://github.com/Enatec/UniFiTooling/raw/master/docs/Set-UnifiNetworkDetails.md</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>Get-UniFiConfig</maml:linkText>

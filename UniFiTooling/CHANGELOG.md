@@ -4,9 +4,21 @@ All notable changes to the **UniFiTooling** project will be documented in this f
 
 ---
 
-### 1.0.10 [Unreleased]
+### 1.0.10 - 2019-01-23
 
-A feature release.
+Repository moved, no real code changes.
+
+#### Deprecated
+
+The folowing internal (private) commands will be removed in the next release (Version 1.0.11):
+
+- `Get-HostsFile`
+
+- `Add-HostsEntry`
+
+- `Get-HostsFile`
+
+  They should never be a part of this module. I just use them for some internal tests.
 
 ### 1.0.9 - 2019-01-20
 
@@ -15,14 +27,21 @@ Mainly a feature release with some bugfixes and refactoring.
 #### Added
 
 - `Get-UnifiSpeedTestResult` has now a -last parameter to get only the latest result
+
 - `Invoke-UnifiAuthorizeGuest` - Authorize a client device via the API of the UniFi Controller
+
 - `Invoke-UnifiUnauthorizeGuest` - Unauthorize a client device via the API of the UniFi Controller
+
 - `Invoke-UnifiReconnectClient` - Reconnect a client device via the API of the UniFi Controller
+
 - `Invoke-UnifiBlockClient` - Block a client device via the API of the UniFi Controller
+
 - `Invoke-UnifiUnblockClient` - Unblock a client device via the API of the UniFi Controller
+
 - `Invoke-UnifiForgetClient` - Forget one or more client devices via the API of the UniFi Controller
 
 - #### Changed
+
   - Refactored a lot of code.
   - Change the Verbose output (Detailed connection details)
   - Change some links to the GitHub Wiki

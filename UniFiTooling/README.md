@@ -12,11 +12,11 @@ I plan to release versions that cover more and more functions. However, I need t
 
 ### Use Cases
 
-You will find some demo use cases within the [UseCases](https://github.com/jhochwald/UniFiTooling/tree/master/release/UniFiTooling/UseCases) directory.
+You will find some demo use cases within the [UseCases](https://github.com/Enatec/UniFiTooling/tree/master/release/UniFiTooling/UseCases) directory.
 
 ### Version
 
-This document is based on UniFiTooling version 1.0.9
+This document is based on UniFiTooling version 1.0.10
 
 ### Status
 
@@ -73,18 +73,18 @@ PS C:\> Install-Module -Name 'UniFiTooling' -Scope AllUsers
 #### Manual Installation (unsupported)
 
 ```powershell
-PS C:\> iex (New-Object Net.WebClient).DownloadString("https://github.com/jhochwald/UniFiTooling/raw/master/Install.ps1")
+PS C:\> iex (New-Object Net.WebClient).DownloadString("https://github.com/Enatec/UniFiTooling/raw/master/Install.ps1")
 ```
 
 #### Download from GitHub
 
-You will find tha latest version in the [release page](https://github.com/jhochwald/UniFiTooling/releases) of the [GitHub repository](https://github.com/jhochwald/UniFiTooling/)
+You will find tha latest version in the [release page](https://github.com/Enatec/UniFiTooling/releases) of the [GitHub repository](https://github.com/Enatec/UniFiTooling/)
 
-[![GitHub release](https://img.shields.io/github/release/jhochwald/UniFiTooling.svg)](https://github.com/jhochwald/UniFiTooling/releases/) [![GitHub release](https://img.shields.io/github/downloads/jhochwald/UniFiTooling/total.svg)](https://github.com/jhochwald/UniFiTooling/releases/) [![Download Size](https://badge-size.herokuapp.com/jhochwald/UniFiTooling/master/release/UniFiTooling-current.zip)](https://github.com/jhochwald/UniFiTooling/blob/master/release/UniFiTooling-current.zip)
+[![GitHub release](https://img.shields.io/github/release/enatec/UniFiTooling.svg)](https://github.com/Enatec/UniFiTooling/releases/) [![GitHub release](https://img.shields.io/github/downloads/enatec/UniFiTooling/total.svg)](https://github.com/Enatec/UniFiTooling/releases/) [![Download Size](https://badge-size.herokuapp.com/enatec/UniFiTooling/master/release/UniFiTooling-current.zip)](https://github.com/Enatec/UniFiTooling/blob/master/release/UniFiTooling-current.zip)
 
 #### Clone the repository
 
-Or clone this [GitHub repository](https://github.com/jhochwald/UniFiTooling/) to your local machine, extract, go to the `.\releases\UniFiTooling` directory and import the module to your session to test, but not install this module.
+Or clone this [GitHub repository](https://github.com/Enatec/UniFiTooling/) to your local machine, extract, go to the `.\releases\UniFiTooling` directory and import the module to your session to test, but not install this module.
 
 ### Get started
 
@@ -134,18 +134,18 @@ PS C:\> Invoke-UniFiApiLogout
 
 ### Feedback
 
-Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/jhochwald/UniFiTooling/issues/new/choose) as *Bug report* if you find something not working.
+Any Feedback is appreciated! Please open a [GitHub issue](https://github.com/Enatec/UniFiTooling/issues/new/choose) as *Bug report* if you find something not working.
 
-[![GitHub issues](https://img.shields.io/github/issues/jhochwald/UniFiTooling.svg)](https://GitHub.com/jhochwald/UniFiTooling/issues/) [![GitHub issues-closed](https://img.shields.io/github/issues-closed/jhochwald/UniFiTooling.svg)](https://GitHub.com/jhochwald/UniFiTooling/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub issues](https://img.shields.io/github/issues/enatec/UniFiTooling.svg)](https://github.com/Enatec/UniFiTooling/issues/) [![GitHub issues-closed](https://img.shields.io/github/issues-closed/enatec/UniFiTooling.svg)](https://github.com/Enatec/UniFiTooling/issues?q=is%3Aissue+is%3Aclosed)
 
 ### Contribute
 
-Anything missing? Please open a [GitHub issue](https://github.com/jhochwald/UniFiTooling/issues/new/choose) as *Feature request*.
+Anything missing? Please open a [GitHub issue](https://github.com/Enatec/UniFiTooling/issues/new/choose) as *Feature request*.
 Suggest an idea for this Module will help to improve this module.
 
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub pull-requests](https://img.shields.io/github/issues-pr/jhochwald/UniFiTooling.svg)](https://GitHub.com/jhochwald/UniFiTooling/pull/) [![GitHub pull-requests closed](https://img.shields.io/github/issues-pr-closed/jhochwald/UniFiTooling.svg)](https://github.com/jhochwald/UniFiTooling/pulls?q=is%3Apr+is%3Aclosed)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub pull-requests](https://img.shields.io/github/issues-pr/enatec/UniFiTooling.svg)](https://github.com/Enatec/UniFiTooling/pull/) [![GitHub pull-requests closed](https://img.shields.io/github/issues-pr-closed/enatec/UniFiTooling.svg)](https://github.com/Enatec/UniFiTooling/pulls?q=is%3Apr+is%3Aclosed)
 
-Please read our [Contribution Guide](https://github.com/jhochwald/UniFiTooling/blob/master/CONTRIBUTING.md) and [Code of Conduct](https://github.com/jhochwald/UniFiTooling/blob/master/CODE_OF_CONDUCT.md).
+Please read our [Contribution Guide](https://github.com/Enatec/UniFiTooling/blob/master/CONTRIBUTING.md) and [Code of Conduct](https://github.com/Enatec/UniFiTooling/blob/master/CODE_OF_CONDUCT.md).
 
 ### Note
 
@@ -215,8 +215,8 @@ All rights reserved.
 ### License
 
 BSD 3-Clause "New" or "Revised" License.
-Here is the the [online](https://github.com/jhochwald/UniFiTooling/wiki/License) version of the License.
+Here is the the [online](https://github.com/Enatec/UniFiTooling/wiki/License) version of the License.
 
 ---
 
-[![GitHub license](https://img.shields.io/github/license/jhochwald/UniFiTooling.svg)](https://github.com/jhochwald/UniFiTooling/blob/master/LICENSE) [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org) [![Open Source Love png1](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![GitHub license](https://img.shields.io/github/license/enatec/UniFiTooling.svg)](https://github.com/Enatec/UniFiTooling/blob/master/LICENSE) [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org) [![Open Source Love png1](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
