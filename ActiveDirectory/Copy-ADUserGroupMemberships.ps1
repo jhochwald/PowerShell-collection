@@ -78,6 +78,21 @@ function Copy-ADUserGroupMemberships
 
          .NOTES
          Initial AIT version of the function
+
+         .LINK
+         https://github.com/jhochwald/PowerShell-collection/
+
+         .LINK
+         Get-ADUser
+
+         .LINK
+         Remove-ADGroupMember
+
+         .LINK
+         Add-ADGroupMember
+
+         .LINK
+         Copy-ADGroupUserMemberships
    #>
 	
    [CmdletBinding(DefaultParameterSetName = 'default',
