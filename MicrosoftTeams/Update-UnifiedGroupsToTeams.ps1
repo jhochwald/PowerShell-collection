@@ -24,9 +24,9 @@ function Update-UnifiedGroupsToTeams
          Do a DryRun (Just get a List of Unified Groups that do NOT have a Microsoft Teams Team)
 
          .EXAMPLE
-         Compare-Object -ReferenceObject ((Get-Team | Select-Object -ExpandProperty GroupId)) -DifferenceObject ((Get-UnifiedGroup -ResultSize Unlimited | Select-Object -ExpandProperty ExternalDirectoryObjectId)) -PassThru
+         PS C:\> Compare-Object -ReferenceObject ((Get-Team | Select-Object -ExpandProperty GroupId)) -DifferenceObject ((Get-UnifiedGroup -ResultSize Unlimited | Select-Object -ExpandProperty ExternalDirectoryObjectId)) -PassThru
 
-         Get a short difference list
+         Get a short difference list (this function is not required to do so)
 
          .NOTES
          Version: 1.0.1
