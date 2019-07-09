@@ -3,30 +3,30 @@
 <#
       .SYNOPSIS
       Exchange Server Logs Cleanup
-	
+
       .DESCRIPTION
       Cleanup some Exchange Sevrer logs.
-	
+
       .EXAMPLE
       PS C:\> .\CleanupExchangeLogs.ps1
-	
+
       .NOTES
       Version: 1.0.1
-		
+
       GUID: bc2b3de9-4a03-481f-94af-c1b7d9f363f0
-	
+
       Author: Joerg Hochwald
-	
+
       Companyname: Alright-IT GmbH
-	
+
       Copyright: Copyright (c) 2019, Alright IT GmbH - All rights reserved.
-	
+
       License: https://opensource.org/licenses/BSD-3-Clause
-	
+
       Releasenotes:
       1.0.1 2019-07-08: Move the delete process to the dedicated Invoke-CleanupOldFiles function
       1.0.0 2019-02-04: Internal Release
-	
+
       THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
 
       .LINK
@@ -48,9 +48,9 @@ begin {
          Old, but some still have the old crap on the Exchaneg server runnning, sorry!
    #>
    #region RequiredModuleWorkAround
-   if (Get-Module -Name webadministration -ListAvailable -ErrorAction SilentlyContinue) 
+   if (Get-Module -Name webadministration -ListAvailable -ErrorAction SilentlyContinue)
    {
-      try 
+      try
       {
          $null = (Import-Module -Name webadministration -Force -ErrorAction Stop)
       }
@@ -59,7 +59,7 @@ begin {
          #region ErrorHandler
          # get error record
          [Management.Automation.ErrorRecord]$e = $_
-			
+
          # retrieve information about runtime error
          $info = @{
             Exception = $e.Exception.Message
@@ -69,17 +69,17 @@ begin {
             Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
-			
+
          Write-Verbose -Message $info
-			
+
          Write-Error -Message ($info.Exception) -ErrorAction Stop
-			
+
          # Only here to catch a global ErrorAction overwrite
          break
          #endregion ErrorHandler
       }
    }
-   else 
+   else
    {
       #region ErrorHandler
       $paramWriteError = @{
@@ -88,7 +88,7 @@ begin {
          ErrorAction = 'Stop'
       }
       Write-Error @paramWriteError
-	
+
       # Only here to catch a global ErrorAction overwrite
       break
       #endregion ErrorHandler
@@ -101,16 +101,16 @@ begin {
       <#
             .SYNOPSIS
             Check if this is an elevated shell
-	
+
             .DESCRIPTION
             Check if this is an elevated shell.
-		
+
             In Powershell 4.0 it can be replaced with:
             #Requires -RunAsAdministrator
-	
+
             .EXAMPLE
             PS C:\> Test-Administrator
-	
+
             .NOTES
             In Powershell 4.0 it can be replaced with: Requires -RunAsAdministrator
 
@@ -119,7 +119,7 @@ begin {
       [CmdletBinding(ConfirmImpact = 'None')]
       [OutputType([bool])]
       param ()
-	
+
       process
       {
          $user = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -127,7 +127,7 @@ begin {
       }
    }
 
-   if ((Test-Administrator) -ne $true) 
+   if ((Test-Administrator) -ne $true)
    {
       #region ErrorHandler
       Write-Error -Message 'The current Windows PowerShell session is not running as Administrator. Start Windows PowerShell by using the Run as Administrator option, and then try running the script again.' -Category NotEnabled -ErrorAction Stop
@@ -149,7 +149,7 @@ begin {
    if ($env:ExchangeInstallPath)
    {
       $LogDirList.Add($env:ExchangeInstallPath + 'Logging\')
-      
+
       # Another possible Directory
       #$LogDirList.Add($env:ExchangeInstallPath + 'Bin\Search\Ceres\Diagnostics\Logs\')
    }
@@ -168,10 +168,10 @@ begin {
       {
          # Cleanup
          $IISLogDirectory = $null
-		
+
          # Get the Log-Directory from the IIS Info
          $IISLogDirectory = ($SingleWebSite.logfile.directory)
-		
+
          <#
                Replace the returned %SystemDrive% with your Systemdrive.
                This is your BOOT Drive!!! Usualy it is C:
@@ -179,10 +179,10 @@ begin {
          if ($IISLogDirectory -match '%SystemDrive%')
          {
             Write-Verbose -Message 'Mangle the SystemDrive within the variable...'
-			
+
             $IISLogDirectory = ($IISLogDirectory -replace '%SystemDrive%', 'C:')
          }
-		
+
          # Add the log Directory to the List
          $LogDirList.Add($IISLogDirectory)
       }
@@ -201,52 +201,52 @@ begin {
       <#
             .SYNOPSIS
             Remove files older then a given number of days
-	
+
             .DESCRIPTION
             Remove files older then a given number of days.
             Mostly used within cleanup Tasks.
-	
+
             .PARAMETER Path
             Path to search.
-	
+
             .PARAMETER Age
             Age of files to remove, in days.
             Defaults to 30
-	
+
             .EXAMPLE
             PS C:\> Invoke-CleanupoldFiles -Path 'C:\inetpub\logs\LogFiles'
-	
+
             .EXAMPLE
             PS C:\> Invoke-CleanupoldFiles -Path 'C:\inetpub\logs\LogFiles' -Age 14
-	
+
             .NOTES
             Version: 1.0.1
-		
+
             GUID: d79b3ac3-6d3a-475d-9825-1649720eeb69
-		
+
             Author: Joerg Hochwald
-		
+
             Companyname: Alright-IT GmbH
-		
+
             Copyright: Copyright (c) 2019, Alright IT GmbH - All rights reserved.
-		
+
             License: https://opensource.org/licenses/BSD-3-Clause
-		
+
             Releasenotes:
             1.0.1 2019-07-08: Rework and splatting
             1.0.0 2019-02-04: Internal Release
-		
+
             THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
 
             .LINK
             https://www.alright-it.com
-	
+
             .LINK
             Get-ChildItem
-	
+
             .LINK
             Test-Path
-	
+
             .LINK
             Get-Date
       #>
@@ -270,29 +270,29 @@ begin {
          [int]
          $Age = 30
       )
-	
+
       process
       {
          if (Test-Path -Path $Path)
          {
             # Save the date to use it for the compare
             $Now = (Get-Date)
-			
+
             # Today minus given days
             $LastWrite = $Now.AddDays(-$days)
-			
+
             # Splatting the parameters
             $paramGetChildItem = @{
                Path    = $Path
                Include = '*.log', '*.blg'
                Recurse = $true
             }
-            
+
             # Find all Files to Delete (e.g. older then the given value)
             $Files = (Get-ChildItem @paramGetChildItem | Where-Object -FilterScript {
                   (-not ($_.PSIsContainer)) -and ($_.LastWriteTime -le $LastWrite)
             } | Select-Object -ExpandProperty fullname)
-			
+
             # Loop over the list of Files
             foreach ($File in $Files)
             {
@@ -316,7 +316,7 @@ begin {
             #region ErrorHandler
             # get error record
             [Management.Automation.ErrorRecord]$e = $_
-			
+
             # retrieve information about runtime error
             $info = @{
                Exception = $e.Exception.Message
@@ -326,11 +326,11 @@ begin {
                Line      = $e.InvocationInfo.ScriptLineNumber
                Column    = $e.InvocationInfo.OffsetInLine
             }
-			
+
             Write-Verbose -Message $info
-			
+
             Write-Error -Message ($info.Exception) -ErrorAction Stop
-			
+
             # Only here to catch a global ErrorAction overwrite
             break
             #endregion ErrorHandler
@@ -348,7 +348,7 @@ process {
       foreach ($LogDir in $LogDirList)
       {
          Write-Verbose -Message "Removing logs from $LogDir older then $days days"
-		
+
          try
          {
             # Do we have a DAY value
@@ -371,7 +371,7 @@ process {
                   verbose     = $true
                }
             }
-            
+
             # Invoke the internal Fun
             Invoke-CleanupOldFiles @paramInvokeCleanupoldFiles
          }
@@ -380,7 +380,7 @@ process {
             #region ErrorHandler
             # get error record
             [Management.Automation.ErrorRecord]$e = $_
-			
+
             # retrieve information about runtime error
             $info = @{
                Exception = $e.Exception.Message
@@ -390,11 +390,11 @@ process {
                Line      = $e.InvocationInfo.ScriptLineNumber
                Column    = $e.InvocationInfo.OffsetInLine
             }
-			
+
             Write-Verbose -Message $info
-			
+
             Write-Error -Message ($info.Exception) -ErrorAction Stop
-			
+
             # Only here to catch a global ErrorAction overwrite
             break
             #endregion ErrorHandler
@@ -410,7 +410,7 @@ process {
          ErrorAction = 'Stop'
       }
       Write-Error @paramWriteError
-	
+
       # Only here to catch a global ErrorAction overwrite
       break
       #endregion ErrorHandler
