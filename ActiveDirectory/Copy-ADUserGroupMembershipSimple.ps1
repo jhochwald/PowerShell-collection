@@ -11,8 +11,38 @@
          .PARAMETER SourceUser
          Source-User Object.
 
+         Specifies an Active Directory group object by providing one of the following values.
+         The identifier in parentheses is the LDAP display name for the attribute.
+
+         Distinguished Name
+         Example: CN=johndoe,OU=europe,CN=users,DC=corp,DC=contoso,DC=com
+
+         GUID (objectGUID)
+         Example: 599c3d2e-f72d-4d20-8a88-030d99495f20
+
+         Security Identifier (objectSid)
+         Example: S-1-5-21-3165297888-301567370-576410423-1103
+
+         Security Accounts Manager (SAM) Account Name (sAMAccountName)
+         Example: johndoe
+
          .PARAMETER TargetUser
          Target-User Object.
+
+         Specifies an Active Directory group object by providing one of the following values.
+         The identifier in parentheses is the LDAP display name for the attribute.
+
+         Distinguished Name
+         Example: CN=janedoe,OU=europe,CN=users,DC=corp,DC=contoso,DC=com
+
+         GUID (objectGUID)
+         Example: 599c3d2e-f72d-4d20-8a88-030d99495f20
+
+         Security Identifier (objectSid)
+         Example: S-1-5-21-3165297888-301567370-576410423-1103
+
+         Security Accounts Manager (SAM) Account Name (sAMAccountName)
+         Example: janedoe
 
          .PARAMETER PassThru
          Use the -PassThru parameter with the previous command to receive feedback about what groups the Target is being added as a member of.
