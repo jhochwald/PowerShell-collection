@@ -45,8 +45,8 @@ begin
 {
    # Defaults
    $STP = 'Stop'
-   $All = $true
 	
+   # Set some default
    if (-not ($HighDeviceCount))
    {
       $HighDeviceCount = 15
