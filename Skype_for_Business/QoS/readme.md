@@ -1,63 +1,8 @@
-# Skype for Business QoS Settings
-Setup Quality of Services (QoS) on Skype for Business Servers and Clients.
+# Legacy Notice
 
-## You Network
-You must configure your network equipment to match the marks that are configured on the client/server part.
+I no longer run Exchange, Skype for Business, or any other Office Server on Premises.
+This is my personal [reaction](https://hochwald.net/microsoft-rolls-back-decision-to-take-away-internal-usage-rights-from-partners/) to the changes that Microsoft [announced](https://hochwald.net/microsoft-is-going-to-kill-internal-use-rights-benefit-for-partners/) for the Internal Use Rights (IUR) program. I know that they decided to reverse that changes and in theory, I could still legally use the software. However, I decided to decommission everything licensed under the terms of the Internal Use Rights (IUR) program.
+In my opinion, the community always should have some benefits from the Internal Use Rights (IUR) program and/or Action Pack. Now that I decided to drop out, there will be no more such benefits.
 
-Some people get this QoS wrong: This configuration enables your Clients and Servers to mark the traffic! Not more, not less. Your network equipment must do the dirty work and prioritize and/or reserve bandwidth that match your requirements.
+I will _no longer maintain_ the scripts related to the Microsoft Office (on Premises) servers. They will remain here, but unmaintained. Fork the repository and maintain or extend them if you like to. The [License](https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE) allows that easily.
 
-If you just load the stuff here, nothing will change. Your Skype Clients and servers will mark the packets and that's about it!
-
-## What it does
-It configures the Skype for Business Servers to use a small range of ports for each function (e.g. Voice or Video). This range should match the Skype for Business Online (SfBO) configuration.
-All Skype for Business Clients should use these configuration after a restart/re-login. Even non-Windows clients will be using the configuration, because it is configured on the server.
-
-For Skype for Business Servers and Windows Based Clients, a dedicated Group Policy will be established. You should apply these to all OU's where the Clients and/or Servers are located.
-The Client Policy also contains configuration/settings for VDI instances, and even for Citrix HDX setup's.
-
-There is also the matching Edge configuration, these boxes should never be domain joined. Therefore, we use local registry settings!
-
-To make the end-to-end setup, there is also a dedicated Group Policy for Exchange Servers. This Policy should be applied at minimum to all Exchange Servers that hosts the Unified Messaging Role. I apply these to all Exchange Servers.
-
-## Please review everything
-Before using the scripts to configure and/or load anything, you should review them! Do not just execute them. These scripts will change a lot and it will reconfigure a lot on your Skype for Business servers!!!
-Don't blame me if something doesn't work as you might expect it.
-
-## Detailed configuration
-The source is the documentation! I know, that sounds typical for a geek... But if you take a closer look at the scripts, you will see a lot of comments and documentation snippets. They should make the settings and a lot of the logic clear.
-
-Microsoft (MSFT) and the community provide a lot of very good and detailed documentation about Skype and QoS.
-
-## Content
-Here is a quick overview of the content
-
-### `Client_GPO.ps1`
-Create the Skype for Busines related Quality of Services Client Group Policy
-
-### `Edge_REG.ps1`
-Setup the Skype for Business 2015 Edge Server for Quality of Services
-Edge Servers are not domain joined, we have to modify the registry instead of using a Group Policy
-		
-### `ExchangeUM_GPO.ps1`
-Create the Skype for Busines related Exchange Unified Messaging Quality of Services Group Policy
-
-### `Server_GPO.ps1`
-Create the Skype for Busines related Quality of Services Server Group Policy
-
-### `Skype_Server_Config.ps1`
-Setup the Skype for Business 2015 Server for Quality of Services
-
-## Signed
-There is a signed version of the scripts within the 'signed' directory. The scripts are the same, they are signed with a valid certificate.
-
-## Support
-Are you kidding me? This is free software. Take it, or leave it!
-
-## Final remarks
-You Network Equipment must support QoS End-to-End!
-
-Teams is not supported (yet).
-
-Some of the new ports for Skype for Business Online (SfBO) are still missing. I might provide an updated version for them soon.
-
-Hybrid with Skype for Business Online (SfBO) will work! But if you want to use QoS End-To-End, Fast Track might be required. Ask Microsoft!
