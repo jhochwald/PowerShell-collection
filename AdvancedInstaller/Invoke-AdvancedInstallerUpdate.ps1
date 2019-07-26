@@ -1,6 +1,4 @@
-﻿#requires -Version 3.0
-
-function Invoke-AdvancedInstallerUpdate
+﻿function Invoke-AdvancedInstallerUpdate
 {
    <#
          .SYNOPSIS
@@ -29,7 +27,6 @@ function Invoke-AdvancedInstallerUpdate
          .LINK
          https://www.advancedinstaller.com/user-guide/powershell-automation.html
    #>
-
    [CmdletBinding(ConfirmImpact = 'None')]
    param
    (
