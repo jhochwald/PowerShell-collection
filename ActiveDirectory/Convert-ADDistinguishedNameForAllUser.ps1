@@ -1,14 +1,14 @@
 ﻿<#
       .SYNOPSIS
-      Update the DistinguishedName Atrribute for all Active Directory Users
-	
+      Update the DistinguishedName Attribute for all Active Directory Users
+
       .DESCRIPTION
-      Update the DistinguishedName Atrribute for all Active Directory Users.
+      Update the DistinguishedName Attribute for all Active Directory Users.
       It will update the 'CN=' to match the SamAccountName
-	
+
       .EXAMPLE
-      PS C:\> .\Convert-ADDistinguishedNameForAllUsers.ps1
-	
+      PS C:\> .\Convert-ADDistinguishedNameForAllUser.ps1
+
       .NOTES
       MIND THE GAP:
       This will change the DistinguishedName and this might break things
@@ -42,7 +42,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
    {
       # get error record
       [Management.Automation.ErrorRecord]$e = $_
-		
+
       # retrieve information about runtime error
       $info = [PSCustomObject]@{
          Exception = $e.Exception.Message
@@ -52,14 +52,14 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
          Line      = $e.InvocationInfo.ScriptLineNumber
          Column    = $e.InvocationInfo.OffsetInLine
       }
-		
+
       $info | Out-String | Write-Verbose
-		
+
       Write-Error -Message $e.Exception.Message -ErrorAction Stop
-		
+
       break
    }
-	
+
    try
    {
       foreach ($User in $AllUsers)
@@ -70,7 +70,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
                      $_.DistinguishedName.split(',')[0].split('=')[1]
                   }
          }) | Select-Object -ExpandProperty OldRDN)
-			
+
          if ($OldRDN -ne ($User.SamAccountName))
          {
             # Mind the Gap: This will change the DistinguishedName and this might break things
@@ -82,7 +82,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
    {
       # get error record
       [Management.Automation.ErrorRecord]$e = $_
-		
+
       # retrieve information about runtime error
       $info = [PSCustomObject]@{
          Exception = $e.Exception.Message
@@ -92,9 +92,9 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
          Line      = $e.InvocationInfo.ScriptLineNumber
          Column    = $e.InvocationInfo.OffsetInLine
       }
-		
+
       $info | Out-String | Write-Verbose
-		
+
       Write-Warning -Message $e.Exception.Message -ErrorAction Continue -WarningAction Continue
    }
 }

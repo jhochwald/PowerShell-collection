@@ -1,5 +1,4 @@
-﻿#requires -Version 3.0 -Modules ActiveDirectory
-function Get-ADUserLockouts
+﻿function Get-ADUserLockouts
 {
    <#
          .SYNOPSIS
@@ -18,17 +17,17 @@ function Get-ADUserLockouts
          Endpoint
 
          .EXAMPLE
-         PS C:\> Get-ADUserLockouts
+         PS C:\> Get-ADUserLockout
 
          Tracking down account lockout sources for all users for the last 7 days
 
          .EXAMPLE
-         Get-ADUser -Filter {Department -eq 'Development'} | Get-ADUserLockouts
+         Get-ADUser -Filter {Department -eq 'Development'} | Get-ADUserLockout
 
          Tracking down account lockout sources for all users in the Development Department for the last 7 days
 
          .EXAMPLE
-         Get-ADUserLockouts -StartTime (Get-Date).AddDays(-2) -EndTime (Get-Date).AddDays(-1)
+         Get-ADUserLockout -StartTime (Get-Date).AddDays(-2) -EndTime (Get-Date).AddDays(-1)
 
          Tracking down account lockout sources for all users for the last day
 
@@ -112,7 +111,7 @@ function Get-ADUserLockouts
 
          break
       }
-      
+
          Write-Verbose -Message 'Found the following events:'
          Write-Verbose -Message $events
    }

@@ -1,17 +1,17 @@
 ﻿#requires -Version 3.0 -Modules ActiveDirectory
 
-function Copy-ADGroupUserMemberships
+function Copy-ADGroupUserMembership
 {
    <#
          .SYNOPSIS
          Copy the membership of a given group to another group in Active Directory
-	
+
          .DESCRIPTION
          Copy the membership of a given group to another group in Active Directory.
          By default only the members of the Source Group will be copied to the Target Group.
-         If the Parameter FULL is used, the Memebrs of the Target Group that are not a member of the Source Group will be removed.
+         If the Parameter FULL is used, the members of the Target Group that are not a member of the Source Group will be removed.
          If the Parameter SYNC is used, the Membership is synced between both groups. If a User is Member of the Target Group only, this membership will be copied to the Source as well.
-	
+
          .PARAMETER SourceGroup
          Source-Group Object.
 
@@ -39,7 +39,7 @@ function Copy-ADGroupUserMemberships
 
          This parameter can also get this object through the pipeline or you can set this parameter to an object
          instance.
-	
+
          .PARAMETER TargetGroup
          Target-Group Object.
 
@@ -67,31 +67,31 @@ function Copy-ADGroupUserMemberships
 
          This parameter can also get this object through the pipeline or you can set this parameter to an object
          instance.
-	
+
          .PARAMETER full
          Remove all memberships from the Targewt that does NOT exist in the the Source.
-	
+
          .PARAMETER sync
          Syncronise the group membership between Source-Group and Target-Group.
          Even if a user is a member of the Target-Group only, it will be copied to the Source-Group as well.
-	
+
          .EXAMPLE
-         PS C:\> Copy-ADGroupUserMemberships -SourceGroup 'Sales' -TargetGroup 'Salesforce'
-	
+         PS C:\> Copy-ADGroupUserMembership -SourceGroup 'Sales' -TargetGroup 'Salesforce'
+
          Copy the membership of the Group 'Sales' to 'Salesforce'
 
          .EXAMPLE
-         PS C:\> Copy-ADGroupUserMemberships -SourceGroup 'Sales' -TargetGroup 'Salesforce' -sync
-	
+         PS C:\> Copy-ADGroupUserMembership -SourceGroup 'Sales' -TargetGroup 'Salesforce' -sync
+
          Copy the membership of the Group 'Sales' to 'Salesforce' and the other way around.
          All Memberships of 'Salesforce' that does NOT exist in 'Sales' will be created in 'Sales' as well.
 
          .EXAMPLE
-         PS C:\> Copy-ADGroupUserMemberships -SourceGroup 'Sales' -TargetGroup 'Salesforce' -full
-	
+         PS C:\> Copy-ADGroupUserMembership -SourceGroup 'Sales' -TargetGroup 'Salesforce' -full
+
          Copy the membership of the Group 'Sales' to 'Salesforce'.
          All Memberships of 'Salesforce' that does NOT exist in 'Sales' will be removed.
-	
+
          .NOTES
          Initial AIT version of the function
 
@@ -110,7 +110,7 @@ function Copy-ADGroupUserMemberships
          .LINK
          Copy-ADUserGroupMemberships
    #>
-	
+
    [CmdletBinding(DefaultParameterSetName = 'default',
          ConfirmImpact = 'Low',
    SupportsShouldProcess)]
@@ -149,7 +149,7 @@ function Copy-ADGroupUserMemberships
       [switch]
       $sync = $null
    )
-	
+
    begin
    {
       if ($pscmdlet.ShouldProcess('Groups', 'Get information from Active Directory'))
@@ -160,22 +160,22 @@ function Copy-ADGroupUserMemberships
             $TargetMembers = (Get-ADGroupMember -Identity $TargetGroup -ErrorAction Stop | Select-Object -ExpandProperty distinguishedName | Sort-Object)
 
             # Check if we have any diferences
-            if (($SourceMembers) -and ($TargetMembers)) 
+            if (($SourceMembers) -and ($TargetMembers))
             {
                # Yep, there are differences
                $Differences = (Compare-Object -ReferenceObject $SourceMembers -DifferenceObject $TargetMembers)
             }
-            elseif (($SourceMembers) -and (-not($TargetMembers))) 
+            elseif (($SourceMembers) -and (-not($TargetMembers)))
             {
                # Target has no members
                $Differences = 'SourceOnly'
             }
-            elseif (-not($SourceMembers)) 
+            elseif (-not($SourceMembers))
             {
                # Source has no members
                Write-Error -Message ('{0} has no members!' -f $SourceGroup) -ErrorAction Stop
             }
-            else 
+            else
             {
                # Nope, there are no differences
                $Differences = $null
@@ -204,13 +204,13 @@ function Copy-ADGroupUserMemberships
          }
       }
    }
-	
+
    process
    {
-      
+
       switch ($pscmdlet.ParameterSetName)
       {
-         'full' 
+         'full'
          {
             if ($pscmdlet.ShouldProcess($TargetGroup, 'Set'))
             {
@@ -222,9 +222,9 @@ function Copy-ADGroupUserMemberships
 
                   if ($TargetOnlyMembers)
                   {
-                     try 
+                     try
                      {
-                        foreach ($TargetOnlyMember in $TargetOnlyMembers.InputObject) 
+                        foreach ($TargetOnlyMember in $TargetOnlyMembers.InputObject)
                         {
                            Write-Verbose -Message ('Process: {0}' -f $TargetOnlyMember)
 
@@ -264,7 +264,7 @@ function Copy-ADGroupUserMemberships
                }
             }
          }
-         'sync' 
+         'sync'
          {
             if ($pscmdlet.ShouldProcess($SourceGroup, 'Set'))
             {
@@ -278,7 +278,7 @@ function Copy-ADGroupUserMemberships
                   {
                      Write-Verbose -Message ('Process: {0}' -f $TargetOnlyMembers)
 
-                     try 
+                     try
                      {
                         $paramAddADGroupMember = @{
                            Identity    = $SourceGroup
@@ -315,7 +315,7 @@ function Copy-ADGroupUserMemberships
                }
             }
          }
-         'default' 
+         'default'
          {
             # Do nothing special
          }
@@ -323,24 +323,24 @@ function Copy-ADGroupUserMemberships
 
       if ($pscmdlet.ShouldProcess($TargetGroup, 'Set'))
       {
-         if ($Differences) 
+         if ($Differences)
          {
-            try 
+            try
             {
-               Write-Verbose -Message 'Process all Source-Group only members.' 
- 
+               Write-Verbose -Message 'Process all Source-Group only members.'
+
                $paramAddADGroupMember = @{
                   Identity    = $TargetGroup
                   ErrorAction = 'Stop'
                   Confirm     = $false
                }
-                  
-               if ($Differences -eq 'SourceOnly') 
+
+               if ($Differences -eq 'SourceOnly')
                {
                   # Target has no members
                   $paramAddADGroupMember.Members = $SourceMembers
                }
-               else 
+               else
                {
                   $paramAddADGroupMember.Members = ($Differences | Where-Object -Property SideIndicator -EQ -Value '<=' | Select-Object -ExpandProperty InputObject)
                }

@@ -1,78 +1,76 @@
-﻿#requires -Version 3.0 -Modules ActiveDirectory
-
-function Copy-ADUserGroupMemberships
+﻿function Copy-ADUserGroupMembership
 {
    <#
          .SYNOPSIS
          Copy group memberships from a given Source-User to a Target-User in Active Directory
-	
+
          .DESCRIPTION
          Copy group memberships from a given Source-User to a Target-User in Active Directory.
          The function can also remove the Target-User from all groups where the Source-User is not a member off (optional) or make the Source-User a member of all groups where only the Target-User is a member of.
-	
+
          .PARAMETER SourceUser
          Source-User Object.
 
          Specifies an Active Directory user object by providing one of the following property values.
          The identifier in parentheses is the LDAP display name for the attribute.
-		
+
          Distinguished Name
-		
+
          Example:  CN=SaraDavis,CN=Europe,CN=Users,DC=corp,DC=contoso,DC=com
-		
+
          GUID (objectGUID)
-		
+
          Example: 599c3d2e-f72d-4d20-8a88-030d99495f20
-		
+
          Security Identifier (objectSid)
-		
+
          Example: S-1-5-21-3165297888-301567370-576410423-1103
-		
+
          SAM account name  (sAMAccountName)
-		
+
          Example: saradavis
-	
+
          .PARAMETER TargetUser
          Target-User Object.
 
          Specifies an Active Directory user object by providing one of the following property values.
          The identifier in parentheses is the LDAP display name for the attribute.
-		
+
          Distinguished Name
-		
+
          Example:  CN=SaraDavis,CN=Europe,CN=Users,DC=corp,DC=contoso,DC=com
-		
+
          GUID (objectGUID)
-		
+
          Example: 599c3d2e-f72d-4d20-8a88-030d99495f20
-		
+
          Security Identifier (objectSid)
-		
+
          Example: S-1-5-21-3165297888-301567370-576410423-1103
-		
+
          SAM account name  (sAMAccountName)
-		
+
          Example: saradavis
-	
+
          .PARAMETER full
          Remove the Target User from all groups where the Source-User is not a member of.
-	
+
          .PARAMETER sync
          Make the Source-User a member of all Groups where only the Target-User is a member of.
-	
+
          .EXAMPLE
-         PS C:\> Copy-ADUserGroupMemberships -SourceUser 'johndoe' -TargetUser 'janedoe'
-	
+         PS C:\> Copy-ADUserGroupMembership -SourceUser 'johndoe' -TargetUser 'janedoe'
+
          Make janedoe a member of all groups where johndoe is a member of. Existing group memberships of janedoe will NOT be removed.
 
          .EXAMPLE
-         PS C:\> Copy-ADUserGroupMemberships -SourceUser 'johndoe' -TargetUser 'janedoe' -full
-	
+         PS C:\> Copy-ADUserGroupMembership -SourceUser 'johndoe' -TargetUser 'janedoe' -full
+
          Make janedoe a member of all groups where johndoe is a member of. Existing group memberships of janedoe WILL be removed.
 
          .EXAMPLE
-         PS C:\> Copy-ADUserGroupMemberships -SourceUser 'johndoe' -TargetUser 'janedoe' -sync
-	
+         PS C:\> Copy-ADUserGroupMembership -SourceUser 'johndoe' -TargetUser 'janedoe' -sync
+
          Make janedoe a member of all groups where johndoe is a member of. Existing group memberships of janedoe WILL be applied to johndoe.
          Lets call this a reverse Full Sync :)
 
@@ -94,7 +92,7 @@ function Copy-ADUserGroupMemberships
          .LINK
          Copy-ADGroupUserMemberships
    #>
-	
+
    [CmdletBinding(DefaultParameterSetName = 'default',
    SupportsShouldProcess)]
    param
@@ -132,7 +130,7 @@ function Copy-ADUserGroupMemberships
       [switch]
       $sync = $null
    )
-	
+
    begin
    {
       if ($pscmdlet.ShouldProcess('User', 'Get information from Active Directory'))
@@ -184,12 +182,12 @@ function Copy-ADUserGroupMemberships
          }
       }
    }
-	
+
    process
    {
       switch ($pscmdlet.ParameterSetName)
       {
-         'full' 
+         'full'
          {
             if ($pscmdlet.ShouldProcess($SourceUser, 'Set'))
             {
@@ -205,7 +203,7 @@ function Copy-ADUserGroupMemberships
                      {
                         Write-Verbose -Message ('Process: {0}' -f $TargetOnlyGroup)
 
-                        try 
+                        try
                         {
                            $paramRemoveADGroupMember = @{
                               Identity    = $TargetOnlyGroup
@@ -243,7 +241,7 @@ function Copy-ADUserGroupMemberships
                }
             }
          }
-         'sync' 
+         'sync'
          {
             if ($pscmdlet.ShouldProcess($SourceUser, 'Set'))
             {
@@ -259,7 +257,7 @@ function Copy-ADUserGroupMemberships
                      {
                         Write-Verbose -Message ('Process: {0}' -f $TargetOnlyGroup)
 
-                        try 
+                        try
                         {
                            $paramAddADGroupMember = @{
                               Identity    = $TargetOnlyGroup
@@ -302,7 +300,7 @@ function Copy-ADUserGroupMemberships
             # Do nothing special
          }
       }
-      
+
       if ($pscmdlet.ShouldProcess($TargetUser, 'Set'))
       {
          if ($Differences)
@@ -317,7 +315,7 @@ function Copy-ADUserGroupMemberships
                {
                   Write-Verbose -Message ('Process: {0}' -f $SourceOnlyGroup)
 
-                  try 
+                  try
                   {
                      $paramAddADGroupMember = @{
                         Identity    = $SourceOnlyGroup
