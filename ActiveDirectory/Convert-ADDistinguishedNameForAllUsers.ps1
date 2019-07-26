@@ -53,7 +53,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
          Column    = $e.InvocationInfo.OffsetInLine
       }
 		
-      Write-Verbose -Message $info
+      $info | Out-String | Write-Verbose
 		
       Write-Error -Message $e.Exception.Message -ErrorAction Stop
 		
@@ -93,7 +93,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
          Column    = $e.InvocationInfo.OffsetInLine
       }
 		
-      Write-Verbose -Message $info
+      $info | Out-String | Write-Verbose
 		
       Write-Warning -Message $e.Exception.Message -ErrorAction Continue -WarningAction Continue
    }

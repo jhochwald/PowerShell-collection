@@ -154,7 +154,7 @@ process
          }
 
          # output information. Post-process collected info, and log info (optional)
-         Write-Verbose -Message $info
+         $info | Out-String | Write-Verbose
 
          Write-Error -Message $info.Exception -ErrorAction $STP
 
@@ -246,7 +246,7 @@ process
          }
 
          # output information. Post-process collected info, and log info (optional)
-         Write-Verbose -Message $info
+         $info | Out-String | Write-Verbose
 
          Write-Error -Message $info.Exception -ErrorAction $STP
 

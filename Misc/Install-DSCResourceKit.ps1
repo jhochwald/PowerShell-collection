@@ -98,7 +98,7 @@ function Install-DSCResourceKit
             Column    = $e.InvocationInfo.OffsetInLine
          }
 			
-         Write-Verbose -Message $info
+         $info | Out-String | Write-Verbose
 			
          # Whoops
          Write-Error -Message $info.Exception -ErrorAction Stop
@@ -145,7 +145,7 @@ function Install-DSCResourceKit
                      Column    = $e.InvocationInfo.OffsetInLine
                   }
 						
-                  Write-Verbose -Message $info
+                  $info | Out-String | Write-Verbose
 						
                   Write-Warning -Message ('Unable to install {0}' -f $DSCResource) -ErrorAction Continue -WarningAction Continue
 						

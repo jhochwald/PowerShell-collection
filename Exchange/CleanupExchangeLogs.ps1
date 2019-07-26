@@ -70,7 +70,7 @@ begin {
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
-         Write-Verbose -Message $info
+         $info | Out-String | Write-Verbose
 
          Write-Error -Message ($info.Exception) -ErrorAction Stop
 
@@ -327,7 +327,7 @@ begin {
                Column    = $e.InvocationInfo.OffsetInLine
             }
 
-            Write-Verbose -Message $info
+            $info | Out-String | Write-Verbose
 
             Write-Error -Message ($info.Exception) -ErrorAction Stop
 
@@ -391,7 +391,7 @@ process {
                Column    = $e.InvocationInfo.OffsetInLine
             }
 
-            Write-Verbose -Message $info
+            $info | Out-String | Write-Verbose
 
             Write-Error -Message ($info.Exception) -ErrorAction Stop
 

@@ -92,7 +92,7 @@
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
-         Write-Verbose -Message $info
+         $info | Out-String | Write-Verbose
 
          Write-Error -Message ($info.Exception) -ErrorAction Stop
 
@@ -202,7 +202,7 @@ function ConvertTo-UnixTimeStamp
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
-         Write-Verbose -Message $info
+         $info | Out-String | Write-Verbose
 
          Write-Error -Message ($info.Exception) -ErrorAction Stop
 

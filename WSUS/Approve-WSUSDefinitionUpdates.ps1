@@ -93,7 +93,7 @@ begin
     }
 		
     # Do some verbose stuff for troubleshooting
-    Write-Verbose -Message $info
+    $info | Out-String | Write-Verbose
 		
     # Thow the error and go...
     Write-Error -Message "$info.Exception" -ErrorAction Stop
@@ -180,7 +180,7 @@ process
         }
 				
         # Do some verbose stuff for troubleshooting
-        Write-Verbose -Message $info
+        $info | Out-String | Write-Verbose
 				
         # A simple warning is OK here
         Write-Warning -Message "$info.Exception" -WarningAction Continue -ErrorAction Continue
