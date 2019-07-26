@@ -33,7 +33,6 @@
          .LINK
          https://psrdrgz.github.io/RemoveAuthenticodeSignature/
    #>
-
    [CmdletBinding(ConfirmImpact = 'Low',
    SupportsShouldProcess)]
    param

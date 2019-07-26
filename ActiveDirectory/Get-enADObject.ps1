@@ -35,29 +35,29 @@
 
          .OUTPUTS
          PSObject
-	
+
          .NOTES
          Version: 1.0.1
-		
+
          GUID: ae1cde05-b498-46dc-832c-41a5f642dd8a
-		
+
          Author: Joerg Hochwald
-		
+
          Companyname: enabling Technology
-		
+
          Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-		
+
          License: https://opensource.org/licenses/BSD-3-Clause
-		
+
          Releasenotes:
          1.0.1 2019-07-26 Refactored, License change to BSD 3-Clause
          1.0.0 2019-01-01 Initial Version
-		
+
          THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
-		
+
          Dependencies:
          Active Directory PowerShell Module
-	
+
          .LINK
          https://www.enatec.io
 
@@ -73,7 +73,7 @@
       [string[]]
       $ADObjectFilter
    )
-	
+
    begin
    {
       if ($DetailedReport)
@@ -101,14 +101,14 @@
             'ObjectCategory', 'ObjectClass', 'Organization', 'OtherName', 'POBox', 'PrimaryGroup'
             'ProfilePath', 'ScriptPath', 'sn', 'textEncodedORAddress', 'userParameters'
          )
-			
+
          $CalculatedProps = @(
             @{
                n = 'OU'
                e = {
                   $_.DistinguishedName -replace '^.+?,(?=(OU|CN)=)'
                }
-            }, 
+            },
             @{
                n = 'proxyAddresses'
                e = {
@@ -116,7 +116,7 @@
                         $_ -ne $null
                   }) -join '|'
                }
-            }, 
+            },
             @{
                n = 'altRecipientBL'
                e = {
@@ -124,7 +124,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'AuthenticationPolicy'
                e = {
@@ -132,7 +132,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'AuthenticationPolicySilo'
                e = {
@@ -140,7 +140,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'Certificates'
                e = {
@@ -148,7 +148,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'CompoundIdentitySupported'
                e = {
@@ -156,7 +156,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'dSCorePropagationData'
                e = {
@@ -164,7 +164,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'KerberosEncryptionType'
                e = {
@@ -172,7 +172,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'managedObjects'
                e = {
@@ -180,7 +180,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'MemberOf'
                e = {
@@ -188,7 +188,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'msExchADCGlobalNames'
                e = {
@@ -196,7 +196,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'msExchPoliciesExcluded'
                e = {
@@ -204,7 +204,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'PrincipalsAllowedToDelegateToAccount'
                e = {
@@ -212,7 +212,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'protocolSettings'
                e = {
@@ -220,7 +220,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'publicDelegatesBL'
                e = {
@@ -228,7 +228,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'securityProtocol'
                e = {
@@ -236,7 +236,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'ServicePrincipalNames'
                e = {
@@ -244,7 +244,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'showInAddressBook'
                e = {
@@ -252,7 +252,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'SIDHistory'
                e = {
@@ -260,7 +260,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'userCertificate'
                e = {
@@ -270,7 +270,7 @@
                }
             }
          )
-			
+
          $ExtensionAttribute = @(
             'extensionAttribute1', 'extensionAttribute2', 'extensionAttribute3', 'extensionAttribute4', 'extensionAttribute5'
             'extensionAttribute6', 'extensionAttribute7', 'extensionAttribute8', 'extensionAttribute9', 'extensionAttribute10'
@@ -280,20 +280,20 @@
       else
       {
          $Props = @(
-            'DisplayName', 'UserPrincipalName', 'mail', 'CN', 'mailNickname', 'Name', 'GivenName', 'Surname', 'StreetAddress', 
+            'DisplayName', 'UserPrincipalName', 'mail', 'CN', 'mailNickname', 'Name', 'GivenName', 'Surname', 'StreetAddress',
             'City', 'State', 'Country', 'PostalCode', 'Company', 'Title', 'Department', 'Description', 'OfficePhone'
             'MobilePhone', 'HomePhone', 'Fax', 'SamAccountName', 'DistinguishedName', 'Office', 'Enabled'
             'whenChanged', 'whenCreated', 'adminCount', 'Memberof', 'msExchPoliciesExcluded', 'proxyAddresses'
          )
-			
+
          $Selectproperties = @(
-            'DisplayName', 'UserPrincipalName', 'mail', 'CN', 'mailNickname', 'Name', 'GivenName', 'Surname', 'StreetAddress', 
+            'DisplayName', 'UserPrincipalName', 'mail', 'CN', 'mailNickname', 'Name', 'GivenName', 'Surname', 'StreetAddress',
             'City', 'State', 'Country', 'PostalCode', 'Company', 'Title', 'Department', 'Description', 'OfficePhone'
             'MobilePhone', 'HomePhone', 'Fax', 'SamAccountName', 'DistinguishedName', 'Office', 'Enabled'
             'whenChanged', 'whenCreated', 'adminCount'
          )
-			
-			
+
+
          $CalculatedProps = @(
             @{
                n = 'proxyAddresses'
@@ -302,13 +302,13 @@
                         $_ -ne $null
                   }) -join '|'
                }
-            }, 
+            },
             @{
                n = 'OU'
                e = {
                   $_.DistinguishedName -replace '^.+?,(?=(OU|CN)=)'
                }
-            }, 
+            },
             @{
                n = 'MemberOf'
                e = {
@@ -316,7 +316,7 @@
                         $_ -ne $null
                   }) -join ';'
                }
-            }, 
+            },
             @{
                n = 'msExchPoliciesExcluded'
                e = {
@@ -328,7 +328,7 @@
          )
       }
    }
-	
+
    process
    {
       if ($ADObjectFilter)

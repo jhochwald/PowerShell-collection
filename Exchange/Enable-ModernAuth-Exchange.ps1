@@ -3,13 +3,13 @@
 <#
     .SYNOPSIS
     Enabling Modern Authentication for Exchange Online
-	
+
     .DESCRIPTION
     Enabling Modern Authentication for Exchange Online (Office 365)
-	
+
     .EXAMPLE
     PS C:\> .\Enable-ModernAuth-Exchange.ps1
-	
+
     .NOTES
     Works fine with Office 2013 and Office 2016 on Windows. Tested with Office 2016 on the Mac.
     You must enable it on your computers (Windows and Mac) as well! It is disabled by default.
@@ -24,10 +24,10 @@ begin
 {
 	# The Exchange Online URL
 	$ExoURL = 'https://outlook.office365.com/powershell-liveid/'
-	
+
 	# Same as above, but for the German Office 365 (MCD)
 	#$ExoURL = 'https://outlook.office.de/powershell-liveid/'
-	
+
 	# The Exchange Online Authentication method
 	$ExoAuth = 'Basic'
 }
@@ -36,7 +36,7 @@ process
 {
 	# Get the Credeantials (Could also be imported if you have dem saved)
 	$credentials = (Get-Credential)
-	
+
 	# Create the new session
 	$paramNewPSSession = @{
 		ConfigurationName = 'Microsoft.Exchange'
@@ -46,10 +46,10 @@ process
 		AllowRedirection  = $true
 	}
 	$ExoSession = (New-PSSession @paramNewPSSession)
-	
+
 	# Start the Session by importing it to the PowerShell Session
 	$null = (Import-PSSession -Session $ExoSession)
-	
+
 	# Enable Modern Authentication, use $false to disable it
 	$null = (Set-OrganizationConfig -OAuth2ClientProfileEnabled $true)
 }

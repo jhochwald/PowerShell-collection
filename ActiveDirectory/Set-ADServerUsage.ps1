@@ -5,19 +5,19 @@ function Set-ADServerUsage
   <#
       .SYNOPSIS
       Set all Active Directory related commands to use a special kind of server
-	
+
       .DESCRIPTION
       By default the Active Directory related commands search for a DC. By default I want to make
       use of the closest one. When I make BULK operations, I would like to use the Server with
       the PDC role. This becomes handy often!
-	
+
       .PARAMETER pdc
       Use the Active Directory Server who holds the PDC role.
-	
+
       .EXAMPLE
       # Use the closest Server
       PS> Set-ADServerUsage
-	
+
       .EXAMPLE
       # Use the Server with the PDC role
       PS> Set-ADServerUsage -pdc
@@ -25,16 +25,16 @@ function Set-ADServerUsage
       .EXAMPLE
       # When it comes to scripts that do bulk operations, especially bulk loads and manipulation,
       # I use the following within the Script:
-      if (Get-Command Set-ADServerUsage -ErrorAction SilentlyContinue) 
+      if (Get-Command Set-ADServerUsage -ErrorAction SilentlyContinue)
       {
       Set-ADServerUsage -pdc
       }
-	
+
       .NOTES
       I use this helper function in my PROFILE. Therefore, some things a bit special.
       Who want's an error message every time a window opens under normal circumstances?
   #>
-	
+
   param
   (
     [Parameter(ValueFromPipeline,
@@ -43,7 +43,7 @@ function Set-ADServerUsage
     [switch]
     $pdc
   )
-	
+
   begin
   {
     # Defaults
@@ -52,16 +52,16 @@ function Set-ADServerUsage
     # Cleanup
     $dc = $null
   }
-	
+
   process
   {
     <#
-        The following would do the trick: 
-        #requires -Modules ActiveDirectory 
-        But I don't want any error messages, so I decided to use this old-school way to figure 
+        The following would do the trick:
+        #requires -Modules ActiveDirectory
+        But I don't want any error messages, so I decided to use this old-school way to figure
         out if we are capable do what I want.
     #>
-    if ((Get-Command -Name Get-ADDomain -ErrorAction $SC) -and (Get-Command -Name Get-ADDomainController -ErrorAction $SC) ) 
+    if ((Get-Command -Name Get-ADDomain -ErrorAction $SC) -and (Get-Command -Name Get-ADDomainController -ErrorAction $SC) )
     {
       if ($pdc)
       {
@@ -77,9 +77,9 @@ function Set-ADServerUsage
       # Skip everything if we do NOT have the proper information.
 
       <#
-          Under normal circumstances this is pretty useless, but I use some virtual machines 
-          that have the RSAT tools installed, but they are not domain joined. The fore I make 
-          this check. If all the systems that have the RSAT installed are domain joined, this 
+          Under normal circumstances this is pretty useless, but I use some virtual machines
+          that have the RSAT tools installed, but they are not domain joined. The fore I make
+          this check. If all the systems that have the RSAT installed are domain joined, this
           test is obsolete.
       #>
       if ($dc)

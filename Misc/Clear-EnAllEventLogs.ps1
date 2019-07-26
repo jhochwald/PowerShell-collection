@@ -1,23 +1,21 @@
-﻿#requires -Version 3.0
-function Clear-EnAllEventLogs
+﻿function Clear-EnAllEventLogs
 {
    <#
          .SYNOPSIS
          AllEventLlogs
-	
+
          .DESCRIPTION
          AllEventLlogs
-	
+
          .PARAMETER ComputerName
          Computer Name
-	
+
          .EXAMPLE
          PS C:\> Clear-EnAllEventLogs
-	
+
          .NOTES
          Additional information about the function.
    #>
-	
    [CmdletBinding(ConfirmImpact = 'Medium',
    SupportsShouldProcess)]
    param
@@ -30,7 +28,7 @@ function Clear-EnAllEventLogs
 
    process
    {
-		
+
       foreach ($SingleComputerName in $ComputerName)
       {
          if ($pscmdlet.ShouldProcess($SingleComputerName, 'Cleanup All EventLogs'))
@@ -40,7 +38,7 @@ function Clear-EnAllEventLogs
                List         = $true
             }
             $null = (Get-EventLog @paramGetEventLog | ForEach-Object -Process {
-                  if ($_.Entries) 
+                  if ($_.Entries)
                   {
                      $paramClearEventLog = @{
                         LogName     = $_.Log

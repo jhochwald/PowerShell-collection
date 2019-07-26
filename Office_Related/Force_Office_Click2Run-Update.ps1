@@ -3,17 +3,17 @@
 <#
 		.SYNOPSIS
 		Triggers the Click 2 Run Update Process
-	
+
 		.DESCRIPTION
 		This Script trigegrs the Click 2 Run Update Process.
-	
+
 		.PARAMETER Silent
 		Suppress the User Info
-	
+
 		.EXAMPLE
 		# Regular Operation
 		PS C:\> .\Force_Office_Click2Run-Update.ps1
-	
+
 		.EXAMPLE
 		# Silent Operation
 		PS C:\> .\Force_Office_Click2Run-Update.ps1 -Silent
@@ -21,7 +21,7 @@
 		.EXAMPLE
 		# Silent Operation
 		PS C:\> .\Force_Office_Click2Run-Update.ps1 -s
-	
+
 		.NOTES
 		Author: Joerg Hochwald - http://hochwald.net
 		License: Freeware, Public Domain
@@ -39,10 +39,10 @@ begin
 {
 	# Constants
 	$SC = 'SilentlyContinue'
-	
+
 	# The Click 2 Run Executable
 	$UpdateEXE = "$env:CommonProgramW6432\Microsoft Shared\ClickToRun\OfficeC2RClient.exe"
-	
+
 	if ($Silent)
 	{
 		# Commandline (Silent)

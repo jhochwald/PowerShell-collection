@@ -1,18 +1,17 @@
-﻿#requires -Version 3.0 -Modules MicrosoftTeams
-function Update-UnifiedGroupsToTeams
+﻿function Update-UnifiedGroupsToTeams
 {
    <#
          .SYNOPSIS
          Converts all Microsoft Office 365 Groups into a new Microsoft Teams Team
-	
+
          .DESCRIPTION
          Converts all Microsoft Office 365 Groups into a new Microsoft Teams Team
          Microsoft Office 365 Groups are also known as Unified Office 365 Groups
-	
+
          .PARAMETER ReportOnly
          Shows a list of Microsoft Office 365 Groups that would be migrated to a new Microsoft Teams Team.
          This is a DryRun only!
-	
+
          .EXAMPLE
          PS C:\> Update-UnifiedGroupsToTeams
 
@@ -30,17 +29,17 @@ function Update-UnifiedGroupsToTeams
 
          .NOTES
          Version: 1.0.1
- 
+
          GUID: 9ff3e101-1197-4243-a132-32ba33a5341c
- 
+
          Author: Joerg Hochwald
- 
+
          Companyname: Alright IT GmbH
- 
+
          Copyright: Copyright (c) 2019, Alright IT GmbH - All rights reserved.
- 
+
          License: https://opensource.org/licenses/BSD-3-Clause
- 
+
          Releasenotes:
          1.0.1 2019-04-21: Add a bit more error handling
          1.0.0 2018-04-14: Internal Release
@@ -49,7 +48,7 @@ function Update-UnifiedGroupsToTeams
 
          Dependencies:
          The script depends on Microsoft's Version 0.9.6, or newer, of the MicrosoftTeams PowerShell Module
-         
+
          Install it with PowerShellGet:
          PS C:\> Install-Module MicrosoftTeams
 
@@ -74,7 +73,7 @@ function Update-UnifiedGroupsToTeams
       [switch]
       $ReportOnly
    )
-	
+
    begin
    {
       #region Defaults
@@ -82,10 +81,10 @@ function Update-UnifiedGroupsToTeams
       $STP = 'Stop'
       #endregion Defaults
 
-      try 
+      try
       {
          #region ConnectionCheck
-         if (-not (Get-Command -Name Get-UnifiedGroup -ErrorAction SilentlyContinue)) 
+         if (-not (Get-Command -Name Get-UnifiedGroup -ErrorAction SilentlyContinue))
          {
             $ErrorParameter = @{
                Message           = 'Please connect to Office 365/Exchange Online before using this function!'
@@ -96,7 +95,7 @@ function Update-UnifiedGroupsToTeams
             Write-Error @ErrorParameter
          }
          #endregion ConnectionCheck
-         
+
          #region GetUnifiedGroups
          $GetUnifiedGroupParameter = @{
             ResultSize    = 'Unlimited'
@@ -105,7 +104,7 @@ function Update-UnifiedGroupsToTeams
          }
          $AllOffice365UnifiedGroups = (Get-UnifiedGroup @GetUnifiedGroupParameter | Select-Object -Property DisplayName, ExternalDirectoryObjectId)
          #endregion GetUnifiedGroups
-      
+
          #region GetMicrosoftTeams
          $GetTeamParameter = @{
             ErrorAction   = $STP
@@ -114,7 +113,7 @@ function Update-UnifiedGroupsToTeams
          $AllMicrosoftTeams = (Get-Team @GetTeamParameter | Select-Object -ExpandProperty GroupId)
          #endregion GetMicrosoftTeams
       }
-      catch 
+      catch
       {
          # Get error record
          [Management.Automation.ErrorRecord]$e = $_
@@ -128,38 +127,38 @@ function Update-UnifiedGroupsToTeams
             Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
-             
+
          # Dump the FULL error record
          Write-Warning -Message ($info | Out-String)
-         
+
          Write-Error -Message $info.Exception -Exception $info.Exception -ErrorAction $STP
-         
+
          break
       }
    }
-	
+
    process
    {
-      if ($AllOffice365UnifiedGroups) 
+      if ($AllOffice365UnifiedGroups)
       {
          #region Loop
          foreach ($Office365UnifiedGroup in $AllOffice365UnifiedGroups)
          {
             if (-not ($AllMicrosoftTeams -match $Office365UnifiedGroup.ExternalDirectoryObjectId))
             {
-               if ($ReportOnly) 
+               if ($ReportOnly)
                {
                   #region ReportOnly
                   $SingleOffice365UnifiedGroup = $Office365UnifiedGroup.DisplayName
                   Write-Output -InputObject ('Microsoft Teams for Unified Group {0} is missing' -f $SingleOffice365UnifiedGroup)
                   #endregion ReportOnly
                }
-               else 
+               else
                {
                   #region CreateMissingTeam
                   Write-Verbose -Message ('Create Microsoft Teams Team for Unified Group {0}' -f $SingleOffice365UnifiedGroup)
-                  
-                  try 
+
+                  try
                   {
                      $NewTeamParameter = @{
                         Group         = $Office365UnifiedGroup
@@ -169,10 +168,10 @@ function Update-UnifiedGroupsToTeams
                      $NewTeam = (New-Team @NewTeamParameter)
 
                      Write-Debug -Message $NewTeam
-                     
+
                      Write-Verbose -Message ('Created Microsoft Teams Team for Unified Group {0}' -f $SingleOffice365UnifiedGroup)
                   }
-                  catch 
+                  catch
                   {
                      # Get error record
                      [Management.Automation.ErrorRecord]$e = $_
@@ -186,10 +185,10 @@ function Update-UnifiedGroupsToTeams
                         Line      = $e.InvocationInfo.ScriptLineNumber
                         Column    = $e.InvocationInfo.OffsetInLine
                      }
-                       
+
                      $TheException = $info.Exception
 
-                     Write-Warning -Message ('Microsoft Teams creation for {0} failed with {1} ' -f $SingleOffice365UnifiedGroup, $TheException) 
+                     Write-Warning -Message ('Microsoft Teams creation for {0} failed with {1} ' -f $SingleOffice365UnifiedGroup, $TheException)
 
                      # Dump the FULL error record
                      Write-Verbose -Message ($info | Out-String)
@@ -200,12 +199,12 @@ function Update-UnifiedGroupsToTeams
          }
          #endregion Loop
       }
-      else 
+      else
       {
          Write-Warning -Message 'No Unified Groups found in your Tenant...'
       }
    }
-	
+
    end
    {
       Write-Verbose -Message 'Done.'

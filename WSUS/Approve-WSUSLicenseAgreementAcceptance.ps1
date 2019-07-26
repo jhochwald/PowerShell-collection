@@ -3,10 +3,10 @@
 <#
     .SYNOPSIS
     Accept License Agreements
-	
+
     .DESCRIPTION
     Accept License Agreements for all Windows Server Update Services (WSUS) Updates
-	
+
     .PARAMETER Name
     Specifies the name of a WSUS server.
 
@@ -18,7 +18,7 @@
     .EXAMPLE
     PS C:\> Approve-WSUSLicenseAgreementAcceptance
 
-    Accept License Agreements 
+    Accept License Agreements
 
     .NOTES
     Initial beta Version
@@ -44,22 +44,22 @@ begin
       ErrorAction   = 'Stop'
       WarningAction = 'Continue'
     }
-		
+
     if ($Name)
     {
       Write-Verbose -Message ('Use {0} as WSUS Server' -f $Name)
-			
+
       # Add the Name field with the given value to the Hashtable (Command Splat)
       $paramGetWsusServer['Name'] = $Name
     }
-		
+
     $WSUS = (Get-WsusServer @paramGetWsusServer)
   }
   catch
   {
     # Get error record
     [Management.Automation.ErrorRecord]$e = $_
-		
+
     # Retrieve information about the error
     $info = [PSCustomObject]@{
       Exception = $e.Exception.Message
@@ -69,25 +69,25 @@ begin
       Line      = $e.InvocationInfo.ScriptLineNumber
       Column    = $e.InvocationInfo.OffsetInLine
     }
-		
+
     # Do some verbose stuff for troubleshooting
     $info | Out-String | Write-Verbose
-		
+
     # Thow the error and go...
     Write-Error -Message "$info.Exception" -ErrorAction Stop
-		
+
     # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
     break
-		
+
     # OK, now we have reached a point the we would never, never ever, see
     exit 1
   }
-	
+
   $unapprovedUpdates = $null
   $unapprovedUpdates = $WSUS.getupdates() | Where-Object -FilterScript {
     $_.isdeclined -ne $true
   }
-	
+
   $license = $null
   if ($unapprovedUpdates)
   {

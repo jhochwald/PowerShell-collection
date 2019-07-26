@@ -1,6 +1,4 @@
-﻿#requires -Version 3.0 -Modules CimCmdlets
-
-function Invoke-DSCPerfReqConfigCheck
+﻿function Invoke-DSCPerfReqConfigCheck
 {
   <#
       .SYNOPSIS
@@ -60,7 +58,6 @@ function Invoke-DSCPerfReqConfigCheck
       Write-Verbose
       Get-WinEvent
   #>
-	
 	[OutputType([bool])]
 	param
 	(
@@ -69,17 +66,17 @@ function Invoke-DSCPerfReqConfigCheck
 		[switch]
 		$Silent = $null
 	)
-	
+
 	begin
 	{
 		$SC = 'SilentlyContinue'
-		
+
 		if ($Silent)
 		{
       $ProgressPreference = $SC
     }
 	}
-	
+
 	process
 	{
 		$InvokeCimMethodParams = @{
@@ -92,11 +89,11 @@ function Invoke-DSCPerfReqConfigCheck
       ErrorAction   = $SC
       WarningAction = $SC
     }
-		
+
 		try
 		{
 			$null = (Invoke-CimMethod @InvokeCimMethodParams)
-			
+
 			if ($Silent)
 			{
         $ProgressPreference = $null
@@ -111,20 +108,20 @@ function Invoke-DSCPerfReqConfigCheck
       }
 			Write-Verbose @paramWriteVerbose
 		}
-		
+
 		$GetWinEventParams = @{
       LogName       = 'Microsoft-Windows-Dsc/*'
       ErrorAction   = $SC
       WarningAction = $SC
       Oldest        = $true
     }
-		
+
 		# TODO: That is fast, but the code looks bad!
 		$SuccessResult = (Get-WinEvent @GetWinEventParams | Group-Object -Property {
     $_.Properties[0].value
     }).Group.LevelDisplayName -notcontains 'Error'
 	}
-	
+
 	end
 	{
 		return $SuccessResult

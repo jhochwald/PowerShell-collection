@@ -3,14 +3,14 @@
 <#
     .SYNOPSIS
     Skype for Business should use Proxy Server
-	
+
     .DESCRIPTION
     Skype for Business should use Proxy Server to sign in instead of trying a direct connection.
     Works with Skype for Business 2015 and 2016 and should work with Lync 1013 as well.
-	
+
     .EXAMPLE
     PS C:\> .\Set-Skype4BProxyUsage.ps1
-	
+
     .NOTES
     Please note: This is a per user setting!
 

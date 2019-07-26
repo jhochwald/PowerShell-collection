@@ -1,17 +1,15 @@
-﻿#requires -Version 3.0
-
-function Resolve-DNSHost
+﻿function Resolve-DNSHost
 {
   <#
       .SYNOPSIS
       Resolve DNS hostname to IP and reverse
-	
+
       .DESCRIPTION
       This function resolves DNS hostname to IP and  the other way around (reverse)
-	
+
       .PARAMETER HostEntry
       Hostname (Single, or multiple) to test.
-	
+
       .EXAMPLE
       PS C:\> Resolve-DNSHost -HostEntry www.hochwald.net
 
@@ -30,25 +28,24 @@ function Resolve-DNSHost
       autodiscover.hochwald.net {40.101.88.8, 40.101.88.184, 52.97.151.104, 40.101.60.24...}
 
       This function resolves DNS hostname to IP and  the other way around (reverse)
-	
+
       .OUTPUTS
       psobject
-	
+
       .NOTES
       Refactored of Resolve-Host.Ps1 by @PrateekKumarSingh
 
       .LINK
       Original:
       https://gist.github.com/PrateekKumarSingh/586f2d3d43f7e8cb07ce
-	
+
       .LINK
       Dns Class (system.net.dns):
       https://docs.microsoft.com/de-de/dotnet/api/system.net.dns
-	
+
       .INPUTS
       String
   #>
-	
   [CmdletBinding(ConfirmImpact = 'None')]
   [OutputType([psobject])]
   param
@@ -62,14 +59,14 @@ function Resolve-DNSHost
     [String[]]
     $HostEntry
   )
-	
+
   begin
   {
     # Cleanup
     $Obj = @()
     $Object = @()
   }
-	
+
   process
   {
     $HostEntry | ForEach-Object -Process {
@@ -78,11 +75,11 @@ function Resolve-DNSHost
         IPAddress = $([Net.Dns]::gethostentry($_).AddressList.IPAddressToString)
       }
     }
-			
+
     # Append
     $Object = ($Obj | Select-Object -Property Hostname, IPAddress)
   }
-	
+
   end
   {
     # Dump to the console

@@ -1,6 +1,4 @@
-﻿#requires -Version 3.0 -Modules PowerShellGet
-
-function Invoke-CheckPowerShellModules
+﻿function Invoke-CheckPowerShellModules
 {
    <#
          .SYNOPSIS
@@ -33,13 +31,13 @@ function Invoke-CheckPowerShellModules
          .EXAMPLE
          PS C:\> Invoke-CheckPowerShellModules -Module 'MSOnline', 'azuread', 'AzureADPreview', 'Microsoft.Online.SharePoint.PowerShell', 'MicrosoftTeams', 'Microsoft.PowerApps.PowerShell', 'Microsoft.PowerApps.Administration.PowerShell', 'SharePointPnPPowerShellOnline', 'credentialmanager' -Install
 
-         Check if all the Office 365 related PowerShell Modules are installed. 
+         Check if all the Office 365 related PowerShell Modules are installed.
          This will not install anything missing; it just runs a check!
 
          .EXAMPLE
          PS C:\> Invoke-CheckPowerShellModules -Module 'MSOnline', 'azuread', 'AzureADPreview', 'Microsoft.Online.SharePoint.PowerShell', 'MicrosoftTeams', 'Microsoft.PowerApps.PowerShell', 'Microsoft.PowerApps.Administration.PowerShell', 'SharePointPnPPowerShellOnline', 'credentialmanager' -Install
 
-         Install all the Office 365 related PowerShell Modules if anything is missing. 
+         Install all the Office 365 related PowerShell Modules if anything is missing.
 
          .EXAMPLE
          PS C:\> Invoke-CheckPowerShellModules -Module 'MSOnline', 'azuread', 'AzureADPreview', 'Microsoft.Online.SharePoint.PowerShell', 'MicrosoftTeams', 'Microsoft.PowerApps.PowerShell', 'Microsoft.PowerApps.Administration.PowerShell', 'SharePointPnPPowerShellOnline', 'credentialmanager' -Scope AllUsers
@@ -107,7 +105,7 @@ function Invoke-CheckPowerShellModules
       [string]
       $Scope = 'CurrentUser'
    )
-	
+
    begin
    {
       # The default scope is the current user (if not given)
@@ -150,11 +148,11 @@ function Invoke-CheckPowerShellModules
 
             if (-not $InstalledModuleVersion)
             {
-               if ($Install) 
+               if ($Install)
                {
                   Write-Verbose -Message ('Start the installation of {0}' -f $PowerShellModule)
 
-                  try 
+                  try
                   {
                      if ($pscmdlet.ShouldProcess($PowerShellModule, 'Install'))
                      {
@@ -170,7 +168,7 @@ function Invoke-CheckPowerShellModules
                         $null = (Install-Module @paramInstallModule)
                      }
                   }
-                  catch 
+                  catch
                   {
                      # Get error record
                      [Management.Automation.ErrorRecord]$e = $_
@@ -199,7 +197,7 @@ function Invoke-CheckPowerShellModules
 
                   Write-Verbose -Message ('Finished the installation of {0}' -f $PowerShellModule)
                }
-               else 
+               else
                {
                   # Error message
                   Write-Error -Message ('{0} was not found...' -f $PowerShellModule) -Category NotInstalled -ErrorAction Stop
@@ -231,12 +229,12 @@ function Invoke-CheckPowerShellModules
                      if ($InstalledModuleVersion.Version -ilt $UpdateVersion)
                      {
                         Write-Verbose -Message ('Version {0} for {1} is availible in the PowerShell Galery' -f $UpdateVersion, $PowerShellModule)
-                        
-                        if ($Update) 
+
+                        if ($Update)
                         {
                            Write-Verbose -Message ('Start the update for {0} to version {1}' -f $PowerShellModule, $UpdateVersion)
-                           
-                           try 
+
+                           try
                            {
                               if ($pscmdlet.ShouldProcess($PowerShellModule, 'Update'))
                               {
@@ -254,7 +252,7 @@ function Invoke-CheckPowerShellModules
 
                               Write-Verbose -Message ('Installed version {0} for {1}' -f $UpdateVersion, $PowerShellModule)
                            }
-                           catch 
+                           catch
                            {
                               # Get error record
                               [Management.Automation.ErrorRecord]$e = $_

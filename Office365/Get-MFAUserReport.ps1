@@ -1,6 +1,4 @@
-﻿#requires -Version 3.0 -Modules MSOnline
-
-function Get-MFAUserReport
+﻿function Get-MFAUserReport
 {
   <#
       .SYNOPSIS
@@ -36,7 +34,6 @@ function Get-MFAUserReport
 
       License: BSD 3-Clause
   #>
-	
   [CmdletBinding(DefaultParameterSetName = 'Normal',
   SupportsShouldProcess)]
   param
@@ -53,17 +50,17 @@ function Get-MFAUserReport
     [string]
     $Path = 'C:\scripts\PowerShell\exports\MFAUsers.csv'
   )
-	
+
   begin
   {
     # Defaults
     $CNT = 'Continue'
     $STP = 'Stop'
-		
+
     # Cleanup
     $Report = @()
     $i = 0
-		
+
     if ($pscmdlet.ShouldProcess('MFA Users', 'Get'))
     {
       # get all Accounts
@@ -76,19 +73,19 @@ function Get-MFAUserReport
       catch
       {
         $line = ($_.InvocationInfo.ScriptLineNumber)
-				
+
         # Dump the Info
         Write-Warning -Message ('Error was in Line {0}' -f $line)
-				
+
         # Dump the Error catched
         Write-Error -Message $_ -ErrorAction $STP
-				
+
         # Something that should never be reached
         break
       }
     }
   }
-	
+
   process
   {
     if ($pscmdlet.ShouldProcess('MFA Users', 'Process'))
@@ -97,22 +94,22 @@ function Get-MFAUserReport
       {
         $AccountDisplayName = $Account.DisplayName
         Write-Verbose -Message ('Processing {0}' -f $AccountDisplayName)
-				
+
         # Counter
         $i++
-				
+
         # Select Methods
         $Methods = ($Account | Select-Object -ExpandProperty StrongAuthenticationMethods)
         $MFA = ($Account | Select-Object -ExpandProperty StrongAuthenticationUserDetails)
         $State = ($Account | Select-Object -ExpandProperty StrongAuthenticationRequirements)
-				
+
         $Methods | ForEach-Object -Process {
           if ($_.IsDefault -eq $true)
           {
             $Method = $_.MethodType
           }
         }
-				
+
         if ($State.State)
         {
           $MFAStatus = $State.State
@@ -121,7 +118,7 @@ function Get-MFAUserReport
         {
           $MFAStatus = 'Disabled'
         }
-				
+
         $Object = [PSCustomObject][Ordered]@{
           User      = $Account.DisplayName
           UPN       = $Account.UserPrincipalName
@@ -130,19 +127,19 @@ function Get-MFAUserReport
           MFAEmail  = $MFA.Email
           MFAStatus = $MFAStatus
         }
-				
+
         # Add Obejct to report
         $Report += $Object
       }
     }
   }
-	
+
   end
   {
     if ($pscmdlet.ShouldProcess('MFA Users', 'Report'))
     {
       Write-Verbose -Message ('{0} accounts are MFA-enabled' -f $i)
-			
+
       if ($pscmdlet.ParameterSetName -eq 'Export')
       {
         try
@@ -152,13 +149,13 @@ function Get-MFAUserReport
         catch
         {
           $line = ($_.InvocationInfo.ScriptLineNumber)
-					
+
           # Dump the Info
           Write-Warning -Message ('Error was in Line {0}' -f $line)
-					
+
           # Dump the Error catched
           Write-Error -Message $_ -ErrorAction $STP
-					
+
           # Something that should never be reached
           break
         }

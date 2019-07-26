@@ -3,38 +3,38 @@
 <#
       .SYNOPSIS
       Compare a old and a refactored function to get any Performace differences
-	
+
       .DESCRIPTION
       This script compares a simple function (That deletes all Windows Eventlog Entries) with an refacored one.
       The request came up during a workshop: I was asked why I use pipes so much and if there is another way, without pipes.
 
       The refactored version was created during the workshop as a prototype.
       And to make it easier to compare them, I created this test script.
-	
+
       .EXAMPLE
       PS C:\> .\Clear-EnAllEventLogs_TESTS.ps1
-	
+
       .NOTES
       Version: 1.0.0
-		
+
       GUID: a0a633ca-6fd1-4806-a160-05bf1f76342b
-		
+
       Author: Joerg Hochwald
-		
+
       Companyname: enabling Technology
-		
+
       Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-		
+
       License: https://opensource.org/licenses/BSD-3-Clause
-		
+
       Releasenotes:
       1.0.0 2019-07-24 Initial Version
-		
+
       THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
-		
+
       Dependencies:
       NONE
-	
+
       .LINK
       https://www.enatec.io
 #>
@@ -48,7 +48,7 @@ function Clear-EnAllEventLogs
    <#
          .SYNOPSIS
          Delete all Windows event log entries
-	
+
          .DESCRIPTION
          Delete all Windows event log entries, without any further interaction.
          I use this only after I do some tests on a virtual machine.
@@ -59,10 +59,10 @@ function Clear-EnAllEventLogs
          Warning:
          All security related will also be removed completely.
          If there were any issues, you might never find any information about it!
-	
+
          .PARAMETER ComputerName
          Computer Name as String. Multi Value is possible
-	
+
          .EXAMPLE
          PS C:\> Clear-EnAllEventLogs
 
@@ -77,27 +77,27 @@ function Clear-EnAllEventLogs
          PS C:\> Clear-EnAllEventLogs -ComputerName 'FRADC01', 'FRADC02'
 
          Delete all Windows EventLog Entries on the Computers with the names FRADC01 and FRADC02.
-	
+
          .NOTES
          Version: 1.2.3
-		
+
          GUID: a0a633ca-6fd1-4806-a160-05bf1f76342b
-		
+
          Author: Joerg Hochwald
-		
+
          Companyname: enabling Technology
-		
+
          Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-		
+
          License: https://opensource.org/licenses/BSD-3-Clause
-		
+
          Releasenotes:
-		
+
          THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
-		
+
          Dependencies:
          TNONE
-	
+
          .LINK
          https://www.enatec.io
 
@@ -125,7 +125,7 @@ function Clear-EnAllEventLogs
 
    process
    {
-		
+
       foreach ($SingleComputerName in $ComputerName)
       {
          if ($pscmdlet.ShouldProcess($SingleComputerName, 'Cleanup All EventLogs'))
@@ -135,7 +135,7 @@ function Clear-EnAllEventLogs
                List         = $true
             }
             $null = (Get-EventLog @paramGetEventLog | ForEach-Object -Process {
-                  if ($_.Entries) 
+                  if ($_.Entries)
                   {
                      $paramClearEventLog = @{
                         LogName     = $_.Log
@@ -157,7 +157,7 @@ function Clear-EnAllEventLogsv2
    <#
          .SYNOPSIS
          Delete all Windows event log entries
-	
+
          .DESCRIPTION
          Delete all Windows event log entries, without any further interaction.
          I use this only after I do some tests on a virtual machine.
@@ -168,10 +168,10 @@ function Clear-EnAllEventLogsv2
          Warning:
          All security related will also be removed completely.
          If there were any issues, you might never find any information about it!
-	
+
          .PARAMETER ComputerName
          Computer Name as String. Multi Value is possible
-	
+
          .EXAMPLE
          PS C:\> Clear-EnAllEventLogsv2
 
@@ -186,28 +186,28 @@ function Clear-EnAllEventLogsv2
          PS C:\> Clear-EnAllEventLogsv2 -ComputerName 'FRADC01', 'FRADC02'
 
          Delete all Windows EventLog Entries on the Computers with the names FRADC01 and FRADC02.
-	
+
          .NOTES
          Version: 2.0.0
-		
+
          GUID: 0b2fcd13-0b5e-48df-9970-7c5fab649ee7
-		
+
          Author: Joerg Hochwald
-		
+
          Companyname: enabling Technology
-		
+
          Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-		
+
          License: https://opensource.org/licenses/BSD-3-Clause
-		
+
          Releasenotes:
          2.0.0 2019-07-23: Refactored version
-		
+
          THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
-		
+
          Dependencies:
          NONE
-	
+
          .LINK
          https://www.enatec.io
 
@@ -235,7 +235,7 @@ function Clear-EnAllEventLogsv2
 
    process
    {
-		
+
       foreach ($SingleComputerName in $ComputerName)
       {
          if ($pscmdlet.ShouldProcess($SingleComputerName, 'Cleanup All EventLogs'))
@@ -245,7 +245,7 @@ function Clear-EnAllEventLogsv2
                List         = $true
             }
             $null = ((Get-EventLog @paramGetEventLog).Where({
-                     if ($_.Entries) 
+                     if ($_.Entries)
                      {
                         $_
                      }
@@ -269,37 +269,37 @@ function Invoke-CreateTestData
    <#
          .SYNOPSIS
          Crete 10.000 a few Dummy entries
-	
+
          .DESCRIPTION
          Crete 10.000 a few Dummy entrie
-	
+
          .EXAMPLE
          PS C:\> Invoke-CreateTestData
-	
+
          .NOTES
          Internal Helper Function to create some useless Test Data
 
          Version: 1.0.1
-		
+
          GUID: bb8bf55b-c3f3-4046-a6e8-2e389fd525d7
-		
+
          Author: Joerg Hochwald
-		
+
          Companyname: enabling Technology
-		
+
          Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-		
+
          License: https://opensource.org/licenses/BSD-3-Clause
-		
+
          Releasenotes:
          1.0.1 2019-07-23: Splat the parameters for better radability
          1.0.0 2019-07-23: Initial Version
-		
+
          THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
-		
+
          Dependencies:
          NONE
-	
+
          .LINK
          https://www.enatec.io
 
@@ -312,10 +312,10 @@ function Invoke-CreateTestData
          .LINK
          Foreach-Object
    #>
-	
+
    [CmdletBinding(ConfirmImpact = 'None')]
    param ()
-	
+
    begin
    {
       # Splat the parameters
@@ -328,7 +328,7 @@ function Invoke-CreateTestData
          ErrorAction = 'SilentlyContinue'
       }
    }
-	
+
    process
    {
       # Change the number to fit your needs

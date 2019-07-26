@@ -1,6 +1,4 @@
-﻿#requires -Version 3.0
-
-function Test-Port
+﻿function Test-Port
 {
   <#
       .SYNOPSIS
@@ -52,7 +50,7 @@ function Test-Port
       Description
       -----------
       Queries port 17 (qotd) on the UDP port and returns whether port is open or not
-       
+
       .EXAMPLE
       @("server1","server2") | Test-Port -port 80
       Checks port 80 on server1 and server2 to see if it is listening
@@ -132,7 +130,7 @@ function Test-Port
       #>
       $TCP = $True
     }
-		
+
     <#
         Typically you never do this, but in this case I felt it was for the benefit of the function as any errors will be noted in the output of the report
         It also reduce the handling within the code. Smart, right?
@@ -154,16 +152,16 @@ function Test-Port
           # Create temporary holder
           # TODO: Replace this
           $temp = '' | Select-Object -Property Server, Port, TypePort, Open, Notes
-					
+
           # Create object for connecting to port on computer
           $tcpobject = (New-Object -TypeName system.Net.Sockets.TcpClient)
-					
+
           # Connect to remote machine's port
           $connect = $tcpobject.BeginConnect($c, $p, $null, $null)
-					
+
           # Configure a timeout before quitting
           $wait = $connect.AsyncWaitHandle.WaitOne($TCPtimeout, $False)
-					
+
           # If timeout
           if (-not $wait)
           {

@@ -30,17 +30,16 @@ function Get-ServicePlanFriendlyList
       Author: Joerg Hochwald <http://jhochwald.com>
       License: The 3-Clause BSD License <https://opensource.org/licenses/BSD-3-Clause>
   #>
-	
   [CmdletBinding()]
   [OutputType([hashtable])]
   param ()
-	
+
   begin
   {
     # Cleanup
     $ServicePlanFriendlyList = $null
   }
-	
+
   process
   {
     # Build the HashTable
@@ -133,7 +132,7 @@ function Get-ServicePlanFriendlyList
       'MCOMEETADV'                       = 'Teams/Skype for Business PSTN Conferencing'
     }
   }
-	
+
   end
   {
     # Dump
@@ -160,17 +159,17 @@ function Get-SkuPartNumberFriendlyNameList
       Author: Joerg Hochwald <http://jhochwald.com>
       License: The 3-Clause BSD License <https://opensource.org/licenses/BSD-3-Clause>
   #>
-	
+
   [CmdletBinding()]
   [OutputType([hashtable])]
   param ()
-	
+
   begin
   {
     # Cleanup
     $SkuPartNumberFriendlyNameList = $null
   }
-	
+
   process
   {
     # Build the HashTable
@@ -308,7 +307,7 @@ function Get-SkuPartNumberFriendlyNameList
       'ENTERPRISEPREMIUM'                = 'Office 365 Enterprise E5'
     }
   }
-	
+
   end
   {
     # Dump
@@ -396,17 +395,17 @@ function Convert-MsolServicePlanName
     [string]
     $ServicePlanFriendlyName
   )
-	
+
   process
   {
     # Moved to a dedicated function
     $ServicePlanFriendlyList = (Get-ServicePlanFriendlyList)
-		
+
     if ($ServicePlanName)
     {
       $ServicePlanFriendlyList["$ServicePlanName"]
     }
-		
+
     if ($ServicePlanFriendlyName)
     {
       ($ServicePlanFriendlyList.GetEnumerator() | Where-Object -FilterScript {
@@ -476,17 +475,17 @@ function Convert-MsolAccountSkuName
     [string]
     $SkuPartNumberFriendlyName
   )
-	
+
   process
   {
     # Moved to a dedicated function
     $SkuPartNumberFriendlyNameList = (Get-SkuPartNumberFriendlyNameList)
-		
+
     if ($SkuPartNumber)
     {
       $SkuPartNumberFriendlyNameList["$SkuPartNumber"]
     }
-		
+
     if ($SkuPartNumberFriendlyName)
     {
       ($SkuPartNumberFriendlyNameList.GetEnumerator() | Where-Object -FilterScript {

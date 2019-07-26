@@ -3,12 +3,12 @@
 <#
     .SYNOPSIS
     Install some DSC Resources
-	
+
     .DESCRIPTION
-    Getting, install, or update DSC Resources I want to have. 
-    It could be used to install every Module from the Gallery. 
+    Getting, install, or update DSC Resources I want to have.
+    It could be used to install every Module from the Gallery.
     However, this is something I do with DSC afterwards!
-	
+
     .EXAMPLE
     PS C:\> .\invoke-GetDSCResources.ps1
 
@@ -17,7 +17,7 @@
     VERBOSE: Populating RepositorySourceLocation property for module PSDscResources.
     VERBOSE: Try to update PSDscResources
     VERBOSE: Updated PSDscResources
-	
+
     .NOTES
     Small script I created for myself.
     I have to prepare DSC systems from time to time, and I want to have the same set of DSC resources on all of them.
@@ -45,44 +45,44 @@ begin
 	# Define some defaults
 	$STP = 'Stop'
 	$SC = 'SilentlyContinue'
-	
+
 	# Suppressing the PowerShell Progress Bar
 	$script:ProgressPreference = $SC
-	
+
 	# Create a list of the DSC Resources I want
 	$NewDSCModules = @(
-		'PSDscResources', 
-		'xNetworking', 
-		'xPSDesiredStateConfiguration', 
-		'xWebAdministration', 
-		'xCertificate', 
-		'xComputerManagement', 
-		'xActiveDirectory', 
-		'SystemLocaleDsc', 
-		'xRemoteDesktopAdmin', 
-		'xPendingReboot', 
-		'xSmbShare', 
-		'xWindowsUpdate', 
-		'xDscDiagnostics', 
-		'xCredSSP', 
-		'xDnsServer', 
-		'xWinEventLog', 
-		'xDhcpServer', 
-		'xHyper-V', 
-		'xStorage', 
+		'PSDscResources',
+		'xNetworking',
+		'xPSDesiredStateConfiguration',
+		'xWebAdministration',
+		'xCertificate',
+		'xComputerManagement',
+		'xActiveDirectory',
+		'SystemLocaleDsc',
+		'xRemoteDesktopAdmin',
+		'xPendingReboot',
+		'xSmbShare',
+		'xWindowsUpdate',
+		'xDscDiagnostics',
+		'xCredSSP',
+		'xDnsServer',
+		'xWinEventLog',
+		'xDhcpServer',
+		'xHyper-V',
+		'xStorage',
 		'xWebDeploy'
-		'xRemoteDesktopSessionHost', 
-		'xDismFeature', 
-		'xSystemSecurity', 
-		'WebAdministrationDsc', 
-		'OfficeOnlineServerDsc', 
-		'AuditPolicyDsc', 
-		'xDFS', 
-		'SecurityPolicyDsc', 
-		'xReleaseManagement', 
-		'xExchange', 
-		'xDefender', 
-		'xWindowsEventForwarding', 
+		'xRemoteDesktopSessionHost',
+		'xDismFeature',
+		'xSystemSecurity',
+		'WebAdministrationDsc',
+		'OfficeOnlineServerDsc',
+		'AuditPolicyDsc',
+		'xDFS',
+		'SecurityPolicyDsc',
+		'xReleaseManagement',
+		'xExchange',
+		'xDefender',
+		'xWindowsEventForwarding',
 		'cHyper-V'
 	)
 }
@@ -93,7 +93,7 @@ process
 	{
 		# Cleanup
 		$ModuleIsAvailable = $null
-		
+
 		# Check: Do I have the resource?
 		$paramGetModule = @{
       ListAvailable = $true
@@ -102,14 +102,14 @@ process
       WarningAction = $SC
     }
 		$ModuleIsAvailable = (Get-Module @paramGetModule)
-		
+
 		if (-not ($ModuleIsAvailable))
 		{
 			# Nope: Install the resource
 			try
 			{
 				Write-Verbose -Message ('Try to install {0}' -f $NewDSCModule)
-				
+
 				$paramInstallModule = @{
           Name          = $NewDSCModule
           Scope         = AllUsers
@@ -118,7 +118,7 @@ process
           WarningAction = $SC
         }
 				$null = (Install-Module @paramInstallModule)
-				
+
 				Write-Verbose -Message ('Installed {0}' -f $NewDSCModule)
 			}
 			catch
@@ -136,7 +136,7 @@ process
 			try
 			{
 				Write-Verbose -Message ('Try to update {0}' -f $NewDSCModule)
-				
+
 				# TODO: Implement the check from invoke-ModuleUpdates.ps1 to prevent the unneeded update tries.
 				$paramUpdateModule = @{
           Name          = $NewDSCModule
@@ -145,7 +145,7 @@ process
           WarningAction = $SC
         }
 				$null = (Update-Module @paramUpdateModule)
-				
+
 				Write-Verbose -Message ('Updated {0}' -f $NewDSCModule)
 			}
 			catch

@@ -3,7 +3,7 @@
 <#
     .SYNOPSIS
     Uninstalls the old and retired Antispam Agents from an Exchange Server
-	
+
     .DESCRIPTION
     Microsoft announced that they deprecated the support for the SmartScreen Antispam content filters for Exchange Servers. This script uninstalls the old an retired SmartScreen Antispam Agents from the local Exchange Server.
     This is an easy to use and light weight replacement for Uninstall-AntiSpamAgents.ps1 from the \Scripts of your Exchange Installation, it will remove just the dead parts and leave the rest as it is. Some find that it might be better to leave the rest intact.
@@ -32,7 +32,7 @@ begin
 {
   # Constants
   $STP = 'SilentlyContinue'
-	
+
   # Agents to remove
   $TransportAgentsToRemove = 'Content Filter Agent', 'Sender Id Agent', 'Protocol Analysis Agent'
 }
@@ -46,7 +46,7 @@ process
     if (Get-TransportAgent -Identity $TransportAgentToRemove -ErrorAction $STP -WarningAction $STP)
     {
       Write-Verbose -Message "Try to remove $TransportAgentToRemove"
-			
+
       try
       {
         # Do it, or dry run it?
@@ -67,7 +67,7 @@ process
         # Whoopsss
         Write-Warning -Message "Unable to remove $TransportAgentToRemove"
       }
-			
+
       Write-Verbose -Message "$TransportAgentToRemove was removed"
     }
     else
@@ -75,7 +75,7 @@ process
       Write-Verbose -Message "Sorry, $TransportAgentToRemove was not found..."
     }
   }
-	
+
 }
 
 #region License

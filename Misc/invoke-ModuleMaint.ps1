@@ -47,13 +47,13 @@ process
       Name          = $SingleModule.name
     }
     $SingleInstance = (Get-Module @paramGetModule)
-		
+
     # Do we have more than one installed version?
     if ($SingleInstance -is [array])
     {
       # What is the latest and greatest?
       $latest = (($SingleInstance | Sort-Object -Property Version -Descending)[0]).Version
-			
+
       # Now loop over all older versions
       foreach ($VersionToRemove in $SingleInstance)
       {

@@ -56,7 +56,6 @@
          .LINK
          Get-Content
    #>
-
    [CmdletBinding(ConfirmImpact = 'Low',
    SupportsShouldProcess)]
    param

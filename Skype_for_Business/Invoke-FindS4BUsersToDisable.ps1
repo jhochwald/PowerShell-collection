@@ -3,13 +3,13 @@
 <#
     .SYNOPSIS
     Find AD disabled Skype for Business Users
-	
+
     .DESCRIPTION
     Find accounts that are disabled in the Active Directory but are still Skype for Business enabled
-	
+
     .PARAMETER disable
     Should all users that are disbled in the Active Directory also be disabled in Skype for Business
-	
+
     .EXAMPLE
     PS C:\> Invoke-FindS4BUsersToDisable
 
@@ -19,7 +19,7 @@
     PS C:\> Invoke-FindS4BUsersToDisable -disable
 
     # Find and disable AD disabled Skype for Business Users
-	
+
     .NOTES
     Be carfull with the -disable switch
     It might disable monitoring users and/or Skype enabled resource accounts
@@ -36,14 +36,14 @@ begin
 {
   # Define the defaults
   $SC = 'SilentlyContinue'
-	
+
   # Cleanup
   $S4BUsersToDisable = $null
 }
 
 process
 {
-  # Splat	
+  # Splat
   $paramGetCsAdUser = @{
     ResultSize    = 'Unlimited'
     ErrorAction   = $SC
@@ -70,7 +70,7 @@ end
           WarningAction = $SC
         }
         $null = ($S4BUserToDisable.SipAddress | Disable-CsUser @paramDisableCsUser)
-				
+
         Write-Verbose -Message ('The user {0} is now disabled' -f $S4BUserToDisable.SipAddress)
       }
       catch
@@ -84,7 +84,7 @@ end
     # Dump all Users
     $S4BUsersToDisable
   }
-	
+
   # Cleanup
   $S4BUsersToDisable = $null
 }

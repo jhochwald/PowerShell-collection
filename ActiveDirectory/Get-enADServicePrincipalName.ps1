@@ -3,7 +3,7 @@
    <#
          .SYNOPSIS
          Retrieves all Service Principal Names (SPNs)
-	
+
          .DESCRIPTION
          Retrieves all Service Principal Names (SPNs) from Active Directory
 
@@ -12,7 +12,7 @@
 
          .OUTPUTS
          PSObject
-	
+
          .EXAMPLE
          PS /> Get-enADServicePrincipalName
 
@@ -45,26 +45,26 @@
 
          .NOTES
          Version: 1.0.1
-		
+
          GUID: 807143d7-fa3e-4b71-affa-fab838b34a01
-		
+
          Author: Joerg Hochwald
-		
+
          Companyname: enabling Technology
-		
+
          Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-		
+
          License: https://opensource.org/licenses/BSD-3-Clause
-		
+
          Releasenotes:
          1.0.1 2019-07-26 Refactored, License change to BSD 3-Clause
          1.0.0 2019-01-01 Initial Version
-		
+
          THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
-		
+
          Dependencies:
          Active Directory PowerShell Module
-	
+
          .LINK
          https://www.enatec.io
 
@@ -74,16 +74,16 @@
    [CmdletBinding(ConfirmImpact = 'None')]
    [OutputType([psobject])]
    param ()
-	
+
    begin
    {
       # Create a new Object
       $AllObject = @()
    }
-	
+
    process
    {
-      try 
+      try
       {
          # We use Get-ADObject because this seems to be fast enough
          $paramGetADObject = @{
@@ -93,7 +93,7 @@
          $AllServicePrincipalNames = (Get-ADObject @paramGetADObject)
 
          # Loop over the List we got from Get-ADObject
-         foreach ($SingleServicePrincipalName in $AllServicePrincipalNames) 
+         foreach ($SingleServicePrincipalName in $AllServicePrincipalNames)
          {
             # Get the values for the Service Principal Name
             $ObjectClass = $SingleServicePrincipalName.ObjectClass
@@ -114,7 +114,7 @@
                      WhenCreated       = $whenCreated
                      DNSHostName       = $DNSHostName
                })
-      
+
                # Add the Values to the List
                $AllObject += $SingleObject
 
@@ -123,7 +123,7 @@
             }
          }
       }
-      catch 
+      catch
       {
          #region ErrorHandler
          # get error record
@@ -148,7 +148,7 @@
          #endregion ErrorHandler
       }
    }
-	
+
    end
    {
       # Dump

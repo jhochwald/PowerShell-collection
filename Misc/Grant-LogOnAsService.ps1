@@ -1,35 +1,32 @@
-﻿#requires -Version 3.0 -RunAsAdministrator
-
-function Grant-LogOnAsService
+﻿function Grant-LogOnAsService
 {
   <#
       .SYNOPSIS
       Grant user log on as a service right in PowerShell
-	
+
       .DESCRIPTION
       Grant user log on as a service right in PowerShell
-	
+
       .PARAMETER Users
       The User that should get the grant
-	
+
       .INPUTS
       String, Multi Value is OK here
 
       .OUTPUTS
       None
-	
+
       .EXAMPLE
       PS C:\> Grant-LogOnAsService -Users 'johndoe'
-	
+
       Grant user log on as a service right in PowerShell
-	
+
       .LINK
       https://gist.github.com/ned1313/9143039
-	
+
       .NOTES
       Just a minor refatoring of the original
   #>
-	
   [CmdletBinding(ConfirmImpact = 'Low',
   SupportsShouldProcess)]
   param
@@ -43,12 +40,12 @@ function Grant-LogOnAsService
     [string[]]
     $Users
   )
-	
+
   process
   {
     if ($pscmdlet.ShouldProcess('Apply login as a service', "$Users"))
     {
-      # Get list of currently used SIDs 
+      # Get list of currently used SIDs
       & "$env:windir\system32\secedit.exe" /export /cfg tempexport.inf
       $curSIDs = (Select-String -Path .\tempexport.inf -Pattern 'SeServiceLogonRight')
       $Sids = $curSIDs.line

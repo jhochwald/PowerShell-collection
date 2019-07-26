@@ -3,16 +3,16 @@
 <#
     .SYNOPSIS
     Approves all Windows Server Update Services (WSUS) definition updates
-	
+
     .DESCRIPTION
     Approves all definition updates to all given Windows Server Update Services (WSUS) Computer Groups
-	
+
     .PARAMETER Name
     Specifies the name of a WSUS server.
-	
+
     .PARAMETER TargetGroupNames
     Specifies the name(s) of the WSUS computer target group(s) for which to run this cmdlet.
-	
+
     .EXAMPLE
     PS C:\> Approve-WSUSDefinitionUpdates -TargetGroupNames 'All Computers'
 
@@ -66,22 +66,22 @@ begin
       ErrorAction   = 'Stop'
       WarningAction = 'Continue'
     }
-		
+
     if ($Name)
     {
       Write-Verbose -Message ('Use {0} as WSUS Server' -f $Name)
-			
+
       # Add the Name field with the given value to the Hashtable (Command Splat)
       $paramGetWsusServer['Name'] = $Name
     }
-		
+
     $WSUS = (Get-WsusServer @paramGetWsusServer)
   }
   catch
   {
     # Get error record
     [Management.Automation.ErrorRecord]$e = $_
-		
+
     # Retrieve information about the error
     $info = [PSCustomObject]@{
       Exception = $e.Exception.Message
@@ -91,51 +91,51 @@ begin
       Line      = $e.InvocationInfo.ScriptLineNumber
       Column    = $e.InvocationInfo.OffsetInLine
     }
-		
+
     # Do some verbose stuff for troubleshooting
     $info | Out-String | Write-Verbose
-		
+
     # Thow the error and go...
     Write-Error -Message "$info.Exception" -ErrorAction Stop
-		
+
     # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
     break
-		
+
     # OK, now we have reached a point the we would never, never ever, see
     exit 1
   }
-	
+
   $DefinitionUpdates = $null
   $DefinitionUpdates = $WSUS.GetUpdateClassifications() | Where-Object -FilterScript {
     $_.Title -eq 'Definition Updates'
   }
-	
+
   if (-not $DefinitionUpdates)
   {
     Write-Error -Message 'No Definition Updates found!' -ErrorAction Stop
-		
+
     break
-		
+
     exit 1
   }
-	
+
   $AllDefinitionUpdates = $null
   $AllDefinitionUpdates = $DefinitionUpdates.GetUpdates() | Where-Object -FilterScript {
     ($_.Title -like 'Definition Update for Microsoft Security Essentials*') -or ($_.Title -like 'Update for Windows Defender Antivirus antimalware platforms*') -or ($_.Title -like 'Definition Update for Windows Defender Antivirus*')
   }
-	
+
   if (-not $AllDefinitionUpdates)
   {
     # Thow the error and go...
     Write-Error -Message 'No Definition Updates found!!!' -ErrorAction Stop
-		
+
     # This is a point the code should never reach (You told PowerShell to Ignore the ErrorAction above!)
     break
-		
+
     # OK, now we have reached a point the we would never, never ever, see
     exit 1
   }
-	
+
 }
 
 process
@@ -168,7 +168,7 @@ process
       {
         # Get error record
         [Management.Automation.ErrorRecord]$e = $_
-				
+
         # Retrieve information about the error
         $info = [PSCustomObject]@{
           Exception = $e.Exception.Message
@@ -178,10 +178,10 @@ process
           Line      = $e.InvocationInfo.ScriptLineNumber
           Column    = $e.InvocationInfo.OffsetInLine
         }
-				
+
         # Do some verbose stuff for troubleshooting
         $info | Out-String | Write-Verbose
-				
+
         # A simple warning is OK here
         Write-Warning -Message "$info.Exception" -WarningAction Continue -ErrorAction Continue
       }

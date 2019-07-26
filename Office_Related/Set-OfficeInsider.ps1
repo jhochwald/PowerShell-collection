@@ -3,11 +3,11 @@
 <#
     .SYNOPSIS
     This script will set the Office Channel info in the Registry
-	
+
     .DESCRIPTION
     This script will add the Office Insider Channel Information in the Registry.
     It is a Quick and Dirty Solution.
-	
+
     .PARAMETER Channel
     The Office Release Channel
     Possible Values for the Channel Variable are:
@@ -20,7 +20,7 @@
     .EXAMPLE
     # Set the Distribution Channel to Insiderfast - Weekly builds
     PS> .\Set-OfficeInsider.ps1 -Channel 'Insiderfast'
-	
+
     .EXAMPLE
     # Set the Distribution Channel to Business - Slow updates
     PS> .\Set-OfficeInsider.ps1 -Channel 'Business'
@@ -48,7 +48,7 @@ begin
 {
   # Constants
   $SC = 'SilentlyContinue'
-	
+
   try
   {
     $paramNewItem = @{
@@ -60,7 +60,7 @@ begin
       Confirm       = $false
     }
     $null = (New-Item @paramNewItem)
-		
+
     Write-Verbose -Message 'The Registry Structure was created.'
   }
   catch
@@ -84,7 +84,7 @@ process
       Confirm       = $false
     }
     $null = (New-ItemProperty @paramNewItemProperty)
-		
+
     Write-Verbose -Message 'Registry Entry was created.'
   }
   catch
@@ -98,7 +98,7 @@ process
       Confirm       = $false
     }
     $null = (Set-Item @paramSetItem)
-		
+
     Write-Verbose -Message 'Registry Entry was changed.'
   }
 }

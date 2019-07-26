@@ -1,14 +1,12 @@
-﻿#requires -Version 3.0
-
-function Test-ValidEmail
+﻿function Test-ValidEmail
 {
   <#
       .SYNOPSIS
       Simple Function to check if a String is a valid Mail
-	
+
       .DESCRIPTION
       Simple Function to check if a String is a valid Mail and return a Bool
-	
+
       .PARAMETER address
       Address String to Check
 
@@ -17,23 +15,22 @@ function Test-ValidEmail
 
       .INPUT
       String
-	
+
       .EXAMPLE
       # Not a valid String
       PS C:\> Test-ValidEmail -address 'Joerg.Hochwald'
       False
-	
+
       .EXAMPLE
       # Valid String
       PS C:\> Test-ValidEmail -address 'Joerg.Hochwald@outlook.com'
       True
-	
+
       .NOTES
       Disclaimer: The code is provided 'as is,' with all possible faults, defects or errors, and without warranty of any kind.
-		
+
       Author: Joerg Hochwald
   #>
-	
   [OutputType([bool])]
   param
   (

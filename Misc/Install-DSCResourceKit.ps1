@@ -1,32 +1,30 @@
-﻿#requires -Version 3.0 -Modules PowerShellGet
-
-function Install-DSCResourceKit
+﻿function Install-DSCResourceKit
 {
    <#
          .SYNOPSIS
          Install the complete PowerShell DSCResourceKit
-	
+
          .DESCRIPTION
          Install the complete PowerShell DSCResourceKit from the PowerShell Gallery.
          It only installs the missing resources.
-	
+
          .PARAMETER Scope
          Specifies the installation scope of the module. The acceptable values for this parameter are: AllUsers and CurrentUser.
-		
+
          The AllUsers scope lets modules be installed in a location that is accessible to all users of the computer, that is, %systemdrive%:\ProgramFiles\WindowsPowerShell\Modules.
-		
+
          The CurrentUser scope lets modules be installed only to $home\Documents\WindowsPowerShell\Modules, so that the module is available only to the current user.
-	
+
          .EXAMPLE
          PS C:\> Install-DSCResourceKit
-		
+
          Install the complete PowerShell DSCResourceKit
-	
+
          .EXAMPLE
          PS C:\> Install-DSCResourceKit -verbose
-		
+
          Install the complete PowerShell DSCResourceKit
-	
+
          .NOTES
          Version: 1.0.0
 
@@ -57,7 +55,6 @@ function Install-DSCResourceKit
          .LINK
          https://www.powershellgallery.com
    #>
-	
    [CmdletBinding(ConfirmImpact = 'None',
    SupportsShouldProcess)]
    param
@@ -70,7 +67,7 @@ function Install-DSCResourceKit
       [String]
       $Scope = 'AllUsers'
    )
-	
+
    begin
    {
       try
@@ -79,7 +76,7 @@ function Install-DSCResourceKit
          {
             $Scope = 'AllUsers'
          }
-			
+
          $AllReSources = ((Find-Module -Tag DSCResourceKit).name)
          $AllInstall = ((Get-Module -ListAvailable).Name)
       }
@@ -87,7 +84,7 @@ function Install-DSCResourceKit
       {
          # Get error record
          [Management.Automation.ErrorRecord]$e = $_
-			
+
          # Retrieve information about runtime error
          $info = [PSCustomObject]@{
             Exception = $e.Exception.Message
@@ -97,14 +94,14 @@ function Install-DSCResourceKit
             Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
-			
+
          $info | Out-String | Write-Verbose
-			
+
          # Whoops
          Write-Error -Message $info.Exception -ErrorAction Stop
       }
    }
-	
+
    process
    {
       if ($pscmdlet.ShouldProcess('DSCResourceKit', 'Install'))
@@ -116,7 +113,7 @@ function Install-DSCResourceKit
                try
                {
                   Write-Verbose -Message ('Try to install {0}' -f $DSCResource)
-						
+
                   $paramInstallModule = @{
                      Name               = $DSCResource
                      Scope              = $Scope
@@ -127,14 +124,14 @@ function Install-DSCResourceKit
                      ErrorAction        = 'Stop'
                   }
                   $null = (Install-Module @paramInstallModule)
-						
+
                   Write-Verbose -Message ('Installed {0}' -f $DSCResource)
                }
                catch
                {
                   # Get error record
                   [Management.Automation.ErrorRecord]$e = $_
-						
+
                   # Retrieve information about runtime error
                   $info = [PSCustomObject]@{
                      Exception = $e.Exception.Message
@@ -144,11 +141,11 @@ function Install-DSCResourceKit
                      Line      = $e.InvocationInfo.ScriptLineNumber
                      Column    = $e.InvocationInfo.OffsetInLine
                   }
-						
+
                   $info | Out-String | Write-Verbose
-						
+
                   Write-Warning -Message ('Unable to install {0}' -f $DSCResource) -ErrorAction Continue -WarningAction Continue
-						
+
                   # Cleanup
                   $e = $null
                   $info = $null
@@ -161,7 +158,7 @@ function Install-DSCResourceKit
          }
       }
    }
-	
+
    end
    {
       # Cleanup

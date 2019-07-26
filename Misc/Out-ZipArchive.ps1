@@ -38,7 +38,6 @@
          .LINK
          https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.archive/compress-archive
    #>
-
    [CmdletBinding(ConfirmImpact = 'None')]
    param
    (

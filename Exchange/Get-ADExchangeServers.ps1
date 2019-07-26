@@ -1,16 +1,14 @@
-﻿#requires -Version 1.0
-
-function Get-ADExchangeServers
+﻿function Get-ADExchangeServers
 {
 	<#
 			.SYNOPSIS
 			Get all Exchange Servers from Active Directory
-	
+
 			.DESCRIPTION
 			This function gets a list with info of all Exchange Servers from the Active Directory.
 			The Exchange tools (or a PowerShell Connection) is not needed.
 			That is the major difference to Get-ExchangeServer
-	
+
 			.EXAMPLE
 			# Get all Exchange Servers from Active Directory
 			PS> Get-ADExchangeServers
@@ -36,18 +34,17 @@ function Get-ADExchangeServers
 			.NOTES
 			Only Exchange Servers with a configured PowerShell URI will be dumped
 	#>
-	
 	[CmdletBinding()]
 	[OutputType([psobject])]
 	param ()
-	
+
 	begin
 	{
 		# Define some defaults
 		$ErrorMessage = 'Unable to get the Exchange Information from the Active Directory!'
 		$SC = 'SilentlyContinue'
 		$STP = 'Stop'
-		
+
 		# Search configuration partition for Exchange Servers where the powershell virtual directory is enabled
 		try
 		{
@@ -60,11 +57,11 @@ function Get-ADExchangeServers
 				ErrorAction   = $STP
 				WarningAction = $SC
 			}
-			
+
 			Write-Error @paramWriteError
 			break
 		}
-		
+
 		if (-not ($ActiveDirectoryInfo))
 		{
 			$paramWriteError = @{
@@ -72,15 +69,15 @@ function Get-ADExchangeServers
 				ErrorAction   = $STP
 				WarningAction = $SC
 			}
-			
+
 			Write-Error @paramWriteError
 			break
 		}
-		
+
 		# Create a new Object
 		$ADExchangeInfo = @()
 	}
-	
+
 	process
 	{
 		try
@@ -91,13 +88,13 @@ function Get-ADExchangeServers
 				# Define some defauts
 				$NONE = ' '
 				$COM = ','
-				
+
 				if ($_.properties.msexchinternalhostname[0])
 				{
 					if ($_.properties.distinguishedname[0])
 					{
 						$SrvLdapPath = ($_.properties.distinguishedname[0] -split $COM)[3 .. 100] -join $COM
-						
+
 						try
 						{
 							$SingleServerObject = [adsi]"LDAP://$SrvLdapPath"
@@ -106,7 +103,7 @@ function Get-ADExchangeServers
 						{
 							$SingleServerObject = $null
 						}
-						
+
 						if ($SingleServerObject)
 						{
 							if ($SingleServerObject.serialnumber[0])
@@ -117,7 +114,7 @@ function Get-ADExchangeServers
 							{
 								$SingleFullVersion = $null
 							}
-							
+
 							if (($SingleServerObject.serialNumber -split $NONE)[1])
 							{
 								$SingleShortVersion = ($SingleServerObject.serialNumber -split $NONE)[1]
@@ -126,7 +123,7 @@ function Get-ADExchangeServers
 							{
 								$SingleShortVersion = $null
 							}
-							
+
 							if ($SingleServerObject.name[0])
 							{
 								$SingleServer = $SingleServerObject.name[0]
@@ -135,7 +132,7 @@ function Get-ADExchangeServers
 							{
 								$SingleServer = $null
 							}
-							
+
 							if ($SingleServerObject.msExchServerSite[0])
 							{
 								$SingleActiveDirectorySite = $SingleServerObject.msExchServerSite[0] -replace '^CN=|,.*$', ''
@@ -145,7 +142,7 @@ function Get-ADExchangeServers
 								$SingleActiveDirectorySite = $null
 							}
 						}
-						
+
 						if ($_.properties.msexchinternalhostname[0])
 						{
 							# With each virtual directory create an object to represent its details,
@@ -160,9 +157,9 @@ function Get-ADExchangeServers
 									Fullver = $SingleFullVersion
 								}
 							}
-							
+
 							$SingleExchangeInfo = (New-Object @paramNewObject)
-							
+
 							# Append the Info to the Object
 							$ADExchangeInfo += $SingleExchangeInfo
 						}
@@ -176,7 +173,7 @@ function Get-ADExchangeServers
 			Write-Verbose -Message 'Something went wrong...'
 		}
 	}
-	
+
 	end
 	{
 		# Just dump the plain object
@@ -191,7 +188,7 @@ function Get-ADExchangeServers
 				ErrorAction   = $STP
 				WarningAction = $SC
 			}
-			
+
 			Write-Error @paramWriteError
 			break
 		}

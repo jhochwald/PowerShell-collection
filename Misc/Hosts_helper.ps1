@@ -43,7 +43,6 @@
          .LINK
          https://gist.github.com/markembling/173887/1824b370be3fe468faceaed5f39b12bad010a417
    #>
-
    [CmdletBinding(ConfirmImpact = 'Medium',
    SupportsShouldProcess)]
    param
@@ -184,7 +183,6 @@ function Remove-HostsEntry
          .LINK
          https://gist.github.com/markembling/173887/1824b370be3fe468faceaed5f39b12bad010a417
    #>
-
    [CmdletBinding(ConfirmImpact = 'Medium',
    SupportsShouldProcess)]
    param
@@ -356,7 +354,6 @@ function Get-HostsFile
          .LINK
          https://gist.github.com/markembling/173887/1824b370be3fe468faceaed5f39b12bad010a417
    #>
-
    [CmdletBinding(ConfirmImpact = 'None')]
    param
    (
