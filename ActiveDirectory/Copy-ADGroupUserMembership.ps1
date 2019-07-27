@@ -1,6 +1,4 @@
-﻿#requires -Version 3.0 -Modules ActiveDirectory
-
-function Copy-ADGroupUserMembership
+﻿function Copy-ADGroupUserMembership
 {
    <#
          .SYNOPSIS
@@ -110,7 +108,6 @@ function Copy-ADGroupUserMembership
          .LINK
          Copy-ADUserGroupMemberships
    #>
-
    [CmdletBinding(DefaultParameterSetName = 'default',
          ConfirmImpact = 'Low',
    SupportsShouldProcess)]

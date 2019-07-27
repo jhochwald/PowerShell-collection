@@ -92,7 +92,6 @@
          .LINK
          Copy-ADGroupUserMemberships
    #>
-
    [CmdletBinding(DefaultParameterSetName = 'default',
    SupportsShouldProcess)]
    param
