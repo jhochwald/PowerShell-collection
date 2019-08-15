@@ -1,9 +1,9 @@
 ﻿<#
       .SYNOPSIS
-      Microsoft Teams Client customization settings via PowerShell
+      Microsoft Teams Client customisation settings via PowerShell
 
       .DESCRIPTION
-      Microsoft Teams Client customization settings via PowerShell
+      Microsoft Teams Client customisation settings via PowerShell
 
       .EXAMPLE
       PS C:\> .\Default_MicrosoftTeams_DesktopConfig.ps1
