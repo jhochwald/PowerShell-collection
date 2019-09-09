@@ -95,17 +95,17 @@ param
 begin
 {
    #region Checks
-   if (-not $State) 
+   if (-not $State)
    {
       $State = 'HE'
    }
 
-   if (-not $Year) 
+   if (-not $Year)
    {
       $Year = (Get-Date).ToString('yyyy')
    }
 
-   if (-not $Path) 
+   if (-not $Path)
    {
       $Path = "$env:USERPROFILE\Holidays.csv"
    }
@@ -115,107 +115,107 @@ begin
    # More fuzzy state support
    switch ($State)
    {
-      'Baden-Württemberg' 
+      'Baden-Württemberg'
       {
          $State = 'BW'
       }
-      'Baden-Wuerttemberg' 
+      'Baden-Wuerttemberg'
       {
          $State = 'BW'
       }
-      'Baden Württemberg' 
+      'Baden Württemberg'
       {
          $State = 'BW'
       }
-      'Baden Wuerttemberg' 
+      'Baden Wuerttemberg'
       {
          $State = 'BW'
       }
-      'Bayern' 
+      'Bayern'
       {
          $State = 'BY'
       }
-      'Berlin' 
+      'Berlin'
       {
          $State = 'BE'
       }
-      'Brandenburg' 
+      'Brandenburg'
       {
          $State = 'BB'
       }
-      'Bremen' 
+      'Bremen'
       {
          $State = 'HB'
       }
-      'Hamburg' 
+      'Hamburg'
       {
          $State = 'HH'
       }
-      'Hessen' 
+      'Hessen'
       {
          $State = 'HE'
       }
-      'Mecklenburg-Vorpommern' 
+      'Mecklenburg-Vorpommern'
       {
          $State = 'MV'
       }
-      'Mecklenburg Vorpommern' 
+      'Mecklenburg Vorpommern'
       {
          $State = 'MV'
       }
-      'Niedersachsen' 
+      'Niedersachsen'
       {
          $State = 'NI'
       }
-      'Nordrhein-Westfalen' 
+      'Nordrhein-Westfalen'
       {
          $State = 'NW'
       }
-      'Nordrhein Westfalen' 
+      'Nordrhein Westfalen'
       {
          $State = 'NW'
       }
-      'Rheinland-Pfalz' 
+      'Rheinland-Pfalz'
       {
          $State = 'RP'
       }
-      'Rheinland Pfalz' 
+      'Rheinland Pfalz'
       {
          $State = 'RP'
       }
-      'Saarland' 
+      'Saarland'
       {
          $State = 'SL'
       }
-      'Sachsen' 
+      'Sachsen'
       {
          $State = 'SN'
       }
-      'Sachen-Anhalt' 
+      'Sachen-Anhalt'
       {
          $State = 'ST'
       }
-      'Sachen Anhalt' 
+      'Sachen Anhalt'
       {
          $State = 'ST'
       }
-      'Schleswig-Holstein' 
+      'Schleswig-Holstein'
       {
          $State = 'SH'
       }
-      'Schleswig Holstein' 
+      'Schleswig Holstein'
       {
          $State = 'SH'
       }
-      'Thüringen' 
+      'Thüringen'
       {
          $State = 'TH'
       }
-      'Thueringen' 
+      'Thueringen'
       {
          $State = 'TH'
       }
-      default 
+      default
       {
          # Good luck ;-)
          $State = $State.ToUpper()
@@ -242,11 +242,11 @@ process
    }
 
    # Use the API to get the List
-   try 
+   try
    {
       $FeiertagApiObject = (Invoke-RestMethod @paramInvokeRestMethod)
    }
-   catch 
+   catch
    {
       #region ErrorHandler
       # get error record
@@ -270,7 +270,7 @@ process
       exit 1
       #endregion ErrorHandler
    }
-   
+
    foreach ($SingleFeiertagApiObject in $FeiertagApiObject.PsObject.Properties)
    {
       # Create a new Object
@@ -278,11 +278,11 @@ process
 
       # Fill in the Values from the API Call
 
-      $MemberObject | Add-Member -NotePropertyName Name -NotePropertyValue $(if ($appendyear) 
+      $MemberObject | Add-Member -NotePropertyName Name -NotePropertyValue $(if ($appendyear)
          {
             ($SingleFeiertagApiObject.Name) + ' 2019'
          }
-         else 
+         else
          {
             ($SingleFeiertagApiObject.Name)
          }
@@ -317,7 +317,7 @@ process
    }
 
    # Create the CSV Object (We remove the Quotes to make it a perfect fit) and save it
-   try 
+   try
    {
       $paramSetContent = @{
          Value       = ($CsvDataObject | ConvertTo-Csv -UseCulture -NoTypeInformation | ForEach-Object {
@@ -330,7 +330,7 @@ process
       }
       $null = (Set-Content @paramSetContent)
    }
-   catch 
+   catch
    {
       #region ErrorHandler
       # get error record
