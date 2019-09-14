@@ -57,6 +57,8 @@
          Get a detailed mailbox permission report
 
          .NOTES
+         Developed and tested with Exchange Online, it should work with on Premises Exchange 2010/2010/2016/2019
+
          This is open-source software, if you find an issue try to fix it yourself.
          There is no support and/or warranty in any kind
 
