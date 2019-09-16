@@ -2,10 +2,10 @@
 {
    <#
          .SYNOPSIS
-         Get a detailed mailbox permission report
+         Get a detailed mailbox Send permission report
 
          .DESCRIPTION
-         Get a detailed mailbox permission report and exports this report to a given CSV file.
+         Get a detailed mailbox Send permission report and exports this report to a given CSV file.
          You can select only usermailboxes, only sharedmailboxes or both for the reporting.
 
          .PARAMETER Identity
