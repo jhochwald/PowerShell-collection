@@ -27,7 +27,7 @@
 
          .EXAMPLE
          Get-enDomainControllerInfo -Discover
-    
+
          Retrieve the name of the closest domain controller.
 
          .NOTES
@@ -46,14 +46,14 @@
    }
 
    process {
-      If ($Discover) 
+      If ($Discover)
       {
          $LocatorFlag = [DirectoryServices.ActiveDirectory.LocatorOptions]::ForceRediscovery
          $Info = ([DirectoryServices.ActiveDirectory.DomainController]::FindOne($DirectoryContext, $LocatorFlag) | Select-Object -Property $SelectProperties)
-      } elseif ($ComputerName) 
+      } elseif ($ComputerName)
       {
          $Info = ([DirectoryServices.ActiveDirectory.DomainController]::FindAll($DirectoryContext) | Where-Object -Property Name -Match -Value $ComputerName | Select-Object -Property $SelectProperties)
-      } else 
+      } else
       {
          $Info = ([DirectoryServices.ActiveDirectory.DomainController]::FindAll($DirectoryContext) | Select-Object -Property $SelectProperties)
       }

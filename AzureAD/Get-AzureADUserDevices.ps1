@@ -166,6 +166,3 @@ end
    # Display Users with high number of devices
    $DeviceCountHigh | Sort-Object -Property DeviceCount -Descending
 }
-
-
-

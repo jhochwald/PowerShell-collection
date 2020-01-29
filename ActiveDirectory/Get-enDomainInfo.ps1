@@ -20,7 +20,7 @@
       $CurrentDomain = [DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
       $null = ($CurrentDomain | Add-Member -MemberType NoteProperty -Name Sites -Value ([DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest().Sites))
       $Domain = ($CurrentDomain | Select-Object -Property $SelectProperties)
-      
+
       <#
       switch($domainModeLevel)
       {

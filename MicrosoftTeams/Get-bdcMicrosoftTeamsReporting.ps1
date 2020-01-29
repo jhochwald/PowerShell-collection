@@ -3,34 +3,34 @@
    <#
          .SYNOPSIS
          Get a Report for all Microsoft Teams Teams
-	
+
          .DESCRIPTION
          Get a Report for all Microsoft Teams Teams
-	
+
          .PARAMETER Connect
          Executes Connect-MicrosoftTeams for you
-	
+
          .PARAMETER Disconnect
          Executes Disconnect-MicrosoftTeams for you as soon as the report is generated
-	
+
          .PARAMETER GiphyDetails
          Include Giphy Details in the report
-	
+
          .PARAMETER MemesDetails
          Include Memes Details in the report
-	
+
          .PARAMETER GuestDetails
          Include Guest Details in the report
-	
+
          .PARAMETER Detailed
          Report some more Details about the Teams.
-	
+
          .PARAMETER AllDetails
          All of the Details are reported, might be a bit verbose for some.
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting
-	
+
          Get a Report for all Microsoft Teams Teams
 
          .EXAMPLE
@@ -55,7 +55,7 @@
          } | Select-Object -ExpandProperty DisplayName | ForEach-Object -Process {
          Write-Warning -Message "Looks like $_ has no members and guests!" -ErrorAction Continue
          }
-         
+
          Find Teams without members and guests, empty teams are boring and, more or less, useless
 
          .EXAMPLE
@@ -64,49 +64,49 @@
          } | Select-Object -ExpandProperty DisplayName | ForEach-Object -Process {
          Write-Warning -Message "Looks like $_ is archived but searchable!" -ErrorAction Continue
          }
-         
+
          Find archived Teams that are still searchable, might not be a bad thing...
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -Connect -Disconnect
-	
+
          Get a Report for all Microsoft Teams Teams, invokes the Connect-MicrosoftTeams and Diconnect-MicrosoftTeams for you
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -AllDetails
-	
+
          Get a Report for all Microsoft Teams Teams, with all the details (very verbose)
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -GiphyDetails
-	
+
          Get a Report for all Microsoft Teams Teams, and include Giphy Details
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -MemesDetails
-	
+
          Get a Report for all Microsoft Teams Teams, and include Memes Details
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -GiphyDetails -MemesDetails
-	
+
          Get a Report for all Microsoft Teams Teams, and include Giphy and Memes Details
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -GuestDetails
-	
-         Get a Report for all Microsoft Teams Teams, and include Guest Details 
-	
+
+         Get a Report for all Microsoft Teams Teams, and include Guest Details
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -Detailed
-	
+
          Get a Report for all Microsoft Teams Teams, with more details then the regular report
-	
+
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting -Detailed -GuestDetails
-	
+
          Get a Report for all Microsoft Teams Teams, with more details then the regular report and Guest Details
-	
+
          .NOTES
          Reworked function to deliver everything we need to have for our Office 365 reporting service.
          See the examples above and you will get an idea what you can do with filtering :-)
@@ -141,7 +141,7 @@
          .LINK
          https://opensource.org/licenses/BSD-3-Clause
    #>
-	
+
    [CmdletBinding(ConfirmImpact = 'None')]
    [OutputType([psobject])]
    param
@@ -182,7 +182,7 @@
       [switch]
       $AllDetails
    )
-	
+
    begin
    {
       #region Connect
@@ -192,11 +192,11 @@
          $null = (Connect-MicrosoftTeams)
       }
       #endregion Connect
-		
+
       # Crete an empty Report variable
       $MicrosoftTeamsReport = @()
    }
-	
+
    process
    {
       # Get all Microsoft Teams Teams and loop over them
@@ -206,26 +206,26 @@
             try
             {
                Write-Verbose -Message ('Generate the Report for the Microsoft Teams Team {0}' -f $_.DisplayName)
-					
+
                # Cleanup
                $TeamUserDetails = $null
-					
+
                # Get the User information for the Microsoft Teams Team and save it for reuse
                $TeamUserDetails = $null
                $TeamUserDetails = (Get-TeamUser -GroupId $_.GroupID -ErrorAction Stop)
-					
+
                # Get the Channel information for the Microsoft Teams Team
                $TeamChannelDetails = $null
                $TeamChannelDetails = ((Get-TeamChannel -GroupId $_.GroupID -ErrorAction Stop).count)
-					
+
                # Put all details into an object
                $SingleTeamReport = (New-Object -TypeName PSobject)
-					
+
                #region FillSingleTeamReport
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $_.DisplayName
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Description' -Value $_.Description
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Visibility' -Value $_.Visibility
-					
+
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Archived' -Value $_.Archived
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'ShowInTeamsSearchAndSuggestions' -Value $_.ShowInTeamsSearchAndSuggestions
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Channels' -Value $TeamChannelDetails
@@ -238,7 +238,7 @@
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Guests' -Value (($TeamUserDetails | Where-Object -FilterScript {
                         $_.Role -like 'guest'
                }).count)
-					
+
                #region GiphyDetails
                if ($GiphyDetails -or $AllDetails)
                {
@@ -246,7 +246,7 @@
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'GiphyContentRating' -Value $_.GiphyContentRating
                }
                #endregion GiphyDetails
-					
+
                #region MemesDetails
                if ($MemesDetails -or $AllDetails)
                {
@@ -254,7 +254,7 @@
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCustomMemes' -Value $_.AllowCustomMemes
                }
                #endregion MemesDetails
-					
+
                #region GuestDetails
                if ($GuestDetails -or $AllDetails)
                {
@@ -262,14 +262,14 @@
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGuestDeleteChannels' -Value $_.AllowGuestDeleteChannels
                }
                #endregion GuestDetails
-					
+
                #region DetailedReport
                if ($Detailed -or $AllDetails)
                {
                   # Based on the idea of Tom Arbuthnot (https://github.com/tomarbuthnot/Microsoft-Teams-PowerShell)
                   $DescriptionWordCount = (($_.Description | Out-String | Measure-Object -Word).words)
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DescriptionWordCount' -Value $DescriptionWordCount
-						
+
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DescriptionScore' -Value $(if ($DescriptionWordCount -eq 0)
                      {
                         'Terrible'
@@ -291,7 +291,7 @@
                         'Unknown'
                      }
                   )
-						
+
                   # As requested by Peter Duda
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Classification' -Value $(if ($_.Classification)
                      {
@@ -302,7 +302,7 @@
                         'None'
                      }
                   )
-						
+
                   # New since 2020/01
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'MailNickName' -Value $(if ($_.MailNickName)
                      {
@@ -313,7 +313,7 @@
                         'None'
                      }
                   )
-						
+
                   # Verbose reporting
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateChannels' -Value $_.AllowCreateUpdateChannels
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowDeleteChannels' -Value $_.AllowDeleteChannels
@@ -327,12 +327,12 @@
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowChannelMentions' -Value $_.AllowChannelMentions
                }
                #endregion DetailedReport
-					
+
                #region FinalValue
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'GroupId' -Value $_.GroupId
                #endregion FinalValue
                #endregion FillSingleTeamReport
-					
+
                # Append to the Report
                $MicrosoftTeamsReport += $SingleTeamReport
             }
@@ -391,13 +391,13 @@
             TargetObject = $e.CategoryInfo.TargetName
          }
          Write-Error @paramWriteError
-               
+
          # Just in case
          Exit 1
          #region ErrorHandler
       }
    }
-	
+
    end
    {
       #region Disconnect
@@ -407,11 +407,10 @@
          $null = (Disconnect-MicrosoftTeams -Confirm:$false)
       }
       #endregion Disconnect
-		
+
       #region ShowReport
       # Dump the Report
       $MicrosoftTeamsReport
       #endregion ShowReport
    }
 }
-
