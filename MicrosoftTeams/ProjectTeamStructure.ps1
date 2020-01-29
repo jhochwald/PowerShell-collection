@@ -117,12 +117,14 @@ param
 
 begin
 {
-   # Azure AD OAuth Application Token for Graph API
-   # Get OAuth token for a AAD Application (returned as $token)
-   # Application (client) ID, tenant ID and secret
-   $ClientId = 'xxxxxxxxxxxxxxxxxxxxxxxx'
-   $TenantId = 'xxxxxxxxxxxxxxxxxxxxxxxx'
-   $ClientSecret = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+   <#
+      # Azure AD OAuth Application Token for Graph API
+      # Get OAuth token for a AAD Application (returned as $token)
+      # Application (client) ID, tenant ID and secret
+      $ClientId = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+      $TenantId = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+      $ClientSecret = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+   #>
 }
 
 process
