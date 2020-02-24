@@ -2,15 +2,15 @@
 
 <#
       .SYNOPSIS
-      Download and install the chocolatey default packages
+      Download and install chocolatey default packages for developer Workstations
 
       .DESCRIPTION
-      Download and install the chocolatey default packages
+      Download and install chocolatey default packages for developer Workstations
 
       .NOTES
-      These are the chocolatey default packages, that we want to have on all new systems
+      Some of the stiff is not for regular workstations
 
-      Version 1.2.8
+      Version 1.0.3
 
       .LINK
       http://beyond-datacenter.com
@@ -36,56 +36,32 @@ begin {
    $env:chocolateyUseWindowsCompression = 'true'
 
    $AllChocoPackages = @(
-      'auto-dark-mode'
-      'azure-cli'
-      'BGInfo'
-      'chocolatey-core.extension'
-      'chocolatey-dotnetfx.extension'
-      'chocolatey-misc-helpers.extension'
-      'chocolatey-windowsupdate.extension'
-      'chocolatey-vscode.extension'
-      'chocolateygui'
-      'curl'
-      'fiddler'
-      'FiraCode'
-      'Firefox'
-      'git'
-      'git-fork'
-      'golang'
-      'GoogleChrome'
-      'graphviz'
-      'keepass'
-      'keepassxc'
-      'makemeadmin'
-      'microsoftazurestorageexplorer'
-      'microsoft-edge'
-      'nodejs'
-      'notepadplusplus'
-      'nuget.commandline'
-      'NugetPackageExplorer'
-      'nxlog'
-      'onedrive'
-      'postman'
-      'powershell-core'
-      'putty'
-      'python3'
-      'teamviewer'
-      'vlc'
-      'vscode'
-      'vscode-python'
-      'vscode-yaml'
-      'vscode-gitlens'
-      'vscode-powershell'
-      'winscp'
-      'yarn'
-      'yubikey-manager'
-      'yubikey-personalization-tool'
-      'yubikey-piv-manager'
-      'yubico-authenticator'
+      'sql-server-management-studio'
+      'azure-data-studio'
+      'mongodb'
+      'php'
+      'composer'
+      'mysql'
+      'winmerge'
+      'msjsdiag.debugger-for-chrome'
+      'ms-mssql.mssql'
+      'electron'
+      'vscode-edge-debug'
+      'vscode-chrome-debug'
+      'vscode-firefox-debug'
+      'DotNetDeveloperBundle'
+      'cmake'
+      'openjdk'
+      'regextester'
+      'powershell-preview'
+      'brave'
+      'sysinternals'
+      'chromium'
    )
 
    # Initial Package Counter
-   $PackageCounter = 1
+   PackageCounter
+   $i = 1
 }
 
 process {
@@ -93,33 +69,22 @@ process {
    {
       try 
       {
-         Write-Verbose -Message ('Start the installation of ' + $ChocoPackage)
+         Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $i + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($i / $AllChocoPackages.Count) * 100)
 
          if ($pscmdlet.ShouldProcess($ChocoPackage, 'Install'))
          {
-            Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $PackageCounter + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($PackageCounter / $AllChocoPackages.Count) * 100)
-            
-            try 
-            {
-               $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage -y --force --params 'ALLUSERS=1')
-            }
-            catch 
-            {
-               # Retry with --ignore-checksums - A less secure option!!!
-               $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage -y --force --ignore-checksums --params 'ALLUSERS=1')
-               # Some Packages (e.g. Sysmon) use the latest and greatest version, the checksum check will cause issues in this case!
-            }
+            $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage -y --force --params 'ALLUSERS=1')
          }
 
          # Add Package Step
-         $PackageCounter++
+         $i++
       }
       catch 
       {
          Write-Warning -Message ('Installation of ' + $ChocoPackage + ' failed!')
       
          # Add Package Step
-         $PackageCounter++
+         $i++
       }
    }
 }
