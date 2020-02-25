@@ -10,7 +10,7 @@
       .NOTES
       Some of the stiff is not for regular workstations
 
-      Version 1.0.3
+      Version 1.0.4
 
       .LINK
       http://beyond-datacenter.com
@@ -57,6 +57,16 @@ begin {
       'brave'
       'sysinternals'
       'chromium'
+      'yarn'
+      'vscode-python'
+      'vscode-yaml'
+      'vscode-gitlens'
+      'nodejs'
+      'NugetPackageExplorer'
+      'postman'
+      'git-fork'
+      'golang'
+      'fiddler'
    )
 
    # Initial Package Counter

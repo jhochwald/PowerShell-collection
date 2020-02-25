@@ -2,15 +2,15 @@
 
 <#
       .SYNOPSIS
-      Download and install the chocolatey default base packages
+      Download and install the chocolatey default packages for Workstations
 
       .DESCRIPTION
-      Download and install the chocolatey default base packages
+      Download and install the chocolatey default packages for Workstations
 
       .NOTES
       These are the chocolatey default packages, that we want to have on all new systems
 
-      Version 1.3.0
+      Version 1.1.0
 
       .LINK
       http://beyond-datacenter.com
@@ -36,20 +36,29 @@ begin {
    $env:chocolateyUseWindowsCompression = 'true'
 
    $AllChocoPackages = @(
-      'BGInfo'
-      'chocolatey-core.extension'
-      'chocolatey-dotnetfx.extension'
-      'chocolatey-misc-helpers.extension'
-      'chocolatey-windowsupdate.extension'
-      'chocolatey-vscode.extension'
-      'FiraCode'
-      'microsoft-edge'
-      'notepadplusplus'
-      'nuget.commandline'
-      'nxlog'
-      'powershell-core'
-      'vscode'
-      'vscode-powershell'
+      'auto-dark-mode'
+      'azure-cli'
+      'chocolateygui'
+      'curl'
+      'Firefox'
+      'git'
+      'GoogleChrome'
+      'graphviz'
+      'keepass'
+      'keepassxc'
+      'makemeadmin'
+      'microsoftazurestorageexplorer'
+      'microsoft-windows-terminal'
+      'onedrive'
+      'putty'
+      'python3'
+      'teamviewer'
+      'vlc'
+      'winscp'
+      'yubikey-manager'
+      'yubikey-personalization-tool'
+      'yubikey-piv-manager'
+      'yubico-authenticator'
    )
 
    # Initial Package Counter
