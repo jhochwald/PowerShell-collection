@@ -2,15 +2,15 @@
 
 <#
       .SYNOPSIS
-      Download and install the chocolatey default base packages
+      Download and install some legacy Microsoft Visual C++ Redistributable
 
       .DESCRIPTION
-      Download and install the chocolatey default base packages
+      Download and install some legacy Microsoft Visual C++ Redistributable as chocolatey default packages
 
       .NOTES
-      These are the chocolatey default packages, that we want to have on all new systems
+      We install the following: 2005, 2008, 2010, 2010, 2013, and 2015
 
-      Version 1.3.0
+      Version 1.0.4
 
       .LINK
       http://beyond-datacenter.com
@@ -24,7 +24,9 @@ param ()
 
 begin
 {
-   Write-Output -InputObject 'Download and install the chocolatey default base packages'
+   Write-Output -InputObject 'Download and install some legacy Microsoft Visual C++ Redistributable'
+   
+   $null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
    
    if (-not $env:ChocolateyInstall)
    {
@@ -32,7 +34,7 @@ begin
    }
    
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction SilentlyContinue)
-   
+
    try 
    {
       $null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
@@ -46,28 +48,17 @@ begin
    $env:chocolateyUseWindowsCompression = 'true'
 
    $AllChocoPackages = @(
-      'BGInfo'
-      'chocolatey-core.extension'
-      'chocolatey-dotnetfx.extension'
-      'chocolatey-misc-helpers.extension'
-      'chocolatey-windowsupdate.extension'
-      'chocolatey-font-helpers.extension'
-      'chocolatey-vscode.extension'
-      'chocolatey-vscode'
-      'FiraCode'
-      'microsoft-edge'
-      'notepadplusplus'
-      'nuget.commandline'
-      'nxlog'
-      'powershell-core'
-      'vscode'
-      'vscode-powershell'
+      #'vcredist2005'
+      #'vcredist2008'
+      #'vcredist2010'
+      #'vcredist2012'
+      'vcredist2013'
+      'vcredist2015'
    )
 
    # Initial Package Counter
    $PackageCounter = 1
 }
-
 process
 {
    foreach ($ChocoPackage in $AllChocoPackages)

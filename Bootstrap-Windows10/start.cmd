@@ -4,7 +4,7 @@ rem Label
 label.exe c: 'Boot'
 
 rem execute the initial setup script
-@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "./Invoke_first.ps1"
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command ".\ps1\Invoke_first.ps1"
 
 rem Remove some Stock Apps
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\Cleanup_StockApps.ps1"
@@ -17,7 +17,7 @@ rem Get the latest time
 W32tm /resync /force
 
 rem Install some HP Tools
-rem @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\Install-WrapperForHPTools.ps1"
+rem @call "%CD%hp\hpsetup.cmd"
 
 rem Allow Pings and enable RDP
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\Set-AllowPingAndRemoteDesktop.ps1"
@@ -41,8 +41,8 @@ rem Desktop Cleanup
 @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\Remove-AllPublicDesktopLinks.ps1"
 
 rem Apply all pending microsoft updates
-rem @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\Install-AllMissingMicrosoftUpdates.ps1"
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\Install-AllMissingMicrosoftUpdates.ps1"
 
 rem Restart
-rem 
+rem
 SHUTDOWN -r -t 10

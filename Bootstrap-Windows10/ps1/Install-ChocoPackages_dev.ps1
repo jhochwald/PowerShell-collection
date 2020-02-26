@@ -2,16 +2,15 @@
 
 <#
       .SYNOPSIS
-      Download and install some Microsoft dotNET Runtimes
+      Download and install chocolatey default packages for developer Workstations
 
       .DESCRIPTION
-      Download and install some Microsoft dotNET Runtimes as chocolatey default packages
+      Download and install chocolatey default packages for developer Workstations
 
       .NOTES
-      Added dotNET Core and Core SDK to the latest version of this script.
-      We also added dotNET Core SDK version 2.2 for some legacy stuff
+      Some of the stiff is not for regular workstations
 
-      Version 1.1.3
+      Version 1.0.4
 
       .LINK
       http://beyond-datacenter.com
@@ -25,15 +24,17 @@ param ()
 
 begin
 {
-   Write-Output -InputObject 'Download and install some Microsoft dotNET Runtimes'
+   Write-Output -InputObject 'Download and install chocolatey default packages for developer Workstations'
+   
+   $null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
    
    if (-not $env:ChocolateyInstall)
    {
       $env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
    }
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction SilentlyContinue)
-   
+
    try 
    {
       $null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
@@ -47,15 +48,49 @@ begin
    $env:chocolateyUseWindowsCompression = 'true'
 
    $AllChocoPackages = @(
-      'DotNet3.5'
-      'DotNet4.5'
-      'dotnet4.7'
-      'dotnetfx'
-      'dotnetcore'
+      'sql-server-management-studio'
+      'azure-data-studio'
+      'gh'
+      'github-desktop'
+      'mongodb'
+      'php'
+      'composer'
+      'mysql'
+      'winmerge'
+      'msjsdiag.debugger-for-chrome'
+      'ms-mssql.mssql'
+      'electron'
+      'vscode-edge-debug'
+      'vscode-chrome-debug'
+      'vscode-firefox-debug'
+      'DotNetDeveloperBundle'
+      'cmake'
+      'openjdk'
+      'regextester'
+      'powershell-preview'
+      'brave'
+      'sysinternals'
+      'chromium'
+      'yarn'
+      'vscode-python'
+      'vscode-yaml'
+      'vscode-gitlens'
+      'nodejs'
+      'NugetPackageExplorer'
+      'postman'
+      'git-fork'
+      'golang'
+      'fiddler'
+      'lockhunter'
+      'dos2unix'
+      'markpad'
+      'dotnetcore-sdk'
+      'dotnetcore-sdk -version 2.2.0'
    )
 
    # Initial Package Counter
-   $PackageCounter = 1
+   PackageCounter
+   $i = 1
 }
 
 process

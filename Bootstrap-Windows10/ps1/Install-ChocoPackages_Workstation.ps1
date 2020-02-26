@@ -26,6 +26,8 @@ begin
 {
    Write-Output -InputObject 'Download and install the chocolatey default packages for Workstations'
    
+   $null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
+   
    if (-not $env:ChocolateyInstall)
    {
       $env:ChocolateyInstall = 'C:\ProgramData\chocolatey'

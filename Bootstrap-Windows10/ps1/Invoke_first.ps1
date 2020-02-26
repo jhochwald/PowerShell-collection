@@ -17,7 +17,7 @@ begin
    #region Defaults
    $SCT = 'SilentlyContinue'
    #endregion Defaults
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    #region ExecutionPolicy
@@ -69,45 +69,37 @@ process
 
    # Create all PowerShell related Profiles
    (($PROFILE).AllUsersAllHosts), (($PROFILE).AllUsersCurrentHost), (($PROFILE).CurrentUserAllHosts), (($PROFILE).CurrentUserCurrentHost) | ForEach-Object -Process {
-      if (-not ($_))
+      if (-not (Test-Path -Path $_ -ErrorAction $SCT))
       {
-         $null = (New-Item -Path $_ -ItemType File -Force -Confirm:$false -ErrorAction SilentlyContinue)
+         $null = (New-Item -Path $_ -ItemType File -Force -Confirm:$false -ErrorAction $SCT)
       }
    }
    #endregion Tweaks
 
    #region Transfer
-   # Copy HP stuff
-   if (Test-Path -Path '.\sp*.exe' -ErrorAction $SCT)
-   {
-      Get-ChildItem -Path '.\sp*.exe' -ErrorAction $SCT | ForEach-Object -Process {
-         $null = (Copy-Item -Path $_ -Destination 'C:\temp' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      }
-   }
-
    # Copy the PowerShell stuff
-   if (Test-Path -Path '.\*.ps1' -ErrorAction $SCT)
+   if (Test-Path -Path '.\ps1\*.ps1' -ErrorAction $SCT)
    {
-      Get-ChildItem -Path '.\*.ps1' -ErrorAction $SCT | ForEach-Object -Process {
+      $null = (Get-ChildItem -Path '.\ps1\*.ps1' -ErrorAction $SCT | ForEach-Object -Process {
          $null = (Copy-Item -Path $_ -Destination 'C:\scripts\PowerShell' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      }
+      })
    }
 
    if (Test-Path -Path '.\tools\*.exe' -ErrorAction $SCT)
    {
-      Get-ChildItem -Path '.\tools\*.exe' -ErrorAction $SCT | ForEach-Object -Process {
+      $null = (Get-ChildItem -Path '.\tools\*.exe' -ErrorAction $SCT | ForEach-Object -Process {
          $null = (Copy-Item -Path $_ -Destination 'C:\Tools' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      }
+      })
    }
 
    if (Test-Path -Path '.\tools\*.bgi' -ErrorAction $SCT)
    {
-      Get-ChildItem -Path '.\tools\*.bgi' -ErrorAction $SCT | ForEach-Object -Process {
+      $null = (Get-ChildItem -Path '.\tools\*.bgi' -ErrorAction $SCT | ForEach-Object -Process {
          $null = (Copy-Item -Path $_ -Destination 'C:\Tools' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      }
+      })
    }
    #endregion Transfer
-   
+
    #region PowerShellProfiles
    # Create all PowerShell related Profiles as dummy (empty)
    $AllSystemProfiles = @(
@@ -121,7 +113,7 @@ process
 
    foreach ($SystemProfile in $AllSystemProfiles)
    {
-      if (-not (Test-Path -Path $SystemProfile -ErrorAction SilentlyContinue)) 
+      if (-not (Test-Path -Path $SystemProfile -ErrorAction SilentlyContinue))
       {
          $null = (New-Item -ItemType File -Path $SystemProfile -Force -ErrorAction SilentlyContinue)
       }
@@ -131,6 +123,7 @@ process
    #region InstallingChocolatey
    $null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
    $null = (Invoke-Expression -Command ((New-Object -TypeName System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')))
+   $null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
    #endregion InstallingChocolatey
 
    #region PackageSource
