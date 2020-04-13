@@ -31,5 +31,5 @@ param ()
 	where store apps (from the Microsoft Teams App Store) not.
 #>
 Get-TeamsApp | Where-Object -FilterScript {
-$_.ExternalId
+   $_.ExternalId
 }
