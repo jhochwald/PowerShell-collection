@@ -2,10 +2,10 @@
 
 <#
       .SYNOPSIS
-      Create of modify a Azure AD Naming Policy for Office 365 Groups
+      Create or modify a Azure AD Naming Policy for Office 365 Groups
 
       .DESCRIPTION
-      Create of modify a Azure AD Naming Policy for Office 365 Groups, these groups (a/k/a Unified Groups) are the base for Microsoft Teams and other Microsoft 365 services.
+      Create or modify a Azure AD Naming Policy for Office 365 Groups, these groups (a/k/a Unified Groups) are the base for Microsoft Teams and other Microsoft 365 services.
 
       .PARAMETER BlockedWordsFile
       CSV with your blacklisted names, 5.000 word is the Office 365 maximum
@@ -16,22 +16,22 @@
       .EXAMPLE
       PS C:\> .\Set-AzureADNamingPolicyForOffice365Groups.ps1
 
-      Create of modify a Azure AD Naming Policy for Office 365 Groups
+      Create or modify a Azure AD Naming Policy for Office 365 Groups
 
       .EXAMPLE
       PS C:\> .\Set-AzureADNamingPolicyForOffice365Groups.ps1 -Verbose
 
-      Create of modify a Azure AD Naming Policy for Office 365 Groups
+      Create or modify a Azure AD Naming Policy for Office 365 Groups
 
       .EXAMPLE
       PS C:\> .\Set-AzureADNamingPolicyForOffice365Groups.ps1 -ApplyDefaults
 
-      Create of modify a Azure AD Naming Policy for Office 365 Groups and apply some basics and defaults
+      Create or modify a Azure AD Naming Policy for Office 365 Groups and apply some basics and defaults
 
       .EXAMPLE
       PS C:\> .\Set-AzureADNamingPolicyForOffice365Groups.ps1 -ApplyDefaults -Verbose
 
-      Create of modify a Azure AD Naming Policy for Office 365 Groups and apply some basics and defaults
+      Create or modify a Azure AD Naming Policy for Office 365 Groups and apply some basics and defaults
 
       .NOTES
       Nothing fancy, just a modified version of the Microsoft script.
