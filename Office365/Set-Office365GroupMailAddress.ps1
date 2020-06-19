@@ -62,26 +62,26 @@
          or if you decide to go with a new external mail domain.
    #>
    [CmdletBinding(ConfirmImpact = 'Low',
-   SupportsShouldProcess)]
+      SupportsShouldProcess)]
    param
    (
       [Parameter(ValueFromPipeline,
-      ValueFromPipelineByPropertyName)]
+         ValueFromPipelineByPropertyName)]
       [ValidateNotNullOrEmpty()]
       [string]
       $OldDomain = 'contoso.com',
       [Parameter(ValueFromPipeline,
-      ValueFromPipelineByPropertyName)]
+         ValueFromPipelineByPropertyName)]
       [ValidateNotNullOrEmpty()]
       [string]
       $NewDomain = 'contoso.net',
       [Parameter(ValueFromPipeline,
-      ValueFromPipelineByPropertyName)]
+         ValueFromPipelineByPropertyName)]
       [Alias('MakePrimary')]
       [switch]
       $MakeNewPrimary = $null,
       [Parameter(ValueFromPipeline,
-      ValueFromPipelineByPropertyName)]
+         ValueFromPipelineByPropertyName)]
       [Alias('RemoveOldDomain', 'Remove', 'Cleanup')]
       [switch]
       $RemoveOld = $null
@@ -103,7 +103,7 @@
       # Get all matching Groups
       $WrongGroups = (Get-UnifiedGroup -ErrorAction Stop -Verbose:$IsVerbose | Where-Object -FilterScript {
             $_.PrimarySmtpAddress -like ('*' + $OldDomainString)
-      })
+         })
    }
 
    process

@@ -33,10 +33,11 @@
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
-begin {
+begin
+{
    # Variables
    [string[]]$AdminMail = 'support@contoso.com'
-   [string]$EmailCulture  = 'en-US'
+   [string]$EmailCulture = 'en-US'
 
    #region Defaults
    [string]$SCT = 'SilentlyContinue'
@@ -167,7 +168,7 @@ process
             WarningAction  = $SCT
          }
          Set-AzureADUser @paramSetAzureAdUser
-   })
+      })
    #endregion
 
    #region
@@ -189,7 +190,7 @@ process
                WarningAction = $SCT
             }
             $null = (Set-Mailbox @paramSetMailbox)
-      })
+         })
       Write-Output -InputObject 'Applied and activated audit for each Mailbox'
    }
    catch
@@ -253,7 +254,7 @@ process
             Expression = {
                $_.PrimarySmtpAddress
             }
-      } | Set-CASMailbox @paramSetCASMailbox)
+         } | Set-CASMailbox @paramSetCASMailbox)
       Write-Output -InputObject 'POP3 and IMAP4 are disabled - CAS Mailbox'
    }
    catch
@@ -464,7 +465,7 @@ process
    }
    if (-not (Get-TransportRule @paramGetTransportRule | Where-Object -FilterScript {
             $_.Name -eq $BlockForwardingRuleName
-   }))
+         }))
    {
       try
       {
@@ -510,7 +511,7 @@ process
    }
    if (-not (Get-TransportRule @paramGetTransportRule | Where-Object -FilterScript {
             $_.Name -eq $ExternalSenderWithInternalDisplayNameRuleName
-   }))
+         }))
    {
       try
       {
@@ -561,7 +562,7 @@ process
    }
    if (-not (Get-TransportRule @paramGetTransportRule | Where-Object -FilterScript {
             $_.Name -eq $MarkExternalMessagesRuleName
-   }))
+         }))
    {
       try
       {

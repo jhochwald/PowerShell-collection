@@ -1,6 +1,6 @@
 ﻿function Get-MFAUserReport
 {
-  <#
+   <#
       .SYNOPSIS
       Get a Azure AD MFA User report
 
@@ -33,179 +33,179 @@
       ParameterSet added
 
       License: BSD 3-Clause
-  #>
-  [CmdletBinding(DefaultParameterSetName = 'Normal',
-  SupportsShouldProcess)]
-  param
-  (
-    [Parameter(ParameterSetName = 'Export',
-        ValueFromPipeline,
-    Position = 1)]
-    [Alias('CSV')]
-    [switch]
-    $Export,
-    [Parameter(ParameterSetName = 'Export',
-        ValueFromPipeline,
-    Position = 2)]
-    [string]
-    $Path = 'C:\scripts\PowerShell\exports\MFAUsers.csv'
-  )
+   #>
+   [CmdletBinding(DefaultParameterSetName = 'Normal',
+      SupportsShouldProcess)]
+   param
+   (
+      [Parameter(ParameterSetName = 'Export',
+         ValueFromPipeline,
+         Position = 1)]
+      [Alias('CSV')]
+      [switch]
+      $Export,
+      [Parameter(ParameterSetName = 'Export',
+         ValueFromPipeline,
+         Position = 2)]
+      [string]
+      $Path = 'C:\scripts\PowerShell\exports\MFAUsers.csv'
+   )
 
-  begin
-  {
-    # Defaults
-    $CNT = 'Continue'
-    $STP = 'Stop'
+   begin
+   {
+      # Defaults
+      $CNT = 'Continue'
+      $STP = 'Stop'
 
-    # Cleanup
-    $Report = @()
-    $i = 0
+      # Cleanup
+      $Report = @()
+      $i = 0
 
-    if ($pscmdlet.ShouldProcess('MFA Users', 'Get'))
-    {
-      # get all Accounts
-      try
+      if ($pscmdlet.ShouldProcess('MFA Users', 'Get'))
       {
-        $Accounts = (Get-MsolUser -All -ErrorAction $STP -WarningAction $CNT | Where-Object -FilterScript {
-            $_.StrongAuthenticationMethods -ne $Null
-        } | Sort-Object -Property DisplayName)
+         # get all Accounts
+         try
+         {
+            $Accounts = (Get-MsolUser -All -ErrorAction $STP -WarningAction $CNT | Where-Object -FilterScript {
+                  $_.StrongAuthenticationMethods -ne $Null
+               } | Sort-Object -Property DisplayName)
+         }
+         catch
+         {
+            $line = ($_.InvocationInfo.ScriptLineNumber)
+
+            # Dump the Info
+            Write-Warning -Message ('Error was in Line {0}' -f $line)
+
+            # Dump the Error catched
+            Write-Error -Message $_ -ErrorAction $STP
+
+            # Something that should never be reached
+            break
+         }
       }
-      catch
+   }
+
+   process
+   {
+      if ($pscmdlet.ShouldProcess('MFA Users', 'Process'))
       {
-        $line = ($_.InvocationInfo.ScriptLineNumber)
+         foreach ($Account in $Accounts)
+         {
+            $AccountDisplayName = $Account.DisplayName
+            Write-Verbose -Message ('Processing {0}' -f $AccountDisplayName)
 
-        # Dump the Info
-        Write-Warning -Message ('Error was in Line {0}' -f $line)
+            # Counter
+            $i++
 
-        # Dump the Error catched
-        Write-Error -Message $_ -ErrorAction $STP
+            # Select Methods
+            $Methods = ($Account | Select-Object -ExpandProperty StrongAuthenticationMethods)
+            $MFA = ($Account | Select-Object -ExpandProperty StrongAuthenticationUserDetails)
+            $State = ($Account | Select-Object -ExpandProperty StrongAuthenticationRequirements)
 
-        # Something that should never be reached
-        break
+            $Methods | ForEach-Object -Process {
+               if ($_.IsDefault -eq $true)
+               {
+                  $Method = $_.MethodType
+               }
+            }
+
+            if ($State.State)
+            {
+               $MFAStatus = $State.State
+            }
+            else
+            {
+               $MFAStatus = 'Disabled'
+            }
+
+            $Object = [PSCustomObject][Ordered]@{
+               User      = $Account.DisplayName
+               UPN       = $Account.UserPrincipalName
+               MFAMethod = $Method
+               MFAPhone  = $MFA.PhoneNumber
+               MFAEmail  = $MFA.Email
+               MFAStatus = $MFAStatus
+            }
+
+            # Add Obejct to report
+            $Report += $Object
+         }
       }
-    }
-  }
+   }
 
-  process
-  {
-    if ($pscmdlet.ShouldProcess('MFA Users', 'Process'))
-    {
-      foreach ($Account in $Accounts)
+   end
+   {
+      if ($pscmdlet.ShouldProcess('MFA Users', 'Report'))
       {
-        $AccountDisplayName = $Account.DisplayName
-        Write-Verbose -Message ('Processing {0}' -f $AccountDisplayName)
+         Write-Verbose -Message ('{0} accounts are MFA-enabled' -f $i)
 
-        # Counter
-        $i++
+         if ($pscmdlet.ParameterSetName -eq 'Export')
+         {
+            try
+            {
+               $Null = ($Report | Export-Csv -NoTypeInformation -Path $Path -Force -ErrorAction $STP -WarningAction $CNT)
+            }
+            catch
+            {
+               $line = ($_.InvocationInfo.ScriptLineNumber)
 
-        # Select Methods
-        $Methods = ($Account | Select-Object -ExpandProperty StrongAuthenticationMethods)
-        $MFA = ($Account | Select-Object -ExpandProperty StrongAuthenticationUserDetails)
-        $State = ($Account | Select-Object -ExpandProperty StrongAuthenticationRequirements)
+               # Dump the Info
+               Write-Warning -Message ('Error was in Line {0}' -f $line)
 
-        $Methods | ForEach-Object -Process {
-          if ($_.IsDefault -eq $true)
-          {
-            $Method = $_.MethodType
-          }
-        }
+               # Dump the Error catched
+               Write-Error -Message $_ -ErrorAction $STP
 
-        if ($State.State)
-        {
-          $MFAStatus = $State.State
-        }
-        else
-        {
-          $MFAStatus = 'Disabled'
-        }
-
-        $Object = [PSCustomObject][Ordered]@{
-          User      = $Account.DisplayName
-          UPN       = $Account.UserPrincipalName
-          MFAMethod = $Method
-          MFAPhone  = $MFA.PhoneNumber
-          MFAEmail  = $MFA.Email
-          MFAStatus = $MFAStatus
-        }
-
-        # Add Obejct to report
-        $Report += $Object
+               # Something that should never be reached
+               break
+            }
+         }
+         else
+         {
+            # Dump to console
+            $Report
+         }
       }
-    }
-  }
-
-  end
-  {
-    if ($pscmdlet.ShouldProcess('MFA Users', 'Report'))
-    {
-      Write-Verbose -Message ('{0} accounts are MFA-enabled' -f $i)
-
-      if ($pscmdlet.ParameterSetName -eq 'Export')
-      {
-        try
-        {
-          $Null = ($Report | Export-Csv -NoTypeInformation -Path $Path -Force -ErrorAction $STP -WarningAction $CNT)
-        }
-        catch
-        {
-          $line = ($_.InvocationInfo.ScriptLineNumber)
-
-          # Dump the Info
-          Write-Warning -Message ('Error was in Line {0}' -f $line)
-
-          # Dump the Error catched
-          Write-Error -Message $_ -ErrorAction $STP
-
-          # Something that should never be reached
-          break
-        }
-      }
-      else
-      {
-        # Dump to console
-        $Report
-      }
-    }
-  }
+   }
 }
 
 <#
-    BSD 3-Clause License
+   BSD 3-Clause License
 
-    Copyright (c) 2018, enabling Technology <http://enatec.io>
-    All rights reserved.
+   Copyright (c) 2018, enabling Technology <http://enatec.io>
+   All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are met:
 
-    * Redistributions of source code must retain the above copyright notice, this
-    list of conditions and the following disclaimer.
+   * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
 
-    * Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
+   * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 
-    * Neither the name of the copyright holder nor the names of its
-    contributors may be used to endorse or promote products derived from
-    this software without specific prior written permission.
+   * Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+   FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    By using the Software, you agree to the License, Terms and Conditions above!
+   By using the Software, you agree to the License, Terms and Conditions above!
 #>
 
 <#
-    This is a third-party Software!
+   This is a third-party Software!
 
-    The developer(s) of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-    The Software is not supported by Microsoft Corp (MSFT)!
+   The developer(s) of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+   The Software is not supported by Microsoft Corp (MSFT)!
 #>

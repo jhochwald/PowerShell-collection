@@ -1,6 +1,6 @@
 ﻿function Get-Office365Endpoints
 {
-  <#
+   <#
       .SYNOPSIS
       Get the Office 365 Endpoint Information from Microsoft via the new RestFull Webservice (JSON)
 
@@ -156,505 +156,505 @@
 
       .LINK
       https://techcommunity.microsoft.com/t5/Office-365-Blog/Announcing-Office-365-endpoint-categories-and-Office-365-IP/ba-p/177638
-  #>
-  [CmdletBinding(ConfirmImpact = 'None')]
-  [OutputType([psobject])]
-  param
-  (
-    [Parameter(ValueFromPipeline,
-    ValueFromPipelineByPropertyName)]
-    [ValidateSet('Worldwide', 'USGovDoD', 'USGovGCCHigh', 'China', 'Germany', IgnoreCase = $true)]
-    [ValidateNotNullOrEmpty()]
-    [string]
-    $Instance = 'Worldwide',
-    [Parameter(ValueFromPipeline)]
-    [ValidateSet('All', 'Common', 'Exchange', 'SharePoint', 'Skype', IgnoreCase = $true)]
-    [ValidateNotNullOrEmpty()]
-    [Alias('ServiceAreas')]
-    [string]
-    $Services = 'All',
-    [Parameter(ValueFromPipeline)]
-    [Alias('TenantName')]
-    [string]
-    $Tenant = $null,
-    [Parameter(ValueFromPipeline)]
-    [switch]
-    $NoIPv6,
-    [Parameter(ValueFromPipeline)]
-    [switch]
-    $ExpressRoute,
-    [ValidateSet('All', 'Optimize', 'Allow', 'Default', IgnoreCase = $true)]
-    [string[]]
-    $Category,
-    [Parameter(ValueFromPipeline)]
-    [switch]
-    $Required,
-    [Parameter(ValueFromPipeline)]
-    [ValidateSet('All', 'IPv4', 'IPv6', 'URLs', IgnoreCase = $true)]
-    [string]
-    $Output = 'All',
-    [Parameter(ValueFromPipeline,
-    ValueFromPipelineByPropertyName)]
-    [Alias('ForceDownload')]
-    [switch]
-    $SkipVersionCheck = $false
-  )
+   #>
+   [CmdletBinding(ConfirmImpact = 'None')]
+   [OutputType([psobject])]
+   param
+   (
+      [Parameter(ValueFromPipeline,
+         ValueFromPipelineByPropertyName)]
+      [ValidateSet('Worldwide', 'USGovDoD', 'USGovGCCHigh', 'China', 'Germany', IgnoreCase = $true)]
+      [ValidateNotNullOrEmpty()]
+      [string]
+      $Instance = 'Worldwide',
+      [Parameter(ValueFromPipeline)]
+      [ValidateSet('All', 'Common', 'Exchange', 'SharePoint', 'Skype', IgnoreCase = $true)]
+      [ValidateNotNullOrEmpty()]
+      [Alias('ServiceAreas')]
+      [string]
+      $Services = 'All',
+      [Parameter(ValueFromPipeline)]
+      [Alias('TenantName')]
+      [string]
+      $Tenant = $null,
+      [Parameter(ValueFromPipeline)]
+      [switch]
+      $NoIPv6,
+      [Parameter(ValueFromPipeline)]
+      [switch]
+      $ExpressRoute,
+      [ValidateSet('All', 'Optimize', 'Allow', 'Default', IgnoreCase = $true)]
+      [string[]]
+      $Category,
+      [Parameter(ValueFromPipeline)]
+      [switch]
+      $Required,
+      [Parameter(ValueFromPipeline)]
+      [ValidateSet('All', 'IPv4', 'IPv6', 'URLs', IgnoreCase = $true)]
+      [string]
+      $Output = 'All',
+      [Parameter(ValueFromPipeline,
+         ValueFromPipelineByPropertyName)]
+      [Alias('ForceDownload')]
+      [switch]
+      $SkipVersionCheck = $false
+   )
 
-  begin
-  {
-    #region MakeIPv6Plausible
-    if (($NoIPv6) -and ($Output -eq 'IPv6'))
-    {
-      # This makes no sense, and we totally ignore to do it!
-      Write-Error -Message 'The selected parameters make no sense; we cannot continue!' -ErrorAction Stop
-
-      # We should never reach this point!
-      break
-    }
-    #endregion MakeIPv6Plausible
-
-    #region CategoryTweaker
-    if ((! $Category) -or ($Category -eq 'All'))
-    {
-      Write-Verbose -Message 'We get all categories.'
-
-      # Set to all
-      $Category += 'Optimize', 'Allow', 'Default'
-    }
-    #endregion CategoryTweaker
-
-    #region TweakOutputHandler
-
-    <#
-        TODO: Make a simpler solution for that!
-    #>
-    switch ($Output)
-    {
-      'All'
+   begin
+   {
+      #region MakeIPv6Plausible
+      if (($NoIPv6) -and ($Output -eq 'IPv6'))
       {
-        Write-Verbose -Message 'Dump all Infos (IPv4, IPv6, and URLs)'
+         # This makes no sense, and we totally ignore to do it!
+         Write-Error -Message 'The selected parameters make no sense; we cannot continue!' -ErrorAction Stop
 
-        $outIPv4 = $true
-        $outIPv6 = $true
-        $outURLs = $true
+         # We should never reach this point!
+         break
       }
-      'IPv4'
+      #endregion MakeIPv6Plausible
+
+      #region CategoryTweaker
+      if ((! $Category) -or ($Category -eq 'All'))
       {
-        Write-Verbose -Message 'Dump IPv4 Infos'
+         Write-Verbose -Message 'We get all categories.'
 
-        $outIPv4 = $true
-        $outIPv6 = $false
-        $outURLs = $false
+         # Set to all
+         $Category += 'Optimize', 'Allow', 'Default'
       }
-      'IPv6'
+      #endregion CategoryTweaker
+
+      #region TweakOutputHandler
+
+      <#
+         TODO: Make a simpler solution for that!
+      #>
+      switch ($Output)
       {
-        Write-Verbose -Message 'Dump IPv6 Infos'
+         'All'
+         {
+            Write-Verbose -Message 'Dump all Infos (IPv4, IPv6, and URLs)'
 
-        $outIPv4 = $false
-        $outIPv6 = $true
-        $outURLs = $false
+            $outIPv4 = $true
+            $outIPv6 = $true
+            $outURLs = $true
+         }
+         'IPv4'
+         {
+            Write-Verbose -Message 'Dump IPv4 Infos'
+
+            $outIPv4 = $true
+            $outIPv6 = $false
+            $outURLs = $false
+         }
+         'IPv6'
+         {
+            Write-Verbose -Message 'Dump IPv6 Infos'
+
+            $outIPv4 = $false
+            $outIPv6 = $true
+            $outURLs = $false
+         }
+         'URLs'
+         {
+            Write-Verbose -Message 'Dump URLs Infos'
+
+            $outIPv4 = $false
+            $outIPv6 = $false
+            $outURLs = $true
+         }
       }
-      'URLs'
-      {
-        Write-Verbose -Message 'Dump URLs Infos'
+      #endregion TweakOutputHandler
 
-        $outIPv4 = $false
-        $outIPv6 = $false
-        $outURLs = $true
-      }
-    }
-    #endregion TweakOutputHandler
+      #region ConfigurationVariables
+      # Webservice root URL
+      $BaseURI = 'https://endpoints.office.com'
+      Write-Verbose -Message ('We use {0} as Base URL' -f $BaseURI)
 
-    #region ConfigurationVariables
-    # Webservice root URL
-    $BaseURI = 'https://endpoints.office.com'
-    Write-Verbose -Message ('We use {0} as Base URL' -f $BaseURI)
-
-    # Path where client ID and latest version number will be stored
-    <#
+      # Path where client ID and latest version number will be stored
+      <#
         TODO: Move the Location to a parameter
     #>
-    $datapath = $Env:TEMP + '\O365_endpoints_' + $Instance + '_latestversion.txt'
+      $datapath = $Env:TEMP + '\O365_endpoints_' + $Instance + '_latestversion.txt'
 
-    Write-Verbose -Message ('We save the Endpoint Version Information to {0}' -f $datapath)
-    #endregion ConfigurationVariables
+      Write-Verbose -Message ('We save the Endpoint Version Information to {0}' -f $datapath)
+      #endregion ConfigurationVariables
 
-    #region LocalVersionChecker
-    # fetch client ID and version if data file exists; otherwise create new file
-    if (Test-Path -Path $datapath)
-    {
-      Write-Verbose -Message 'We get the information from Microsoft...'
+      #region LocalVersionChecker
+      # fetch client ID and version if data file exists; otherwise create new file
+      if (Test-Path -Path $datapath)
+      {
+         Write-Verbose -Message 'We get the information from Microsoft...'
 
-      # Read the File
-      $content = (Get-Content -Path $datapath)
+         # Read the File
+         $content = (Get-Content -Path $datapath)
 
-      # Get the Info
-      $clientRequestId = $content[0]
-      $lastVersion = $content[1]
+         # Get the Info
+         $clientRequestId = $content[0]
+         $lastVersion = $content[1]
 
-      # Cleanup
-      $content = $null
-    }
-    else
-    {
-      Write-Verbose -Message 'Old version information file exists, start to gather the Info!'
+         # Cleanup
+         $content = $null
+      }
+      else
+      {
+         Write-Verbose -Message 'Old version information file exists, start to gather the Info!'
 
-      # Create a GUID
-      $clientRequestId = [GUID]::NewGuid().Guid
+         # Create a GUID
+         $clientRequestId = [GUID]::NewGuid().Guid
 
-      # Dummy Data
-      $lastVersion = '0000000000'
+         # Dummy Data
+         $lastVersion = '0000000000'
 
-      # Save the local info
+         # Save the local info
+         try
+         {
+            @($clientRequestId, $lastVersion) | Out-File -FilePath $datapath -ErrorAction Stop
+         }
+         catch
+         {
+            # Write the complete error if we have verbose turned on
+            Write-Verbose -Message $_
+
+            # Our Error test
+            Write-Error -Message ('Unable to write Datafile: {0}' -f $datapath) -ErrorAction Stop
+
+            # We should never reach this point!
+            break
+         }
+      }
+      #endregion LocalVersionChecker
+
+      #region RemoteVersionChecker
+      # Call version method to check the latest version, and pull new data if version number is different
       try
       {
-        @($clientRequestId, $lastVersion) | Out-File -FilePath $datapath -ErrorAction Stop
+         # Splat the parameters
+         $GetVersionParams = @{
+            Uri           = ($BaseURI + '/version/' + $Instance + '?clientRequestId=' + $clientRequestId)
+            Method        = 'Get'
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+
+         Write-Verbose -Message ('We use {0} as request URI.' -f ($GetVersionParams.Uri))
+
+         $version = (Invoke-RestMethod @GetVersionParams)
       }
       catch
       {
-        # Write the complete error if we have verbose turned on
-        Write-Verbose -Message $_
+         # Write the complete error if we have verbose turned on
+         Write-Verbose -Message $_
 
-        # Our Error test
-        Write-Error -Message ('Unable to write Datafile: {0}' -f $datapath) -ErrorAction Stop
+         # Our Error test
+         Write-Error -Message 'Unable to get the new Office 365 Endpoint Information' -ErrorAction Stop
 
-        # We should never reach this point!
-        break
+         # We should never reach this point!
+         break
       }
-    }
-    #endregion LocalVersionChecker
+      #endregion RemoteVersionChecker
+   }
 
-    #region RemoteVersionChecker
-    # Call version method to check the latest version, and pull new data if version number is different
-    try
-    {
-      # Splat the parameters
-      $GetVersionParams = @{
-        Uri           = ($BaseURI + '/version/' + $Instance + '?clientRequestId=' + $clientRequestId)
-        Method        = 'Get'
-        ErrorAction   = 'Stop'
-        WarningAction = 'SilentlyContinue'
-      }
-
-      Write-Verbose -Message ('We use {0} as request URI.' -f ($GetVersionParams.Uri))
-
-      $version = (Invoke-RestMethod @GetVersionParams)
-    }
-    catch
-    {
-      # Write the complete error if we have verbose turned on
-      Write-Verbose -Message $_
-
-      # Our Error test
-      Write-Error -Message 'Unable to get the new Office 365 Endpoint Information' -ErrorAction Stop
-
-      # We should never reach this point!
-      break
-    }
-    #endregion RemoteVersionChecker
-  }
-
-  process
-  {
-    #region VersionCompare
-    if (($SkipVersionCheck -eq $true) -or ($version.latest -gt $lastVersion))
-    {
-      Write-Verbose -Message ('New version of Office 365 {0} endpoints detected' -f $Instance)
-
-      # Write the new version number to the data file
-      try
+   process
+   {
+      #region VersionCompare
+      if (($SkipVersionCheck -eq $true) -or ($version.latest -gt $lastVersion))
       {
-        @($clientRequestId, $version.latest) | Out-File -FilePath $datapath -ErrorAction Stop
-      }
-      catch
-      {
-        # Write the complete error if we have verbose turned on
-        Write-Verbose -Message $_
+         Write-Verbose -Message ('New version of Office 365 {0} endpoints detected' -f $Instance)
 
-        # Our Error test
-        Write-Error -Message ('Unable to write Datafile: {0}' -f $datapath) -ErrorAction Stop
+         # Write the new version number to the data file
+         try
+         {
+            @($clientRequestId, $version.latest) | Out-File -FilePath $datapath -ErrorAction Stop
+         }
+         catch
+         {
+            # Write the complete error if we have verbose turned on
+            Write-Verbose -Message $_
 
-        # We should never reach this point!
-        break
-      }
-      #endregion VersionCompare
+            # Our Error test
+            Write-Error -Message ('Unable to write Datafile: {0}' -f $datapath) -ErrorAction Stop
 
-      #region GetTheEndpoints
-      try
-      {
-        # Set the default URI
-        $requestURI = ($BaseURI + '/endpoints/' + $Instance + '?clientRequestId=' + $clientRequestId)
+            # We should never reach this point!
+            break
+         }
+         #endregion VersionCompare
 
-        switch ($Services)
-        {
-          'All'
-          {
-            # We get all
-          }
-          'Common'
-          {
-            # Append to the URI
-            $requestURI = ($requestURI + '&ServiceAreas=Common')
-          }
-          'Exchange'
-          {
-            # Append to the URI
-            $requestURI = ($requestURI + '&ServiceAreas=Exchange')
-          }
-          'SharePoint'
-          {
-            # Append to the URI
-            $requestURI = ($requestURI + '&ServiceAreas=SharePoint')
-          }
-          'Skype'
-          {
-            # Append to the URI
-            $requestURI = ($requestURI + '&ServiceAreas=Skype')
-          }
-        }
+         #region GetTheEndpoints
+         try
+         {
+            # Set the default URI
+            $requestURI = ($BaseURI + '/endpoints/' + $Instance + '?clientRequestId=' + $clientRequestId)
 
-        if ($Tenant)
-        {
-          # Append to the URI - Build URL for the Tenant
-          $requestURI = ($requestURI + '&TenantName=' + $Tenant)
-        }
-
-        if ($NoIPv6)
-        {
-          # Append to the URI - Exclude IPv6 addresses from the output
-          $requestURI = ($requestURI + '&NoIPv6')
-
-          Write-Verbose -Message 'IPv6 addresses are excluded from the output! IPv6 is the future, think about an adoption soon.'
-        }
-
-        # Do our job and get the data via Rest Request
-        Write-Verbose -Message ('We request the following URI: {0}' -f $requestURI)
-
-        $endpointSetsParams = @{
-          Uri           = $requestURI
-          Method        = 'Get'
-          ErrorAction   = 'Stop'
-          WarningAction = 'SilentlyContinue'
-        }
-        $endpointSets = (Invoke-RestMethod @endpointSetsParams)
-      }
-      catch
-      {
-        # Write the complete error if we have verbose turned on
-        Write-Verbose -Message $_
-
-        # Our Error test
-        Write-Error -Message 'Unable to get the new Office 365 Endpoint Information' -ErrorAction Stop
-
-        # We should never reach this point!
-        break
-      }
-      #endregion GetTheEndpoints
-
-      #region FilterURLs
-
-      if ($outURLs)
-      {
-        $flatUrls = $endpointSets | ForEach-Object -Process {
-          $endpointSet = $PSItem
-          $urls = $(if ($endpointSet.urls.Count -gt 0)
+            switch ($Services)
             {
-              $endpointSet.urls
+               'All'
+               {
+                  # We get all
+               }
+               'Common'
+               {
+                  # Append to the URI
+                  $requestURI = ($requestURI + '&ServiceAreas=Common')
+               }
+               'Exchange'
+               {
+                  # Append to the URI
+                  $requestURI = ($requestURI + '&ServiceAreas=Exchange')
+               }
+               'SharePoint'
+               {
+                  # Append to the URI
+                  $requestURI = ($requestURI + '&ServiceAreas=SharePoint')
+               }
+               'Skype'
+               {
+                  # Append to the URI
+                  $requestURI = ($requestURI + '&ServiceAreas=Skype')
+               }
             }
-            else
+
+            if ($Tenant)
             {
-              @()
+               # Append to the URI - Build URL for the Tenant
+               $requestURI = ($requestURI + '&TenantName=' + $Tenant)
             }
-          )
 
-          # Cleanup
-          $urlCustomObjects = @()
-
-          if ($endpointSet.category -in ($Category))
-          {
-            $urlCustomObjects = $urls | ForEach-Object -Process {
-              # Ordered is slower, but we like it this way
-              [PSCustomObject][ordered]@{
-                id           = $endpointSet.id
-                serviceArea  = $endpointSet.serviceArea
-                DisplayName  = $endpointSet.serviceAreaDisplayName
-                url          = $PSItem
-                tcpPorts     = $endpointSet.tcpPorts
-                udpPorts     = $endpointSet.udpPorts
-                expressRoute = $endpointSet.expressRoute
-                category     = $endpointSet.category
-                required     = $endpointSet.required
-                notes        = $endpointSet.notes
-              }
-            }
-          }
-
-          # Only ExpressRoute enabled Objects?
-          if ($ExpressRoute)
-          {
-            $urlCustomObjects = $urlCustomObjects | Where-Object -FilterScript {
-              $urlCustomObjects.expressRoute -eq $true
-            }
-          }
-
-          # Only required to have connectivity for Office 365 to be supported
-          if ($Required)
-          {
-            $urlCustomObjects = $urlCustomObjects | Where-Object -FilterScript {
-              $urlCustomObjects.required -eq $true
-            }
-          }
-
-          # Dump
-          $urlCustomObjects
-        }
-      }
-      #endregion FilterURLs
-
-      #region FilterIPv4
-      if ($outIPv4)
-      {
-        $flatIpv4 = $endpointSets | ForEach-Object -Process {
-          $endpointSet = $PSItem
-          $ips = $(if ($endpointSet.ips.Count -gt 0)
+            if ($NoIPv6)
             {
-              $endpointSet.ips
+               # Append to the URI - Exclude IPv6 addresses from the output
+               $requestURI = ($requestURI + '&NoIPv6')
+
+               Write-Verbose -Message 'IPv6 addresses are excluded from the output! IPv6 is the future, think about an adoption soon.'
             }
-            else
-            {
-              @()
+
+            # Do our job and get the data via Rest Request
+            Write-Verbose -Message ('We request the following URI: {0}' -f $requestURI)
+
+            $endpointSetsParams = @{
+               Uri           = $requestURI
+               Method        = 'Get'
+               ErrorAction   = 'Stop'
+               WarningAction = 'SilentlyContinue'
             }
-          )
+            $endpointSets = (Invoke-RestMethod @endpointSetsParams)
+         }
+         catch
+         {
+            # Write the complete error if we have verbose turned on
+            Write-Verbose -Message $_
 
-          # IPv4 strings have dots while IPv6 strings have colons
-          $IPv4 = $ips | Where-Object -FilterScript {
-            $PSItem -like '*.*'
-          }
+            # Our Error test
+            Write-Error -Message 'Unable to get the new Office 365 Endpoint Information' -ErrorAction Stop
 
-          # Cleanup
-          $ipCustomObjects = @()
+            # We should never reach this point!
+            break
+         }
+         #endregion GetTheEndpoints
 
-          if ($endpointSet.category -in ($Category))
-          {
-            $ipCustomObjects = $IPv4 | ForEach-Object -Process {
-              # Ordered is slower, but we like it this way
-              [PSCustomObject][ordered]@{
-                id           = $endpointSet.id
-                serviceArea  = $endpointSet.serviceArea
-                DisplayName  = $endpointSet.serviceAreaDisplayName
-                ip           = $PSItem
-                tcpPorts     = $endpointSet.tcpPorts
-                udpPorts     = $endpointSet.udpPorts
-                expressRoute = $endpointSet.expressRoute
-                category     = $endpointSet.category
-                required     = $endpointSet.required
-                notes        = $endpointSet.notes
-              }
+         #region FilterURLs
+
+         if ($outURLs)
+         {
+            $flatUrls = $endpointSets | ForEach-Object -Process {
+               $endpointSet = $PSItem
+               $urls = $(if ($endpointSet.urls.Count -gt 0)
+                  {
+                     $endpointSet.urls
+                  }
+                  else
+                  {
+                     @()
+                  }
+               )
+
+               # Cleanup
+               $urlCustomObjects = @()
+
+               if ($endpointSet.category -in ($Category))
+               {
+                  $urlCustomObjects = $urls | ForEach-Object -Process {
+                     # Ordered is slower, but we like it this way
+                     [PSCustomObject][ordered]@{
+                        id           = $endpointSet.id
+                        serviceArea  = $endpointSet.serviceArea
+                        DisplayName  = $endpointSet.serviceAreaDisplayName
+                        url          = $PSItem
+                        tcpPorts     = $endpointSet.tcpPorts
+                        udpPorts     = $endpointSet.udpPorts
+                        expressRoute = $endpointSet.expressRoute
+                        category     = $endpointSet.category
+                        required     = $endpointSet.required
+                        notes        = $endpointSet.notes
+                     }
+                  }
+               }
+
+               # Only ExpressRoute enabled Objects?
+               if ($ExpressRoute)
+               {
+                  $urlCustomObjects = $urlCustomObjects | Where-Object -FilterScript {
+                     $urlCustomObjects.expressRoute -eq $true
+                  }
+               }
+
+               # Only required to have connectivity for Office 365 to be supported
+               if ($Required)
+               {
+                  $urlCustomObjects = $urlCustomObjects | Where-Object -FilterScript {
+                     $urlCustomObjects.required -eq $true
+                  }
+               }
+
+               # Dump
+               $urlCustomObjects
             }
-          }
+         }
+         #endregion FilterURLs
 
-          # Dump
-          $ipCustomObjects
-        }
+         #region FilterIPv4
+         if ($outIPv4)
+         {
+            $flatIpv4 = $endpointSets | ForEach-Object -Process {
+               $endpointSet = $PSItem
+               $ips = $(if ($endpointSet.ips.Count -gt 0)
+                  {
+                     $endpointSet.ips
+                  }
+                  else
+                  {
+                     @()
+                  }
+               )
+
+               # IPv4 strings have dots while IPv6 strings have colons
+               $IPv4 = $ips | Where-Object -FilterScript {
+                  $PSItem -like '*.*'
+               }
+
+               # Cleanup
+               $ipCustomObjects = @()
+
+               if ($endpointSet.category -in ($Category))
+               {
+                  $ipCustomObjects = $IPv4 | ForEach-Object -Process {
+                     # Ordered is slower, but we like it this way
+                     [PSCustomObject][ordered]@{
+                        id           = $endpointSet.id
+                        serviceArea  = $endpointSet.serviceArea
+                        DisplayName  = $endpointSet.serviceAreaDisplayName
+                        ip           = $PSItem
+                        tcpPorts     = $endpointSet.tcpPorts
+                        udpPorts     = $endpointSet.udpPorts
+                        expressRoute = $endpointSet.expressRoute
+                        category     = $endpointSet.category
+                        required     = $endpointSet.required
+                        notes        = $endpointSet.notes
+                     }
+                  }
+               }
+
+               # Dump
+               $ipCustomObjects
+            }
+         }
+         #endregion FilterIPv4
+
+         #region FilterIPv6
+         if ($outIPv6)
+         {
+            $flatIpv6 = $endpointSets | ForEach-Object -Process {
+               $endpointSet = $PSItem
+               $ips = $(if ($endpointSet.ips.Count -gt 0)
+                  {
+                     $endpointSet.ips
+                  }
+                  else
+                  {
+                     @()
+                  }
+               )
+
+               # IPv4 strings have dots while IPv6 strings have colons
+               $IPv6 = $ips | Where-Object -FilterScript {
+                  $PSItem -like '*:*'
+               }
+
+               # Cleanup
+               $ipCustomObjects = @()
+
+               if ($endpointSet.category -in ($Category))
+               {
+                  $ipCustomObjects = $IPv6 | ForEach-Object -Process {
+                     # Ordered is slower, but we like it this way
+                     [PSCustomObject][ordered]@{
+                        id           = $endpointSet.id
+                        serviceArea  = $endpointSet.serviceArea
+                        DisplayName  = $endpointSet.serviceAreaDisplayName
+                        ip           = $PSItem
+                        tcpPorts     = $endpointSet.tcpPorts
+                        udpPorts     = $endpointSet.udpPorts
+                        expressRoute = $endpointSet.expressRoute
+                        category     = $endpointSet.category
+                        required     = $endpointSet.required
+                        notes        = $endpointSet.notes
+                     }
+                  }
+               }
+
+               # Dump
+               $ipCustomObjects
+            }
+         }
+         #endregion FilterIPv4
       }
-      #endregion FilterIPv4
+   }
 
-      #region FilterIPv6
-      if ($outIPv6)
+   end
+   {
+      if (($SkipVersionCheck -eq $true) -or ($version.latest -gt $lastVersion))
       {
-        $flatIpv6 = $endpointSets | ForEach-Object -Process {
-          $endpointSet = $PSItem
-          $ips = $(if ($endpointSet.ips.Count -gt 0)
-            {
-              $endpointSet.ips
-            }
-            else
-            {
-              @()
-            }
-          )
+         #region DumpIPv4
+         if ($outIPv4)
+         {
+            Write-Verbose -Message 'Office 365 IPv4 IP Address Ranges'
 
-          # IPv4 strings have dots while IPv6 strings have colons
-          $IPv6 = $ips | Where-Object -FilterScript {
-            $PSItem -like '*:*'
-          }
+            ($flatIpv4 | Sort-Object -Property id)
+         }
+         #endregion DumpIPv4
 
-          # Cleanup
-          $ipCustomObjects = @()
+         #region DumpIPv6
+         if ($outIPv6)
+         {
+            Write-Verbose -Message 'Office 365 IPv6 IP Address Ranges'
 
-          if ($endpointSet.category -in ($Category))
-          {
-            $ipCustomObjects = $IPv6 | ForEach-Object -Process {
-              # Ordered is slower, but we like it this way
-              [PSCustomObject][ordered]@{
-                id           = $endpointSet.id
-                serviceArea  = $endpointSet.serviceArea
-                DisplayName  = $endpointSet.serviceAreaDisplayName
-                ip           = $PSItem
-                tcpPorts     = $endpointSet.tcpPorts
-                udpPorts     = $endpointSet.udpPorts
-                expressRoute = $endpointSet.expressRoute
-                category     = $endpointSet.category
-                required     = $endpointSet.required
-                notes        = $endpointSet.notes
-              }
-            }
-          }
+            ($flatIpv6 | Sort-Object -Property id)
+         }
+         #endregion DumpIPv6
 
-          # Dump
-          $ipCustomObjects
-        }
+         #region DumpURLs
+         if ($outURLs)
+         {
+            Write-Verbose -Message 'Office 365 URLs'
+
+            ($flatUrls | Sort-Object -Property id)
+         }
+         #endregion DumpURLs
       }
-      #endregion FilterIPv4
-    }
-  }
-
-  end
-  {
-    if (($SkipVersionCheck -eq $true) -or ($version.latest -gt $lastVersion))
-    {
-      #region DumpIPv4
-      if ($outIPv4)
+      else
       {
-        Write-Verbose -Message 'Office 365 IPv4 IP Address Ranges'
-
-        ($flatIpv4 | Sort-Object -Property id)
-      }
-      #endregion DumpIPv4
-
-      #region DumpIPv6
-      if ($outIPv6)
-      {
-        Write-Verbose -Message 'Office 365 IPv6 IP Address Ranges'
-
-        ($flatIpv6 | Sort-Object -Property id)
-      }
-      #endregion DumpIPv6
-
-      #region DumpURLs
-      if ($outURLs)
-      {
-        Write-Verbose -Message 'Office 365 URLs'
-
-        ($flatUrls | Sort-Object -Property id)
-      }
-      #endregion DumpURLs
-    }
-    else
-    {
-      #region DumpInfoNothing
-      <#
+         #region DumpInfoNothing
+         <#
           This 'else' loop is here as a placeholder in this script!
           We use this in the comemrcial version (function within the commercial module)
       #>
 
-      Write-Output -InputObject ('The {0} Office 365 endpoints are up-to-date' -f $Instance)
-      #endregion DumpInfoNothing
-    }
-  }
+         Write-Output -InputObject ('The {0} Office 365 endpoints are up-to-date' -f $Instance)
+         #endregion DumpInfoNothing
+      }
+   }
 
-  #region CHANGELOG
-  <#
+   #region CHANGELOG
+   <#
       CHANGELOG:
       0.8.6 - 2019.01-04:
       [CHANGE] Converted back to a function to make it easier for me (no more need to adopt between my sources)
@@ -690,10 +690,10 @@
       0.8.0 - 2018-08-18:
       [INIT] Intitial public release
   #>
-  #endregion CHANGELOG
+   #endregion CHANGELOG
 
-  #region LICENSE
-  <#
+   #region LICENSE
+   <#
       LICENSE:
 
       Copyright 2018 by enabling Technology - http://enatec.io
@@ -707,10 +707,10 @@
 
       By using the Software, you agree to the License, Terms and Conditions above!
   #>
-  #endregion LICENSE
+   #endregion LICENSE
 
-  #region DISCLAIMER
-  <#
+   #region DISCLAIMER
+   <#
       DISCLAIMER:
 
       - Use at your own risk, etc.
@@ -721,5 +721,5 @@
       - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
       - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
   #>
-  #endregion DISCLAIMER
+   #endregion DISCLAIMER
 }

@@ -54,14 +54,14 @@
 param
 (
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [AllowNull()]
    [AllowEmptyString()]
    [Alias('File', 'Path')]
    [string]
    $BlockedWordsFile = '.\BlockedWords.csv',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [switch]
    $ApplyDefaults
 )
@@ -130,7 +130,7 @@ process
       # Get the existing template
       $template = (Get-AzureADDirectorySettingTemplate -ErrorAction Stop | Where-Object -FilterScript {
             $_.displayname -eq 'group.unified'
-      })
+         })
 
       # Modify the settings
       $settingsCopy = $template.CreateDirectorySetting()

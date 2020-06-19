@@ -70,22 +70,22 @@
 param
 (
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
-   [ValidateSet('BW', 'BY', 'BE', 'BB', 'HB', 'HH', 'HE', 'MV', 'NI', 'NW', 'RP', 'SL', 'SN', 'ST', 'SH', 'TH','Baden-Württemberg', 'Baden-Wuerttemberg', 'Baden Württemberg', 'Baden Wuerttemberg','Bayern','Berlin','Brandenburg','Bremen','Hamburg','Hessen','Mecklenburg-Vorpommern','Mecklenburg Vorpommern','Niedersachsen','Nordrhein Westfalen','Nordrhein-Westfalen','Rheinland-Pfalz','Rheinland Pfalz','Saarland','Sachsen','Rheinland PfalzSachen-Anhalt','Schleswig-Holstein','Schleswig Holstein','Thüringen','Thueringen', IgnoreCase = $true)]
+   [ValidateSet('BW', 'BY', 'BE', 'BB', 'HB', 'HH', 'HE', 'MV', 'NI', 'NW', 'RP', 'SL', 'SN', 'ST', 'SH', 'TH', 'Baden-Württemberg', 'Baden-Wuerttemberg', 'Baden Württemberg', 'Baden Wuerttemberg', 'Bayern', 'Berlin', 'Brandenburg', 'Bremen', 'Hamburg', 'Hessen', 'Mecklenburg-Vorpommern', 'Mecklenburg Vorpommern', 'Niedersachsen', 'Nordrhein Westfalen', 'Nordrhein-Westfalen', 'Rheinland-Pfalz', 'Rheinland Pfalz', 'Saarland', 'Sachsen', 'Rheinland PfalzSachen-Anhalt', 'Schleswig-Holstein', 'Schleswig Holstein', 'Thüringen', 'Thueringen', IgnoreCase = $true)]
    [string]
    $State = 'HE',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [int]
    $Year = (Get-Date).ToString('yyyy'),
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [switch]
    $appendyear = $true,
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [Alias('Export', 'ExportCSV', 'CsvFile')]
    [string]
@@ -322,7 +322,7 @@ process
       $paramSetContent = @{
          Value       = ($CsvDataObject | ConvertTo-Csv -UseCulture -NoTypeInformation | ForEach-Object {
                $_.Replace('"', '')
-         })
+            })
          Path        = $Path
          Force       = $true
          Confirm     = $false
@@ -358,7 +358,7 @@ process
 
 end
 {
-   Write-verbose -Message ((Get-Content -Path $Path).ToString())
+   Write-Verbose -Message ((Get-Content -Path $Path).ToString())
 
    #region Cleanup
    $State = $null
@@ -374,4 +374,3 @@ end
    $paramSetContent = $null
    #endregion Cleanup
 }
-
