@@ -20,7 +20,7 @@ begin
    #region Defaults
    $SCT = 'SilentlyContinue'
    #endregion Defaults
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    #region AppList
@@ -77,32 +77,35 @@ process
    #region AppListLoop
    foreach ($item in $AllPackages)
    {
-      try 
+      try
       {
          $null = (Get-AppxPackage -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
                $_.name -like '*' + $item + '*'
-         } | Remove-AppxPackage -Confirm:$false -PreserveApplicationData:$false -ErrorAction $SCT -WarningAction $SCT)
-      } catch 
-      {
-         Write-Verbose -Message 'Whoopsie'
+            } | Remove-AppxPackage -Confirm:$false -PreserveApplicationData:$false -ErrorAction $SCT -WarningAction $SCT)
       }
-   
-      try 
-      {
-         $null = (Get-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
-               $_.name -like '*' + $item + '*'
-         } | Remove-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT)
-      } catch 
+      catch
       {
          Write-Verbose -Message 'Whoopsie'
       }
 
-      try 
+      try
+      {
+         $null = (Get-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
+               $_.name -like '*' + $item + '*'
+            } | Remove-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT)
+      }
+      catch
+      {
+         Write-Verbose -Message 'Whoopsie'
+      }
+
+      try
       {
          $null = (Get-AppxProvisionedPackage -Online -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
                $_.DisplayName -like '*' + $item + '*'
-         } | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction $SCT -WarningAction $SCT)
-      } catch 
+            } | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction $SCT -WarningAction $SCT)
+      }
+      catch
       {
          Write-Verbose -Message 'Whoopsie'
       }
@@ -116,7 +119,7 @@ process
          Get-ItemProperty -Path $_.PSPath -ErrorAction $SCT -WarningAction $SCT
       } | Where-Object -FilterScript {
          $_ -match 'McAfee Security'
-   } | Select-Object -ExpandProperty UninstallString)
+      } | Select-Object -ExpandProperty UninstallString)
 
    if ($McAfeeSecurityApp)
    {
@@ -136,7 +139,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -10,13 +10,14 @@
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
-begin {
+begin
+{
    Write-Output -InputObject 'Install all missing Microsoft updated'
 
    #region Defaults
    $SCT = 'SilentlyContinue'
    #endregion Defaults
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    #region HelperFunctions
@@ -25,22 +26,22 @@ begin {
       <#
             .SYNOPSIS
             Check if WUServiceManager is configured
-	
+
             .DESCRIPTION
             Check if WUServiceManager is configured
-	
+
             .EXAMPLE
             PS C:\> Test-GetWUServiceManager
-	
+
             .NOTES
             Additional information about the function.
       #>
-		
+
       [CmdletBinding(ConfirmImpact = 'None',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       [OutputType([bool])]
       param ()
-		
+
       begin
       {
          #region Defaults
@@ -48,7 +49,7 @@ begin {
          $ServiceID = '7971f918-a847-4430-9279-4a52d1efe18d'
          #endregion Defaults
       }
-		
+
       process
       {
          $paramGetWUServiceManager = @{
@@ -57,7 +58,7 @@ begin {
             ErrorAction  = $SCT
          }
          $WUServiceManager = (Get-WUServiceManager @paramGetWUServiceManager)
-			
+
          if (-not ($WUServiceManager))
          {
             $paramAddWUServiceManager = @{
@@ -76,33 +77,33 @@ begin {
          }
       }
    }
-	
+
    function Invoke-GetWindowsUpdate
    {
       <#
             .SYNOPSIS
             Wrapper for Get-WindowsUpdate
-	
+
             .DESCRIPTION
             Wrapper for Get-WindowsUpdate
-	
+
             .EXAMPLE
             PS C:\> Invoke-GetWindowsUpdate
-	
+
             .NOTES
             Additional information about the function.
       #>
-		
+
       [CmdletBinding(ConfirmImpact = 'Low',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       param ()
-		
+
       begin
       {
          #region Defaults
          $SCT = 'SilentlyContinue'
          #endregion Defaults
-			
+
          $paramGetWindowsUpdate = @{
             ComputerName    = $env:COMPUTERNAME
             MicrosoftUpdate = $true
@@ -116,7 +117,7 @@ begin {
             WarningAction   = $SCT
          }
       }
-		
+
       process
       {
          $null = (Get-WindowsUpdate @paramGetWindowsUpdate)
@@ -125,25 +126,27 @@ begin {
    #endregion HelperFunctions
 }
 
-process {
-   if (Test-GetWUServiceManager -ErrorAction $SCT) 
+process
+{
+   if (Test-GetWUServiceManager -ErrorAction $SCT)
    {
       $null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
    }
-   else 
+   else
    {
       # Retry to fix it
       $null = (Test-GetWUServiceManager -ErrorAction $SCT)
-      
+
       $Retry = $true
    }
 
-   if ($Retry -eq $true) 
+   if ($Retry -eq $true)
    {
-      if (Test-GetWUServiceManager -ErrorAction $SCT) 
+      if (Test-GetWUServiceManager -ErrorAction $SCT)
       {
-          $null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
-      } else 
+         $null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
+      }
+      else
       {
          Write-Warning -Message 'Unable to apply the latest Microsoft updates, please check and apply them manually!' -WarningAction Stop
       }
@@ -159,7 +162,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

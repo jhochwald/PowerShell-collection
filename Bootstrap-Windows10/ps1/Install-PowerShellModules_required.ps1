@@ -17,7 +17,7 @@ begin
    #region Defaults
    $SCT = 'SilentlyContinue'
    #endregion Defaults
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    # Every System should have these Modules
@@ -33,11 +33,12 @@ begin
    )
 }
 
-process {
+process
+{
    # Force the installation of the Modules listed above
    $null = ($PowerShellModuleList | ForEach-Object -Process {
          (Install-Module -Name $_ -Scope AllUsers -Repository PSGallery -Force -Confirm:$false -AllowClobber -SkipPublisherCheck -ErrorAction $SCT)
-   })
+      })
 
    # Refresh
    $null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)
@@ -52,7 +53,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -20,27 +20,27 @@
       https://chocolatey.org/docs
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
 {
    Write-Output -InputObject 'Download and install some Microsoft dotNET Runtimes'
-   
+
    $null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
-   
+
    if (-not $env:ChocolateyInstall)
    {
       $env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
    }
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction SilentlyContinue)
-   
-   try 
+
+   try
    {
       $null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
    }
-   catch 
+   catch
    {
       Write-Verbose -Message 'Unable to set PowerShell to use TLS 1.2.'
    }
@@ -64,19 +64,19 @@ process
 {
    foreach ($ChocoPackage in $AllChocoPackages)
    {
-      try 
+      try
       {
          Write-Verbose -Message ('Start the installation of ' + $ChocoPackage)
 
          if ($pscmdlet.ShouldProcess($ChocoPackage, 'Install'))
          {
             Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $PackageCounter + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($PackageCounter / $AllChocoPackages.Count) * 100)
-            
-            try 
+
+            try
             {
                $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
             }
-            catch 
+            catch
             {
                # Retry with --ignore-checksums - A less secure option!!!
                $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --ignore-checksums --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
@@ -87,10 +87,10 @@ process
          # Add Package Step
          $PackageCounter++
       }
-      catch 
+      catch
       {
          Write-Warning -Message ('Installation of ' + $ChocoPackage + ' failed!')
-      
+
          # Add Package Step
          $PackageCounter++
       }
@@ -106,7 +106,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

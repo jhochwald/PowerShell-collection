@@ -1,6 +1,6 @@
 ﻿function Test-Port
 {
-  <#
+   <#
       .SYNOPSIS
       Tests port on a given computer.
 
@@ -83,259 +83,288 @@
 
       .LINK
       http://www.iana.org/assignments/port-numbers
-  #>
-  [cmdletbinding(
+   #>
+   [cmdletbinding(
       DefaultParameterSetName = '',
       ConfirmImpact = 'None'
-  )]
-  param (
-    [Parameter(
-        Mandatory, HelpMessage = 'Name of server to test the port connection on.',
-        Position = 0,
-        ParameterSetName = '',
-    ValueFromPipeline)]
-    [array]
-    $computer,
-    [Parameter(
-        Position = 1, HelpMessage = 'Port to test',
-        Mandatory,
-    ParameterSetName = '')]
-    [array]
-    $port,
-    [Parameter(
-    ParameterSetName = '')]
-    [int]
-    $TCPtimeout = 1000,
-    [Parameter(
-    ParameterSetName = '')]
-    [int]
-    $UDPtimeout = 1000,
-    [Parameter(
-    ParameterSetName = '')]
-    [switch]
-    $TCP,
-    [Parameter(
-    ParameterSetName = '')]
-    [switch]
-    $UDP
-  )
+   )]
+   param (
+      [Parameter(
+         Mandatory, HelpMessage = 'Name of server to test the port connection on.',
+         Position = 0,
+         ParameterSetName = '',
+         ValueFromPipeline)]
+      [array]
+      $computer,
+      [Parameter(
+         Position = 1, HelpMessage = 'Port to test',
+         Mandatory,
+         ParameterSetName = '')]
+      [array]
+      $port,
+      [Parameter(
+         ParameterSetName = '')]
+      [int]
+      $TCPtimeout = 1000,
+      [Parameter(
+         ParameterSetName = '')]
+      [int]
+      $UDPtimeout = 1000,
+      [Parameter(
+         ParameterSetName = '')]
+      [switch]
+      $TCP,
+      [Parameter(
+         ParameterSetName = '')]
+      [switch]
+      $UDP
+   )
 
-  begin
-  {
-    # Check if we test TCP or UDP
-    if ((-not $TCP) -AND (-not $UDP))
-    {
-      <#
-          Nothing? OK, we use the Defualt (TCP)
-      #>
-      $TCP = $True
-    }
-
-    <#
-        Typically you never do this, but in this case I felt it was for the benefit of the function as any errors will be noted in the output of the report
-        It also reduce the handling within the code. Smart, right?
-    #>
-    $ErrorActionPreference = 'SilentlyContinue'
-
-    # Cleanup
-    $report = @()
-  }
-
-  process
-  {
-    foreach ($c in $computer)
-    {
-      foreach ($p in $port)
+   begin
+   {
+      # Check if we test TCP or UDP
+      if ((-not $TCP) -AND (-not $UDP))
       {
-        if ($TCP)
-        {
-          # Create temporary holder
-          # TODO: Replace this
-          $temp = '' | Select-Object -Property Server, Port, TypePort, Open, Notes
-
-          # Create object for connecting to port on computer
-          $tcpobject = (New-Object -TypeName system.Net.Sockets.TcpClient)
-
-          # Connect to remote machine's port
-          $connect = $tcpobject.BeginConnect($c, $p, $null, $null)
-
-          # Configure a timeout before quitting
-          $wait = $connect.AsyncWaitHandle.WaitOne($TCPtimeout, $False)
-
-          # If timeout
-          if (-not $wait)
-          {
-            # Close connection
-            $tcpobject.Close()
-
-            Write-Verbose -Message 'Connection Timeout'
-
-            # Build report
-            $temp.Server = $c
-            $temp.Port = $p
-            $temp.TypePort = 'TCP'
-            $temp.Open = $False
-            $temp.Notes = 'Connection to Port Timed Out'
-          }
-          else
-          {
-            $error.Clear()
-            $null = $tcpobject.EndConnect($connect)
-
-            # If error
-            if ($error[0])
-            {
-              # Begin making error more readable in report
-              [string]$string = ($error[0].exception).message
-              $message = (($string.split(':')[1]).replace('"', '')).TrimStart()
-              $failed = $True
-            }
-
-            # Close connection
-            $tcpobject.Close()
-
-            # If unable to query port to due failure
-            if ($failed)
-            {
-              # Build report
-              $temp.Server = $c
-              $temp.Port = $p
-              $temp.TypePort = 'TCP'
-              $temp.Open = $False
-              $temp.Notes = "$message"
-            }
-            else
-            {
-              # Build report
-              $temp.Server = $c
-              $temp.Port = $p
-              $temp.TypePort = 'TCP'
-              $temp.Open = $True
-              $temp.Notes = ''
-            }
-          }
-
-          # Reset failed value
-          $failed = $null
-
-          # Merge temp array with report
-          $report += $temp
-        }
-
-        if ($UDP)
-        {
-          # Create temporary holder
-          $temp = '' | Select-Object -Property Server, Port, TypePort, Open, Notes
-
-          # Create object for connecting to port on computer
-          $udpobject = (New-Object -TypeName system.Net.Sockets.Udpclient)
-
-          # Set a timeout on receiving message
-          $udpobject.client.ReceiveTimeout = $UDPtimeout
-
-          # Connect to remote machine's port
-          Write-Verbose -Message 'Making UDP connection to remote server'
-
-          $udpobject.Connect("$c", $p)
-
-          # Sends a message to the host to which you have connected.
-          Write-Verbose -Message 'Sending message to remote host'
-
-          $a = (New-Object -TypeName system.text.asciiencoding)
-          $byte = $a.GetBytes("$(Get-Date)")
-          $null = $udpobject.Send($byte, $byte.length)
-
-          # IPEndPoint object will allow us to read datagrams sent from any source.
-          Write-Verbose -Message 'Creating remote endpoint'
-
-          $remoteendpoint = (New-Object -TypeName system.net.ipendpoint -ArgumentList ([ipaddress]::Any, 0))
-
-          try
-          {
-            # Blocks until a message returns on this socket from a remote host.
-            Write-Verbose -Message 'Waiting for message return'
-
-            $receivebytes = $udpobject.Receive([ref]$remoteendpoint)
-            [string]$returndata = $a.GetString($receivebytes)
-
-            if ($returndata)
-            {
-              Write-Verbose -Message 'Connection Successful'
-
-              # Build report
-              $temp.Server = $c
-              $temp.Port = $p
-              $temp.TypePort = 'UDP'
-              $temp.Open = $True
-              $temp.Notes = $returndata
-              $udpobject.close()
-            }
-          }
-          catch
-          {
-            if ($error[0].ToString() -match '\bRespond after a period of time\b')
-            {
-              # Close connection
-              $udpobject.Close()
-
-              # Make sure that the host is online and not a false positive that it is open
-              if (Test-Connection -ComputerName $c -Count 1 -Quiet)
-              {
-                Write-Verbose -Message 'Connection Open'
-
-                # Build report
-                $temp.Server = $c
-                $temp.Port = $p
-                $temp.TypePort = 'UDP'
-                $temp.Open = $True
-                $temp.Notes = ''
-              }
-              else
-              {
-                <#
-                    It is possible that the host is not online or that the host is online,
-                    but ICMP is blocked by a firewall and this port is actually open.
-                #>
-
-                Write-Verbose -Message 'Host maybe unavailable'
-
-                # Build report
-                $temp.Server = $c
-                $temp.Port = $p
-                $temp.TypePort = 'UDP'
-                $temp.Open = $False
-                $temp.Notes = 'Unable to verify if port is open or if host is unavailable.'
-              }
-            }
-            elseif ($error[0].ToString() -match 'forcibly closed by the remote host')
-            {
-              # Close connection
-              $udpobject.Close()
-
-              Write-Verbose -Message 'Connection Timeout'
-
-              # Build report
-              $temp.Server = $c
-              $temp.Port = $p
-              $temp.TypePort = 'UDP'
-              $temp.Open = $False
-              $temp.Notes = 'Connection to Port Timed Out'
-            }
-            else
-            {
-              $udpobject.close()
-            }
-          }
-          # Merge temp array with report
-          $report += $temp
-        }
+         <#
+            Nothing? OK, we use the Defualt (TCP)
+         #>
+         $TCP = $True
       }
-    }
-  }
 
-  end
-  {
-    # Generate Report
-    $report
-  }
+      <#
+         Typically you never do this, but in this case I felt it was for the benefit of the function as any errors will be noted in the output of the report
+         It also reduce the handling within the code. Smart, right?
+      #>
+      $ErrorActionPreference = 'SilentlyContinue'
+
+      # Cleanup
+      $report = @()
+   }
+
+   process
+   {
+      foreach ($c in $computer)
+      {
+         foreach ($p in $port)
+         {
+            if ($TCP)
+            {
+               # Create temporary holder
+               # TODO: Replace this
+               $temp = '' | Select-Object -Property Server, Port, TypePort, Open, Notes
+
+               # Create object for connecting to port on computer
+               $tcpobject = (New-Object -TypeName system.Net.Sockets.TcpClient)
+
+               # Connect to remote machine's port
+               $connect = $tcpobject.BeginConnect($c, $p, $null, $null)
+
+               # Configure a timeout before quitting
+               $wait = $connect.AsyncWaitHandle.WaitOne($TCPtimeout, $False)
+
+               # If timeout
+               if (-not $wait)
+               {
+                  # Close connection
+                  $tcpobject.Close()
+
+                  Write-Verbose -Message 'Connection Timeout'
+
+                  # Build report
+                  $temp.Server = $c
+                  $temp.Port = $p
+                  $temp.TypePort = 'TCP'
+                  $temp.Open = $False
+                  $temp.Notes = 'Connection to Port Timed Out'
+               }
+               else
+               {
+                  $error.Clear()
+                  $null = $tcpobject.EndConnect($connect)
+
+                  # If error
+                  if ($error[0])
+                  {
+                     # Begin making error more readable in report
+                     [string]$string = ($error[0].exception).message
+                     $message = (($string.split(':')[1]).replace('"', '')).TrimStart()
+                     $failed = $True
+                  }
+
+                  # Close connection
+                  $tcpobject.Close()
+
+                  # If unable to query port to due failure
+                  if ($failed)
+                  {
+                     # Build report
+                     $temp.Server = $c
+                     $temp.Port = $p
+                     $temp.TypePort = 'TCP'
+                     $temp.Open = $False
+                     $temp.Notes = "$message"
+                  }
+                  else
+                  {
+                     # Build report
+                     $temp.Server = $c
+                     $temp.Port = $p
+                     $temp.TypePort = 'TCP'
+                     $temp.Open = $True
+                     $temp.Notes = ''
+                  }
+               }
+
+               # Reset failed value
+               $failed = $null
+
+               # Merge temp array with report
+               $report += $temp
+            }
+
+            if ($UDP)
+            {
+               # Create temporary holder
+               $temp = '' | Select-Object -Property Server, Port, TypePort, Open, Notes
+
+               # Create object for connecting to port on computer
+               $udpobject = (New-Object -TypeName system.Net.Sockets.Udpclient)
+
+               # Set a timeout on receiving message
+               $udpobject.client.ReceiveTimeout = $UDPtimeout
+
+               # Connect to remote machine's port
+               Write-Verbose -Message 'Making UDP connection to remote server'
+
+               $udpobject.Connect("$c", $p)
+
+               # Sends a message to the host to which you have connected.
+               Write-Verbose -Message 'Sending message to remote host'
+
+               $a = (New-Object -TypeName system.text.asciiencoding)
+               $byte = $a.GetBytes("$(Get-Date)")
+               $null = $udpobject.Send($byte, $byte.length)
+
+               # IPEndPoint object will allow us to read datagrams sent from any source.
+               Write-Verbose -Message 'Creating remote endpoint'
+
+               $remoteendpoint = (New-Object -TypeName system.net.ipendpoint -ArgumentList ([ipaddress]::Any, 0))
+
+               try
+               {
+                  # Blocks until a message returns on this socket from a remote host.
+                  Write-Verbose -Message 'Waiting for message return'
+
+                  $receivebytes = $udpobject.Receive([ref]$remoteendpoint)
+                  [string]$returndata = $a.GetString($receivebytes)
+
+                  if ($returndata)
+                  {
+                     Write-Verbose -Message 'Connection Successful'
+
+                     # Build report
+                     $temp.Server = $c
+                     $temp.Port = $p
+                     $temp.TypePort = 'UDP'
+                     $temp.Open = $True
+                     $temp.Notes = $returndata
+                     $udpobject.close()
+                  }
+               }
+               catch
+               {
+                  if ($error[0].ToString() -match '\bRespond after a period of time\b')
+                  {
+                     # Close connection
+                     $udpobject.Close()
+
+                     # Make sure that the host is online and not a false positive that it is open
+                     if (Test-Connection -ComputerName $c -Count 1 -Quiet)
+                     {
+                        Write-Verbose -Message 'Connection Open'
+
+                        # Build report
+                        $temp.Server = $c
+                        $temp.Port = $p
+                        $temp.TypePort = 'UDP'
+                        $temp.Open = $True
+                        $temp.Notes = ''
+                     }
+                     else
+                     {
+                        <#
+                           It is possible that the host is not online or that the host is online,
+                           but ICMP is blocked by a firewall and this port is actually open.
+                        #>
+
+                        Write-Verbose -Message 'Host maybe unavailable'
+
+                        # Build report
+                        $temp.Server = $c
+                        $temp.Port = $p
+                        $temp.TypePort = 'UDP'
+                        $temp.Open = $False
+                        $temp.Notes = 'Unable to verify if port is open or if host is unavailable.'
+                     }
+                  }
+                  elseif ($error[0].ToString() -match 'forcibly closed by the remote host')
+                  {
+                     # Close connection
+                     $udpobject.Close()
+
+                     Write-Verbose -Message 'Connection Timeout'
+
+                     # Build report
+                     $temp.Server = $c
+                     $temp.Port = $p
+                     $temp.TypePort = 'UDP'
+                     $temp.Open = $False
+                     $temp.Notes = 'Connection to Port Timed Out'
+                  }
+                  else
+                  {
+                     $udpobject.close()
+                  }
+               }
+               # Merge temp array with report
+               $report += $temp
+            }
+         }
+      }
+   }
+
+   end
+   {
+      # Generate Report
+      $report
+   }
 }
+
+#region LICENSE
+<#
+      BSD 3-Clause License
+
+      Copyright (c) 2020, enabling Technology
+      All rights reserved.
+
+      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#>
+#endregion LICENSE
+
+#region DISCLAIMER
+<#
+      DISCLAIMER:
+      - Use at your own risk, etc.
+      - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+      - This is a third-party Software
+      - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+      - The Software is not supported by Microsoft Corp (MSFT)
+      - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+      - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
+#>
+#endregion DISCLAIMER

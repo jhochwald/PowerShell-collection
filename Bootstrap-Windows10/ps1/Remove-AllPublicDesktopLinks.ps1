@@ -11,20 +11,21 @@
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
-begin {
+begin
+{
    Write-Output -InputObject 'Removes all public Desktop Links'
-   
+
    #region GlobalDefaults
    $SCT = 'SilentlyContinue'
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
-   
+
    # Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
    Start-Sleep -Seconds 5
-   
+
    $paramGetChildItem = @{
       Path          = ($env:PUBLIC + '\Desktop\')
       Filter        = '*.lnk'
@@ -41,7 +42,8 @@ begin {
    #endregion GlobalDefaults
 }
 
-process {
+process
+{
    if ($pscmdlet.ShouldProcess('All public Desktop Links', 'Remove'))
    {
       $null = (Get-ChildItem @paramGetChildItem | Select-Object -ExpandProperty FullName | Remove-Item @paramRemoveItem)
@@ -57,7 +59,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

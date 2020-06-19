@@ -17,7 +17,7 @@ begin
    #region Defaults
    $SCT = 'SilentlyContinue'
    #endregion Defaults
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    $StartMenuContent = @'
@@ -52,12 +52,12 @@ process
    {
       $RegistryBasePath = ($RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows')
       $RegistryKeyPath = ($RegistryBasePath + '\Explorer')
-	
+
       if (-not (Test-Path -Path $RegistryKeyPath -ErrorAction $SCT))
       {
          $null = (New-Item -Path $RegistryBasePath -Name 'Explorer' -Force -Confirm:$false -ErrorAction $SCT)
       }
-	
+
       $null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 1 -Force -Confirm:$false -ErrorAction $SCT)
       $null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'StartLayoutFile' -Value $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
    }
@@ -99,7 +99,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

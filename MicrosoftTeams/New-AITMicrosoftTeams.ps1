@@ -119,67 +119,67 @@
       https://aka.ms/InstallModule
 #>
 [CmdletBinding(DefaultParameterSetName = 'MFA',
-ConfirmImpact = 'None')]
+   ConfirmImpact = 'None')]
 param
 (
    [Parameter(ParameterSetName = 'Credentials',
-         ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 0)]
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName,
+      Position = 0)]
    [System.Management.Automation.Credential()]
    [Alias('TeamsCredentials', 'TeamsAdminCredentials', 'Office365creds')]
    [pscredential]
    $msTeamsCreds,
    [Parameter(ParameterSetName = 'MFA',
-         ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 0)]
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName,
+      Position = 0)]
    [Alias('UseMFA')]
    [switch]
    $mfa,
    [Parameter(Mandatory,
-         ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-         Position = 1,
-   HelpMessage = 'Team display name.')]
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName,
+      Position = 1,
+      HelpMessage = 'Team display name.')]
    [ValidateNotNullOrEmpty()]
    [Alias('TeamsDisplayName')]
    [string]
    $DisplayName,
    [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 2)]
+      ValueFromPipelineByPropertyName,
+      Position = 2)]
    [Alias('TeamsAlias')]
    [string]
    $Alias,
    [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 3)]
+      ValueFromPipelineByPropertyName,
+      Position = 3)]
    [Alias('TeamsDescription')]
    [string]
    $Description,
    [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 4)]
+      ValueFromPipelineByPropertyName,
+      Position = 4)]
    [ValidateSet('HiddenMembership', 'Private', 'Public', IgnoreCase = $true)]
    [Alias('TeamsAccessType')]
    [string]
    $AccessType = 'Private',
    [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 5)]
+      ValueFromPipelineByPropertyName,
+      Position = 5)]
    [Alias('AddCreatorAsTeamsMember')]
    [switch]
    $AddCreatorAsMember = $false,
    [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 6)]
+      ValueFromPipelineByPropertyName,
+      Position = 6)]
    [Alias('TeamsOwner')]
    [string[]]
    $Owner,
    [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName,
-   Position = 7)]
+      ValueFromPipelineByPropertyName,
+      Position = 7)]
    [Alias('TeamsUser', 'TeamsMember')]
    [string[]]
    $User

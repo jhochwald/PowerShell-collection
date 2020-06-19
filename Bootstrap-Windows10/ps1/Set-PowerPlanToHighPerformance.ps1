@@ -29,30 +29,30 @@ process
    $ActivePowerPlan = $null
    $PowerPlanHighPowerState = $null
    #endregion Cleanup
-	
+
    #region InformationGathering
    # Splat the parameters
    $paramGetWmiObject = @{
       Namespace = 'root\cimv2\power'
-      Class	    = 'Win32_PowerPlan'
+      Class     = 'Win32_PowerPlan'
    }
-	
+
    # Gather the PowerPlan information
    $ActivePowerPlan = (Get-WmiObject @paramGetWmiObject | Select-Object -Property ElementName, IsActive)
-	
+
    # Filter the 'High Performance' plan info
    $PowerPlanHighPowerState = $ActivePowerPlan | Where-Object -FilterScript {
       $_.ElementName -eq 'High Performance'
    }
    #endregion InformationGathering
-	
+
    #region CheckIfTheTweakIsNeeded
    if ($PowerPlanHighPowerState.IsActive -ne $true)
    {
       # Use the PowerPlan "High Performance"
       $paramGetWmiObject.Filter = "ElementName = 'High Performance'"
       $powerPlan = (Get-WmiObject @paramGetWmiObject)
-		
+
       #region ActivateThePowerPlan
       $null = (Invoke-Command -ScriptBlock {
             $powerPlan.Activate()
@@ -63,27 +63,27 @@ process
       #endregion ActivateThePowerPlan
    }
    #endregion CheckIfTheTweakIsNeeded
-	
+
    #region Cleanup
    $PowerPlanHighPowerState = $null
    #endregion Cleanup
-	
+
    #region Retest
    $PowerPlanHighPowerState = $ActivePowerPlan | Where-Object -FilterScript {
       $_.ElementName -eq 'High Performance'
    }
-	
+
    # Filter the 'High Performance' plan info
    if ($PowerPlanHighPowerState.IsActive -ne $true)
    {
       Write-Warning -Message "Unable to set the PowerPlan to 'High Performance'"
    }
    #endregion Retest
-	
+
    #region NoStandBy
    & "$env:windir\system32\powercfg.cpl" -change -standby-timeout-ac 0
    #endregion NoStandBy
-	
+
    #region DisableHybernationSupport
    & "$env:windir\system32\powercfg.cpl" -change -hibernate-timeout-ac 0
    #endregion DisableHybernationSupport
@@ -98,7 +98,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

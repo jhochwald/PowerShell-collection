@@ -24,17 +24,17 @@
       https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference
 #>
 [CmdletBinding(ConfirmImpact = 'Medium',
-               SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
 {
    Write-Output -InputObject 'Apply the Defender exclusions based on recommendations by Microsoft'
-   
+
    $SCT = 'SilentlyContinue'
 
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
-   
+
    #region DefaultExclusions
    $ExcludePathList = @(
       "$env:windir\SoftwareDistribution\DataStore\Datastore.edb",
@@ -57,10 +57,10 @@ begin
       "$env:ProgramData\chocolatey\lib\sysinternals\tools\*.exe"
    )
    #endregion DefaultExclusions
-	
+
    #region AdExclusions
    # Turn off scanning of Active Directory and Active Directory-related files
-	
+
    # Exclude the Main NTDS database files.
    $DSADatabaseFile = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters'
    $DSADatabaseFilePath = ('Registry::' + $DSADatabaseFile)
@@ -77,7 +77,7 @@ begin
    {
       Write-Verbose -Message 'No NTDS database files to exclude'
    }
-	
+
    # Exclude the Active Directory transaction log files.
    $DatabaseLogFiles = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters'
    $DatabaseLogFilesPath = ('Registry::' + $DatabaseLogFiles)
@@ -96,7 +96,7 @@ begin
    {
       Write-Verbose -Message 'No Active Directory transaction log files to exclude'
    }
-	
+
    # Exclude the files in the NTDS Working folder
    $DSAWorkingDir = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NTDS\Parameters'
    $DSAWorkingDirPath = ('Registry::' + $DSAWorkingDir)
@@ -114,10 +114,10 @@ begin
       Write-Verbose -Message 'No NTDS Working folder to exclude'
    }
    #endregion AdExclusions
-	
+
    #region SysVolExclusions
    # Turn off scanning of SYSVOL files
-	
+
    # Turn off scanning of files in the File Replication Service (FRS) Working folder
    $SysVolWorkingDir = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NtFrs\Parameters'
    $SysVolWorkingDirPath = ('Registry::' + $SysVolWorkingDir)
@@ -135,7 +135,7 @@ begin
    {
       Write-Verbose -Message 'No File Replication Service Working folder to exclude'
    }
-	
+
    # Turn off scanning of files in the File Replication Service Database Log files
    $SysVolDBLogFileDir = 'HKEY_LOCAL_MACHINE\SYSTEM\Currentcontrolset\Services\Ntfrs\Parameters'
    $SysVolDBLogFileDirPath = ('Registry::' + $SysVolDBLogFileDir)
@@ -159,7 +159,7 @@ begin
       Write-Verbose -Message 'No File Replication Service Database Log files to exclude'
    }
    #endregion SysVolExclusions
-	
+
    #region DhcpExclusions
    # Turn off scanning of DHCP files
    $DhcpFiles = 'HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\DHCPServer\Parameters'
@@ -174,7 +174,7 @@ begin
          $ExcludePathList += ($DhcpDatabasePathValue + '\*.chk')
          $ExcludePathList += ($DhcpDatabasePathValue + '\*.edb')
       }
-		
+
       $DhcpLogFilePathValue = (Get-ItemProperty -Path $DhcpFilesPath | Select-Object -ExpandProperty 'DhcpLogFilePath' -ErrorAction $SCT)
       if (($DhcpLogFilePathValue) -and ($DhcpLogFilePathValue -ne $DhcpDatabasePathValue))
       {
@@ -184,7 +184,7 @@ begin
       {
          $ExcludePathList += ($DhcpDatabasePathValue + '\*.log')
       }
-		
+
       $DhcpBackupDatabasePathValue = (Get-ItemProperty -Path $DhcpFilesPath | Select-Object -ExpandProperty 'BackupDatabasePath' -ErrorAction $SCT)
       if ($DhcpBackupDatabasePathValue)
       {
@@ -200,7 +200,7 @@ begin
       Write-Verbose -Message 'No DHCP Server Directory found'
    }
    #endregion DhcpExclusions
-	
+
    #region DnsExclusions
    $DnsServerDir = "$env:windir\System32\dns"
    if (Test-Path -Path $DnsServerDir -ErrorAction $SCT)
@@ -208,7 +208,7 @@ begin
       $ExcludePathList += ($DnsServerDir + '\*.log')
       $ExcludePathList += ($DnsServerDir + '\*.dns')
       $ExcludePathList += ($DnsServerDir + '\BOOT')
-		
+
       $DnsBackupServerDir = ($DnsServerDir + '\backup')
       if (Test-Path -Path $DnsBackupServerDir -ErrorAction $SCT)
       {
@@ -222,13 +222,13 @@ begin
       Write-Verbose -Message 'No DNS Server Directory found'
    }
    #endregion DnsExclusions
-	
+
    #region WinsExclusions
    $WinsServerDir = "$env:windir\System32\Wins"
    if (Test-Path -Path $WinsServerDir -ErrorAction $SCT)
    {
       Write-Warning -Message 'WINS is still installed on this system!' -WarningAction Continue
-		
+
       $ExcludePathList += ($WinsServerDir + '\*.chk')
       $ExcludePathList += ($WinsServerDir + '\*.log')
       $ExcludePathList += ($WinsServerDir + '\*.mdb')
@@ -252,7 +252,7 @@ process
             # Splat the parameters for Add-MpPreference
             $SplatAddMpPreference = @{
                ExclusionPath = $ExcludePath
-               Force		     = $true
+               Force         = $true
                ErrorAction   = 'Stop'
                WarningAction = 'Continue'
             }
@@ -263,23 +263,23 @@ process
             #region ErrorHandler
             # get error record
             [Management.Automation.ErrorRecord]$e = $_
-				
+
             # retrieve information about runtime error
             $info = @{
                Exception = $e.Exception.Message
-               Reason	 = $e.CategoryInfo.Reason
-               Target	 = $e.CategoryInfo.TargetName
-               Script	 = $e.InvocationInfo.ScriptName
-               Line	    = $e.InvocationInfo.ScriptLineNumber
-               Column	 = $e.InvocationInfo.OffsetInLine
+               Reason    = $e.CategoryInfo.Reason
+               Target    = $e.CategoryInfo.TargetName
+               Script    = $e.InvocationInfo.ScriptName
+               Line      = $e.InvocationInfo.ScriptLineNumber
+               Column    = $e.InvocationInfo.OffsetInLine
             }
-				
+
             # Error Stack
             $info | Out-String | Write-Verbose
-				
+
             # Just display the info on continue with the rest of the list
             Write-Warning -Message ($info.Exception) -ErrorAction Continue -WarningAction Continue
-				
+
             # Cleanup
             $info = $null
             $e = $null
@@ -298,7 +298,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

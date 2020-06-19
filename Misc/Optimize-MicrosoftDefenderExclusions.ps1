@@ -22,7 +22,7 @@
       https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference
 #>
 [CmdletBinding(ConfirmImpact = 'Medium',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
@@ -61,7 +61,7 @@ begin
       if ($DSADatabaseFileValue)
       {
          $ExcludePathList += ($DSADatabaseFileValue)
-         $ExcludePathList += ($DSADatabaseFileValue).Replace('.dit','.pat')
+         $ExcludePathList += ($DSADatabaseFileValue).Replace('.dit', '.pat')
       }
    }
    else
@@ -77,10 +77,10 @@ begin
       $DatabaseLogFilesPathValue = (Get-ItemProperty -Path $DatabaseLogFilesPath | Select-Object -ExpandProperty 'Database Log Files Path' -ErrorAction SilentlyContinue)
       if ($DatabaseLogFilesPathValue)
       {
-         $ExcludePathList += ($DatabaseLogFilesPathValue +'\EDB*.log')
-         $ExcludePathList += ($DatabaseLogFilesPathValue +'\Res*.log')
-         $ExcludePathList += ($DatabaseLogFilesPathValue +'\Edb*.jrs')
-         $ExcludePathList += ($DatabaseLogFilesPathValue +'\Ntds.pat')
+         $ExcludePathList += ($DatabaseLogFilesPathValue + '\EDB*.log')
+         $ExcludePathList += ($DatabaseLogFilesPathValue + '\Res*.log')
+         $ExcludePathList += ($DatabaseLogFilesPathValue + '\Edb*.jrs')
+         $ExcludePathList += ($DatabaseLogFilesPathValue + '\Ntds.pat')
       }
    }
    else
@@ -96,8 +96,8 @@ begin
       $DSAWorkingDirValue = (Get-ItemProperty -Path $DSAWorkingDirPath | Select-Object -ExpandProperty 'DSA Working Directory' -ErrorAction SilentlyContinue)
       if ($DSAWorkingDirValue)
       {
-         $ExcludePathList += ($DSAWorkingDirValue +'\Temp.edb')
-         $ExcludePathList += ($DSAWorkingDirValue +'\Edb.chk')
+         $ExcludePathList += ($DSAWorkingDirValue + '\Temp.edb')
+         $ExcludePathList += ($DSAWorkingDirValue + '\Edb.chk')
       }
    }
    else
@@ -117,9 +117,9 @@ begin
       $SysVolWorkingDirValue = (Get-ItemProperty -Path $SysVolWorkingDirPath | Select-Object -ExpandProperty 'Working Directory' -ErrorAction SilentlyContinue)
       if ($SysVolWorkingDirValue)
       {
-         $ExcludePathList += ($SysVolWorkingDirValue +'\jet\sys\edb.chk')
-         $ExcludePathList += ($SysVolWorkingDirValue +'\jet\Ntfrs.jdb')
-         $ExcludePathList += ($SysVolWorkingDirValue +'\jet\log\*.log')
+         $ExcludePathList += ($SysVolWorkingDirValue + '\jet\sys\edb.chk')
+         $ExcludePathList += ($SysVolWorkingDirValue + '\jet\Ntfrs.jdb')
+         $ExcludePathList += ($SysVolWorkingDirValue + '\jet\log\*.log')
       }
    }
    else
@@ -141,7 +141,7 @@ begin
       {
          if ($SysVolWorkingDirValue)
          {
-            $ExcludePathList += ($SysVolWorkingDirValue +'\jet\Log\Edb*.log')
+            $ExcludePathList += ($SysVolWorkingDirValue + '\jet\Log\Edb*.log')
          }
       }
    }
@@ -279,3 +279,32 @@ process
       }
    }
 }
+
+#region LICENSE
+<#
+      BSD 3-Clause License
+
+      Copyright (c) 2020, enabling Technology
+      All rights reserved.
+
+      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#>
+#endregion LICENSE
+
+#region DISCLAIMER
+<#
+      DISCLAIMER:
+      - Use at your own risk, etc.
+      - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+      - This is a third-party Software
+      - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+      - The Software is not supported by Microsoft Corp (MSFT)
+      - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+      - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
+#>
+#endregion DISCLAIMER

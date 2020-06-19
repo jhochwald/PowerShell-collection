@@ -60,7 +60,7 @@ process
    # Twaek some directories
    $null = (Get-Item -Path ($Home + '\3D Objects'), ($Home + '\Contacts'), ($Home + '\Favorites'), ($Home + '\Links'), ($Home + '\Saved Games'), ($Home + '\Searches') -Force | ForEach-Object -Process {
          $_.Attributes = $_.Attributes -bor 'Hidden'
-   })
+      })
 
    # Create Directory structure
    'C:\temp', 'C:\Tools', 'C:\scripts\Batch', 'C:\scripts\PowerShell' | ForEach-Object -Process {
@@ -81,22 +81,22 @@ process
    if (Test-Path -Path '.\ps1\*.ps1' -ErrorAction $SCT)
    {
       $null = (Get-ChildItem -Path '.\ps1\*.ps1' -ErrorAction $SCT | ForEach-Object -Process {
-         $null = (Copy-Item -Path $_ -Destination 'C:\scripts\PowerShell' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      })
+            $null = (Copy-Item -Path $_ -Destination 'C:\scripts\PowerShell' -Force -Confirm:$false -ErrorAction SilentlyContinue)
+         })
    }
 
    if (Test-Path -Path '.\tools\*.exe' -ErrorAction $SCT)
    {
       $null = (Get-ChildItem -Path '.\tools\*.exe' -ErrorAction $SCT | ForEach-Object -Process {
-         $null = (Copy-Item -Path $_ -Destination 'C:\Tools' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      })
+            $null = (Copy-Item -Path $_ -Destination 'C:\Tools' -Force -Confirm:$false -ErrorAction SilentlyContinue)
+         })
    }
 
    if (Test-Path -Path '.\tools\*.bgi' -ErrorAction $SCT)
    {
       $null = (Get-ChildItem -Path '.\tools\*.bgi' -ErrorAction $SCT | ForEach-Object -Process {
-         $null = (Copy-Item -Path $_ -Destination 'C:\Tools' -Force -Confirm:$false -ErrorAction SilentlyContinue)
-      })
+            $null = (Copy-Item -Path $_ -Destination 'C:\Tools' -Force -Confirm:$false -ErrorAction SilentlyContinue)
+         })
    }
    #endregion Transfer
 
@@ -154,7 +154,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -23,7 +23,7 @@ begin
 
    #region GlobalDefaults
    $SCT = 'SilentlyContinue'
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    $paramRemoveItemProperty = @{
@@ -39,26 +39,26 @@ begin
       <#
             .SYNOPSIS
             Enforce that an item property in the registry
-	
+
             .DESCRIPTION
             Enforce that an item property in the registry
-	
+
             .PARAMETER Path
             Registry Path
-	
+
             .PARAMETER PropertyType
             The Property Type
-	
+
             .PARAMETER Value
             The Registry Value to set
-	
+
             .EXAMPLE
             PS C:\> Confirm-RegistryItemProperty -Path 'HKLM:\System\CurrentControlSet\Services\PimIndexMaintenanceSvc\Start' -PropertyType 'DWord' -Value '1'
-	
+
             .NOTES
             Just an internal Helper function
       #>
-	
+
       [CmdletBinding(ConfirmImpact = 'None',
       SupportsShouldProcess)]
       param
@@ -87,12 +87,12 @@ begin
          [Alias('RegistryValue')]
          $Value
       )
-	
+
       begin
       {
          $SCT = 'SilentlyContinue'
       }
-	
+
       process
       {
          if (-Not (Test-Path -Path ($Path | Split-Path) -ErrorAction $SCT))
@@ -919,7 +919,7 @@ process
       Get-ChildItem -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Include '*.group' -Recurse -WarningAction $SCT -ErrorAction $SCT | ForEach-Object {
          $data = ((Get-ItemProperty -Path ($_.PsPath + '\Current') -Name 'Data' -WarningAction $SCT -ErrorAction $SCT).Data -Join ',')
          $data = ($data.Substring(0, $data.IndexOf(',0,202,30') + 9) + ',0,202,80,0,0')
-		
+
          $null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\Current\Data') -PropertyType Binary -Value $data.Split(',') -WarningAction $SCT -ErrorAction $SCT)
       }
    }
@@ -927,9 +927,9 @@ process
    {
       $key = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current" -WarningAction $SCT -ErrorAction $SCT)
       $data = $key.Data[0 .. 25] + ([byte[]](202, 50, 0, 226, 44, 1, 1, 0, 0))
-	
+
       $null = (Confirm-RegistryItemProperty -Path ($key.PSPath + '\Data') -PropertyType Binary -Value $data -ErrorAction $SCT)
-	
+
       $null = (Stop-Process -Name 'ShellExperienceHost' -Force -WarningAction $SCT -ErrorAction $SCT)
    }
    #endregion UnpinStartMenuTiles
@@ -1186,7 +1186,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

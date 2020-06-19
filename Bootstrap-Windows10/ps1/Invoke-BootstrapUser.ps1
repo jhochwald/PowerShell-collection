@@ -23,7 +23,7 @@ begin
 
    #region GlobalDefaults
    $SCT = 'SilentlyContinue'
-   
+
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
    $paramRemoveItemProperty = @{
@@ -39,67 +39,67 @@ begin
       <#
             .SYNOPSIS
             Enforce that an item property in the registry
-	
+
             .DESCRIPTION
             Enforce that an item property in the registry
-	
+
             .PARAMETER Path
             Registry Path
-	
+
             .PARAMETER PropertyType
             The Property Type
-	
+
             .PARAMETER Value
             The Registry Value to set
-	
+
             .EXAMPLE
             PS C:\> Confirm-RegistryItemProperty -Path 'HKLM:\System\CurrentControlSet\Services\PimIndexMaintenanceSvc\Start' -PropertyType 'DWord' -Value '1'
-	
+
             .NOTES
             Just an internal Helper function
       #>
-	
+
       [CmdletBinding(ConfirmImpact = 'None',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       param
       (
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         HelpMessage = 'Add help message for user')]
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('RegistryPath')]
          [string]
          $Path,
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         HelpMessage = 'Add help message for user')]
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('Property', 'Type')]
          [string]
          $PropertyType,
          [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName)]
          [AllowEmptyCollection()]
          [AllowEmptyString()]
          [AllowNull()]
          [Alias('RegistryValue')]
          $Value
       )
-	
+
       begin
       {
          $SCT = 'SilentlyContinue'
       }
-	
+
       process
       {
          if (-Not (Test-Path -Path ($Path | Split-Path) -ErrorAction $SCT))
          {
             $null = (New-Item -Path ($Path | Split-Path) -Force -WarningAction $SCT -ErrorAction $SCT)
          }
-         
+
          if (-Not (Test-Path -Path $Path -ErrorAction $SCT))
          {
             $null = (New-ItemProperty -Path ($Path | Split-Path) -Name ($Path | Split-Path -Leaf) -PropertyType $PropertyType -Value $Value -Force -Confirm:$false -ErrorAction $SCT)
@@ -362,7 +362,7 @@ process
    $langs = (Get-WinUserLanguageList -ErrorAction $SCT)
    $null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
             $_.LanguageTag -ne 'en-US'
-   }) -Force -ErrorAction $SCT)
+         }) -Force -ErrorAction $SCT)
    #endregion RemoveENKeyboard
 
    #region EnableEnhPointerPrecision
@@ -379,20 +379,20 @@ process
       {
          $null = (New-Item -Path ($_.PsPath + '\' + $SoundScheme) -ErrorAction $SCT)
       }
-	
+
       if (-not (Test-Path -Path ($_.PsPath + '\.Current') -ErrorAction $SCT))
       {
          $null = (New-Item -Path ($_.PsPath + '\.Current') -ErrorAction $SCT)
       }
-	
+
       # Get a regular string from any possible kind of value, i.e. resolve REG_EXPAND_SZ, copy REG_SZ or empty from non-existing.
       $Data = (Get-ItemProperty -Path ($_.PsPath + '\' + $SoundScheme) -Name '(Default)' -ErrorAction $SCT).'(Default)'
-	
-      if ($Data) 
+
+      if ($Data)
       {
          # Replace any kind of value with a regular string (similar behavior to Sound control panel).
          $null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\' + $SoundScheme) -Name '(Default)' -PropertyType String -Value $Data -ErrorAction $SCT)
-	
+
          # Copy data from source scheme to current.
          $null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\.Current') -Name '(Default)' -PropertyType String -Value $Data -ErrorAction $SCT)
       }
@@ -567,7 +567,7 @@ process
 
    foreach ($SystemProfile in $AllSystemProfiles)
    {
-      if (-not (Test-Path -Path $SystemProfile -ErrorAction SilentlyContinue)) 
+      if (-not (Test-Path -Path $SystemProfile -ErrorAction SilentlyContinue))
       {
          $null = (New-Item -ItemType File -Path $SystemProfile -Force -ErrorAction SilentlyContinue)
       }
@@ -583,24 +583,24 @@ process
       Name             = 'UpdateEnvExplorer'
       Language         = 'CSharp'
       MemberDefinition = @'
-     private static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
-     private const int WM_SETTINGCHANGE = 0x1a;
-     private const int SMTO_ABORTIFHUNG = 0x0002;
-     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-     static extern bool SendNotifyMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
-     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-     private static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, IntPtr lpdwResult);
-     [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-     private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
-     public static void Refresh()
-     {
-       // Update desktop icons
-       SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
-       // Update environment variables
-       SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, null, SMTO_ABORTIFHUNG, 100, IntPtr.Zero);
-       // Update taskbar
-       SendNotifyMessage(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, "TraySettings");
-     }
+   private static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
+   private const int WM_SETTINGCHANGE = 0x1a;
+   private const int SMTO_ABORTIFHUNG = 0x0002;
+   [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+   static extern bool SendNotifyMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
+   [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+   private static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, IntPtr lpdwResult);
+   [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+   private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
+   public static void Refresh()
+   {
+      // Update desktop icons
+      SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
+      // Update environment variables
+      SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, null, SMTO_ABORTIFHUNG, 100, IntPtr.Zero);
+      // Update taskbar
+      SendNotifyMessage(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, "TraySettings");
+   }
 '@
    }
 
@@ -622,7 +622,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
