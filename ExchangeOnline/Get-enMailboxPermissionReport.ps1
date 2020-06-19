@@ -79,33 +79,33 @@
    param
    (
       [Parameter(ValueFromPipeline = $true,
-      ValueFromPipelineByPropertyName = $true)]
+         ValueFromPipelineByPropertyName = $true)]
       [AllowEmptyString()]
       [AllowEmptyCollection()]
       [Alias('Mailbox', 'MailboxID', 'MailboxIdentity')]
       [string]
       $Identity = '*',
       [Parameter(ValueFromPipeline = $true,
-      ValueFromPipelineByPropertyName = $true)]
+         ValueFromPipelineByPropertyName = $true)]
       [ValidateSet('UserMailbox', 'User', 'SharedMailbox', 'Shared', 'All', IgnoreCase = $true)]
       [string]
       $MailboxType = 'All',
       [Parameter(ValueFromPipeline = $true,
-      ValueFromPipelineByPropertyName = $true)]
+         ValueFromPipelineByPropertyName = $true)]
       [AllowEmptyCollection()]
       [AllowEmptyString()]
       [Alias('MailboxResultSize')]
       [string]
       $ResultSize = 'Unlimited',
       [Parameter(ValueFromPipeline = $true,
-      ValueFromPipelineByPropertyName = $true)]
+         ValueFromPipelineByPropertyName = $true)]
       [AllowEmptyCollection()]
       [AllowEmptyString()]
       [Alias('CsvReport', 'CsvFile')]
       [string]
       $Path = 'C:\scripts\PowerShell\Reports\MailboxPermissionReport.csv',
       [Parameter(ValueFromPipeline = $true,
-      ValueFromPipelineByPropertyName = $true)]
+         ValueFromPipelineByPropertyName = $true)]
       [ValidateSet('Unicode', 'UTF7', 'UTF8', 'ASCII', 'UTF32', 'BigEndianUnicode', 'Default', 'OEM', IgnoreCase = $true)]
       [AllowEmptyCollection()]
       [AllowEmptyString()]
@@ -164,7 +164,8 @@
       #endregion paramGetMailbox
 
       #region MailboxTypeSwitch
-      switch ($MailboxType) {
+      switch ($MailboxType)
+      {
          UserMailbox
          {
             $paramWhereObject = @{
@@ -305,7 +306,9 @@
 
 #region LICENSE
 <#
-      Copyright (c) 2019, enabling Technology by Alright-IT GmbH
+      BSD 3-Clause License
+
+      Copyright (c) 2020, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -314,7 +317,6 @@
       3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-      By using the Software, you agree to the License, Terms and Conditions above!
 #>
 #endregion LICENSE
 

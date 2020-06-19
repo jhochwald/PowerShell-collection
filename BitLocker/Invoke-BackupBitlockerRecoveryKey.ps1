@@ -32,93 +32,93 @@ param ()
 
 begin
 {
-	# Defaults
-	$LogName = 'Application'
-	$STP = 'Stop'
-	$SCT = 'SilentlyContinue'
-	$LogSource = 'enAutomate'
+   # Defaults
+   $LogName = 'Application'
+   $STP = 'Stop'
+   $SCT = 'SilentlyContinue'
+   $LogSource = 'enAutomate'
 
-	# Register the event log source
-	$null = (New-EventLog -LogName $LogName -Source $LogSource -ErrorAction $SCT)
+   # Register the event log source
+   $null = (New-EventLog -LogName $LogName -Source $LogSource -ErrorAction $SCT)
 }
 
 process
 {
-	try
-	{
-		# Get BitLocker Volume info
-		$BitLockerVolumeInfo = (Get-BitLockerVolume -ErrorAction $STP | Where-Object -FilterScript {
-				$_.VolumeType -eq 'OperatingSystem'
-			})
+   try
+   {
+      # Get BitLocker Volume info
+      $BitLockerVolumeInfo = (Get-BitLockerVolume -ErrorAction $STP | Where-Object -FilterScript {
+            $_.VolumeType -eq 'OperatingSystem'
+         })
 
-		# Get the Mount Point
-		$BootDrive = $BitLockerVolumeInfo.MountPoint
+      # Get the Mount Point
+      $BootDrive = $BitLockerVolumeInfo.MountPoint
 
-		# Check if the drive is encrypted
-		if ($BitLockerVolumeInfo.ProtectionStatus -ne 'On')
-		{
-			$InfoMessage = ('Enable BitLocker for ' + $BootDrive)
-			Write-Verbose -Message $InfoMessage
-			$null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Information -EventId 1000 -Message $InfoMessage -ErrorAction $SCT)
+      # Check if the drive is encrypted
+      if ($BitLockerVolumeInfo.ProtectionStatus -ne 'On')
+      {
+         $InfoMessage = ('Enable BitLocker for ' + $BootDrive)
+         Write-Verbose -Message $InfoMessage
+         $null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Information -EventId 1000 -Message $InfoMessage -ErrorAction $SCT)
 
-			# Now we try to activate BitLocker (-UsedSpaceOnly is not perfect, but much faster in this case
-			$null = (Enable-BitLocker -MountPoint $BootDrive -EncryptionMethod XtsAes128 -UsedSpaceOnly -SkipHardwareTest -RecoveryPasswordProtector -Confirm:$false -ErrorAction $STP)
-		}
+         # Now we try to activate BitLocker (-UsedSpaceOnly is not perfect, but much faster in this case
+         $null = (Enable-BitLocker -MountPoint $BootDrive -EncryptionMethod XtsAes128 -UsedSpaceOnly -SkipHardwareTest -RecoveryPasswordProtector -Confirm:$false -ErrorAction $STP)
+      }
 
-		# Get the correct ID (The one from the RecoveryPassword)
-		$BitLockerKeyProtectorId = ($BitLockerVolumeInfo.KeyProtector | Where-Object -FilterScript {
-				$_.KeyProtectorType -eq 'RecoveryPassword'
-			} | Select-Object -ExpandProperty KeyProtectorId)
+      # Get the correct ID (The one from the RecoveryPassword)
+      $BitLockerKeyProtectorId = ($BitLockerVolumeInfo.KeyProtector | Where-Object -FilterScript {
+            $_.KeyProtectorType -eq 'RecoveryPassword'
+         } | Select-Object -ExpandProperty KeyProtectorId)
 
-		# Check if we have a recovery password/id
-		if ($BitLockerKeyProtectorId)
-		{
-			# Do the backup towards AzureAD
-			$null = (BackupToAAD-BitLockerKeyProtector -MountPoint $BootDrive -KeyProtectorId $BitLockerKeyProtectorId -Confirm:$false -ErrorAction $STP)
+      # Check if we have a recovery password/id
+      if ($BitLockerKeyProtectorId)
+      {
+         # Do the backup towards AzureAD
+         $null = (BackupToAAD-BitLockerKeyProtector -MountPoint $BootDrive -KeyProtectorId $BitLockerKeyProtectorId -Confirm:$false -ErrorAction $STP)
 
-			$InfoMessage = ('The Recovery Infor for ' + $BootDrive + ' was saved to the Azure Active Directory')
-			Write-Verbose -Message $InfoMessage
-			$null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Information -EventId 1000 -Message $InfoMessage -ErrorAction $SCT)
-		}
-		else
-		{
-			$WarningMessage = ('No Recorvery Information for ' + $BootDrive + ' found...')
-			Write-Warning -Message $WarningMessage
-			$null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Warning -EventId 1001 -Message $WarningMessage -ErrorAction $SCT)
-		}
-	}
-	catch
-	{
-		#region ErrorHandler
-		# Get error record
-		[Management.Automation.ErrorRecord]$e = $_
+         $InfoMessage = ('The Recovery Infor for ' + $BootDrive + ' was saved to the Azure Active Directory')
+         Write-Verbose -Message $InfoMessage
+         $null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Information -EventId 1000 -Message $InfoMessage -ErrorAction $SCT)
+      }
+      else
+      {
+         $WarningMessage = ('No Recorvery Information for ' + $BootDrive + ' found...')
+         Write-Warning -Message $WarningMessage
+         $null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Warning -EventId 1001 -Message $WarningMessage -ErrorAction $SCT)
+      }
+   }
+   catch
+   {
+      #region ErrorHandler
+      # Get error record
+      [Management.Automation.ErrorRecord]$e = $_
 
-		# retrieve information about runtime error
-		$info = @{
-			Exception = $e.Exception.Message
-			Reason	 = $e.CategoryInfo.Reason
-			Target	 = $e.CategoryInfo.TargetName
-			Script	 = $e.InvocationInfo.ScriptName
-			Line	    = $e.InvocationInfo.ScriptLineNumber
-			Column	 = $e.InvocationInfo.OffsetInLine
-		}
+      # retrieve information about runtime error
+      $info = @{
+         Exception = $e.Exception.Message
+         Reason    = $e.CategoryInfo.Reason
+         Target    = $e.CategoryInfo.TargetName
+         Script    = $e.InvocationInfo.ScriptName
+         Line      = $e.InvocationInfo.ScriptLineNumber
+         Column    = $e.InvocationInfo.OffsetInLine
+      }
 
-		# Error Stack
-		$info | Out-String | Write-Verbose
+      # Error Stack
+      $info | Out-String | Write-Verbose
 
-		# Save to the Event Log
-		$null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Error -EventId 1001 -Message ($info.Exception) -ErrorAction $SCT)
+      # Save to the Event Log
+      $null = (Write-EventLog -LogName $LogName -Source $LogSource -EntryType Error -EventId 1001 -Message ($info.Exception) -ErrorAction $SCT)
 
-		# Just display the info on continue with the rest of the list
-		$paramWriteError = @{
-			Message   = ($info.Exception)
-			Exception = $info.Exception
-			TargetObject = $info.Target
-			ErrorAction = 'Stop'
-			WarningAction = 'Continue'
-		}
-		Write-Error @paramWriteError
-	}
+      # Just display the info on continue with the rest of the list
+      $paramWriteError = @{
+         Message       = ($info.Exception)
+         Exception     = $info.Exception
+         TargetObject  = $info.Target
+         ErrorAction   = 'Stop'
+         WarningAction = 'Continue'
+      }
+      Write-Error @paramWriteError
+   }
 }
 
 #region LICENSE
