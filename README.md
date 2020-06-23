@@ -4,22 +4,9 @@ A collection of PowerShell Scripts, Tools, and Modules. Mostly related to some o
 
 Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.net).
 
-## What is here?
+## Status
 
-The stuff here is mostly related to:
-
-- [ActiveDirectory](ActiveDirectory) (Active Directory related) **Legacy**
-- [AdvancedInstaller](AdvancedInstaller) (AdvancedInstaller related)
-- [AzureAD](AzureAD) (Azure Active Directory related)
-- [Exchange](Exchange) (On Premises) **Legacy**
-- [ExchangeOnline](ExchangeOnline) (Exchange Online, part of Office 365)
-- [MicrosoftTeams](MicrosoftTeams) (Part of Office 365)
-- [Misc](Misc) (Misc Tools and Scripts that might come handy)
-- [Office365](Office365) (All other Office 365 related)
-- [Office_Related](Office_Related) (Stuff Office 201x and 365 Client related) **Legacy**
-- [Skype_for_Business](Skype_for_Business) (On Premises Server and Client) **Legacy**
-- [UniFiTooling](UniFiTooling) (UBNT UniFi SDN) **Legacy**
-- [WSUS](WSUS) (Windows Server Update Services related) **Legacy**
+![CI](https://github.com/jhochwald/PowerShell-collection/workflows/CI/badge.svg)
 
 ### Legacy Notice
 
@@ -55,38 +42,11 @@ See the [Contribution Guide](CONTRIBUTING.md) for more details!
 
 More then welcome! Please see the [Contribution Guide](CONTRIBUTING.md) for more details!
 
-### Signed Code
-
-~~I will sign all scripts with a valid certificate soon, again.~~
-
-~~In the meantime, I use a test certificate from [Ascertia.com](https://www.ascertia.com) for testing everything.
-Please note: The [Ascertia.com](https://www.ascertia.com) might throw error, caused by a missing root certificate trust! This is a known issue, but for mow I need a test certificate!~~
-
-~~I sign all files with a time stamp from an official [Timestamp Server](http://timestamp.digicert.com). A time stamp prevents the script from failing if the certificate expires because users and programs can verify that the certificate was valid at the time of signing.~~
-
-~~I sign all scripts, modules, executables, and installers. In addition, all scripts and modules will be available plain (without signature).~~
-
 #### Any ideas?
 
 I still search for a free code signing certificate for my open-source projects. So, does anyone know a source?
 
 Even if there is no "free" version for my open-source projects, I would also pay for a valid certificate (again). However, most of the sources I found are not cheap! Does anyone know a cheap source for a signing certificate?
-
-### Installers
-
-In the past, I published a few things with a (signed) MSI installer package. These MSI installers were very basic; I know!
-
-~~But there is hope: The [Advanced Installer Team](http://www.advancedinstaller.com/) sponsored a _free_ [Advanced Installer Professional](https://www.advancedinstaller.com/top-professional-features.html) license for my open-source work. So things will change soon, and I will provide (much better) installers again in the very near future.~~
-I no longer have a license for [Advanced Installer Professional](https://www.advancedinstaller.com/top-professional-features.html). 
-
-I, still, highly recommend [Advanced Installer](http://www.advancedinstaller.com/), because it's they have a great set of [features](https://www.advancedinstaller.com/top-exclusive-features.html), and it fits perfect to my tooling and existing workflow. I used the [free version](https://www.advancedinstaller.com/top-freeware-features.html) to build some of my basic installers before. I switched to the [Professional](https://www.advancedinstaller.com/top-professional-features.html) version only because it can do a few more things I really needed. ~~Mainly the automated handling of digital signatures and the integration into my existing Continuous Integration chain.~~
-
-### Continuous Deployment
-
-~~I will transfer this project to my existing [TeamCity](https://www.jetbrains.com/teamcity/) Continuous Integration (CI) chain soon. As part of that I started to tweak a bit further (under the hood), like creating a few basic pester tests. I will publish all the stuff that I use for it as well.~~
-
-~~My goal is to automate the complete Continuous Integration (CI) and Continuous Delivery (CD) process like we did it within my old company. As a result, much better code should land here very soon.
-But: There is no timeframe planned, at least not yet!~~
 
 ### Default License
 
@@ -94,25 +54,27 @@ In my opinion: All the stuff here should be free, and the license should be as f
 
 **BSD 3-Clause License**
 
-Copyright (c) 2019, enabling Technology <[http://enatec.io](http://enatec.io)>
+Copyright (c) 2020, enabling Technology
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *By using the Software, you agree to the License, Terms and Conditions above!*
 
 ---
 
-**This is a third-party Software!**
+**DISCLAIMER**
 
-The developer(s) of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-
-The Software is not supported by Microsoft Corp (MSFT)!
+- Use at your own risk, etc.
+- This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+- This is a third-party Software
+- The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+- The Software is not supported by Microsoft Corp (MSFT)
+- By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+- If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
