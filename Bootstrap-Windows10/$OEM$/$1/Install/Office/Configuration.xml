@@ -1,0 +1,100 @@
+<Configuration>
+    <Info Description="enabling Technology default Click 2 Run installation" />
+    <!-- Only this Channel is supported with this kind of installation -->
+    <Add OfficeClientEdition="64" Channel="PerpetualVL2019" ForceUpgrade="TRUE" MigrateArch="TRUE" AllowCdnFallback="True" OfficeMgmtCOM="False">
+        <!-- Office 365 (Office 2019 in this case) -->
+        <Product ID="ProPlus2019Volume">
+            <Language ID="de-de" />
+            <Language ID="en-us" />
+            <!-- No Access -->
+            <ExcludeApp ID="Access" />
+            <!-- No Sync -->
+            <ExcludeApp ID="Groove" />
+            <!-- We have OneDrive Build into Windows 10 -->
+            <ExcludeApp ID="OneDrive" />
+            <!-- We use OneNote from the App Store -->
+            <!-- <ExcludeApp ID="OneNote" /> -->
+            <!-- No Publish -->
+            <ExcludeApp ID="Publisher" />
+            <!-- No Lync/Skype for Business -->
+            <ExcludeApp ID="Lync" />
+        </Product>
+        <Product ID="VisioPro2019Volume">
+            <Language ID="de-de" />
+            <Language ID="en-us" />
+            <!-- No Access -->
+            <ExcludeApp ID="Access" />
+            <!-- No Sync -->
+            <ExcludeApp ID="Groove" />
+            <!-- We have OneDrive Build into Windows 10 -->
+            <ExcludeApp ID="OneDrive" />
+            <!-- We use OneNote from the App Store -->
+            <!-- <ExcludeApp ID="OneNote" /> -->
+            <!-- No Publish -->
+            <ExcludeApp ID="Publisher" />
+            <!-- No Lync/Skype for Business -->
+            <ExcludeApp ID="Lync" />
+        </Product>
+        <Product ID="ProjectPro2019Volume">
+            <Language ID="de-de" />
+            <Language ID="en-us" />
+            <!-- No Access -->
+            <ExcludeApp ID="Access" />
+            <!-- No Sync -->
+            <ExcludeApp ID="Groove" />
+            <!-- We have OneDrive Build into Windows 10 -->
+            <ExcludeApp ID="OneDrive" />
+            <!-- We use OneNote from the App Store -->
+            <!-- <ExcludeApp ID="OneNote" /> -->
+            <!-- No Publish -->
+            <ExcludeApp ID="Publisher" />
+            <!-- No Lync/Skype for Business -->
+            <ExcludeApp ID="Lync" />
+        </Product>
+        <!-- Will be removed soon -->
+        <Product ID="SkypeforBusiness2019Volume">
+            <Language ID="de-de" />
+            <Language ID="en-us" />
+            <!-- No Access -->
+            <ExcludeApp ID="Access" />
+            <!-- No Sync -->
+            <ExcludeApp ID="Groove" />
+            <!-- We have OneDrive Build into Windows 10 -->
+            <ExcludeApp ID="OneDrive" />
+            <!-- We use OneNote from the App Store -->
+            <!-- <ExcludeApp ID="OneNote" /> -->
+            <!-- No Publish -->
+            <ExcludeApp ID="Publisher" />
+        </Product>
+    </Add>
+    <!-- Silent Unattended Install -->
+    <Display Level="NONE" AcceptEULA="TRUE" />
+    <!-- Only for terminal Servers -->
+    <Property Name="SharedComputerLicensing" Value="0" />
+    <!-- Do not register any Incons -->
+    <Property Name="PinIconsToTaskbar" Value="FALSE" />
+    <!-- Use the Microsoft CDN -->
+    <Property Name="SCLCacheOverride" Value="0" />
+    <!-- We Active this Office via KMS -->
+    <Property Name="AUTOACTIVATE" Value="1" />
+    <!-- Close all running Office apps -->
+    <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+    <!-- Apply Updates -->
+    <Updates Enabled="TRUE" />
+    <!-- Remove all older MSI installations -->
+    <RemoveMSI All="TRUE" />
+    <!-- Customize this installation -->
+    <AppSettings>
+        <!-- Set the owner -->
+        <Setup Name="Company" Value="enabling Technology" />
+        <!-- Only a few default settings are customized -->
+        <User Key="software\microsoft\office\16.0\osm" Name="enableupload" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentUpload" />
+        <User Key="software\microsoft\office\16.0\osm" Name="enablelogging" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableLogging" />
+        <!-- Microsoft Default file format -->
+        <User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
+        <User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
+        <User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
+    </AppSettings>
+    <!-- No logging -->
+    <Logging Level="Off" />
+</Configuration>
