@@ -34,7 +34,7 @@ process
    # Splat the parameters
    $paramGetWmiObject = @{
       Namespace = 'root\cimv2\power'
-      Class	    = 'Win32_PowerPlan'
+      Class     = 'Win32_PowerPlan'
    }
 
    # Gather the PowerPlan information

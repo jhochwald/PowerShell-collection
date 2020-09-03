@@ -145,7 +145,7 @@ begin
          [string] $NameSpace = 'root\cimv2',
          [string[]] $ComputerName = $Env:COMPUTERNAME,
          [ValidateSet('Default', 'Dcom', 'Wsman')][string] $Protocol = 'Default',
-      [string[]] $Properties = '*')
+         [string[]] $Properties = '*')
 
       begin
       {
@@ -219,8 +219,8 @@ process
    }
 
    # Set Date/Time
-   $Date        = (Get-Date -Format 'yyyy-MM-dd')
-   $Time        = (Get-Date -Format 'HH:mm')
+   $Date = (Get-Date -Format 'yyyy-MM-dd')
+   $Time = (Get-Date -Format 'HH:mm')
 
    # Install Site
    $RegistrySite = 'HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters'
@@ -240,95 +240,106 @@ process
          $_.IPAddress
       } | Select-Object -ExpandProperty IPAddress | Where-Object -FilterScript {
          $_ -notlike '*:*'
-   })
+      })
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallDate -PropertyType $RegSz -Value $(if ($Date)
          {
             $Date
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallTime -PropertyType $RegSz -Value $(if ($Time)
          {
             $Time
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallHostname -PropertyType $RegSz -Value $(if ($Hardware.Name)
          {
             $Hardware.Name
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallIP -PropertyType $RegSz -Value $(if ($WindowsNicInfo)
          {
             $WindowsNicInfo
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallSite -PropertyType $RegSz -Value $(if ($Site)
          {
             $Site
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name HardwareManufacturer -PropertyType $RegSz -Value $(if ($Hardware.Manufacturer)
          {
             $Hardware.Manufacturer
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name HardwareModel -PropertyType $RegSz -Value $(if ($Hardware.Model)
          {
             $Hardware.Model
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallOperationsystem -PropertyType $RegSz -Value $(if ($WindowsVersionInfo.Caption)
          {
             $WindowsVersionInfo.Caption
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallArchitecture -PropertyType $RegSz -Value $(if ($WindowsVersionInfo.OSArchitecture)
          {
             $WindowsVersionInfo.OSArchitecture
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallReleaseId -PropertyType $RegSz -Value $(if ($WindowsReleaseId)
          {
             $WindowsReleaseId
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
    $null = (New-ItemProperty -Path $RegistryPath -Name InstallVersion -PropertyType $RegSz -Value $(if ($WindowsVersionInfo.Version)
          {
             $WindowsVersionInfo.Version
-         } else
+         }
+         else
          {
             $DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+         }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 }
 
 end

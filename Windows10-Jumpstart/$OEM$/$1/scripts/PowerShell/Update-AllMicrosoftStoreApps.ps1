@@ -15,7 +15,7 @@
       New version that use CIM instead of WMI
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
@@ -31,14 +31,14 @@ begin
    Start-Sleep -Seconds 5
 
    $paramGetCimInstance = @{
-	   Namespace   = 'Root\cimv2\mdm\dmmap'
-	   ClassName   = 'MDM_EnterpriseModernAppManagement_AppManagement01'
-	   ErrorAction = $SCT
+      Namespace   = 'Root\cimv2\mdm\dmmap'
+      ClassName   = 'MDM_EnterpriseModernAppManagement_AppManagement01'
+      ErrorAction = $SCT
    }
 
    $paramInvokeCimMethod = @{
-	   MethodName  = 'UpdateScanMethod'
-	   ErrorAction = $SCT
+      MethodName  = 'UpdateScanMethod'
+      ErrorAction = $SCT
    }
    #endregion GlobalDefaults
 }

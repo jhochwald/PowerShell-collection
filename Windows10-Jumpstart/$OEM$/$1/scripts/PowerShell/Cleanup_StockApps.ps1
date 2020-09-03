@@ -81,8 +81,9 @@ process
       {
          $null = (Get-AppxPackage -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
                $_.name -like '*' + $item + '*'
-         } | Remove-AppxPackage -Confirm:$false -PreserveApplicationData:$false -ErrorAction $SCT -WarningAction $SCT)
-      } catch
+            } | Remove-AppxPackage -Confirm:$false -PreserveApplicationData:$false -ErrorAction $SCT -WarningAction $SCT)
+      }
+      catch
       {
          Write-Verbose -Message 'Whoopsie'
       }
@@ -91,8 +92,9 @@ process
       {
          $null = (Get-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
                $_.name -like '*' + $item + '*'
-         } | Remove-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT)
-      } catch
+            } | Remove-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT)
+      }
+      catch
       {
          Write-Verbose -Message 'Whoopsie'
       }
@@ -101,8 +103,9 @@ process
       {
          $null = (Get-AppxProvisionedPackage -Online -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
                $_.DisplayName -like '*' + $item + '*'
-         } | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction $SCT -WarningAction $SCT)
-      } catch
+            } | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction $SCT -WarningAction $SCT)
+      }
+      catch
       {
          Write-Verbose -Message 'Whoopsie'
       }
@@ -116,7 +119,7 @@ process
          Get-ItemProperty -Path $_.PSPath -ErrorAction $SCT -WarningAction $SCT
       } | Where-Object -FilterScript {
          $_ -match 'McAfee Security'
-   } | Select-Object -ExpandProperty UninstallString)
+      } | Select-Object -ExpandProperty UninstallString)
 
    if ($McAfeeSecurityApp)
    {

@@ -16,7 +16,7 @@
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin

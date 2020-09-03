@@ -24,7 +24,7 @@
       https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference
 #>
 [CmdletBinding(ConfirmImpact = 'Medium',
-               SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
@@ -252,7 +252,7 @@ process
             # Splat the parameters for Add-MpPreference
             $SplatAddMpPreference = @{
                ExclusionPath = $ExcludePath
-               Force		     = $true
+               Force         = $true
                ErrorAction   = 'Stop'
                WarningAction = 'Continue'
             }
@@ -267,11 +267,11 @@ process
             # retrieve information about runtime error
             $info = @{
                Exception = $e.Exception.Message
-               Reason	 = $e.CategoryInfo.Reason
-               Target	 = $e.CategoryInfo.TargetName
-               Script	 = $e.InvocationInfo.ScriptName
-               Line	    = $e.InvocationInfo.ScriptLineNumber
-               Column	 = $e.InvocationInfo.OffsetInLine
+               Reason    = $e.CategoryInfo.Reason
+               Target    = $e.CategoryInfo.TargetName
+               Script    = $e.InvocationInfo.ScriptName
+               Line      = $e.InvocationInfo.ScriptLineNumber
+               Column    = $e.InvocationInfo.OffsetInLine
             }
 
             # Error Stack

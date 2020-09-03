@@ -14,7 +14,7 @@
       Initial
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin

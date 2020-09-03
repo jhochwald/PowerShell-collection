@@ -10,7 +10,8 @@
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
-begin {
+begin
+{
    Write-Output -InputObject 'Install all missing Microsoft updated'
 
    #region Defaults
@@ -37,7 +38,7 @@ begin {
       #>
 
       [CmdletBinding(ConfirmImpact = 'None',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       [OutputType([bool])]
       param ()
 
@@ -94,7 +95,7 @@ begin {
       #>
 
       [CmdletBinding(ConfirmImpact = 'Low',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       param ()
 
       begin
@@ -125,7 +126,8 @@ begin {
    #endregion HelperFunctions
 }
 
-process {
+process
+{
    if (Test-GetWUServiceManager -ErrorAction $SCT)
    {
       $null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
@@ -142,8 +144,9 @@ process {
    {
       if (Test-GetWUServiceManager -ErrorAction $SCT)
       {
-          $null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
-      } else
+         $null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
+      }
+      else
       {
          Write-Warning -Message 'Unable to apply the latest Microsoft updates, please check and apply them manually!' -WarningAction Stop
       }

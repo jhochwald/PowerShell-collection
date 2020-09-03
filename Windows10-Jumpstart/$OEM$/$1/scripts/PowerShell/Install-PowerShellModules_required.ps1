@@ -33,11 +33,12 @@ begin
    )
 }
 
-process {
+process
+{
    # Force the installation of the Modules listed above
    $null = ($PowerShellModuleList | ForEach-Object -Process {
          (Install-Module -Name $_ -Scope AllUsers -Repository PSGallery -Force -Confirm:$false -AllowClobber -SkipPublisherCheck -ErrorAction $SCT)
-   })
+      })
 
    # Refresh
    $null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)

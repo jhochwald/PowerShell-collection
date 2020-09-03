@@ -11,10 +11,11 @@
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
-begin {
+begin
+{
    Write-Output -InputObject 'Removes all public Desktop Links'
 
    #region GlobalDefaults
@@ -41,7 +42,8 @@ begin {
    #endregion GlobalDefaults
 }
 
-process {
+process
+{
    if ($pscmdlet.ShouldProcess('All public Desktop Links', 'Remove'))
    {
       $null = (Get-ChildItem @paramGetChildItem | Select-Object -ExpandProperty FullName | Remove-Item @paramRemoveItem)

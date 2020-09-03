@@ -60,27 +60,27 @@ begin
       #>
 
       [CmdletBinding(ConfirmImpact = 'None',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       param
       (
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         HelpMessage = 'Add help message for user')]
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('RegistryPath')]
          [string]
          $Path,
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         HelpMessage = 'Add help message for user')]
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('Property', 'Type')]
          [string]
          $PropertyType,
          [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName)]
          [AllowEmptyCollection()]
          [AllowEmptyString()]
          [AllowNull()]
@@ -122,7 +122,7 @@ process
    # Do not use sign-in info to automatically finish setting up device after an update or restart
    $sid = ((Get-CimInstance -ClassName Win32_UserAccount | Where-Object -FilterScript {
             $_.Name -eq "$env:USERNAME"
-   }).SID)
+         }).SID)
    $null = (Confirm-RegistryItemProperty -Path ('HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\UserARSO\' + $sid + 'OptOut') -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 
    #region DisableTelemetry
@@ -146,7 +146,7 @@ process
    $null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC\PreventHandwritingDataSharing' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
    $null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\TextInput\AllowLinguisticDataCollection' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
 
-   $null = (Get-Scheduledtask -TaskName 'Microsoft Compatibility Appraiser','ProgramDataUpdater','Consolidator','KernelCeipTask','UsbCeip','Microsoft-Windows-DiskDiagnosticDataCollector','GatherNetworkInfo','QueueReporting' -ErrorAction $SCT | Disable-scheduledtask -ErrorAction $SCT)
+   $null = (Get-Scheduledtask -TaskName 'Microsoft Compatibility Appraiser', 'ProgramDataUpdater', 'Consolidator', 'KernelCeipTask', 'UsbCeip', 'Microsoft-Windows-DiskDiagnosticDataCollector', 'GatherNetworkInfo', 'QueueReporting' -ErrorAction $SCT | Disable-scheduledtask -ErrorAction $SCT)
    #endregion DisableTelemetry
 
    #region DisableWiFiSense
@@ -179,7 +179,7 @@ process
       } | ForEach-Object -Process {
          $null = (Confirm-RegistryItemProperty -Path ($_.PsPath + 'Disabled') -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
          $null = (Confirm-RegistryItemProperty -Path ($_.PsPath + 'DisabledByUser') -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-   })
+      })
    $OFS = ' '
    #endregion DisableBackgroundApps
 
@@ -656,7 +656,7 @@ process
    {
       $null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
                $_.LanguageTag -ne 'en-US'
-      }) -Force -ErrorAction $SCT)
+            }) -Force -ErrorAction $SCT)
    }
    #endregion RemoveENKeyboard
 
@@ -783,16 +783,16 @@ process
    #region InstallWindowsStore
    $null = (Get-AppxPackage -AllUsers 'Microsoft.DesktopAppInstaller' -ErrorAction $SCT | ForEach-Object {
          $null = (Add-AppxPackage -DisableDevelopmentMode -Register ($_.InstallLocation + '\AppXManifest.xml') -ErrorAction $SCT)
-   })
+      })
    $null = (Get-AppxPackage -AllUsers 'Microsoft.Services.Store.Engagement' -ErrorAction $SCT | ForEach-Object {
          $null = (Add-AppxPackage -DisableDevelopmentMode -Register ($_.InstallLocation + '\AppXManifest.xml') -ErrorAction $SCT)
-   })
+      })
    $null = (Get-AppxPackage -AllUsers 'Microsoft.StorePurchaseApp' -ErrorAction $SCT | ForEach-Object {
          $null = (Add-AppxPackage -DisableDevelopmentMode -Register ($_.InstallLocation + '\AppXManifest.xml') -ErrorAction $SCT)
-   })
+      })
    $null = (Get-AppxPackage -AllUsers 'Microsoft.WindowsStore' -ErrorAction $SCT | ForEach-Object {
          $null = (Add-AppxPackage -DisableDevelopmentMode -Register ($_.InstallLocation + '\AppXManifest.xml') -ErrorAction $SCT)
-   })
+      })
    #endregion InstallWindowsStore
 
    #region DisableFullscreenOptims
@@ -849,14 +849,14 @@ process
    #region InstallSSHClient
    $null = (Get-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object {
          $_.Name -like 'OpenSSH.Client*'
-   } | Add-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
+      } | Add-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
    #endregion InstallSSHClient
 
    #region UninstallSSHServer
    $null = (Stop-Service -Name 'sshd' -Force -NoWait -WarningAction $SCT -ErrorAction $SCT)
    $null = (Get-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object {
          $_.Name -like 'OpenSSH.Server*'
-   } | Remove-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
+      } | Remove-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
    #endregion UninstallSSHServer
 
    #region SetPhotoViewerAssociation
@@ -966,7 +966,7 @@ process
    #region
    if (Get-WindowsEdition -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object -FilterScript {
          $_.Edition -eq 'Professional' -or $_.Edition -eq 'Enterprise'
-   })
+      })
    {
       if ((Get-CimInstance -ClassName CIM_Processor -WarningAction $SCT -ErrorAction $SCT).VirtualizationFirmwareEnabled -eq $true)
       {
@@ -1080,7 +1080,7 @@ process
          $null = (Get-WindowsCapability -Online -ErrorAction $SCT | Where-Object -FilterScript {
                #$_.Name -cmatch $IncludedApps
                ($_.Name -like $IncludedApp) -and ($_.State -eq 'Installed')
-         } | Remove-WindowsCapability -Online -ErrorAction $SCT)
+            } | Remove-WindowsCapability -Online -ErrorAction $SCT)
       }
       catch
       {
@@ -1104,12 +1104,12 @@ process
    $settings = (New-ScheduledTaskSettingsSet -Compatibility 'Win8' -StartWhenAvailable -ErrorAction $SCT)
    $principal = (New-ScheduledTaskPrincipal -UserId $env:USERNAME -RunLevel 'Highest' -ErrorAction $SCT)
    $params = @{
-      'TaskName'  = 'Update Cleanup'
-      'Action'    = $action
-      'Trigger'   = $trigger
-      'Settings'  = $settings
-      'Principal' = $principal
-      'Force'     = $true
+      'TaskName'    = 'Update Cleanup'
+      'Action'      = $action
+      'Trigger'     = $trigger
+      'Settings'    = $settings
+      'Principal'   = $principal
+      'Force'       = $true
       'ErrorAction' = $SCT
    }
    $null = (Register-ScheduledTask @params)
@@ -1124,12 +1124,12 @@ process
    $settings = (New-ScheduledTaskSettingsSet -Compatibility 'Win8' -StartWhenAvailable -ErrorAction $SCT)
    $principal = (New-ScheduledTaskPrincipal -UserId 'NT AUTHORITY\SYSTEM' -RunLevel 'Highest' -ErrorAction $SCT)
    $params = @{
-      'TaskName'  = 'SoftwareDistribution'
-      'Action'    = $action
-      'Trigger'   = $trigger
-      'Settings'  = $settings
-      'Principal' = $principal
-      'Force'     = $true
+      'TaskName'    = 'SoftwareDistribution'
+      'Action'      = $action
+      'Trigger'     = $trigger
+      'Settings'    = $settings
+      'Principal'   = $principal
+      'Force'       = $true
       'ErrorAction' = $SCT
    }
    $null = (Register-ScheduledTask @params)
@@ -1142,12 +1142,12 @@ process
    $settings = (New-ScheduledTaskSettingsSet -Compatibility 'Win8' -StartWhenAvailable -ErrorAction $SCT)
    $principal = (New-ScheduledTaskPrincipal -UserId 'NT AUTHORITY\SYSTEM' -RunLevel 'Highest' -ErrorAction $SCT)
    $params = @{
-      'TaskName'  = 'Temp'
-      'Action'    = $action
-      'Trigger'   = $trigger
-      'Settings'  = $settings
-      'Principal' = $principal
-      'Force'     = $true
+      'TaskName'    = 'Temp'
+      'Action'      = $action
+      'Trigger'     = $trigger
+      'Settings'    = $settings
+      'Principal'   = $principal
+      'Force'       = $true
       'ErrorAction' = $SCT
    }
    $null = (Register-ScheduledTask @params)
@@ -1166,7 +1166,7 @@ process
          $null = (Get-WindowsCapability -Online -ErrorAction $SCT | Where-Object -FilterScript {
                #$_.Name -cmatch $IncludedApps
                ($_.Name -like $IncludedApp) -and ($_.State -eq 'Installed')
-         } | Remove-WindowsCapability -Online -ErrorAction $SCT)
+            } | Remove-WindowsCapability -Online -ErrorAction $SCT)
       }
       catch
       {

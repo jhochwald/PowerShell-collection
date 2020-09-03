@@ -20,7 +20,7 @@
       https://chocolatey.org/docs
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin

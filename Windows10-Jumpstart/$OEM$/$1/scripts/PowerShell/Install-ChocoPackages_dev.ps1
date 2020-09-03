@@ -19,7 +19,7 @@
       https://chocolatey.org/docs
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
@@ -49,9 +49,9 @@ begin
 
    $AllChocoPackages = @(
       'sql-server-management-studio'
-		'azure-data-studio'
-		'azure-cli'
-		'microsoftazurestorageexplorer'
+      'azure-data-studio'
+      'azure-cli'
+      'microsoftazurestorageexplorer'
       'gh'
       'github-desktop'
       'mongodb'

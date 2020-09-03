@@ -60,27 +60,27 @@ begin
       #>
 
       [CmdletBinding(ConfirmImpact = 'None',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       param
       (
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         HelpMessage = 'Add help message for user')]
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('RegistryPath')]
          [string]
          $Path,
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         HelpMessage = 'Add help message for user')]
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('Property', 'Type')]
          [string]
          $PropertyType,
          [Parameter(ValueFromPipeline,
-         ValueFromPipelineByPropertyName)]
+            ValueFromPipelineByPropertyName)]
          [AllowEmptyCollection()]
          [AllowEmptyString()]
          [AllowNull()]
@@ -362,7 +362,7 @@ process
    $langs = (Get-WinUserLanguageList -ErrorAction $SCT)
    $null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
             $_.LanguageTag -ne 'en-US'
-   }) -Force -ErrorAction $SCT)
+         }) -Force -ErrorAction $SCT)
    #endregion RemoveENKeyboard
 
    #region EnableEnhPointerPrecision

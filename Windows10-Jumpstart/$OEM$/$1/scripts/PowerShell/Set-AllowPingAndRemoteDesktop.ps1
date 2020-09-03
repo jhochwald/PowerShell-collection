@@ -32,7 +32,7 @@
       Run this elevated!!!
 #>
 [CmdletBinding(ConfirmImpact = 'Medium',
-               SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param
 (
    [Parameter(ValueFromPipeline)]
@@ -51,15 +51,15 @@ begin
 
    # Splat the Set-ItemProperty parameters
    $paramSetItemProperty = @{
-      Path		   = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
-      Name		   = 'fDenyTSConnections'
-      Value		   = 0
+      Path        = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
+      Name        = 'fDenyTSConnections'
+      Value       = 0
       ErrorAction = $CNT
    }
 
    # Splat the Enable-NetFirewallRule parameters
    $paramEnableNetFirewallRule = @{
-      Confirm	   = $false
+      Confirm     = $false
       ErrorAction = $CNT
    }
 }
