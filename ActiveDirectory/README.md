@@ -5,4 +5,3 @@ This is my personal [reaction](https://hochwald.net/microsoft-rolls-back-decisio
 In my opinion, the community always should have some benefits from the Internal Use Rights (IUR) program and/or Action Pack. Now that I decided to drop out, there will be no more such benefits.
 
 I will _no longer maintain_ the scripts related to the Microsoft Office (on Premises) servers. They will remain here, but unmaintained. Fork the repository and maintain or extend them if you like to. The [License](https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE) allows that easily.
-

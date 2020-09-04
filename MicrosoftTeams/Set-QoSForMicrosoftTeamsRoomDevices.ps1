@@ -36,11 +36,11 @@
       https://twitter.com/StaleHansen/status/1294341225647083522
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param
 (
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [Alias('AppName')]
    [string]
    $AppPathNameMatchCondition = $null
