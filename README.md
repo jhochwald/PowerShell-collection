@@ -27,8 +27,8 @@ I was asked why all my scripts contain so many comments, and why they are so wel
 #### Why in general?
 
 Many ask me that question!
-The answer is simple: "*I like to contribute back to the community!*"
-The long answer: "*I still try to automate all the things! And I love to show what PowerShell can do... As a result, I started to publish a lot of code. Things I build, things I like, or just things I found interesting to build :-)*"
+The answer is simple: "_I like to contribute back to the community!_"
+The long answer: "_I still try to automate all the things! And I love to show what PowerShell can do... As a result, I started to publish a lot of code. Things I build, things I like, or just things I found interesting to build :-)_"
 
 ### Found a bug or Issue?
 
@@ -65,7 +65,7 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-*By using the Software, you agree to the License, Terms and Conditions above!*
+_By using the Software, you agree to the License, Terms and Conditions above!_
 
 ---
 
