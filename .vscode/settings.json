@@ -1,19 +1,35 @@
 {
-	//-------- Files configuration --------
-	// When enabled, will trim trailing whitespace when you save a file.
+   "window.zoomLevel": 0,
+   "explorer.confirmDelete": false,
+   "terminal.integrated.shell.windows": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+   "explorer.confirmDragAndDrop": false,
+   "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.organizeImports": true
+   },
+   "editor.formatOnSave": true,
+   "git.confirmSync": false,
+   "prettier.singleQuote": false,
+   "prettier.withNodeModules": true,
+   "prettier.tabWidth": 2,
+   "prettier.printWidth": 140,
+   "prettier.bracketSpacing": true,
+   "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
+   },
+   "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+   },
+   "editor.wordWrap": "wordWrapColumn",
+   "editor.wordWrapColumn": 140,
+   "editor.fontSize": 14,
 	"files.trimTrailingWhitespace": true,
 	"search.exclude": {
 		"release": true,
 		"": true
-	},
-	//-------- PowerShell Configuration --------
-	// Use a custom PowerShell Script Analyzer settings file for this workspace.
-	// Relative paths for this setting are always relative to the workspace root dir.
 	"powershell.scriptAnalysis.settingsPath": "ScriptAnalyzerSettings.psd1",
-	// TNo focus on console when executing
 	"powershell.integratedConsole.focusConsoleOnExecute": false,
-	// Don't start integrated console on startup
-	"powershell.integratedConsole.showOnStartup": false,
-	// Assume files are PowerShell by default
+   "powershell.integratedConsole.showOnStartup": false,
+   "powershell.codeFormatting.addWhitespaceAroundPipe": true,
 	"files.defaultLanguage": "powershell"
 }
