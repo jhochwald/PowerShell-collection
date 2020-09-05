@@ -64,16 +64,16 @@
       This script is only a quick hack to harden (and secure) any new system, even if it is not managed afterwords.
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param
 (
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [Alias('RulesCsv')]
    [string]
    $CsvPath = '.\Bootstrap-MicrosoftDefenderConfiguration.csv',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [Alias('EnforceRule')]
    [switch]
    $Force = $null
@@ -531,16 +531,17 @@ process
 
       # Download
       $paramInvokeWebRequest = @{
-         Uri		   = $ProcessMitigationUri
-         OutFile	   = $ProcessMitigationFile
-         Method	   = 'Get'
+         Uri         = $ProcessMitigationUri
+         OutFile     = $ProcessMitigationFile
+         Method      = 'Get'
          ContentType = 'text/xml'
          ErrorAction = 'Continue'
       }
       $null = (Invoke-WebRequest @paramInvokeWebRequest)
    }
 
-   if (Test-Path -Path $ProcessMitigationFile -ErrorAction SilentlyContinue) {
+   if (Test-Path -Path $ProcessMitigationFile -ErrorAction SilentlyContinue)
+   {
       Write-Verbose -Message 'Enabling Exploit Protection'
 
       # Apply the File
@@ -548,13 +549,15 @@ process
 
       # Cleanup
       $paramRemoveItem = @{
-         Path		   = $ProcessMitigationFile
-         Force		   = $true
-         Confirm	   = $false
+         Path        = $ProcessMitigationFile
+         Force       = $true
+         Confirm     = $false
          ErrorAction = 'Continue'
       }
       $null = (Remove-Item @paramRemoveItem)
-   } else {
+   }
+   else
+   {
       Write-Warning -Message ('The local Process Mitigation file (' + $ProcessMitigationFile + ') is missing! Not enabling Exploit Protection.')
    }
    #endregion ProcessMitigation

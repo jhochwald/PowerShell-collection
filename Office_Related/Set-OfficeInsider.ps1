@@ -10,6 +10,7 @@
 
    .PARAMETER Channel
    The Office Release Channel
+
    Possible Values for the Channel Variable are:
    Insiderfast - With weekly builds, not generally supported
    FirstReleaseCurrent - Office Insider Slow aka First Release Channel

@@ -29,7 +29,7 @@
 param
 (
    [Parameter(ValueFromPipeline = $true,
-				  Position = 1)]
+      Position = 1)]
    [Alias('s')]
    [switch]
    $Silent
