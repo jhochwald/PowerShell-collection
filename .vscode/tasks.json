@@ -7,28 +7,20 @@
 // ${fileExtname}: the current opened file's extension
 // ${cwd}: the current working directory of the spawned process
 {
-	// See https://go.microsoft.com/fwlink/?LinkId=733558
-	// for the documentation about the tasks.json format
-	"version": "2.0.0",
-	// Start PowerShell
-	"windows": {
-		"command": "powershell.exe",
-		"args": [
-			"-NoProfile",
-			"-ExecutionPolicy",
-			"Bypass"
-		]
-	},
-	"linux": {
-		"command": "/usr/bin/pwsh",
-		"args": [
-			"-NoProfile"
-		]
-	},
-	"osx": {
-		"command": "/usr/local/bin/pwsh",
-		"args": [
-			"-NoProfile"
-		]
-	}
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  // Start PowerShell
+  "windows": {
+    "command": "powershell.exe",
+    "args": ["-NoProfile", "-ExecutionPolicy", "Bypass"]
+  },
+  "linux": {
+    "command": "/usr/bin/pwsh",
+    "args": ["-NoProfile"]
+  },
+  "osx": {
+    "command": "/usr/local/bin/pwsh",
+    "args": ["-NoProfile"]
+  }
 }
