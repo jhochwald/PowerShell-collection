@@ -2,6 +2,8 @@
 
 The enabling Technology Windows 10 Jumpstart installation
 
+**This will be moved to a seperate repository soon.**
+
 ## What is this?
 
 It is part of an internal enabling Technology Project
