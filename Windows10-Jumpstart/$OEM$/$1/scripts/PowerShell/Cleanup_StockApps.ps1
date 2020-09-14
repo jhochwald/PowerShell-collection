@@ -7,6 +7,9 @@
       .DESCRIPTION
       Remove Windows 10 Stock Applications
 
+      .NOTES
+      Version 1.0.1
+
       .LINK
       http://beyond-datacenter.com
 #>
@@ -15,124 +18,130 @@ param ()
 
 begin
 {
-   Write-Output -InputObject 'Remove Windows 10 Stock Applications'
+	Write-Output -InputObject 'Remove Windows 10 Stock Applications'
 
-   #region Defaults
-   $SCT = 'SilentlyContinue'
-   #endregion Defaults
+	#region Defaults
+	$SCT = 'SilentlyContinue'
+	#endregion Defaults
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   #region AppList
-   $AllPackages = @(
-      'Microsoft.Windows.Cortana',
-      '*Cortana*', 'Microsoft.Bing*',
-      'Microsoft.Xbox*',
-      'Microsoft.WindowsPhone',
-      '*Solitaire*',
-      'Microsoft.People',
-      'Microsoft.Zune*',
-      'Microsoft.WindowsSoundRecorder',
-      'microsoft.windowscommunicationsapps',
-      'Microsoft.SkypeApp',
-      'officehub',
-      '3dbuilder',
-      'windowscamera',
-      '*Dell*',
-      '*Dropbox*',
-      '*Facebook*',
-      'Microsoft.WindowsFeedbackHub',
-      'Microsoft.Getstarted',
-      '*Autodesk*',
-      '*Keeper*',
-      '*McAfee*',
-      '*Minecraft*',
-      '*Netflix*',
-      'Microsoft.MicrosoftOfficeHub',
-      'Microsoft.OneConnect',
-      '*Plex*',
-      'Microsoft.SkypeApp',
-      '*Solitaire*',
-      'Microsoft.Office.Sway',
-      '*Twitter*',
-      '*DisneyMagicKingdom*',
-      '*Disney*',
-      '*HiddenCityMysteryofShadows*',
-      '*HiddenCity*',
-      'Microsoft.YourPhone',
-      'Microsoft.WindowsMaps',
-      'Microsoft.Print3D',
-      'Microsoft.MixedReality.Portal',
-      'Microsoft.Microsoft3DViewer',
-      'Microsoft.GetHelp',
-      'Microsoft.MicrosoftStickyNotes',
-      'Microsoft.Windows.Photos'
-      'Microsoft.MSPaint'
-   )
-   #endregion AppList
+	#region AppList
+	$AllPackages = @(
+		'Microsoft.Windows.Cortana',
+		'*Cortana*', 'Microsoft.Bing*',
+		'Microsoft.Xbox*',
+		'Microsoft.WindowsPhone',
+		'*Solitaire*',
+		'Microsoft.People',
+		'Microsoft.Zune*',
+		'Microsoft.WindowsSoundRecorder',
+		'microsoft.windowscommunicationsapps',
+		'Microsoft.SkypeApp',
+		'officehub',
+		'3dbuilder',
+		'windowscamera',
+		'*Dell*',
+		'*Dropbox*',
+		'*Facebook*',
+		'Microsoft.WindowsFeedbackHub',
+		'Microsoft.Getstarted',
+		'*Autodesk*',
+		'*Keeper*',
+		'*McAfee*',
+		'*Minecraft*',
+		'*Netflix*',
+		'Microsoft.MicrosoftOfficeHub',
+		'Microsoft.OneConnect',
+		'*Plex*',
+		'Microsoft.SkypeApp',
+		'*Solitaire*',
+		'Microsoft.Office.Sway',
+		'*Twitter*',
+		'*DisneyMagicKingdom*',
+		'*Disney*',
+		'*HiddenCityMysteryofShadows*',
+		'*HiddenCity*',
+		'Microsoft.YourPhone',
+		'Microsoft.WindowsMaps',
+		'Microsoft.Print3D',
+		'Microsoft.MixedReality.Portal',
+		'Microsoft.Microsoft3DViewer',
+		'Microsoft.GetHelp',
+		'Microsoft.MicrosoftStickyNotes',
+		'Microsoft.Windows.Photos'
+		'Microsoft.MSPaint'
+	)
+	#endregion AppList
 }
 
 process
 {
-   #region AppListLoop
-   foreach ($item in $AllPackages)
-   {
-      try
-      {
-         $null = (Get-AppxPackage -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
-               $_.name -like '*' + $item + '*'
-            } | Remove-AppxPackage -Confirm:$false -PreserveApplicationData:$false -ErrorAction $SCT -WarningAction $SCT)
-      }
-      catch
-      {
-         Write-Verbose -Message 'Whoopsie'
-      }
+	#region AppListLoop
+	foreach ($item in $AllPackages)
+	{
+		try
+		{
+			# Stop Search - Gain performance
+			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-      try
-      {
-         $null = (Get-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
-               $_.name -like '*' + $item + '*'
-            } | Remove-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT)
-      }
-      catch
-      {
-         Write-Verbose -Message 'Whoopsie'
-      }
+			$null = (Get-AppxPackage -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
+					$_.name -like '*' + $item + '*'
+				} | Remove-AppxPackage -Confirm:$false -PreserveApplicationData:$false -ErrorAction $SCT -WarningAction $SCT)
+		}
+		catch
+		{
+			Write-Verbose -Message 'Whoopsie'
+		}
 
-      try
-      {
-         $null = (Get-AppxProvisionedPackage -Online -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
-               $_.DisplayName -like '*' + $item + '*'
-            } | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction $SCT -WarningAction $SCT)
-      }
-      catch
-      {
-         Write-Verbose -Message 'Whoopsie'
-      }
-   }
-   #endregion AppListLoop
+		try
+		{
+			# Stop Search - Gain performance
+			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-   #region UninstallMcAfeeSecurity
-   $McAfeeSecurityApp = $null
+			$null = (Get-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
+					$_.name -like '*' + $item + '*'
+				} | Remove-AppxPackage -AllUsers -ErrorAction $SCT -WarningAction $SCT)
+		}
+		catch
+		{
+			Write-Verbose -Message 'Whoopsie'
+		}
 
-   $McAfeeSecurityApp = (Get-ChildItem -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall' -ErrorAction $SCT -WarningAction $SCT | ForEach-Object -Process {
-         Get-ItemProperty -Path $_.PSPath -ErrorAction $SCT -WarningAction $SCT
-      } | Where-Object -FilterScript {
-         $_ -match 'McAfee Security'
-      } | Select-Object -ExpandProperty UninstallString)
+		try
+		{
+			$null = (Get-AppxProvisionedPackage -Online -ErrorAction $SCT -WarningAction $SCT | Where-Object -FilterScript {
+					$_.DisplayName -like '*' + $item + '*'
+				} | Remove-AppxProvisionedPackage -Online -AllUsers -ErrorAction $SCT -WarningAction $SCT)
+		}
+		catch
+		{
+			Write-Verbose -Message 'Whoopsie'
+		}
+	}
+	#endregion AppListLoop
 
-   if ($McAfeeSecurityApp)
-   {
-      $McAfeeSecurityApp = $McAfeeSecurityApp -Replace "$env:ProgramW6432\McAfee\MSC\mcuihost.exe", ''
+	#region UninstallMcAfeeSecurity
+	$McAfeeSecurityApp = $null
 
-      $null = (Start-Process -FilePath "$env:ProgramW6432\McAfee\MSC\mcuihost.exe" -ArgumentList $McAfeeSecurityApp -Wait -ErrorAction $SCT -WarningAction $SCT)
-   }
-   #endregion UninstallMcAfeeSecurity
+	$McAfeeSecurityApp = (Get-ChildItem -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall' -ErrorAction $SCT -WarningAction $SCT | ForEach-Object -Process {
+			Get-ItemProperty -Path $_.PSPath -ErrorAction $SCT -WarningAction $SCT
+		} | Where-Object -FilterScript {
+			$_ -match 'McAfee Security'
+		} | Select-Object -ExpandProperty UninstallString)
+
+	if ($McAfeeSecurityApp)
+	{
+		$McAfeeSecurityApp = $McAfeeSecurityApp -Replace "$env:ProgramW6432\McAfee\MSC\mcuihost.exe", ''
+
+		$null = (Start-Process -FilePath "$env:ProgramW6432\McAfee\MSC\mcuihost.exe" -ArgumentList $McAfeeSecurityApp -Wait -ErrorAction $SCT -WarningAction $SCT)
+	}
+	#endregion UninstallMcAfeeSecurity
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

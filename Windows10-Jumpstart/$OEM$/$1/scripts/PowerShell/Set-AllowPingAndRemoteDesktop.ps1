@@ -30,88 +30,93 @@
       .NOTES
       Helper script I use to bootstrap servers
       Run this elevated!!!
+
+      Version 1.0.3
+
+      .LINK
+      http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Medium',
-   SupportsShouldProcess)]
+	SupportsShouldProcess)]
 param
 (
-   [Parameter(ValueFromPipeline)]
-   [switch]
-   $RDPGroup
+	[Parameter(ValueFromPipeline)]
+	[switch]
+	$RDPGroup
 )
 
 begin
 {
-   Write-Output -InputObject 'Enable inbound ICMP (Ping) and Remote Desktop (RDP)'
+	Write-Output -InputObject 'Enable inbound ICMP (Ping) and Remote Desktop (RDP)'
 
-   $SCT = 'SilentlyContinue'
-   $CNT = 'Continue'
+	$SCT = 'SilentlyContinue'
+	$CNT = 'Continue'
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   # Splat the Set-ItemProperty parameters
-   $paramSetItemProperty = @{
-      Path        = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
-      Name        = 'fDenyTSConnections'
-      Value       = 0
-      ErrorAction = $CNT
-   }
+	# Splat the Set-ItemProperty parameters
+	$paramSetItemProperty = @{
+		Path        = 'HKLM:\System\CurrentControlSet\Control\Terminal Server'
+		Name        = 'fDenyTSConnections'
+		Value       = 0
+		ErrorAction = $CNT
+	}
 
-   # Splat the Enable-NetFirewallRule parameters
-   $paramEnableNetFirewallRule = @{
-      Confirm     = $false
-      ErrorAction = $CNT
-   }
+	# Splat the Enable-NetFirewallRule parameters
+	$paramEnableNetFirewallRule = @{
+		Confirm     = $false
+		ErrorAction = $CNT
+	}
 }
 
 process
 {
-   # Support WhatIf (SupportsShouldProcess)
-   if ($pscmdlet.ShouldProcess('Registry Terminal Server', 'Modify'))
-   {
-      # Tweak the Registry for Remote Desktop connections
-      $null = (Set-ItemProperty @paramSetItemProperty)
-   }
+	# Support WhatIf (SupportsShouldProcess)
+	if ($pscmdlet.ShouldProcess('Registry Terminal Server', 'Modify'))
+	{
+		# Tweak the Registry for Remote Desktop connections
+		$null = (Set-ItemProperty @paramSetItemProperty)
+	}
 
-   # We avoid using $RDPGroup.IsPresent
-   if ($PSBoundParameters.ContainsKey('RDPGroup'))
-   {
-      if ($pscmdlet.ShouldProcess('Firewall Group for Remote Desktop', 'Enable'))
-      {
-         # Allow Remote Desktop (The Group)
-         $null = (Get-NetFirewallRule -DisplayGroup 'Remote Desktop' -ErrorAction $SCT | Where-Object {
-               $_.Enabled -ne $true
-            } | Enable-NetFirewallRule @paramEnableNetFirewallRule)
-      }
-   }
-   else
-   {
-      if ($pscmdlet.ShouldProcess('Firewall Rules for Remote Desktop', 'Enable'))
-      {
-         # Alternative Approach: Enable the minimum, not the Group
-         Get-NetFirewallRule -Name 'RemoteDesktop-UserMode-In-TCP' -ErrorAction $SCT | Where-Object {
-            $_.Enabled -ne $true
-         } | Enable-NetFirewallRule @paramEnableNetFirewallRule
+	# We avoid using $RDPGroup.IsPresent
+	if ($PSBoundParameters.ContainsKey('RDPGroup'))
+	{
+		if ($pscmdlet.ShouldProcess('Firewall Group for Remote Desktop', 'Enable'))
+		{
+			# Allow Remote Desktop (The Group)
+			$null = (Get-NetFirewallRule -DisplayGroup 'Remote Desktop' -ErrorAction $SCT | Where-Object {
+					$_.Enabled -ne $true
+				} | Enable-NetFirewallRule @paramEnableNetFirewallRule)
+		}
+	}
+	else
+	{
+		if ($pscmdlet.ShouldProcess('Firewall Rules for Remote Desktop', 'Enable'))
+		{
+			# Alternative Approach: Enable the minimum, not the Group
+			Get-NetFirewallRule -Name 'RemoteDesktop-UserMode-In-TCP' -ErrorAction $SCT | Where-Object {
+				$_.Enabled -ne $true
+			} | Enable-NetFirewallRule @paramEnableNetFirewallRule
 
-         Get-NetFirewallRule -DisplayName 'Remote Desktop - User Mode (TCP-In)' -ErrorAction $SCT | Where-Object {
-            $_.Enabled -ne $true
-         } | Enable-NetFirewallRule @paramEnableNetFirewallRule
-      }
-   }
+			Get-NetFirewallRule -DisplayName 'Remote Desktop - User Mode (TCP-In)' -ErrorAction $SCT | Where-Object {
+				$_.Enabled -ne $true
+			} | Enable-NetFirewallRule @paramEnableNetFirewallRule
+		}
+	}
 
-   if ($pscmdlet.ShouldProcess('Ping', 'Enable'))
-   {
-      # Allow Ping for IPv4 and IPv6
-      # NOTE: The wildcard (ICMPv?) will select both. Replace it with 4 or 6 to use just one of them
-      Get-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv?-In)' -ErrorAction $SCT | Where-Object {
-         $_.Enabled -ne $true
-      } | Enable-NetFirewallRule @paramEnableNetFirewallRule
-   }
+	if ($pscmdlet.ShouldProcess('Ping', 'Enable'))
+	{
+		# Allow Ping for IPv4 and IPv6
+		# NOTE: The wildcard (ICMPv?) will select both. Replace it with 4 or 6 to use just one of them
+		Get-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv?-In)' -ErrorAction $SCT | Where-Object {
+			$_.Enabled -ne $true
+		} | Enable-NetFirewallRule @paramEnableNetFirewallRule
+	}
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

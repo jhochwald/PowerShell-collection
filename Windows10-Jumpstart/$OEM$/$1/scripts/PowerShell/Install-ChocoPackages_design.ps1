@@ -10,7 +10,7 @@
       .NOTES
       These are the chocolatey default packages, that we want to have on all new systems
 
-      Version 1.1.0
+      Version 1.1.1
 
       .LINK
       http://beyond-datacenter.com
@@ -19,96 +19,109 @@
       https://chocolatey.org/docs
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-   SupportsShouldProcess)]
+	SupportsShouldProcess)]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Download and install the chocolatey default packages for Workstations'
+	Write-Output -InputObject 'Download and install the chocolatey default packages for Workstations'
 
-   $null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
+	#region Defaults
+	$SCT = 'SilentlyContinue'
+	#endregion Defaults
 
-   if (-not $env:ChocolateyInstall)
-   {
-      $env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
-   }
+	$null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction SilentlyContinue)
+	if (-not $env:ChocolateyInstall)
+	{
+		$env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
+	}
 
-   try
-   {
-      $null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
-   }
-   catch
-   {
-      Write-Verbose -Message 'Unable to set PowerShell to use TLS 1.2.'
-   }
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   # Use Windows built-in compression instead of downloading 7zip
-   $env:chocolateyUseWindowsCompression = 'true'
+	try
+	{
+		$null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
+	}
+	catch
+	{
+		Write-Verbose -Message 'Unable to set PowerShell to use TLS 1.2.'
+	}
 
-   $AllChocoPackages = @(
-      'Scribus'
-      'InkScape'
-      'gimp'
-      'google-web-designer'
-      'bluefish'
-      'komodo-edit'
-      'bluegriffon'
-      'aptana-studio'
-      'pngoptimizer'
-      'optipng'
-      'exiftool'
-      'exiftoolgui'
-      'irfanview'
-      'irfanview-shellextension'
-      'irfanviewplugins'
-   )
+	# Use Windows built-in compression instead of downloading 7zip
+	$env:chocolateyUseWindowsCompression = 'true'
 
-   # Initial Package Counter
-   $PackageCounter = 1
+	$AllChocoPackages = @(
+		'Scribus'
+		'InkScape'
+		'gimp'
+		'google-web-designer'
+		'bluefish'
+		'komodo-edit'
+		'bluegriffon'
+		'aptana-studio'
+		'pngoptimizer'
+		'optipng'
+		'exiftool'
+		'exiftoolgui'
+		'irfanview'
+		'irfanview-shellextension'
+		'irfanviewplugins'
+	)
+
+	# Initial Package Counter
+	$PackageCounter = 1
 }
 
 process
 {
-   foreach ($ChocoPackage in $AllChocoPackages)
-   {
-      try
-      {
-         Write-Verbose -Message ('Start the installation of ' + $ChocoPackage)
+	foreach ($ChocoPackage in $AllChocoPackages)
+	{
+		try
+		{
+			# Stop Search - Gain performance
+			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-         if ($pscmdlet.ShouldProcess($ChocoPackage, 'Install'))
-         {
-            Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $PackageCounter + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($PackageCounter / $AllChocoPackages.Count) * 100)
+			Write-Verbose -Message ('Start the installation of ' + $ChocoPackage)
 
-            try
-            {
-               $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
-            }
-            catch
-            {
-               # Retry with --ignore-checksums - A less secure option!!!
-               $null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --allowemptychecksum --ignore-checksums --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
-               # Some Packages (e.g. Sysmon) use the latest and greatest version, the checksum check will cause issues in this case!
-            }
-         }
+			if ($pscmdlet.ShouldProcess($ChocoPackage, 'Install'))
+			{
+				Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $PackageCounter + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($PackageCounter / $AllChocoPackages.Count) * 100)
 
-         # Add Package Step
-         $PackageCounter++
-      }
-      catch
-      {
-         Write-Warning -Message ('Installation of ' + $ChocoPackage + ' failed!')
+				try
+				{
+					# Stop Search - Gain performance
+					$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-         # Add Package Step
-         $PackageCounter++
-      }
-   }
+					$null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
+				}
+				catch
+				{
+					# Stop Search - Gain performance
+					$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+
+					# Retry with --ignore-checksums - A less secure option!!!
+					$null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --allowemptychecksum --ignore-checksums --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
+					# Some Packages (e.g. Sysmon) use the latest and greatest version, the checksum check will cause issues in this case!
+				}
+			}
+
+			# Add Package Step
+			$PackageCounter++
+		}
+		catch
+		{
+			Write-Warning -Message ('Installation of ' + $ChocoPackage + ' failed!')
+
+			# Add Package Step
+			$PackageCounter++
+		}
+	}
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction SilentlyContinue)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

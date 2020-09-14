@@ -7,52 +7,57 @@
       .DESCRIPTION
       Removes all public Desktop Links
 
+      .NOTES
+      Still beta!
+
+      Version 1.0.1
+
       .LINK
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-   SupportsShouldProcess)]
+	SupportsShouldProcess)]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Removes all public Desktop Links'
+	Write-Output -InputObject 'Removes all public Desktop Links'
 
-   #region GlobalDefaults
-   $SCT = 'SilentlyContinue'
+	#region GlobalDefaults
+	$SCT = 'SilentlyContinue'
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   # Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
-   Start-Sleep -Seconds 5
+	# Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
+	Start-Sleep -Seconds 5
 
-   $paramGetChildItem = @{
-      Path          = ($env:PUBLIC + '\Desktop\')
-      Filter        = '*.lnk'
-      WarningAction = $SCT
-      ErrorAction   = $SCT
-   }
+	$paramGetChildItem = @{
+		Path          = ($env:PUBLIC + '\Desktop\')
+		Filter        = '*.lnk'
+		WarningAction = $SCT
+		ErrorAction   = $SCT
+	}
 
-   $paramRemoveItem = @{
-      Force         = $true
-      Confirm       = $false
-      WarningAction = $SCT
-      ErrorAction   = $SCT
-   }
-   #endregion GlobalDefaults
+	$paramRemoveItem = @{
+		Force         = $true
+		Confirm       = $false
+		WarningAction = $SCT
+		ErrorAction   = $SCT
+	}
+	#endregion GlobalDefaults
 }
 
 process
 {
-   if ($pscmdlet.ShouldProcess('All public Desktop Links', 'Remove'))
-   {
-      $null = (Get-ChildItem @paramGetChildItem | Select-Object -ExpandProperty FullName | Remove-Item @paramRemoveItem)
-   }
+	if ($pscmdlet.ShouldProcess('All public Desktop Links', 'Remove'))
+	{
+		$null = (Get-ChildItem @paramGetChildItem | Select-Object -ExpandProperty FullName | Remove-Item @paramRemoveItem)
+	}
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

@@ -11,48 +11,54 @@
       http://beyond-datacenter.com
 
       .NOTES
-      Initial
+      Version 1.0.1
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-   SupportsShouldProcess)]
+	SupportsShouldProcess)]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Update all help files for all installed PowerShell Modules'
+	Write-Output -InputObject 'Update all help files for all installed PowerShell Modules'
 
-   #region GlobalDefaults
-   $SCT = 'SilentlyContinue'
+	#region GlobalDefaults
+	$SCT = 'SilentlyContinue'
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   # Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
-   Start-Sleep -Seconds 2
+	# Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
+	Start-Sleep -Seconds 2
 
-   $paramStartProcess = $null
-   $paramStartProcess = @{
-      FilePath         = 'powershell.exe'
-      ArgumentList     = '-ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command $null = (Update-Help -Force -Confirm:$false -ErrorAction SilentlyContinue)'
-      WorkingDirectory = "$env:HOMEDRIVE\scripts\PowerShell\"
-      LoadUserProfile  = $false
-      ErrorAction      = $SCT
-      Verbose          = $false
-   }
-   #endregion GlobalDefaults
+	$paramStartProcess = $null
+	$paramStartProcess = @{
+		FilePath         = 'powershell.exe'
+		ArgumentList     = '-ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command $null = (Update-Help -Force -Confirm:$false -ErrorAction $SCT)'
+		WorkingDirectory = "$env:HOMEDRIVE\scripts\PowerShell\"
+		LoadUserProfile  = $false
+		ErrorAction      = $SCT
+		Verbose          = $false
+	}
+	#endregion GlobalDefaults
 }
 
 process
 {
-   # Update the Module Information
-   $null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)
+	# Stop Search - Gain performance
+	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-   # Update the Help
-   $null = (Start-Process @paramStartProcess)
+	# Update the Module Information
+	$null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)
+
+	# Stop Search - Gain performance
+	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+
+	# Update the Help
+	$null = (Start-Process @paramStartProcess)
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

@@ -13,85 +13,96 @@
       .NOTES
       Works fine on Windows Server 2016 (Developed for server use).
       Should also work on Windows 10, but I never tested it on a Windows 10 system!
+
+      Version 1.5.8
+
+      .LINK
+      http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Set the Windows Power Plan to High Performance'
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction SilentlyContinue)
+	Write-Output -InputObject 'Set the Windows Power Plan to High Performance'
+
+	$SCT = 'SilentlyContinue'
+
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 }
 
 process
 {
-   #region Cleanup
-   $ActivePowerPlan = $null
-   $PowerPlanHighPowerState = $null
-   #endregion Cleanup
+	# Stop Search - Gain performance
+	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-   #region InformationGathering
-   # Splat the parameters
-   $paramGetWmiObject = @{
-      Namespace = 'root\cimv2\power'
-      Class     = 'Win32_PowerPlan'
-   }
+	#region Cleanup
+	$ActivePowerPlan = $null
+	$PowerPlanHighPowerState = $null
+	#endregion Cleanup
 
-   # Gather the PowerPlan information
-   $ActivePowerPlan = (Get-WmiObject @paramGetWmiObject | Select-Object -Property ElementName, IsActive)
+	#region InformationGathering
+	# Splat the parameters
+	$paramGetWmiObject = @{
+		Namespace = 'root\cimv2\power'
+		Class     = 'Win32_PowerPlan'
+	}
 
-   # Filter the 'High Performance' plan info
-   $PowerPlanHighPowerState = $ActivePowerPlan | Where-Object -FilterScript {
-      $_.ElementName -eq 'High Performance'
-   }
-   #endregion InformationGathering
+	# Gather the PowerPlan information
+	$ActivePowerPlan = (Get-WmiObject @paramGetWmiObject | Select-Object -Property ElementName, IsActive)
 
-   #region CheckIfTheTweakIsNeeded
-   if ($PowerPlanHighPowerState.IsActive -ne $true)
-   {
-      # Use the PowerPlan "High Performance"
-      $paramGetWmiObject.Filter = "ElementName = 'High Performance'"
-      $powerPlan = (Get-WmiObject @paramGetWmiObject)
+	# Filter the 'High Performance' plan info
+	$PowerPlanHighPowerState = $ActivePowerPlan | Where-Object -FilterScript {
+		$_.ElementName -eq 'High Performance'
+	}
+	#endregion InformationGathering
 
-      #region ActivateThePowerPlan
-      $null = (Invoke-Command -ScriptBlock {
-            $powerPlan.Activate()
-         } -ErrorAction SilentlyContinue)
-      <#
+	#region CheckIfTheTweakIsNeeded
+	if ($PowerPlanHighPowerState.IsActive -ne $true)
+	{
+		# Use the PowerPlan "High Performance"
+		$paramGetWmiObject.Filter = "ElementName = 'High Performance'"
+		$powerPlan = (Get-WmiObject @paramGetWmiObject)
+
+		#region ActivateThePowerPlan
+		$null = (Invoke-Command -ScriptBlock {
+				$powerPlan.Activate()
+			} -ErrorAction $SCT)
+		<#
             This looks a bit crappy, but it works fine and I don't like to have any output of the activation
       #>
-      #endregion ActivateThePowerPlan
-   }
-   #endregion CheckIfTheTweakIsNeeded
+		#endregion ActivateThePowerPlan
+	}
+	#endregion CheckIfTheTweakIsNeeded
 
-   #region Cleanup
-   $PowerPlanHighPowerState = $null
-   #endregion Cleanup
+	#region Cleanup
+	$PowerPlanHighPowerState = $null
+	#endregion Cleanup
 
-   #region Retest
-   $PowerPlanHighPowerState = $ActivePowerPlan | Where-Object -FilterScript {
-      $_.ElementName -eq 'High Performance'
-   }
+	#region Retest
+	$PowerPlanHighPowerState = $ActivePowerPlan | Where-Object -FilterScript {
+		$_.ElementName -eq 'High Performance'
+	}
 
-   # Filter the 'High Performance' plan info
-   if ($PowerPlanHighPowerState.IsActive -ne $true)
-   {
-      Write-Warning -Message "Unable to set the PowerPlan to 'High Performance'"
-   }
-   #endregion Retest
+	# Filter the 'High Performance' plan info
+	if ($PowerPlanHighPowerState.IsActive -ne $true)
+	{
+		Write-Warning -Message "Unable to set the PowerPlan to 'High Performance'"
+	}
+	#endregion Retest
 
-   #region NoStandBy
-   & "$env:windir\system32\powercfg.cpl" -change -standby-timeout-ac 0
-   #endregion NoStandBy
+	#region NoStandBy
+	& "$env:windir\system32\powercfg.cpl" -change -standby-timeout-ac 0
+	#endregion NoStandBy
 
-   #region DisableHybernationSupport
-   & "$env:windir\system32\powercfg.cpl" -change -hibernate-timeout-ac 0
-   #endregion DisableHybernationSupport
+	#region DisableHybernationSupport
+	& "$env:windir\system32\powercfg.cpl" -change -hibernate-timeout-ac 0
+	#endregion DisableHybernationSupport
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction SilentlyContinue)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

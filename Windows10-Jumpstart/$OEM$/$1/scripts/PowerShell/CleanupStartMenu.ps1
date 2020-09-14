@@ -6,21 +6,27 @@
 
       .DESCRIPTION
       Cleanup the Windows 10 Start Menu
+
+      .NOTES
+      Version 1.0.2
+
+      .LINK
+      http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Cleanup the Windows 10 Start Menu'
+	Write-Output -InputObject 'Cleanup the Windows 10 Start Menu'
 
-   #region Defaults
-   $SCT = 'SilentlyContinue'
-   #endregion Defaults
+	#region Defaults
+	$SCT = 'SilentlyContinue'
+	#endregion Defaults
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   $StartMenuContent = @'
+	$StartMenuContent = @'
 <LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" Version="1" xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout" xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
 <LayoutOptions StartTileGroupCellWidth="6" />
 <DefaultLayoutOverride>
@@ -31,68 +37,71 @@ begin
 </LayoutModificationTemplate>
 '@
 
-   $StartMenuFile = "$env:windir\StartMenuLayout.xml"
+	$StartMenuFile = "$env:windir\StartMenuLayout.xml"
 }
 
 process
 {
-   # Delete layout file if it already exists
-   if (Test-Path -Path $StartMenuFile -ErrorAction $SCT)
-   {
-      $null = (Remove-Item -Path $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
-   }
+	# Stop Search - Gain performance
+	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-   # Creates the blank layout file
-   $null = ($StartMenuContent | Out-File -FilePath $StartMenuFile -Encoding ASCII -Force -ErrorAction $SCT)
+	# Delete layout file if it already exists
+	if (Test-Path -Path $StartMenuFile -ErrorAction $SCT)
+	{
+		$null = (Remove-Item -Path $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
+	}
 
-   $RegistryAliases = @('HKLM', 'HKCU')
+	# Creates the blank layout file
+	$null = ($StartMenuContent | Out-File -FilePath $StartMenuFile -Encoding ASCII -Force -ErrorAction $SCT)
 
-   # Assign the start layout and force it to apply with "LockedStartLayout" at both the machine and user level
-   foreach ($RegistryAlias in $RegistryAliases)
-   {
-      $RegistryBasePath = ($RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows')
-      $RegistryKeyPath = ($RegistryBasePath + '\Explorer')
+	$RegistryAliases = @('HKLM', 'HKCU')
 
-      if (-not (Test-Path -Path $RegistryKeyPath -ErrorAction $SCT))
-      {
-         $null = (New-Item -Path $RegistryBasePath -Name 'Explorer' -Force -Confirm:$false -ErrorAction $SCT)
-      }
+	# Assign the start layout and force it to apply with "LockedStartLayout" at both the machine and user level
+	foreach ($RegistryAlias in $RegistryAliases)
+	{
+		$RegistryBasePath = ($RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows')
+		$RegistryKeyPath = ($RegistryBasePath + '\Explorer')
 
-      $null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 1 -Force -Confirm:$false -ErrorAction $SCT)
-      $null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'StartLayoutFile' -Value $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
-   }
+		if (-not (Test-Path -Path $RegistryKeyPath -ErrorAction $SCT))
+		{
+			$null = (New-Item -Path $RegistryBasePath -Name 'Explorer' -Force -Confirm:$false -ErrorAction $SCT)
+		}
 
-   # Restart Explorer, open the start menu (necessary to load the new layout)
-   Stop-Process -name explorer
+		$null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 1 -Force -Confirm:$false -ErrorAction $SCT)
+		$null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'StartLayoutFile' -Value $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
+	}
 
-   # Give it a few seconds to process
-   Start-Sleep -Seconds 5
+	# Restart Explorer, open the start menu (necessary to load the new layout)
+	Stop-Process -name explorer
 
-   $WScriptShell = (New-Object -ComObject wscript.shell)
-   $WScriptShell.SendKeys('^{ESCAPE}')
+	# Give it a few seconds to process
+	Start-Sleep -Seconds 5
 
-   # Give it a few seconds to process
-   Start-Sleep -Seconds 5
+	$WScriptShell = (New-Object -ComObject wscript.shell)
+	$WScriptShell.SendKeys('^{ESCAPE}')
 
-   # Enable the ability to pin items again by disabling "LockedStartLayout"
-   foreach ($RegistryAlias in $RegistryAliases)
-   {
-      $RegistryBasePath = $RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows'
-      $RegistryKeyPath = $RegistryBasePath + '\Explorer'
-      $null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 0 -Force -Confirm:$false -ErrorAction $SCT)
-   }
+	# Give it a few seconds to process
+	Start-Sleep -Seconds 5
 
-   # Restart Explorer and delete the layout file
-   Stop-Process -name explorer
+	# Enable the ability to pin items again by disabling "LockedStartLayout"
+	foreach ($RegistryAlias in $RegistryAliases)
+	{
+		$RegistryBasePath = $RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows'
+		$RegistryKeyPath = $RegistryBasePath + '\Explorer'
+		$null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 0 -Force -Confirm:$false -ErrorAction $SCT)
+	}
 
-   # Uncomment the next line to make clean start menu default for all new users
-   # Import-StartLayout -LayoutPath $layoutFile -MountPath $env:SystemDrive\
-   $null = (Remove-Item -Path $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
+	# Restart Explorer and delete the layout file
+	Stop-Process -name explorer
+
+	# Uncomment the next line to make clean start menu default for all new users
+	# Import-StartLayout -LayoutPath $layoutFile -MountPath $env:SystemDrive\
+	$null = (Remove-Item -Path $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

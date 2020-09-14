@@ -6,47 +6,56 @@
 
       .DESCRIPTION
       Install some madatory PowerShell Modules from the PowerShell Gallery
+
+      .NOTES
+      Version 1.0.1
+
+      .LINK
+      http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Install some madatory PowerShell Modules'
+	Write-Output -InputObject 'Install some madatory PowerShell Modules'
 
-   #region Defaults
-   $SCT = 'SilentlyContinue'
-   #endregion Defaults
+	#region Defaults
+	$SCT = 'SilentlyContinue'
+	#endregion Defaults
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   # Every System should have these Modules
-   $PowerShellModuleList = @(
-      'PoShKeePass'
-      'Pester'
-      'PackageManagement'
-      'PowerShellGet'
-      'PSScriptAnalyzer'
-      'posh-git'
-      'PSWindowsUpdate'
-      'BurntToast'
-   )
+	# Every System should have these Modules
+	$PowerShellModuleList = @(
+		'PoShKeePass'
+		'Pester'
+		'PackageManagement'
+		'PowerShellGet'
+		'PSScriptAnalyzer'
+		'posh-git'
+		'PSWindowsUpdate'
+		'BurntToast'
+	)
 }
 
 process
 {
-   # Force the installation of the Modules listed above
-   $null = ($PowerShellModuleList | ForEach-Object -Process {
-         (Install-Module -Name $_ -Scope AllUsers -Repository PSGallery -Force -Confirm:$false -AllowClobber -SkipPublisherCheck -ErrorAction $SCT)
-      })
+	# Force the installation of the Modules listed above
+	$null = ($PowerShellModuleList | ForEach-Object -Process {
+			# Stop Search - Gain performance
+			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-   # Refresh
-   $null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)
+			(Install-Module -Name $_ -Scope AllUsers -Repository PSGallery -Force -Confirm:$false -AllowClobber -SkipPublisherCheck -ErrorAction $SCT)
+		})
+
+	# Refresh
+	$null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

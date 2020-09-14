@@ -10,75 +10,80 @@
       .NOTES
       Still beta!
 
-      Version 0.0.9
+      Version 1.0.1
 
       .LINK
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-   SupportsShouldProcess)]
+	SupportsShouldProcess)]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Download and install the chocolatey default base packages'
-   $SCT = 'SilentlyContinue'
-   $ErrorActionPreference = $SCT
+	Write-Output -InputObject 'Tweak the All User Profiles'
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$SCT = 'SilentlyContinue'
+
+	$ErrorActionPreference = $SCT
+
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 }
 
 process
 {
-   # Get default user profile path
-   $DefaultUserProfile = ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList' -Name 'Default' -ErrorAction $SCT -WarningAction $SCT).Default)
+	# Stop Search - Gain performance
+	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-   # Modify default startmenu and remove all tiles which will be downloaded later
-   $XmlObjectPath = (Join-Path -Path $DefaultUserProfile -ChildPath 'AppData\Local\Microsoft\Windows\Shell\DefaultLayouts.xml' -ErrorAction $SCT -WarningAction $SCT)
-   $XmlObject = (New-Object -TypeName xml -ErrorAction $SCT -WarningAction $SCT)
-   $XmlObject.PreserveWhitespace = $true
-   $null = ($XmlObject.Load($XmlObjectPath))
-   $XmlNameSpace = (New-Object -TypeName System.Xml.XmlNamespaceManager -ArgumentList ($XmlObject.NameTable) -ErrorAction $SCT -WarningAction $SCT)
-   $null = ($XmlNameSpace.AddNamespace('start', 'http://schemas.microsoft.com/Start/2014/StartLayout'))
-   $null = ($XmlObject.SelectNodes('//start:SecondaryTile', $XmlNameSpace) | ForEach-Object { $null = $_.ParentNode.RemoveChild($_) })
-   $null = ($XmlObject.Save($XmlObjectPath))
+	# Get default user profile path
+	$DefaultUserProfile = ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList' -Name 'Default' -ErrorAction $SCT -WarningAction $SCT).Default)
 
-   # Easy HKU access
-   $null = (New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS)
+	# Modify default startmenu and remove all tiles which will be downloaded later
+	$XmlObjectPath = (Join-Path -Path $DefaultUserProfile -ChildPath 'AppData\Local\Microsoft\Windows\Shell\DefaultLayouts.xml' -ErrorAction $SCT -WarningAction $SCT)
+	$XmlObject = (New-Object -TypeName xml -ErrorAction $SCT -WarningAction $SCT)
+	$XmlObject.PreserveWhitespace = $true
+	$null = ($XmlObject.Load($XmlObjectPath))
+	$XmlNameSpace = (New-Object -TypeName System.Xml.XmlNamespaceManager -ArgumentList ($XmlObject.NameTable) -ErrorAction $SCT -WarningAction $SCT)
+	$null = ($XmlNameSpace.AddNamespace('start', 'http://schemas.microsoft.com/Start/2014/StartLayout'))
+	$null = ($XmlObject.SelectNodes('//start:SecondaryTile', $XmlNameSpace) | ForEach-Object { $null = $_.ParentNode.RemoveChild($_) })
+	$null = ($XmlObject.Save($XmlObjectPath))
 
-   # Load default user hive
-   $null = (& "$env:windir\system32\reg.exe" load 'HKU\DEFAULT' (Join-Path -Path $DefaultUserProfile -ChildPath 'NTUSER.DAT' -ErrorAction $SCT -WarningAction $SCT))
+	# Easy HKU access
+	$null = (New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS -ErrorAction $SCT)
+
+	# Load default user hive
+	$null = (& "$env:windir\system32\reg.exe" load 'HKU\DEFAULT' (Join-Path -Path $DefaultUserProfile -ChildPath 'NTUSER.DAT' -ErrorAction $SCT -WarningAction $SCT))
 
 
-   $RunOneOnjectPath = 'C:\scripts\PowerShell\Invoke-BootstrapUser.ps1'
+	$RunOneOnjectPath = 'C:\scripts\PowerShell\Invoke-BootstrapUser.ps1'
 
-   $RunOnceHku = 'HKU:\DEFAULT\Software\Microsoft\Windows\CurrentVersion\RunOnce'
-   $null = (New-Item -Path $RunOnceHku -Force -ErrorAction $SCT -WarningAction $SCT)
-   $null = (New-ItemProperty -Path $RunOnceHku -Force -Name '!run_once' -Value "powershell -NoProfile -WindowStyle Hidden -File $RunOneOnjectPath" -ErrorAction $SCT -WarningAction $SCT)
+	$RunOnceHku = 'HKU:\DEFAULT\Software\Microsoft\Windows\CurrentVersion\RunOnce'
+	$null = (New-Item -Path $RunOnceHku -Force -ErrorAction $SCT -WarningAction $SCT)
+	$null = (New-ItemProperty -Path $RunOnceHku -Force -Name '!run_once' -Value "powershell -NoProfile -WindowStyle Hidden -File $RunOneOnjectPath" -ErrorAction $SCT -WarningAction $SCT)
 
-   $RuneOnceHkcu = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce'
-   $null = (New-Item -Path $RuneOnceHkcu -Force -ErrorAction $SCT -WarningAction $SCT)
-   $null = (New-ItemProperty -Path $RuneOnceHkcu -Force -Name '!run_once' -Value "powershell -NoProfile -WindowStyle Hidden -File $RunOneOnjectPath" -ErrorAction $SCT -WarningAction $SCT)
+	$RuneOnceHkcu = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce'
+	$null = (New-Item -Path $RuneOnceHkcu -Force -ErrorAction $SCT -WarningAction $SCT)
+	$null = (New-ItemProperty -Path $RuneOnceHkcu -Force -Name '!run_once' -Value "powershell -NoProfile -WindowStyle Hidden -File $RunOneOnjectPath" -ErrorAction $SCT -WarningAction $SCT)
 
-   # unload default user hive
+	# unload default user hive
 
-   $null = (& "$env:windir\system32\reg.exe" unload 'HKU\DEFAULT')
+	$null = (& "$env:windir\system32\reg.exe" unload 'HKU\DEFAULT')
 
-   try
-   {
-      $null = (Remove-PSDrive -Name HKU -Force -ErrorAction $SCT -WarningAction $SCT)
-   }
-   catch
-   {
-      Write-Verbose -Message 'Known issue'
-   }
+	try
+	{
+		$null = (Remove-PSDrive -Name HKU -Force -ErrorAction $SCT -WarningAction $SCT)
+	}
+	catch
+	{
+		Write-Verbose -Message 'Known issue'
+	}
 }
 
 end
 {
-   [GC]::Collect()
+	$null = ([GC]::Collect())
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE

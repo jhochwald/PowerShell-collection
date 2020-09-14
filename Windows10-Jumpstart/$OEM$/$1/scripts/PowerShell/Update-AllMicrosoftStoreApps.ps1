@@ -7,53 +7,58 @@
       .DESCRIPTION
       Update all Microsoft Store Apps
 
-      .LINK
-      http://beyond-datacenter.com
-
       .NOTES
       There is a scheduled task that does this job, but we would like to enforce it!
       New version that use CIM instead of WMI
+
+      Version 1.0.0
+
+      .LINK
+      http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-   SupportsShouldProcess)]
+	SupportsShouldProcess)]
 param ()
 
 begin
 {
-   Write-Output -InputObject 'Update all Microsoft Store Apps'
+	Write-Output -InputObject 'Update all Microsoft Store Apps'
 
-   #region GlobalDefaults
-   $SCT = 'SilentlyContinue'
+	#region GlobalDefaults
+	$SCT = 'SilentlyContinue'
 
-   $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
-   # Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
-   Start-Sleep -Seconds 5
+	# Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
+	Start-Sleep -Seconds 5
 
-   $paramGetCimInstance = @{
-      Namespace   = 'Root\cimv2\mdm\dmmap'
-      ClassName   = 'MDM_EnterpriseModernAppManagement_AppManagement01'
-      ErrorAction = $SCT
-   }
+	$paramGetCimInstance = @{
+		Namespace   = 'Root\cimv2\mdm\dmmap'
+		ClassName   = 'MDM_EnterpriseModernAppManagement_AppManagement01'
+		ErrorAction = $SCT
+	}
 
-   $paramInvokeCimMethod = @{
-      MethodName  = 'UpdateScanMethod'
-      ErrorAction = $SCT
-   }
-   #endregion GlobalDefaults
+	$paramInvokeCimMethod = @{
+		MethodName  = 'UpdateScanMethod'
+		ErrorAction = $SCT
+	}
+	#endregion GlobalDefaults
 }
 
 process
 {
-   if ($pscmdlet.ShouldProcess('All Microsoft Store Apps', 'Update'))
-   {
-      $null = (Get-CimInstance @paramGetCimInstance | Invoke-CimMethod @paramInvokeCimMethod)
-   }
+	if ($pscmdlet.ShouldProcess('All Microsoft Store Apps', 'Update'))
+	{
+		# Stop Search - Gain performance
+		$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+
+		$null = (Get-CimInstance @paramGetCimInstance | Invoke-CimMethod @paramInvokeCimMethod)
+	}
 }
 
 end
 {
-   $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
 #region LICENSE
