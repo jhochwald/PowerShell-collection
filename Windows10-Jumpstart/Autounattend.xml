@@ -115,8 +115,8 @@
       <!-- Set the OEM Info -->
       <OEMName>Technet</OEMName>
       <!-- Set Owner info -->
-      <RegisteredOrganization>Enabling Technology</RegisteredOrganization>
-      <RegisteredOwner>Enabling Technology</RegisteredOwner>
+      <RegisteredOrganization>enabling Technology</RegisteredOrganization>
+      <RegisteredOwner>enabling Technology</RegisteredOwner>
       <FirstLogonCommands>
         <!-- PowerShell Set-ExecutionPolicy Unrestricted -->
         <SynchronousCommand wcm:action="add">
