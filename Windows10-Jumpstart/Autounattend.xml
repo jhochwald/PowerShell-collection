@@ -6,92 +6,33 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <!-- Change this for the German ISO -->
       <SetupUILanguage>
+        <!-- The Installation process itself is english -->
         <UILanguage>en-US</UILanguage>
       </SetupUILanguage>
+      <!-- German Keyboard -->
       <InputLocale>047:00000407</InputLocale>
+      <!-- Germany -->
       <SystemLocale>de-DE</SystemLocale>
+      <!-- the OS itself -->
       <UILanguage>en-US</UILanguage>
+      <!-- Just to be sure -->
       <UILanguageFallback>en-US</UILanguageFallback>
+      <!-- As requested: Install Admin is german -->
       <UserLocale>de-DE</UserLocale>
       <!-- Change this for the German ISO -->
     </component>
     <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <DiskConfiguration>
-        <Disk wcm:action="add">
-          <DiskID>0</DiskID>
-          <WillWipeDisk>true</WillWipeDisk>
-          <CreatePartitions>
-            <!-- Windows RE Tools partition -->
-            <CreatePartition wcm:action="add">
-              <Order>1</Order>
-              <Type>Primary</Type>
-              <Size>300</Size>
-            </CreatePartition>
-            <!-- System partition (ESP) -->
-            <CreatePartition wcm:action="add">
-              <Order>2</Order>
-              <Type>EFI</Type>
-              <Size>100</Size>
-            </CreatePartition>
-            <!-- Microsoft reserved partition (MSR) -->
-            <CreatePartition wcm:action="add">
-              <Order>3</Order>
-              <Type>MSR</Type>
-              <Size>128</Size>
-            </CreatePartition>
-            <!-- Windows partition -->
-            <CreatePartition wcm:action="add">
-              <Order>4</Order>
-              <Type>Primary</Type>
-              <Extend>true</Extend>
-            </CreatePartition>
-          </CreatePartitions>
-          <ModifyPartitions>
-            <!-- Windows RE Tools partition -->
-            <ModifyPartition wcm:action="add">
-              <Order>1</Order>
-              <PartitionID>1</PartitionID>
-              <Label>WINRE</Label>
-              <Format>NTFS</Format>
-              <TypeID>DE94BBA4-06D1-4D40-A16A-BFD50179D6AC</TypeID>
-            </ModifyPartition>
-            <!-- System partition (ESP) -->
-            <ModifyPartition wcm:action="add">
-              <Order>2</Order>
-              <PartitionID>2</PartitionID>
-              <Label>System</Label>
-              <Format>FAT32</Format>
-            </ModifyPartition>
-            <!-- MSR partition does not need to be modified -->
-            <ModifyPartition wcm:action="add">
-              <Order>3</Order>
-              <PartitionID>3</PartitionID>
-            </ModifyPartition>
-            <!-- Windows partition -->
-            <ModifyPartition wcm:action="add">
-              <Order>4</Order>
-              <PartitionID>4</PartitionID>
-              <Label>Boot</Label>
-              <Letter>C</Letter>
-              <Format>NTFS</Format>
-            </ModifyPartition>
-          </ModifyPartitions>
-        </Disk>
-      </DiskConfiguration>
-      <ImageInstall>
-        <OSImage>
-          <InstallTo>
-            <DiskID>0</DiskID>
-            <PartitionID>4</PartitionID>
-          </InstallTo>
-          <InstallToAvailablePartition>false</InstallToAvailablePartition>
-        </OSImage>
-      </ImageInstall>
+      <!-- The Partition part was removed in this autounattend.xml File -->
+      <!-- Gives the User the option to select and can keep an existing vendor partition alive. -->
+      <!-- Based on the request #ENUA09 -->
       <UserData>
+        <!-- Auto accept EULA -->
         <AcceptEula>true</AcceptEula>
+        <!-- Set the owner info -->
         <FullName>enabling Technology</FullName>
+        <!-- Set the organization info -->
         <Organization>enabling Technology</Organization>
       </UserData>
     </component>
@@ -101,6 +42,7 @@
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <!-- Generate a random Name based on the Full Name -->
+      <!-- The AzureAD provisioning package will rename the computer anyway #ENUA11 -->
       <ComputerName>*</ComputerName>
       <!-- Time Zone -->
       <TimeZone>W. Europe Standard Time</TimeZone>
@@ -114,6 +56,7 @@
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <!-- Tweak the Firewall -->
+      <!-- Will be modified later via DSC/Intune -->
       <FirewallGroups>
         <FirewallGroup wcm:action="add" wcm:keyValue="RemoteDesktop">
           <Active>true</Active>
@@ -131,13 +74,17 @@
     <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <!-- Change this for the German ISO -->
+      <!-- German keyboard -->
       <InputLocale>047:00000407</InputLocale>
+      <!-- Germany/metric -->
       <SystemLocale>de-DE</SystemLocale>
+      <!-- The OS itself is english -->
       <UILanguage>en-US</UILanguage>
+      <!-- Should always be english -->
       <UILanguageFallback>en-US</UILanguageFallback>
+      <!-- The User interface is german - As requested - User can change it later -->
       <UserLocale>de-DE</UserLocale>
-      <!-- Change this for the German ISO -->
+      <!-- Might need a few tweaks for the German ISO -->
     </component>
     <component name="Microsoft-Windows-TPM-Tasks" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
@@ -150,22 +97,26 @@
     <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <!-- Add the default OEM Info -->
+      <!-- Add the DEFAULT OEM Info -->
       <OEMInformation>
-        <!-- Please review this :-) -->
+        <!-- Default OEM Logo -->
         <Logo>C:\Windows\System32\oemlogo.bmp</Logo>
+        <!-- SAMPLE: OEM Name -->
         <Manufacturer>enabling Technology</Manufacturer>
+        <!-- SAMPLE: Support or office hours -->
         <SupportHours>Mon-Fri 10am-12pm and 2pm-4pm</SupportHours>
+        <!-- SAMPLE: Default office number, no real support -->
         <SupportPhone>+49 69 26957730</SupportPhone>
+        <!-- SAMPLE: Public Website, not the Jira Service Desk -->
         <SupportURL>http://www.enatec.io</SupportURL>
       </OEMInformation>
-      <!-- * -->
+      <!-- Copy OEM Profile -->
       <CopyProfile>true</CopyProfile>
-      <!-- * -->
+      <!-- Set the OEM Info -->
       <OEMName>Technet</OEMName>
-      <!-- Set the registration info -->
-      <RegisteredOrganization>enabling Technology</RegisteredOrganization>
-      <RegisteredOwner>enabling Technology</RegisteredOwner>
+      <!-- Set Owner info -->
+      <RegisteredOrganization>Enabling Technology</RegisteredOrganization>
+      <RegisteredOwner>Enabling Technology</RegisteredOwner>
       <FirstLogonCommands>
         <!-- PowerShell Set-ExecutionPolicy Unrestricted -->
         <SynchronousCommand wcm:action="add">
@@ -177,34 +128,47 @@
       </FirstLogonCommands>
       <!-- OOBE -->
       <OOBE>
+        <!-- Do NOT show the EULA -->
         <HideEULAPage>true</HideEULAPage>
+        <!-- Do NOT show any OEM info and registration -->
         <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+        <!-- Do NOT show the Online Account part (We register with our Tenant anyway) -->
         <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+        <!-- No further local accounts -->
         <HideLocalAccountScreen>true</HideLocalAccountScreen>
+        <!-- No WiFi Page - Might come back soon for AutoPilot without Ethernet -->
         <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <!-- Basic device security -->
         <ProtectYourPC>3</ProtectYourPC>
+        <!-- Do NOT show the Device OOBE screen -->
         <SkipMachineOOBE>true</SkipMachineOOBE>
+        <!-- Do NOT show any further OOBE pages -->
         <SkipUserOOBE>true</SkipUserOOBE>
+        <!-- Do NOT install any OEM/retail demo content -->
         <UnattendEnableRetailDemo>false</UnattendEnableRetailDemo>
       </OOBE>
       <!-- Add a local Admin Account -->
       <UserAccounts>
         <LocalAccounts>
-          <!-- Basic Admin account - Our process will remove this one later  -->
           <LocalAccount wcm:action="add">
             <Password>
-              <!-- Please change this password here -->
+              <!-- Will be changed by intune/DSC after the system is registered -->
               <Value>ChangeMe1234</Value>
-              <!-- Better use an encryted one, but the plain one is easier to understand -->
+              <!-- Who cares? Will be changed anyway -->
               <PlainText>true</PlainText>
             </Password>
+            <!-- Will be filled by DSC later -->
             <Description>Install Admin</Description>
+            <!-- Will be changed by DSC later -->
             <DisplayName>locadmin</DisplayName>
+            <!-- If you switch this, you will have NO local admin -->
             <Group>Administrators</Group>
+            <!-- This is the login/account -->
             <Name>locadmin</Name>
           </LocalAccount>
         </LocalAccounts>
       </UserAccounts>
+      <!-- For DACH -->
       <TimeZone>W. Europe Standard Time</TimeZone>
     </component>
     <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
@@ -228,40 +192,45 @@
     <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <!-- Change this for the German ISO -->
+      <!-- Input is German/metric/German Keyboard -->
       <InputLocale>de-DE</InputLocale>
+      <!-- German/metric -->
       <SystemLocale>de-DE</SystemLocale>
+      <!-- The OS itself is english -->
       <UILanguage>en-US</UILanguage>
+      <!-- Fallback should be english -->
       <UILanguageFallback>en-US</UILanguageFallback>
+      <!-- German/metric for the User - can be changed by the user -->
       <UserLocale>de-DE</UserLocale>
-      <!-- Change this for the German ISO -->
+      <!-- Might need a few tweaks for the German ISO -->
     </component>
   </settings>
-  <!-- NEW -->
+  <!-- Jump Start -->
   <settings pass="auditUser">
     <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <RunSynchronous>
         <RunSynchronousCommand wcm:action="add">
-          <Description>Copy Files...</Description>
+          <Description>Set PowerShell Execution Policy</Description>
           <Path>cmd.exe /c powershell -Command "Set-ExecutionPolicy Unrestricted -force"</Path>
           <Order>1</Order>
         </RunSynchronousCommand>
         <RunSynchronousCommand wcm:action="add">
-          <Description>Copy Files...</Description>
+          <Description>Jump Start</Description>
+          <!-- Only a few basic things will be done here -->
           <Path>cmd.exe /c c:\install\start.cmd"</Path>
           <Order>1</Order>
         </RunSynchronousCommand>
       </RunSynchronous>
     </component>
   </settings>
-  <!-- NEW -->
+  <!-- Jump Start -->
   <settings pass="offlineServicing">
     <component name="Microsoft-Windows-LUA-Settings" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS"
       xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <!-- Enable UAC -->
+      <!-- Enable/Re-Enable UAC -->
       <EnableLUA>true</EnableLUA>
     </component>
   </settings>
