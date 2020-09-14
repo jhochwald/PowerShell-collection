@@ -1,7 +1,4 @@
 @echo off
-
-rem Part of the enabling Technology Windows 10 Jumpstart installation
-
 rem Cleanup the HP stuff
 del C:\temp\sp_*.exe /F /Q
 

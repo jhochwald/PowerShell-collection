@@ -1,7 +1,3 @@
-@echo off
-
-rem Part of the enabling Technology Windows 10 Jumpstart installation
-
 title First
 set Module=First
 echo start %Module% %time% =================== >>%logfile_setup%

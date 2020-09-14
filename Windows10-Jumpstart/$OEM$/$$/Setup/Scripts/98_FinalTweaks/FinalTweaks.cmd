@@ -1,7 +1,3 @@
-@echo off
-
-rem Part of the enabling Technology Windows 10 Jumpstart installation
-
 title FinalTweaks
 set Module=FinalTweaks
 echo start %Module% %time% =================== >>%logfile_setup%
