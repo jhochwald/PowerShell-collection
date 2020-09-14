@@ -12,8 +12,6 @@
       Version 1.0.0
 
       .LINK
-      Part of the enabling Technology Windows 10 Jumpstart installation
-
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low')]
@@ -121,24 +119,20 @@ process
    if ($ManufacturerTooling -eq 'HP')
    {
       # Cleanup the OEM Info
-      if (Get-ItemPropertyValue -Path $OemInfoPath -Name SupportHours -ErrorAction $SCT -WarningAction $SCT)
-      {
+      if (Get-ItemPropertyValue -Path $OemInfoPath -Name SupportHours -ErrorAction $SCT -WarningAction $SCT) {
          $null = (& "$env:windir\system32\reg.exe" DELETE $OemInfoPath /v 'SupportHours' /f)
       }
 
-      if (Get-ItemPropertyValue -Path $OemInfoPath -Name SupportPhone -ErrorAction $SCT -WarningAction $SCT)
-      {
+      if (Get-ItemPropertyValue -Path $OemInfoPath -Name SupportPhone -ErrorAction $SCT -WarningAction $SCT) {
          $null = (& "$env:windir\system32\reg.exe" DELETE $OemInfoPath /v 'SupportPhone' /f)
       }
 
-      if (Get-ItemPropertyValue -Path $OemInfoPath -Name Model -ErrorAction $SCT -WarningAction $SCT)
-      {
+      if (Get-ItemPropertyValue -Path $OemInfoPath -Name Model -ErrorAction $SCT -WarningAction $SCT) {
          $null = (& "$env:windir\system32\reg.exe" DELETE $OemInfoPath /v 'Model' /f)
       }
 
       # Copy the OEM Logo
-      if (Test-Path -Path 'hp\SYSTEM.BMP' -ErrorAction $SCT -WarningAction $SCT)
-      {
+      if (Test-Path -Path 'hp\SYSTEM.BMP' -ErrorAction $SCT -WarningAction $SCT) {
          $null = (Copy-Item -Path 'hp\SYSTEM.BMP' -Destination 'C:\WINDOWS\SYSTEM32\' -Force -Confirm:$false -ErrorAction $SCT -WarningAction $SCT)
       }
 
@@ -150,13 +144,11 @@ process
       $null = (& "$env:windir\system32\reg.exe" ADD $OemInfoPath /v 'SupportURL' /t REG_SZ /d 'http://support.hp.com' /f)
 
       # Install the HP Tools
-      if (Test-Path -Path 'hp\sp101423.exe' -ErrorAction $SCT -WarningAction $SCT)
-      {
+      if (Test-Path -Path 'hp\sp101423.exe' -ErrorAction $SCT -WarningAction $SCT) {
          $null = (Start-Process -FilePath 'hp\sp101423.exe' -ArgumentList '/s' -Wait -NoNewWindow -WarningAction Continue -ErrorAction Continue)
       }
 
-      if (Test-Path -Path 'hp\sp101214.exe' -ErrorAction $SCT -WarningAction $SCT)
-      {
+      if (Test-Path -Path 'hp\sp101214.exe' -ErrorAction $SCT -WarningAction $SCT) {
          $null = (Start-Process -FilePath 'hp\sp101214.exe' -ArgumentList '/s /a /s /v" /qn"' -Wait -NoNewWindow -WarningAction Continue -ErrorAction Continue)
       }
    }
