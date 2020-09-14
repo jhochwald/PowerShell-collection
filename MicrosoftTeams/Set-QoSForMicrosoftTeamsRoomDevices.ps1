@@ -1,5 +1,4 @@
-﻿#requires -RunAsAdministrator
-#requires -Version 3.0 -Modules NetQos
+﻿#requires -Version 3.0 -Modules NetQos -RunAsAdministrator
 <#
       .SYNOPSIS
       Apply QoS Settings for Microsoft Teams Room Devices
@@ -58,7 +57,12 @@ process
    if ($pscmdlet.ShouldProcess('QoS-Settings', 'Apply'))
    {
       #region Audio
-      if (-not (Get-NetQosPolicy -Name $AudioPoliy -ErrorAction SilentlyContinue -WarningAction SilentlyContinue))
+      $paramGetNetQosPolicy = @{
+         Name          = $AudioPoliy
+         ErrorAction   = $SCT
+         WarningAction = $SCT
+      }
+      if (-not (Get-NetQosPolicy @paramGetNetQosPolicy))
       {
          try
          {
@@ -71,8 +75,8 @@ process
                IPProtocolMatchCondition     = 'Both'
                Name                         = $AudioPoliy
                Confirm                      = $false
-               WarningAction                = 'Continue'
-               ErrorAction                  = 'Stop'
+               WarningAction                = $CNT
+               ErrorAction                  = $STP
             }
 
             # Do we have an application name?
@@ -91,7 +95,12 @@ process
       #endregion Audio
 
       #region Video
-      if (-not (Get-NetQosPolicy -Name $VideoPolicy -ErrorAction SilentlyContinue -WarningAction SilentlyContinue))
+      $paramGetNetQosPolicy = @{
+         Name          = $VideoPolicy
+         ErrorAction   = $SCT
+         WarningAction = $SCT
+      }
+      if (-not (Get-NetQosPolicy @paramGetNetQosPolicy))
       {
          try
          {
@@ -104,8 +113,8 @@ process
                IPProtocolMatchCondition     = 'Both'
                Name                         = $VideoPolicy
                Confirm                      = $false
-               WarningAction                = 'Continue'
-               ErrorAction                  = 'Stop'
+               WarningAction                = $CNT
+               ErrorAction                  = $STP
             }
 
             # Do we have an application name?
@@ -124,7 +133,12 @@ process
       #endregion Video
 
       #region AppSharing
-      if (-not (Get-NetQosPolicy -Name $AppSharingPolicy -ErrorAction SilentlyContinue -WarningAction SilentlyContinue))
+      $paramGetNetQosPolicy = @{
+         Name          = $AppSharingPolicy
+         ErrorAction   = $SCT
+         WarningAction = $SCT
+      }
+      if (-not (Get-NetQosPolicy @paramGetNetQosPolicy))
       {
          try
          {
@@ -137,8 +151,8 @@ process
                IPProtocolMatchCondition     = 'Both'
                Name                         = $AppSharingPolicy
                Confirm                      = $false
-               WarningAction                = 'Continue'
-               ErrorAction                  = 'Stop'
+               WarningAction                = $CNT
+               ErrorAction                  = $STP
             }
 
             # Do we have an application name?
@@ -154,6 +168,6 @@ process
             Write-Warning -Message ('Unable to apply {0} QoS Poliy' -f $AppSharingPolicy)
          }
       }
-      #end AppSharing
+      #endregion AppSharing
    }
 }
