@@ -32,6 +32,10 @@ The Office Suite will be removed soon from the scripts! We use Intune to deploy 
 
 ## Please Note
 
+1st of all: Please review the `c:\install\start.cmd`! Skip the parts that you don't want to be applied. We are not Batch experts, as you might see very quickly.
+
+We decided to stay with tha Batch, because this was in use way before we established this new approach and all the users knew about the directory and this file!
+
 1. Please review all the XML, Batch, and PowerShell Files before you apply them!
 2. Download Office 365 (See the Batch) - Review the XML
 3. Download the Lenovo specific files (Removed to prevent any kind of licensing issues)
