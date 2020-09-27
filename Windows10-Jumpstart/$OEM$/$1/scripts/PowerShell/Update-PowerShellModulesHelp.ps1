@@ -11,7 +11,7 @@
       http://beyond-datacenter.com
 
       .NOTES
-      Version 1.0.1
+      Version 1.0.2
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
 	SupportsShouldProcess)]
@@ -28,32 +28,22 @@ begin
 
 	# Wait a moment to make the command above work (Otherwise the delete might get blocked!!!)
 	Start-Sleep -Seconds 2
-
-	$paramStartProcess = $null
-	$paramStartProcess = @{
-		FilePath         = 'powershell.exe'
-		ArgumentList     = '-ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -Command $null = (Update-Help -Force -Confirm:$false -ErrorAction $SCT)'
-		WorkingDirectory = "$env:HOMEDRIVE\scripts\PowerShell\"
-		LoadUserProfile  = $false
-		ErrorAction      = $SCT
-		Verbose          = $false
-	}
 	#endregion GlobalDefaults
 }
 
 process
 {
 	# Stop Search - Gain performance
-	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+	$null = (Get-Service -Name 'WSearch' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
 	# Update the Module Information
-	$null = (Get-Module -ListAvailable -Refresh -ErrorAction $SCT)
+	$null = (Get-Module -ListAvailable -Refresh -WarningAction $SCT -ErrorAction $SCT)
 
 	# Stop Search - Gain performance
-	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+	$null = (Get-Service -Name 'WSearch' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
 	# Update the Help
-	$null = (Start-Process @paramStartProcess)
+	$null = (Update-Help -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 }
 
 end

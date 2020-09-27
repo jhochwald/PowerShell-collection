@@ -34,12 +34,23 @@ begin
 	$SCT = 'SilentlyContinue'
 	#endregion Defaults
 
-	$null = (& "C:\ProgramData\chocolatey\bin\refreshenv.cmd")
-
+	#region
 	if (-not $env:ChocolateyInstall)
 	{
 		$env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
 	}
+	#endregion
+
+	#region
+	if (Get-Command -Name Update-SessionEnvironment -WarningAction $SCT -ErrorAction $SCT)
+	{
+		$null = (Update-SessionEnvironment -WarningAction $SCT -ErrorAction $SCT)
+	}
+	elseif (Test-Path -Path "$env:ChocolateyInstall\bin\refreshenv.cmd" -WarningAction $SCT -ErrorAction $SCT)
+	{
+		$null = (& "$env:ChocolateyInstall\bin\refreshenv.cmd")
+	}
+	#endregion
 
 	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
 
@@ -86,12 +97,17 @@ begin
 		'brave'
 		'sysinternals'
 		'chromium'
+		'GoogleChrome.Canary'
+		'GoogleChrome'
 		'yarn'
 		'vscode-python'
 		'vscode-yaml'
 		'vscode-gitlens'
 		'nodejs'
 		'NugetPackageExplorer'
+		'NuGet.ContextMenu'
+		'Paket.PowerShell'
+		'choco-cleaner'
 		'postman'
 		'git-fork'
 		'golang'
@@ -104,7 +120,6 @@ begin
 	)
 
 	# Initial Package Counter
-	PackageCounter
 	$PackageCounter = 1
 }
 

@@ -1,0 +1,16 @@
+{
+	"CloudAssignedDomainJoinMethod": 0,
+	"CloudAssignedDeviceName": "ENATEC-%SERIAL%",
+	"CloudAssignedAutopilotUpdateTimeout": 1800000,
+	"CloudAssignedForcedEnrollment": 1,
+	"Version": 2049,
+	"CloudAssignedTenantId": "b768b3c4-dc4b-445c-94c0-388882f966fb",
+	"CloudAssignedAutopilotUpdateDisabled": 1,
+	"ZtdCorrelationId": "ae8249a2-ad5d-426a-99a0-2aba35426014",
+	"Comment_File": "Profile DEFAULT",
+	"CloudAssignedAadServerData": "{\"ZeroTouchConfig\":{\"CloudAssignedTenantUpn\":\"\",\"ForcedEnrollment\":1,\"CloudAssignedTenantDomain\":\"hochwald.net\"}}",
+	"CloudAssignedOobeConfig": 1308,
+	"CloudAssignedLockdownConfig": 1,
+	"CloudAssignedTenantDomain": "hochwald.net",
+	"CloudAssignedLanguage": "en-US"
+}

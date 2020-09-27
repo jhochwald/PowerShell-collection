@@ -110,18 +110,21 @@ begin
 			$SCT = 'SilentlyContinue'
 			#endregion Defaults
 
-			$paramGetWindowsUpdate = @{
-				ComputerName    = $env:COMPUTERNAME
-				MicrosoftUpdate = $true
-				Install         = $true
-				IgnoreUserInput = $true
-				AcceptAll       = $true
-				AutoReboot      = $true
-				WhatIf          = $false
-				Verbose         = $false
-				ErrorAction     = $SCT
-				WarningAction   = $SCT
-			}
+         $paramGetWindowsUpdate = @{
+            ComputerName    = $env:COMPUTERNAME
+            MicrosoftUpdate = $true
+            Install         = $true
+            ForceInstall    = $true
+            IgnoreUserInput = $true
+            AcceptAll       = $true
+            AutoReboot      = $false
+            IgnoreReboot    = $true
+            Criteria        = "IsHidden=0 and IsInstalled=0 and Type='Software'"
+            WhatIf          = $false
+            Verbose         = $true
+            ErrorAction     = $SCT
+            WarningAction   = $SCT
+         }
 		}
 
 		process
@@ -137,14 +140,14 @@ process
 	if (Test-GetWUServiceManager -ErrorAction $SCT)
 	{
 		# Stop Search - Gain performance
-		$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+		$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq 'Running' } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
 		$null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
 	}
 	else
 	{
 		# Stop Search - Gain performance
-		$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+		$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq 'Running' } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
 		# Retry to fix it
 		$null = (Test-GetWUServiceManager -ErrorAction $SCT)
@@ -157,7 +160,7 @@ process
 		if (Test-GetWUServiceManager -ErrorAction $SCT)
 		{
 			# Stop Search - Gain performance
-			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq 'Running' } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
 			$null = (Invoke-GetWindowsUpdate -ErrorAction $SCT)
 		}

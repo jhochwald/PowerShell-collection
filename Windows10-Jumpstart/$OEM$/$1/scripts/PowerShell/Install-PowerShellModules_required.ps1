@@ -46,7 +46,8 @@ process
 			# Stop Search - Gain performance
 			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-			(Install-Module -Name $_ -Scope AllUsers -Repository PSGallery -Force -Confirm:$false -AllowClobber -SkipPublisherCheck -ErrorAction $SCT)
+         (Install-Module -Name $_ -Scope AllUsers -Repository PSGallery -Force -Confirm:$false -AllowClobber -SkipPublisherCheck -ErrorAction $SCT)
+         Start-Sleep -Seconds 5
 		})
 
 	# Refresh

@@ -542,6 +542,14 @@ process
 	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\PaintDesktopVersion' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
 	#endregion HideBuildNumberFromDesktop
 
+	#region ScreenSaver
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\ScreenSaveActive' -PropertyType 'String' -Value '1' -ErrorAction $SCT)
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\ScreenSaverIsSecure' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\ScreenSaveTimeOut' -PropertyType 'DWord' -Value '600' -ErrorAction $SCT)
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\scrnsave.exe' -PropertyType 'String' -Value 'c:\windows\system32\scrnsave.scr' -ErrorAction $SCT)
+
+	#endregion ScreenSaver
+
 	#region DisableThumbnails
 	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\IconsOnly' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	#endregion DisableThumbnails
@@ -578,7 +586,26 @@ process
 
 	#region OneDriveInsider
 	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\OneDrive\EnableTeamTier_Internal' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\OneDrive\EnableFasterRingUpdate' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	#endregion OneDriveInsider
+
+	#region EnableADALOneDrive
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableADAL' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	#endregion EnableADALOneDrive
+
+	#region OneDriveEnableHoldTheFile
+	# Users can choose how to handle Office files in conflict
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableHoldTheFile' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	#endregionEnableHoldTheFile
+
+	#region OneDriveEnableAllOcsiClients
+	# Coauthoring and in-app sharing for Office files
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableAllOcsiClients' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	#endregion OneDriveEnableAllOcsiClients
+
+	#region Office2016Telemetry
+	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\software\policies\microsoft\office\16.0\osm\enablelogging' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	#endregion Office2016Telemetry
 	#endregion ApplicationTweaks
 
 	#region Unpinning

@@ -12,8 +12,12 @@
       Lot of the stuff of this version is adopted from Disassembler <disassembler@dasm.cz>
 
 		Changelog:
+		2.0.5: Change a few handlers for WindowsFeatures
+		2.0.4: Remove Edge icon on desktop
+		2.0.3: Remove the 20H2 Edge Autostart
 		2.0.2: Remove First Run Experience for Edge
-      Version 2.0.2
+
+		Version 2.0.5
 
       .LINK
       http://beyond-datacenter.com
@@ -24,8 +28,7 @@
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
-begin
-{
+begin {
 	Write-Output -InputObject 'Bootstrap Windows 10 System'
 
 	#region GlobalDefaults
@@ -41,8 +44,7 @@ begin
 	#endregion GlobalDefaults
 
 	#region HelperFunction
-	function Confirm-RegistryItemProperty
-	{
+	function Confirm-RegistryItemProperty {
 		<#
             .SYNOPSIS
             Enforce that an item property in the registry
@@ -95,24 +97,19 @@ begin
 			$Value
 		)
 
-		begin
-		{
+		begin {
 			$SCT = 'SilentlyContinue'
 		}
 
-		process
-		{
-			if (-Not (Test-Path -Path ($Path | Split-Path) -ErrorAction $SCT))
-			{
+		process {
+			if (-Not (Test-Path -Path ($Path | Split-Path) -ErrorAction $SCT)) {
 				$null = (New-Item -Path ($Path | Split-Path) -Force -WarningAction $SCT -ErrorAction $SCT)
 			}
 
-			if (-Not (Test-Path -Path $Path -ErrorAction $SCT))
-			{
+			if (-Not (Test-Path -Path $Path -ErrorAction $SCT)) {
 				$null = (New-ItemProperty -Path ($Path | Split-Path) -Name ($Path | Split-Path -Leaf) -PropertyType $PropertyType -Value $Value -Force -Confirm:$false -ErrorAction $SCT)
 			}
-			else
-			{
+			else {
 				$null = (Set-ItemProperty -Path ($Path | Split-Path) -Name ($Path | Split-Path -Leaf) -Value $Value -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 			}
 		}
@@ -120,8 +117,7 @@ begin
 	#endregion HelperFunction
 }
 
-process
-{
+process {
 	# Stop Search - Gain performance
 	$null = (Get-Service -Name 'WSearch' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 
@@ -136,12 +132,10 @@ process
 	$null = (Confirm-RegistryItemProperty -Path ('HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\UserARSO\' + $sid + 'OptOut') -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 
 	#region DisableTelemetry
-	if ((Get-WindowsEdition -Online).Edition -eq 'Enterprise' -or (Get-WindowsEdition -Online).Edition -eq 'Education')
-	{
+	if ((Get-WindowsEdition -Online).Edition -eq 'Enterprise' -or (Get-WindowsEdition -Online).Edition -eq 'Education') {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection\AllowTelemetry' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
 	}
-	else
-	{
+	else {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection\AllowTelemetry' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	}
 
@@ -250,18 +244,15 @@ process
 	#endregion DisableErrorReporting
 
 	#region SetP2PUpdateLocal
-	if ([Environment]::OSVersion.Version.Build -eq 10240)
-	{
+	if ([Environment]::OSVersion.Version.Build -eq 10240) {
 		# Method used in 1507
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config\DODownloadMode' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	}
-	elseif ([Environment]::OSVersion.Version.Build -le 14393)
-	{
+	elseif ([Environment]::OSVersion.Version.Build -le 14393) {
 		# Method used in 1511 and 1607
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization\DODownloadMode' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	}
-	else
-	{
+	else {
 		# Method used since 1703
 		$null = (Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization' -Name 'DODownloadMode' @paramRemoveItemProperty)
 	}
@@ -294,6 +285,10 @@ process
 	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\System\CurrentControlSet\Services\PimIndexMaintenanceSvc\Start' -PropertyType 'DWord' -Value '4' -ErrorAction $SCT)
 	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\System\CurrentControlSet\Services\PimIndexMaintenanceSvc\UserServiceFlags' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
 	#endregion DisableContactData
+
+	#region EnableActiveProbing
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\System\CurrentControlSet\Services\NlaSvc\Parameters\Internet\EnableActiveProbing\EnableActiveProbing' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
+	#endregion EnableActiveProbing
 
 	#region DisableUserDataStorage
 	$null = (Get-Service -Name 'UnistoreSvc_*' -WarningAction $SCT -ErrorAction $SCT | Stop-Service -Force -WarningAction $SCT -ErrorAction $SCT)
@@ -357,16 +352,13 @@ process
 	#region ShowDefenderTrayIcon
 	$null = (Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender Security Center\Systray' -Name 'HideSystray' @paramRemoveItemProperty)
 
-	if ([Environment]::OSVersion.Version.Build -eq 14393)
-	{
+	if ([Environment]::OSVersion.Version.Build -eq 14393) {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\WindowsDefender' -PropertyType ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`"" -ErrorAction $SCT)
 	}
-	elseif ([Environment]::OSVersion.Version.Build -ge 15063 -And [Environment]::OSVersion.Version.Build -le 17134)
-	{
+	elseif ([Environment]::OSVersion.Version.Build -ge 15063 -And [Environment]::OSVersion.Version.Build -le 17134) {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\SecurityHealth' -PropertyType ExpandString -Value '%ProgramFiles%\Windows Defender\MSASCuiL.exe' -ErrorAction $SCT)
 	}
-	elseif ([Environment]::OSVersion.Version.Build -ge 17763)
-	{
+	elseif ([Environment]::OSVersion.Version.Build -ge 17763) {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\SecurityHealth' -PropertyType ExpandString -Value '%windir%\system32\SecurityHealthSystray.exe' -ErrorAction $SCT)
 	}
 	#endregion ShowDefenderTrayIcon
@@ -374,16 +366,13 @@ process
 	#region EnableDefender
 	$null = (Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' @paramRemoveItemProperty)
 
-	if ([Environment]::OSVersion.Version.Build -eq 14393)
-	{
+	if ([Environment]::OSVersion.Version.Build -eq 14393) {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\WindowsDefender' -PropertyType ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`"" -ErrorAction $SCT)
 	}
-	elseif ([Environment]::OSVersion.Version.Build -ge 15063 -And [Environment]::OSVersion.Version.Build -le 17134)
-	{
+	elseif ([Environment]::OSVersion.Version.Build -ge 15063 -And [Environment]::OSVersion.Version.Build -le 17134) {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\SecurityHealth' -PropertyType ExpandString -Value '%ProgramFiles%\Windows Defender\MSASCuiL.exe' -ErrorAction $SCT)
 	}
-	elseif ([Environment]::OSVersion.Version.Build -ge 17763)
-	{
+	elseif ([Environment]::OSVersion.Version.Build -ge 17763) {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\SecurityHealth' -PropertyType ExpandString -Value '%windir%\system32\SecurityHealthSystray.exe' -ErrorAction $SCT)
 	}
 	#endregion EnableDefender
@@ -433,14 +422,12 @@ process
 	#endregion DisableNetDevicesAutoInstallation
 
 	#region DisableHomeGroups
-	if (Get-Service -Name 'HomeGroupListener' -WarningAction $SCT -ErrorAction $SCT)
-	{
+	if (Get-Service -Name 'HomeGroupListener' -WarningAction $SCT -ErrorAction $SCT) {
 		$null = (Stop-Service -Name 'HomeGroupListener' -WarningAction $SCT -ErrorAction $SCT)
 		$null = (Set-Service -Name 'HomeGroupListener' -StartupType Disabled -WarningAction $SCT -ErrorAction $SCT)
 	}
 
-	if (Get-Service -Name 'HomeGroupProvider' -WarningAction $SCT -ErrorAction $SCT)
-	{
+	if (Get-Service -Name 'HomeGroupProvider' -WarningAction $SCT -ErrorAction $SCT) {
 		$null = (Stop-Service -Name 'HomeGroupProvider' -WarningAction $SCT -ErrorAction $SCT)
 		$null = (Set-Service -Name 'HomeGroupProvider' -StartupType Disabled -WarningAction $SCT -ErrorAction $SCT)
 	}
@@ -666,8 +653,7 @@ process
 
 	#region RemoveENKeyboard
 	$langs = (Get-WinUserLanguageList -ErrorAction $SCT)
-	if ($langs)
-	{
+	if ($langs) {
 		$null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
 					$_.LanguageTag -ne 'en-US'
 				}) -Force -ErrorAction $SCT)
@@ -683,12 +669,10 @@ process
 	#endregion EnableChangingSoundScheme
 
 	#region DisableVerboseStatus
-	if ((Get-CimInstance -ClassName 'Win32_OperatingSystem' -ErrorAction $SCT).ProductType -eq 1)
-	{
+	if ((Get-CimInstance -ClassName 'Win32_OperatingSystem' -ErrorAction $SCT).ProductType -eq 1) {
 		$null = (Remove-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'VerboseStatus' @paramRemoveItemProperty)
 	}
-	else
-	{
+	else {
 		$null = (Confirm-RegistryItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\VerboseStatus' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
 	}
 	#endregion DisableVerboseStatus
@@ -764,8 +748,7 @@ process
 	#endregion Hide3DObjectsFromExplorer
 
 	#region HideIncludeInLibraryMenu
-	if (-not (Test-Path -Path 'HKCR:'))
-	{
+	if (-not (Test-Path -Path 'HKCR:')) {
 		$null = (New-PSDrive -Name 'HKCR' -PSProvider 'Registry' -Root 'HKEY_CLASSES_ROOT' -ErrorAction $SCT)
 	}
 
@@ -773,8 +756,7 @@ process
 	#endregion HideIncludeInLibraryMenu
 
 	#region HideGiveAccessToMenu
-	if (-not (Test-Path -Path 'HKCR:'))
-	{
+	if (-not (Test-Path -Path 'HKCR:')) {
 		$null = (New-PSDrive -Name 'HKCR' -PSProvider 'Registry' -Root 'HKEY_CLASSES_ROOT' -ErrorAction $SCT)
 	}
 
@@ -791,7 +773,27 @@ process
 
 	#region Application Tweaks
 	#region
+
+	$null = (New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Edge\HideFirstRunExperience' -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+	$null = (New-Item -Path 'HKLM:\\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+
+	# Remove Edge icon on desktop
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DisableEdgeDesktopShortcutCreation' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+
+	# Show the initial setup ?
 	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Edge\HideFirstRunExperience' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+
+	# Do NOT allow Microsoft Edge to pre-launch at Windows startup, when the system is idle, and each time Microsoft Edge is closed
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main\AllowPrelaunch' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
+
+	# No preloading of the startpage and Tabs
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main\TabPreloader' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
+
+	# Configure Do Not Track
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main\DoNotTrack' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+
+	# Show message when opening sites in Internet Explorer
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\Software\Policies\Microsoft\MicrosoftEdge\Main\ShowMessageWhenOpeningSitesInInternetExplorer' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	#endregion
 
 	#region EnableOneDrive
@@ -827,6 +829,14 @@ process
 	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DisableEdgeDesktopShortcutCreation' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	#endregion DisableEdgeShortcutCreation
 
+	#region ConfiguteOneDrive
+	# Try Auto configure
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\OneDrive\SilentAccountConfig' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+
+	# Enable the FilesOnDemand Freature
+	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\OneDrive\FilesOnDemandEnabled' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+	#endregion ConfiguteOneDrive
+
 	#region DisableIEFirstRun
 	$null = (Confirm-RegistryItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Main\DisableFirstRunCustomize' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
 	#endregion DisableIEFirstRun
@@ -850,34 +860,32 @@ process
 	#endregion DisableMediaSharing
 
 	#region UninstallWorkFolders
-	$null = (Disable-WindowsOptionalFeature -Online -FeatureName 'WorkFolders-Client' -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	$null = (Get-WindowsOptionalFeature -Online -FeatureName 'WorkFolders-Client' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 	#endregion UninstallWorkFolders
 
 	#region UninstallPowerShellV2
-	$null = (Disable-WindowsOptionalFeature -Online -FeatureName 'MicrosoftWindowsPowerShellV2Root' -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	$null = (Get-WindowsOptionalFeature -Online -FeatureName 'MicrosoftWindowsPowerShellV2Root' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 	#endregion UninstallPowerShellV2
 
 	#region InstallSSHClient
 	$null = (Get-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object {
-			$_.Name -like 'OpenSSH.Client*'
+			(($_.Name -like 'OpenSSH.Client*') -and ($_.State -eq 'NotPresent'))
 		} | Add-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
 	#endregion InstallSSHClient
 
 	#region UninstallSSHServer
 	$null = (Stop-Service -Name 'sshd' -Force -NoWait -WarningAction $SCT -ErrorAction $SCT)
 	$null = (Get-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object {
-			$_.Name -like 'OpenSSH.Server*'
+			(($_.Name -like 'OpenSSH.Server*') -and ($_.State -eq 'Installed'))
 		} | Remove-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
 	#endregion UninstallSSHServer
 
 	#region SetPhotoViewerAssociation
-	if (-not (Test-Path -Path 'HKCR:'))
-	{
+	if (-not (Test-Path -Path 'HKCR:')) {
 		$null = (New-PSDrive -Name 'HKCR' -PSProvider 'Registry' -Root 'HKEY_CLASSES_ROOT' -WarningAction $SCT -ErrorAction $SCT)
 	}
 
-	foreach ($type in @('Paint.Picture', 'giffile', 'jpegfile', 'pngfile'))
-	{
+	foreach ($type in @('Paint.Picture', 'giffile', 'jpegfile', 'pngfile')) {
 		$null = (New-Item -Path $('HKCR:\' + $type + '\shell\open') -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 		$null = (New-Item -Path $('HKCR:\' + $type + '\shell\open\command') -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
 		$null = (Confirm-RegistryItemProperty -Path $('HKCR:\' + $type + '\shell\open\MuiVerb') -PropertyType ExpandString -Value '@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043' -ErrorAction $SCT)
@@ -886,8 +894,7 @@ process
 	#endregion SetPhotoViewerAssociation
 
 	#region AddPhotoViewerOpenWith
-	if (-not (Test-Path -Path 'HKCR:'))
-	{
+	if (-not (Test-Path -Path 'HKCR:')) {
 		$null = (New-PSDrive -Name 'HKCR' -PSProvider 'Registry' -Root 'HKEY_CLASSES_ROOT' -WarningAction $SCT -ErrorAction $SCT)
 	}
 
@@ -900,11 +907,11 @@ process
 	#endregion AddPhotoViewerOpenWith
 
 	#region InstallPDFPrinter
-	$null = (Enable-WindowsOptionalFeature -Online -FeatureName 'Printing-PrintToPDFServices-Features' -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	$null = (Get-WindowsOptionalFeature -Online -FeatureName 'Printing-PrintToPDFServices-Features' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 	#endregion InstallPDFPrinter
 
 	#region UninstallXPSPrinter
-	$null = (Disable-WindowsOptionalFeature -Online -FeatureName 'Printing-XPSServices-Features' -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	$null = (Get-WindowsOptionalFeature -Online -FeatureName 'Printing-XPSServices-Features' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 	#endregion UninstallXPSPrinter
 
 	#region RemoveFaxPrinter
@@ -912,12 +919,11 @@ process
 	#endregion RemoveFaxPrinter
 
 	#region UninstallFaxAndScan
-	$null = (Disable-WindowsOptionalFeature -Online -FeatureName 'FaxServicesClientPackage' -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	$null = (Get-WindowsOptionalFeature -Online -FeatureName 'FaxServicesClientPackage' -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 	#endregion UninstallFaxAndScan
 
 	#region InstallNET23
-	if ((Get-CimInstance -ClassName 'Win32_OperatingSystem').ProductType -eq 1)
-	{
+	if ((Get-CimInstance -ClassName 'Win32_OperatingSystem').ProductType -eq 1) {
 		$null = (Enable-WindowsOptionalFeature -Online -FeatureName 'NetFx3' -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 	}
 	#endregion InstallNET23
@@ -937,8 +943,7 @@ process
 
 	#region
 	# Do not allow the computer to turn off the Ethernet adapter to save power
-	if ((Get-CimInstance -ClassName 'Win32_ComputerSystem' -ErrorAction $SCT).PCSystemType -eq 1)
-	{
+	if ((Get-CimInstance -ClassName 'Win32_ComputerSystem' -ErrorAction $SCT).PCSystemType -eq 1) {
 		# Desktop
 		$adapter = (Get-NetAdapter -Physical -WarningAction $SCT -ErrorAction $SCT | Get-NetAdapterPowerManagement -WarningAction $SCT -ErrorAction $SCT)
 		$adapter.AllowComputerToTurnOffDevice = 'Disabled'
@@ -949,16 +954,12 @@ process
 	#region
 	if (Get-WindowsEdition -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object -FilterScript {
 			$_.Edition -eq 'Professional' -or $_.Edition -eq 'Enterprise'
-		})
-	{
-		if ((Get-CimInstance -ClassName CIM_Processor -WarningAction $SCT -ErrorAction $SCT).VirtualizationFirmwareEnabled -eq $true)
-		{
+		}) {
+		if ((Get-CimInstance -ClassName CIM_Processor -WarningAction $SCT -ErrorAction $SCT).VirtualizationFirmwareEnabled -eq $true) {
 			$null = (Enable-WindowsOptionalFeature -FeatureName Containers-DisposableClientVM -All -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 		}
-		else
-		{
-			if ((Get-CimInstance -ClassName 'CIM_ComputerSystem' -WarningAction $SCT -ErrorAction $SCT).HypervisorPresent -eq $true)
-			{
+		else {
+			if ((Get-CimInstance -ClassName 'CIM_ComputerSystem' -WarningAction $SCT -ErrorAction $SCT).HypervisorPresent -eq $true) {
 				$null = (Enable-WindowsOptionalFeature -FeatureName Containers-DisposableClientVM -All -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
 			}
 		}
@@ -1013,8 +1014,7 @@ process
 	# Remove "Edit with Paint 3D" from context menu
 	$exts = @('.bmp', '.gif', '.jpe', '.jpeg', '.jpg', '.png', '.tif', '.tiff')
 
-	foreach ($ext in $exts)
-	{
+	foreach ($ext in $exts) {
 		$null = (Remove-Item -Path ('Registry::HKEY_CLASSES_ROOT\SystemFileAssociations\' + $ext + '\Shell\3D Edit\ProgrammaticAccessOnly') @paramRemoveItemProperty)
 	}
 	#endregion
@@ -1048,22 +1048,21 @@ process
 	#region
 	# Turn off Windows features
 	$features = @('FaxServicesClientPackage', 'LegacyComponents', 'MicrosoftWindowsPowerShellV2', 'MicrosoftWindowsPowershellV2Root', 'Printing-XPSServices-Features', 'Printing-PrintToPDFServices-Features', 'WorkFolders-Client', 'SMB1Protocol', 'SMB1Protocol-Client', 'SMB1Protocol-Server')
-	$null = (Disable-WindowsOptionalFeature -Online -FeatureName $features -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	foreach ($feature in $features) {
+		$null = (Get-WindowsOptionalFeature -Online -FeatureName $feature -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	}
 
 	# Remove Windows capabilities
 	$IncludedApps = @('App.Support.QuickAssist*', 'Hello.Face*', 'Media.WindowsMediaPlayer*', 'Language.Handwriting*', 'Language.OCR*', 'Language.Speech*', 'Language.TextToSpeech*')
 	$OFS = '|'
-	foreach ($IncludedApp in $IncludedApps)
-	{
-		try
-		{
+	foreach ($IncludedApp in $IncludedApps) {
+		try {
 			$null = (Get-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object -FilterScript {
 					#$_.Name -cmatch $IncludedApps
 					($_.Name -like $IncludedApp) -and ($_.State -eq 'Installed')
 				} | Remove-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
 		}
-		catch
-		{
+		catch {
 			Write-Verbose -Message 'Most of the time: Permanent package cannot be uninstalled. And we know that!'
 		}
 	}
@@ -1075,10 +1074,10 @@ process
 	# Create a task in the Task Scheduler to start Windows cleaning up - The task runs every 90 days
 	$keys = @('Delivery Optimization Files', 'Device Driver Packages', 'Previous Installations', 'Setup Log Files', 'Temporary Setup Files', 'Update Cleanup', 'Windows Defender', 'Windows Upgrade Log Files')
 
-	foreach ($key in $keys)
-	{
+	foreach ($key in $keys) {
 		$null = (Confirm-RegistryItemProperty -Path ('HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\' + $key + 'StateFlags1337') -PropertyType 'DWord' -Value '2' -ErrorAction $SCT)
 	}
+
 	$action = (New-ScheduledTaskAction -Execute 'cleanmgr.exe' -Argument '/sagerun:1337' -ErrorAction $SCT)
 	$trigger = (New-ScheduledTaskTrigger -Daily -DaysInterval '90' -At '9am' -ErrorAction $SCT)
 	$settings = (New-ScheduledTaskSettingsSet -Compatibility 'Win8' -StartWhenAvailable -ErrorAction $SCT)
@@ -1134,22 +1133,21 @@ process
 
 	# Turn off Windows features
 	$features = @('FaxServicesClientPackage', 'LegacyComponents', 'MicrosoftWindowsPowerShellV2', 'MicrosoftWindowsPowershellV2Root', 'Printing-XPSServices-Features', 'Printing-PrintToPDFServices-Features', 'WorkFolders-Client', 'SMB1Protocol', 'SMB1Protocol-Client', 'SMB1Protocol-Server')
-	$null = (Disable-WindowsOptionalFeature -Online -FeatureName $features -NoRestart -ErrorAction $SCT)
+	foreach ($feature in $features) {
+		$null = (Get-WindowsOptionalFeature -Online -FeatureName $feature -WarningAction $SCT -ErrorAction $SCT | Where-Object { $_.State -ne 'Disabled' } | Disable-WindowsOptionalFeature -Online -NoRestart -WarningAction $SCT -ErrorAction $SCT)
+	}
 
 	# Remove Windows capabilities
 	$IncludedApps = @('App.Support.QuickAssist*', 'Hello.Face*', 'Media.WindowsMediaPlayer*', 'Browser.InternetExplorer*', 'Language.Handwriting*', 'Language.OCR*', 'Language.Speech*', 'Language.TextToSpeech*')
 	$OFS = '|'
-	foreach ($IncludedApp in $IncludedApps)
-	{
-		try
-		{
+	foreach ($IncludedApp in $IncludedApps) {
+		try {
 			$null = (Get-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT | Where-Object -FilterScript {
 					#$_.Name -cmatch $IncludedApps
 					($_.Name -like $IncludedApp) -and ($_.State -eq 'Installed')
 				} | Remove-WindowsCapability -Online -WarningAction $SCT -ErrorAction $SCT)
 		}
-		catch
-		{
+		catch {
 			Write-Verbose -Message 'Most of the time: Permanent package cannot be uninstalled. And we know that!'
 		}
 	}
@@ -1157,8 +1155,7 @@ process
 	#endregion FinalTouches
 }
 
-end
-{
+end {
 	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
 }
 
