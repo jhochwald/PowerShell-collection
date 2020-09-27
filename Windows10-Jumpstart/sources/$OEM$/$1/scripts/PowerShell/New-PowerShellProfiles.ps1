@@ -2,13 +2,20 @@
 
 <#
       .SYNOPSIS
-      Cleanup the Windows 10 Start Menu
+      Create plain PowerShell Profiles, if needed
 
       .DESCRIPTION
-      Cleanup the Windows 10 Start Menu
+      Create plain PowerShell Profiles, if needed
 
       .NOTES
-      Version 1.0.2
+      Changelog:
+      1.0.1: First real release
+      1.0.0: Intital beta version
+
+      Version 1.0.1
+
+      .LINK
+      http://beyond-datacenter.com
 
       .LINK
       http://beyond-datacenter.com
@@ -18,26 +25,13 @@ param ()
 
 begin
 {
-	Write-Output -InputObject 'Cleanup the Windows 10 Start Menu'
+	Write-Output -InputObject 'Create plain PowerShell Profiles, if needed'
 
 	#region Defaults
 	$SCT = 'SilentlyContinue'
 	#endregion Defaults
 
 	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
-
-	$StartMenuContent = @'
-<LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" Version="1" xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout" xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
-<LayoutOptions StartTileGroupCellWidth="6" />
-<DefaultLayoutOverride>
-<StartLayoutCollection>
-<defaultlayout:StartLayout GroupCellWidth="6" />
-</StartLayoutCollection>
-</DefaultLayoutOverride>
-</LayoutModificationTemplate>
-'@
-
-	$StartMenuFile = "$env:windir\StartMenuLayout.xml"
 }
 
 process
@@ -45,58 +39,45 @@ process
 	# Stop Search - Gain performance
 	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
-	# Delete layout file if it already exists
-	if (Test-Path -Path $StartMenuFile -ErrorAction $SCT)
-	{
-		$null = (Remove-Item -Path $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
+	# Splat the parameters
+	$paramNewItem = @{
+		type          = 'file'
+		force         = $true
+		Confirm       = $false
+		ErrorAction   = $SCT
+		WarningAction = $SCT
 	}
 
-	# Creates the blank layout file
-	$null = ($StartMenuContent | Out-File -FilePath $StartMenuFile -Encoding ASCII -Force -ErrorAction $SCT)
-
-	$RegistryAliases = @('HKLM', 'HKCU')
-
-	# Assign the start layout and force it to apply with "LockedStartLayout" at both the machine and user level
-	foreach ($RegistryAlias in $RegistryAliases)
-	{
-		$RegistryBasePath = ($RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows')
-		$RegistryKeyPath = ($RegistryBasePath + '\Explorer')
-
-		if (-not (Test-Path -Path $RegistryKeyPath -ErrorAction $SCT))
-		{
-			$null = (New-Item -Path $RegistryBasePath -Name 'Explorer' -Force -Confirm:$false -ErrorAction $SCT)
-		}
-
-		$null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 1 -Force -Confirm:$false -ErrorAction $SCT)
-		$null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'StartLayoutFile' -Value $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
+	# Splat the parameters
+	$paramTestPath = @{
+		ErrorAction   = $SCT
+		WarningAction = $SCT
 	}
 
-	# Restart Explorer, open the start menu (necessary to load the new layout)
-	Stop-Process -name explorer
-
-	# Give it a few seconds to process
-	Start-Sleep -Seconds 5
-
-	$WScriptShell = (New-Object -ComObject wscript.shell)
-	$WScriptShell.SendKeys('^{ESCAPE}')
-
-	# Give it a few seconds to process
-	Start-Sleep -Seconds 5
-
-	# Enable the ability to pin items again by disabling "LockedStartLayout"
-	foreach ($RegistryAlias in $RegistryAliases)
+	if (-not (Test-Path -Path $PROFILE @paramTestPath))
 	{
-		$RegistryBasePath = $RegistryAlias + ':\SOFTWARE\Policies\Microsoft\Windows'
-		$RegistryKeyPath = $RegistryBasePath + '\Explorer'
-		$null = (Set-ItemProperty -Path $RegistryKeyPath -Name 'LockedStartLayout' -Value 0 -Force -Confirm:$false -ErrorAction $SCT)
+		$null = (New-Item -Path $PROFILE @paramNewItem)
 	}
 
-	# Restart Explorer and delete the layout file
-	Stop-Process -name explorer
+	if (-not (Test-Path -Path $PROFILE.AllUsersAllHosts @paramTestPath))
+	{
+		$null = (New-Item -Path $PROFILE.AllUsersAllHosts @paramNewItem)
+	}
 
-	# Uncomment the next line to make clean start menu default for all new users
-	# Import-StartLayout -LayoutPath $layoutFile -MountPath $env:SystemDrive\
-	$null = (Remove-Item -Path $StartMenuFile -Force -Confirm:$false -ErrorAction $SCT)
+	if (-not (Test-Path -Path $PROFILE.AllUsersCurrentHost @paramTestPath))
+	{
+		$null = (New-Item -Path $PROFILE.AllUsersCurrentHost @paramNewItem)
+	}
+
+	if (-not (Test-Path -Path $PROFILE.CurrentUserAllHosts @paramTestPath))
+	{
+		$null = (New-Item -Path $PROFILE.CurrentUserAllHosts @paramNewItem)
+	}
+
+	if (-not (Test-Path -Path $PROFILE.CurrentUserCurrentHost @paramTestPath))
+	{
+		$null = (New-Item -Path $PROFILE.CurrentUserCurrentHost @paramNewItem)
+	}
 }
 
 end

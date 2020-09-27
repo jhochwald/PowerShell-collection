@@ -5,7 +5,7 @@
 :: enabling Technology progressive OS deployment (ETPOSD)
 :: Client System Bootstrapper for Windows 10 Enterprise Installations
 ::
-:: Version 1.4.7
+:: Version 1.4.8
 ::
 :: Tested with Windows 10 Enterprise Release 2004 and Release 2009
 ::
@@ -231,6 +231,18 @@ SC stop wsearch >nul 2>&1
 ECHO Enable Remote PowerShell
 ECHO %TIME:~0,8% Enable Remote PowerShell >>%logfile_setup%
 "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force -Confirm:$false -ErrorAction Continue" >>%logfile_setup% 2>&1
+ECHO Errorlevel=%Errorlevel% >>%logfile_setup% 2>nul
+
+:: DEFAULT
+ECHO.>>%logfile_setup% 2>nul
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction SilentlyContinue)" >nul 2>&1
+SC stop wsearch >nul 2>&1
+:: DEFAULT
+
+:CreatePowerShellProfiles
+ECHO Create plain PowerShell Profiles
+ECHO %TIME:~0,8% Create plain PowerShell Profiles >>%logfile_setup%
+start /MIN /WAIT "CleanupStockApps" %SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "C:\scripts\PowerShell\New-PowerShellProfiles.ps1" >>%logfile_setup% 2>&1
 ECHO Errorlevel=%Errorlevel% >>%logfile_setup% 2>nul
 
 :: DEFAULT
@@ -874,7 +886,8 @@ IF EXIST c:\install\ rd /s /q c:\install\ >nul 2>&1
 ::
 :: Public Changelog for this Wrapper:
 ::
-:: 1.4.7:  Add KMS Ping checks for Windows and Office activation
+:: 1.4.8:  Add CreatePowerShellProfiles part to create empty PowerShell Profiles, if needed -JHO
+:: 1.4.7:  Add KMS Ping checks for Windows and Office activation - JHO
 :: 1.4.6:  Test Release - ALL
 :: 1.4.5:  Change the logging and add errorlevel to all enties - JHO
 :: 1.4.4:  Rewrite this Wrapper Batch file to make it more robust - JHO

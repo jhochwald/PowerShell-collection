@@ -5,8 +5,8 @@
       Apply the Defender exclusions based on recommendations by Microsoft
 
       .DESCRIPTION
-	  Apply the Defender exclusions based on recommendations by Microsoft,
-	  Some additional Controlled Folder Access Allowed Applications will be added as well
+      Apply the Defender exclusions based on recommendations by Microsoft,
+      Some additional Controlled Folder Access Allowed Applications will be added as well
 
       .EXAMPLE
       PS C:\> Optimize-MicrosoftDefenderExclusions.ps1
@@ -15,10 +15,11 @@
       Do not just use set-mppreference here, this might remove any existing exclusions.
       Might be the right thing to do, but with add-mppreference you append to the list (if exists).
 
-	  Changelog:
-	  1.0.3: Add ControlledFolderAccessAllowedApplications handling
-	  1.0.2: First real release
-	  1.0.0: Intital beta version
+      Changelog:
+      1.0.3: Add ControlledFolderAccessAllowedApplications handling
+      1.0.2: First real release
+      1.0.0: Intital beta version
+
       Version 1.0.3
 
       .LINK
