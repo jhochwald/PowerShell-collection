@@ -104,8 +104,8 @@ begin
 	$ServerAddresses += $ServerAddressesIPv4
 
 	if ((($PSCmdlet.MyInvocation.BoundParameters['IPv6']).IsPresent) -eq $true)
- {
-	 	Write-Verbose -Message 'IPv6 Servers will be added to the serverlist'
+   {
+      Write-Verbose -Message 'IPv6 Servers will be added to the serverlist'
 		# IPv6 DNS Servers to use
 		$ServerAddressesIPv6 = @(
 			'2606:4700:4700::1111'
