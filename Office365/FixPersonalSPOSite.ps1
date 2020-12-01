@@ -26,7 +26,7 @@
       See the last command of this script, Get-SPOSite does all the magic. Don't ask!
 
       Author: Joerg Hochwald - https://hochwald.net
-      Contributor: Cristopher Pope - https://hope-this-helps.de
+      Contributor: Christopher Pope - https://hope-this-helps.de
 #>
 [CmdletBinding(ConfirmImpact = 'Low')]
 param
