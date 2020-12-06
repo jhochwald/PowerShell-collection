@@ -23,10 +23,10 @@
       We found this issue in at least two different tenants, therefore we decided to figure out a workaround.
 
       Want to know how the magic workaround works?
-      See the last command of this script, Get-SPOSite does all the magic. Son't ask!
+      See the last command of this script, Get-SPOSite does all the magic. Don't ask!
 
       Author: Joerg Hochwald - https://hochwald.net
-      Contributor: Cristopher Pope - https://hope-this-helps.de
+      Contributor: Christopher Pope - https://hope-this-helps.de
 #>
 [CmdletBinding(ConfirmImpact = 'Low')]
 param
