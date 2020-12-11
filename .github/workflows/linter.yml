@@ -1,0 +1,67 @@
+---
+name: Linter
+
+# Controls when the action will run.
+# Triggers the workflow on push and/or pull request events but only for the master branch
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check and install PSScriptAnalyzer module
+        shell: pwsh
+        run: |
+          if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty InstallationPolicy) -eq 'Trusted')
+          {
+            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
+          }
+
+          if (-not (Get-Module -Name PSScriptAnalyzer -ListAvailable -ErrorAction SilentlyContinue))
+          {
+            Install-Module -Name PSScriptAnalyzer -Repository PSGallery -ErrorAction Stop
+          }
+      - name: Lint with PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          # Cleanup
+          $issues = $null
+          $TestDetails = $null
+          $errors = $null
+          $warnings = $null
+
+          # Execute the test
+          $TestDetails = (Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue)
+
+          # Store the errors and warnings
+          $errors = $issues | Where-Object -FilterScript {
+            $_.Severity -eq 'Error'
+          }
+          $warnings = $issues | Where-Object -FilterScript {
+            $_.Severity -eq 'Warning'
+          }
+
+          if ($errors)
+          {
+            Write-Error -Message ('There were {0} errors and {1} warnings total.' -f $errors.Count, $warnings.Count) -ErrorAction Stop
+          }
+          elseif ($warnings)
+          {
+            Write-Warning -Message ('There were {0} warnings total.' -f $warnings.Count)
+          }
+          else
+          {
+            Write-Output -InputObject 'OK'
+          }
+
+          Write-Verbose -Message $TestDetails
