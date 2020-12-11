@@ -35,7 +35,7 @@ jobs:
           $warnings = $null
 
           # Execute the test
-          $TestDetails = (Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue)
+          Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue
 
           # Store the errors and warnings
           $errors = $issues | Where-Object -FilterScript {
@@ -57,5 +57,3 @@ jobs:
           {
             Write-Output -InputObject 'OK'
           }
-
-          Write-Verbose -Message $TestDetails
