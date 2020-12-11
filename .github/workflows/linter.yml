@@ -22,15 +22,9 @@ jobs:
       - name: Check and install PSScriptAnalyzer module
         shell: pwsh
         run: |
-          if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty InstallationPolicy) -eq 'Trusted')
-          {
-            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
-          }
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
 
-          if (-not (Get-Module -Name PSScriptAnalyzer -ListAvailable -ErrorAction SilentlyContinue))
-          {
-            Install-Module -Name PSScriptAnalyzer -Repository PSGallery -ErrorAction Stop
-          }
+          Install-Module -Name PSScriptAnalyzer -Repository PSGallery -ErrorAction Stop
       - name: Lint with PSScriptAnalyzer
         shell: pwsh
         run: |
