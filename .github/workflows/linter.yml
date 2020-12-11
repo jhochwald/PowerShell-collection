@@ -35,7 +35,7 @@ jobs:
           $warnings = $null
 
           # Execute the test
-          Invoke-ScriptAnalyzer -Path *.ps1 -Recurse -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue
+          Invoke-ScriptAnalyzer -Path . -Recurse -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue
 
           # Store the errors and warnings
           $errors = $issues | Where-Object -FilterScript {
