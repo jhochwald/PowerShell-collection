@@ -35,7 +35,7 @@ jobs:
           $warnings = $null
 
           # Execute the test
-          Invoke-ScriptAnalyzer -Path . -Recurse -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue
+          Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning,Error -ExcludeRule PSReviewUnusedParameter,PSPossibleIncorrectComparisonWithNull,PSAvoidUsingWMICmdlet,PSUseSingularNouns,PSAvoidUsingWriteHost,PSUseDeclaredVarsMoreThanAssignments,PSAvoidUsingComputerNameHardcoded,PSAvoidGlobalVars,PSAvoidUsingUsernameAndPasswordParams -OutVariable issues -ErrorAction SilentlyContinue -WarningAction Continue
 
           # Store the errors and warnings
           $errors = $issues | Where-Object -FilterScript {
