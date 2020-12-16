@@ -11,36 +11,42 @@
       Users, Meeting Rooms, Online Application Instances (Resource Accounts)
 
       .PARAMETER OutputType
-      Define the Script Output:
+      Define the Script Output
+
+      Valid values are:
       CONSOLE - Dump a formatted list into the console
-      HTML - Create a simple HTML report with Tables. Only here to be compatible to our older version
-      XML - Create a simple Extensible Markup Language (XML) report
-      YAML - Create a simple YAML Ain't Markup Language (YAML) report
-      JSON - Create a simple JavaScript Object Notation (JSON) report. Handy if you need to upload the data via WebServices/APIs
-      CSV - Create a simple comma-separated values (CSV) report. This is perfect for re-use within Excel, or other applications
+      HTML    - Create a simple HTML report with Tables. Only here to be compatible to our older version
+      XML     - Create a simple Extensible Markup Language (XML) report
+      YAML    - Create a simple YAML Ain't Markup Language (YAML) report
+      JSON    - Create a simple JavaScript Object Notation (JSON) report. Handy if you need to upload the data via WebServices/APIs
+      CSV     - Create a simple comma-separated values (CSV) report. This is perfect for re-use within Excel, or other applications
 
       If you leave it empty (this is the default), the object will be dumped to the console!
       This can become handy, if you use this script to generate the report and re-use it in the pipe or your own application
 
       .PARAMETER Path
       Where to store the Report File
+
       Default is 'C:\scripts\PowerShell\logs\'
 
       .PARAMETER DateFormat
       Use the format for Get-Date
+
       Default is 'yyyyMMdd-HHmmUTC'
 
       .PARAMETER UTC
       Use ToUniversalTime for the Date Strings
+
       Default is $true
 
       .PARAMETER Report
       Define what to report.
-      Valid is:
-      Users - Report numbers assigned to users
-      MeetingRooms - Report numbers assigned to Meetings Rooms (e.g. Teams Rooms Devices)
-      ResourceAccounts - Report numbers assigned to Applications. Auto Attendants (AA) and/or Call Queues (CQ) are supported
-      All - Alle assigned numbers
+
+      Valid values are:
+      Users            - Report numbers assigned to users
+      MeetingRooms     - Report numbers assigned to Meetings Room accounts
+      ResourceAccounts - Report numbers assigned to Applications. (Auto Attendants (AA) and/or Call Queues (CQ) are supported)
+      All              - All assigned numbers (all above merged into one report)
 
       Default is 'All'
 
@@ -50,9 +56,25 @@
       The Report will be dumped to the console (unformatted)
 
       .EXAMPLE
-      PS C:\> .\Get-TeamsAssignedNumbers.ps1 -OutputType CONSOLE
+      PS C:\> .\Get-TeamsAssignedNumbers.ps1 -OutputType CONSOLE -Report MeetingRooms
 
-      Dump a formatted list into the console
+      Dump a formatted report for numbers assigned to Meeting Rooms into the console
+
+      .EXAMPLE
+      PS C:\> .\Get-TeamsAssignedNumbers.ps1 -OutputType CONSOLE -Report ResourceAccounts
+
+      Dump a formatted report for numbers assigned to Resource Accounts into the console
+
+      .EXAMPLE
+      PS C:\> .\Get-TeamsAssignedNumbers.ps1 -OutputType CONSOLE -Report Users
+
+      Dump a formatted report for numbers assigned to Resource Accounts into the console
+      This will contain function users for Resource Accounts and Meeting Rooms, but they will be shown as user object!
+
+      .EXAMPLE
+      PS C:\> .\Get-TeamsAssignedNumbers.ps1 -OutputType CONSOLE -Report all
+
+      Dump a formatted report for every assigned number into the console
 
       .EXAMPLE
       PS C:\> .\Get-TeamsAssignedNumbers.ps1 -OutputType HTML
@@ -102,7 +124,7 @@ param
    [AllowEmptyString()]
    [AllowEmptyCollection()]
    [ValidateSet('CONSOLE', 'HTML', 'XML', 'YAML', 'JSON', 'CSV', IgnoreCase = $true)]
-   [Alias('ReportType')]
+   [Alias('ReportFormat')]
    [string]
    $OutputType = $null,
    [Parameter(ValueFromPipeline,
@@ -220,6 +242,7 @@ process
       # Get Users with LineURI
       $UsersLineURI = $null
       $paramGetCsOnlineUser = @{
+         ResultSize    = 30000
          Verbose       = $VerboseValue
          Debug         = $DebugValue
          Filter        = {
@@ -229,7 +252,7 @@ process
          WarningAction = 'SilentlyContinue'
       }
       $paramSelectObject = @{
-         Property = 'UserPrincipalName', 'LineURI', 'DisplayName', 'FirstName', 'LastName'
+         Property = 'UserPrincipalName', 'LineURI', 'DisplayName', 'FirstName', 'LastName', 'Enabled', 'SipAddress'
          Verbose  = $VerboseValue
          Debug    = $DebugValue
       }
@@ -243,7 +266,7 @@ process
          {
             $MatchedData = @()
 
-            $null = ($ReportingItem.LineURI -match $LineURIRegex)
+            ($ReportingItem.PhoneNumber -match $LineURIRegex | Out-Null)
 
             $ReportingObject = (New-Object -TypeName System.Object)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
@@ -253,6 +276,8 @@ process
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'FirstName' -Value $ReportingItem.FirstName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LastName' -Value $ReportingItem.LastName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'SipAddress' -Value $($ReportingItem.SipAddress -replace 'sip:', ''))
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Enabled' -Value $ReportingItem.Enabled)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'User')
 
             # Add to array
@@ -269,6 +294,7 @@ process
       $MeetingRoomLineURI = $null
 
       $paramGetCsMeetingRoom = @{
+         ResultSize    = 10000
          Verbose       = $VerboseValue
          Debug         = $DebugValue
          Filter        = {
@@ -278,7 +304,7 @@ process
          WarningAction = 'SilentlyContinue'
       }
       $paramSelectObject = @{
-         Property = 'UserPrincipalName', 'LineURI', 'DisplayName'
+         Property = 'UserPrincipalName', 'LineURI', 'DisplayName', 'Enabled', 'SipAddress'
          Verbose  = $VerboseValue
          Debug    = $DebugValue
       }
@@ -292,7 +318,7 @@ process
          {
             $MatchedData = @()
 
-            $null = ($ReportingItem.LineURI -match $LineURIRegex)
+            ($ReportingItem.PhoneNumber -match $LineURIRegex | Out-Null)
 
             $ReportingObject = (New-Object -TypeName System.Object)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
@@ -300,12 +326,17 @@ process
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'MeetingRoom')
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'SipAddress' -Value $($ReportingItem.SipAddress -replace 'sip:', ''))
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Enabled' -Value $ReportingItem.Enabled)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'Meeting Room')
 
             # Remove existing User entry (Rooms have an user object as well)
-            $ReportData = ($ReportData | Where-Object -FilterScript {
-                  ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
-               })
+            if ($ReportData.UserPrincipalName -contains $ReportingItem.UserPrincipalName)
+            {
+               $ReportData = ($ReportData | Where-Object -FilterScript {
+                     ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
+                  })
+            }
 
             # Add to array
             $null = ($ReportData += $ReportingObject)
@@ -321,13 +352,15 @@ process
       $OnlineApplicationInstanceLineURI = $null
 
       $paramGetCsOnlineApplicationInstance = @{
+         Force         = $true
+         ResultSize    = 10000
          Verbose       = $VerboseValue
          Debug         = $DebugValue
          ErrorAction   = 'SilentlyContinue'
          WarningAction = 'SilentlyContinue'
       }
       $paramSelectObject = @{
-         Property = 'UserPrincipalName', 'DisplayName', 'PhoneNumber', 'ApplicationId'
+         Property = 'UserPrincipalName', 'DisplayName', 'PhoneNumber', 'ApplicationId', 'Enabled'
          Verbose  = $VerboseValue
          Debug    = $DebugValue
       }
@@ -343,7 +376,43 @@ process
          {
             $MatchedData = @()
 
-            $null = ($ReportingItem.PhoneNumber -match $LineURIRegex)
+            ($ReportingItem.PhoneNumber -match $LineURIRegex | Out-Null)
+
+            <#
+               Workaround:
+
+               Get-CsOnlineApplicationInstance does not return an "Enabled" and "SipAddress" field,
+               so we try to re-use any existing object information
+
+               Will not work all the time, only if regular users are reported as well!
+            #>
+            if ($ReportData.UserPrincipalName -contains $ReportingItem.UserPrincipalName)
+            {
+               # Cleanup
+               $WorkaroundInfo = $null
+
+               $WorkaroundInfo = ($ReportData | Where-Object -FilterScript {
+                     ($_.UserPrincipalName -eq $ReportingItem.UserPrincipalName)
+                  } | Select-Object -Property 'Enabled', 'SipAddress')
+
+               if (($WorkaroundInfo).Enabled)
+               {
+                  $isAppEnabled = (($WorkaroundInfo).Enabled)
+               }
+               else
+               {
+                  $isAppEnabled = 'unknown'
+               }
+
+               if (($WorkaroundInfo).SipAddress)
+               {
+                  $isSipAddress = (($WorkaroundInfo).SipAddress)
+               }
+               else
+               {
+                  $isSipAddress = 'unknown'
+               }
+            }
 
             $ReportingObject = (New-Object -TypeName System.Object)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
@@ -351,8 +420,9 @@ process
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value $(
-                  if ($ReportingItem.ApplicationId -eq 'ce933385-9390-45d1-9512-c8d228074e07')
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'SipAddress' -Value $isSipAddress)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Enabled' -Value $isAppEnabled)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value $(if ($ReportingItem.ApplicationId -eq 'ce933385-9390-45d1-9512-c8d228074e07')
                   {
                      'Auto Attendant Resource Account'
                   }
@@ -367,9 +437,12 @@ process
                ))
 
             # Remove existing User entry (Apps have an user object as well)
-            $ReportData = ($ReportData | Where-Object -FilterScript {
-                  ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
-               } -Verbose:$VerboseValue -Debug:$DebugValue)
+            if ($ReportData.UserPrincipalName -contains $ReportingItem.UserPrincipalName)
+            {
+               $ReportData = ($ReportData | Where-Object -FilterScript {
+                     ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
+                  })
+            }
 
             # Add to array
             $null = ($ReportData += $ReportingObject)
@@ -588,7 +661,7 @@ process
       {
          $paramFormatTable = @{
             AutoSize = $true
-            Property = 'LineURI', 'DDI', 'Ext', 'DisplayName', 'Type'
+            Property = 'UserPrincipalName', 'LineURI', 'DDI', 'Ext', 'DisplayName', 'Type'
             Verbose  = $VerboseValue
             Debug    = $DebugValue
          }
