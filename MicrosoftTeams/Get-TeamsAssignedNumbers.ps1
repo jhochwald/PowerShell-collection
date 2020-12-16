@@ -34,6 +34,16 @@
       Use ToUniversalTime for the Date Strings
       Default is $true
 
+      .PARAMETER Report
+      Define what to report.
+      Valid is:
+      Users - Report numbers assigned to users
+      MeetingRooms - Report numbers assigned to Meetings Rooms (e.g. Teams Rooms Devices)
+      ResourceAccounts - Report numbers assigned to Applications. Auto Attendants (AA) and/or Call Queues (CQ) are supported
+      All - Alle assigned numbers
+
+      Default is 'All'
+
       .EXAMPLE
       PS C:\> .\Get-TeamsAssignedNumbers.ps1
 
@@ -69,400 +79,458 @@
 
       Create a simple comma-separated values (CSV) report.
 
+      .LINK
+      https://github.com/ucgeek/Get-TeamsAssignedNumbers
+
+      .LINK
+      https://github.com/ucgeek/Get-TeamsAssignedNumbers/blob/master/LICENSE
+
       .NOTES
-      Based on the work off Andrew Morpeth (https://ucgeek.co/)
+      Based on the work off Andrew Morpeth (@ucgeek and https://ucgeek.co/)
+      Licensed under the GNU General Public License v3.0 terms (by @ucgeek)
 
       REQUIREMENTS:
-      If you haven't already, you will need to install the MicrosoftTeams PowerShell module and connect to the Teams/Skype for Business Online Service of Microsoft Office 365
+      If you haven't already, you will need to install the MicrosoftTeams PowerShell module
+      The script assumes, you are connect to the Teams/Skype for Business Online Service of Microsoft Office 365
 #>
 [CmdletBinding(ConfirmImpact = 'None')]
 param
 (
-	[Parameter(ValueFromPipeline,
-		ValueFromPipelineByPropertyName)]
-	[ValidateSet('CONSOLE', 'HTML', 'XML', 'YAML', 'JSON', 'CSV', IgnoreCase = $true)]
-	[AllowEmptyCollection()]
-	[AllowEmptyString()]
-	[AllowNull()]
-	[Alias('ReportType')]
-	[string]
-	$OutputType = $null,
-	[Parameter(ValueFromPipeline,
-		ValueFromPipelineByPropertyName)]
-	[AllowEmptyCollection()]
-	[AllowEmptyString()]
-	[AllowNull()]
-	[string]
-	$Path = 'C:\scripts\PowerShell\logs',
-	[Parameter(ValueFromPipeline,
-		ValueFromPipelineByPropertyName)]
-	[AllowEmptyCollection()]
-	[AllowEmptyString()]
-	[AllowNull()]
-	[string]
-	$DateFormat = 'yyyyMMdd-HHmmUTC',
-	[Parameter(ValueFromPipeline,
-		ValueFromPipelineByPropertyName)]
-	[Alias('UseUTC')]
-	[switch]
-	$UTC
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
+   [AllowNull()]
+   [AllowEmptyString()]
+   [AllowEmptyCollection()]
+   [ValidateSet('CONSOLE', 'HTML', 'XML', 'YAML', 'JSON', 'CSV', IgnoreCase = $true)]
+   [Alias('ReportType')]
+   [string]
+   $OutputType = $null,
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
+   [AllowNull()]
+   [AllowEmptyString()]
+   [AllowEmptyCollection()]
+   [string]
+   $Path = 'C:\scripts\PowerShell\logs',
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
+   [AllowNull()]
+   [AllowEmptyString()]
+   [AllowEmptyCollection()]
+   [string]
+   $DateFormat = 'yyyyMMdd-HHmmUTC',
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
+   [Alias('UseUTC')]
+   [switch]
+   $UTC,
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
+   [AllowEmptyCollection()]
+   [AllowEmptyString()]
+   [AllowNull()]
+   [ValidateSet('Users', 'MeetingRooms', 'ResourceAccounts', 'All', IgnoreCase = $true)]
+   [Alias('ReportType')]
+   [string[]]
+   $Report = 'All'
 )
 
 begin
 {
-	#region DateToUTC
-	if (-not ($UTC))
- {
-		$UTC = $true
-	}
-	#endregion DateToUTC
+   #region BoundParameters
+   if (($PSCmdlet.MyInvocation.BoundParameters['Verbose']).IsPresent)
+   {
+      $VerboseValue = $true
+   }
+   else
+   {
+      $VerboseValue = $false
+   }
 
-	#region UseDateUTC
-	if (($UTC -eq $true) -and ($DateFormat))
- {
-		$FileName = ('MicrosoftTeamsAssignedNumbers_' + ((Get-Date).ToUniversalTime()).ToString($DateFormat))
-	}
-	#endregion UseDateUTC
+   if (($PSCmdlet.MyInvocation.BoundParameters['Debug']).IsPresent)
+   {
+      $DebugValue = $true
+   }
+   else
+   {
+      $DebugValue = $false
+   }
+   #endregion BoundParameters
 
-	#region UseDateFormat
-	if ($DateFormat)
- {
-		$FileName = ('MicrosoftTeamsAssignedNumbers_' + ((Get-Date).ToString($DateFormat)))
-	}
-	else
- {
-		# This is the default
-		$FileName = ('MicrosoftTeamsAssignedNumbers_' + (Get-Date -Format s).replace(':', '-'))
-	}
-	#endregion UseDateFormat
+   #region DateToUTC
+   if (-not ($UTC))
+   {
+      $UTC = $true
+   }
+   #endregion DateToUTC
 
-	#region PathMangle
-	if ($Path)
- {
-		# Save to a given PATH
-		$FilePath = ($Path + '\' + $FileName)
-	}
-	else
- {
-		# Save here (where the script was started)
-		$FilePath = ('.\' + $FileName)
-	}
-	#endregion PathMangle
+   #region UseDateUTC
+   if (($UTC -eq $true) -and ($DateFormat))
+   {
+      $FileName = ('MicrosoftTeamsAssignedNumbers_' + ((Get-Date).ToUniversalTime()).ToString($DateFormat))
+   }
+   #endregion UseDateUTC
 
-	#region Regex
-	# Regex values
-	$LineURIRegex = '^(?:tel:)?(?:\+)?(\d+)(?:;ext=(\d+))?(?:;([\w-]+))?$'
-	#endregion Regex
+   #region UseDateFormat
+   if ($DateFormat)
+   {
+      $FileName = ('MicrosoftTeamsAssignedNumbers_' + ((Get-Date).ToString($DateFormat)))
+   }
+   else
+   {
+      # This is the default
+      $FileName = ('MicrosoftTeamsAssignedNumbers_' + (Get-Date -Format s).replace(':', '-'))
+   }
+   #endregion UseDateFormat
 
-	# Cleanup
-	$Report = @()
+   #region PathMangle
+   if ($Path)
+   {
+      # Save to a given PATH
+      $FilePath = ($Path + '\' + $FileName)
+   }
+   else
+   {
+      # Save here (where the script was started)
+      $FilePath = ('.\' + $FileName)
+   }
+   #endregion PathMangle
+
+   #region Regex
+   # Regex values
+   $LineURIRegex = '^(?:tel:)?(?:\+)?(\d+)(?:;ext=(\d+))?(?:;([\w-]+))?$'
+   #endregion Regex
+
+   #region ReportType
+   if (-not ($Report))
+   {
+      $Report = 'All'
+   }
+   #endregion ReportType
+
+   # Cleanup
+   $ReportData = @()
 }
 
 process
 {
-	#region BoundParameters
-	if (($PSCmdlet.MyInvocation.BoundParameters['Verbose']).IsPresent)
- {
-		$VerboseValue = $true
-	}
-	else
- {
-		$VerboseValue = $false
-	}
+   #region Users
+   if (($Report -eq 'Users') -or ($Report -eq 'All'))
+   {
+      # Get Users with LineURI
+      $UsersLineURI = $null
+      $paramGetCsOnlineUser = @{
+         Verbose       = $VerboseValue
+         Debug         = $DebugValue
+         Filter        = {
+            (LineURI -ne $null)
+         }
+         ErrorAction   = 'SilentlyContinue'
+         WarningAction = 'SilentlyContinue'
+      }
+      $paramSelectObject = @{
+         Property = 'UserPrincipalName', 'LineURI', 'DisplayName', 'FirstName', 'LastName'
+         Verbose  = $VerboseValue
+         Debug    = $DebugValue
+      }
+      $UsersLineURI = (Get-CsOnlineUser @paramGetCsOnlineUser | Select-Object @paramSelectObject)
 
-	if (($PSCmdlet.MyInvocation.BoundParameters['Debug']).IsPresent)
- {
-		$DebugValue = $true
-	}
-	else
- {
-		$DebugValue = $false
-	}
-	#endregion BoundParameters
+      if ($UsersLineURI)
+      {
+         Write-Verbose -Message 'Processing User Numbers'
 
-	#region Users
-	# Get Users with LineURI
-	$UsersLineURI = $null
-	$paramGetCsOnlineUser = @{
-		Verbose       = $VerboseValue
-		Debug         = $DebugValue
-		Filter        = {
-			LineURI -ne $null
-		}
-		ErrorAction   = 'SilentlyContinue'
-		WarningAction = 'SilentlyContinue'
-	}
-	$paramSelectObject = @{
-		Property = 'UserPrincipalName', 'LineURI', 'DisplayName', 'FirstName', 'LastName'
-		Verbose  = $VerboseValue
-		Debug    = $DebugValue
-	}
-	$UsersLineURI = (Get-CsOnlineUser @paramGetCsOnlineUser | Select-Object @paramSelectObject)
+         foreach ($ReportingItem in $UsersLineURI)
+         {
+            $MatchedData = @()
 
-	if ($UsersLineURI)
- {
-		Write-Verbose -Message 'Processing User Numbers'
+            $null = ($ReportingItem.LineURI -match $LineURIRegex)
 
-		foreach ($ReportingItem in $UsersLineURI)
-		{
-			$MatchedData = @()
-			$null = $ReportingItem.LineURI -match $LineURIRegex
+            $ReportingObject = (New-Object -TypeName System.Object)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.LineURI)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'FirstName' -Value $ReportingItem.FirstName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LastName' -Value $ReportingItem.LastName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'User')
 
-			$ReportingObject = (New-Object -TypeName System.Object)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.LineURI)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'FirstName' -Value $ReportingItem.FirstName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LastName' -Value $ReportingItem.LastName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'User')
+            # Add to array
+            $null = ($ReportData += $ReportingObject)
+         }
+      }
+   }
+   #endregion Users
 
-			# Add to array
-			$null = ($Report += $ReportingObject)
-		}
-	}
-	#endregion Users
+   #region MeetingRooms
+   if (($Report -eq 'MeetingRooms') -or ($Report -eq 'All'))
+   {
+      # Get meeting room numbers
+      $MeetingRoomLineURI = $null
 
-	#region MeetingRooms
-	# Get meeting room numbers
-	$MeetingRoomLineURI = $null
-	$paramGetCsMeetingRoom = @{
-		Verbose       = $VerboseValue
-		Debug         = $DebugValue
-		Filter        = {
-			LineURI -ne $null
-		}
-		ErrorAction   = 'SilentlyContinue'
-		WarningAction = 'SilentlyContinue'
-	}
-	$paramSelectObject = @{
-		Property = 'UserPrincipalName', 'LineURI', 'DisplayName'
-		Verbose  = $VerboseValue
-		Debug    = $DebugValue
-	}
-	$MeetingRoomLineURI = (Get-CsMeetingRoom @paramGetCsMeetingRoom | Select-Object @paramSelectObject)
+      $paramGetCsMeetingRoom = @{
+         Verbose       = $VerboseValue
+         Debug         = $DebugValue
+         Filter        = {
+            LineURI -ne $null
+         }
+         ErrorAction   = 'SilentlyContinue'
+         WarningAction = 'SilentlyContinue'
+      }
+      $paramSelectObject = @{
+         Property = 'UserPrincipalName', 'LineURI', 'DisplayName'
+         Verbose  = $VerboseValue
+         Debug    = $DebugValue
+      }
+      $MeetingRoomLineURI = (Get-CsMeetingRoom @paramGetCsMeetingRoom | Select-Object @paramSelectObject)
 
-	if ($MeetingRoomLineURI)
- {
-		Write-Verbose -Message 'Processing Meeting Room Numbers'
+      if ($MeetingRoomLineURI)
+      {
+         Write-Verbose -Message 'Processing Meeting Room Numbers'
 
-		foreach ($ReportingItem in $MeetingRoomLineURI)
-		{
-			$MatchedData = @()
-			$null = $ReportingItem.LineURI -match $LineURIRegex
+         foreach ($ReportingItem in $MeetingRoomLineURI)
+         {
+            $MatchedData = @()
 
-			$ReportingObject = (New-Object -TypeName System.Object)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.LineURI)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'MeetingRoom')
+            $null = ($ReportingItem.LineURI -match $LineURIRegex)
 
-			# Remove existing User entry (Rooms have an user object as well)
-			$Report = ($Report | Where-Object -FilterScript {
-					$_.UserPrincipalName -ne $ReportingItem.UserPrincipalName
-				})
+            $ReportingObject = (New-Object -TypeName System.Object)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.LineURI)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value 'MeetingRoom')
 
-			# Add to array
-			$null = ($Report += $ReportingObject)
-		}
-	}
-	#endregion MeetingRooms
+            # Remove existing User entry (Rooms have an user object as well)
+            $ReportData = ($ReportData | Where-Object -FilterScript {
+                  ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
+               })
 
-	#region ResourceAccounts
-	# Get online resource accounts
-	$OnlineApplicationInstanceLineURI = $null
-	$paramGetCsOnlineApplicationInstance = @{
-		Verbose       = $VerboseValue
-		Debug         = $DebugValue
-		ErrorAction   = 'SilentlyContinue'
-		WarningAction = 'SilentlyContinue'
-	}
-	$paramSelectObject = @{
-		Property = 'UserPrincipalName', 'DisplayName', 'PhoneNumber', 'ApplicationId'
-		Verbose  = $VerboseValue
-		Debug    = $DebugValue
-	}
-	$OnlineApplicationInstanceLineURI = (Get-CsOnlineApplicationInstance @paramGetCsOnlineApplicationInstance | Where-Object -FilterScript {
-			$_.PhoneNumber -ne $null
-		} -ErrorAction SilentlyContinue -WarningAction SilentlyContinue | Select-Object @paramSelectObject)
+            # Add to array
+            $null = ($ReportData += $ReportingObject)
+         }
+      }
+   }
+   #endregion MeetingRooms
 
-	if ($OnlineApplicationInstanceLineURI)
- {
-		Write-Verbose -Message 'Processing Online Application Instances (Resource Accounts) Numbers'
+   #region ResourceAccounts
+   if (($Report -eq 'ResourceAccounts') -or ($Report -eq 'All'))
+   {
+      # Get online resource accounts
+      $OnlineApplicationInstanceLineURI = $null
 
-		foreach ($ReportingItem in $OnlineApplicationInstanceLineURI)
-		{
-			$MatchedData = @()
-			$null = $ReportingItem.PhoneNumber -match $LineURIRegex
+      $paramGetCsOnlineApplicationInstance = @{
+         Verbose       = $VerboseValue
+         Debug         = $DebugValue
+         ErrorAction   = 'SilentlyContinue'
+         WarningAction = 'SilentlyContinue'
+      }
+      $paramSelectObject = @{
+         Property = 'UserPrincipalName', 'DisplayName', 'PhoneNumber', 'ApplicationId'
+         Verbose  = $VerboseValue
+         Debug    = $DebugValue
+      }
+      $OnlineApplicationInstanceLineURI = (Get-CsOnlineApplicationInstance @paramGetCsOnlineApplicationInstance | Where-Object -FilterScript {
+            ($_.PhoneNumber -ne $null)
+         } -ErrorAction SilentlyContinue -WarningAction SilentlyContinue | Select-Object @paramSelectObject)
 
-			$ReportingObject = (New-Object -TypeName System.Object)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.PhoneNumber)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
-			$null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value $(
-					if ($ReportingItem.ApplicationId -eq 'ce933385-9390-45d1-9512-c8d228074e07')
-					{
-						'Auto Attendant Resource Account'
-					}
-					elseif ($ReportingItem.ApplicationId -eq '11cd3e2e-fccb-42ad-ad00-878b93575e07')
-					{
-						'Call Queue Resource Account'
-					}
-					else
-					{
-						'Unknown Resource Account'
-					}
-				))
+      if ($OnlineApplicationInstanceLineURI)
+      {
+         Write-Verbose -Message 'Processing Online Application Instances (Resource Accounts) Numbers'
 
-			# Remove existing User entry (Apps have an user object as well)
-			$Report = ($Report | Where-Object -FilterScript {
-					$_.UserPrincipalName -ne $ReportingItem.UserPrincipalName
-				} -Verbose:$VerboseValue -Debug:$DebugValue)
+         foreach ($ReportingItem in $OnlineApplicationInstanceLineURI)
+         {
+            $MatchedData = @()
 
-			# Add to array
-			$null = ($Report += $ReportingObject)
-		}
-	}
-	#endregion ResourceAccounts
+            $null = ($ReportingItem.PhoneNumber -match $LineURIRegex)
 
-	# Sort the Array data, based on the LineURI object
-	$paramSortObject = @{
-		Property = 'LineURI'
-		Verbose  = $VerboseValue
-		Debug    = $DebugValue
-	}
-	$Report = ($Report | Sort-Object @paramSortObject)
+            $ReportingObject = (New-Object -TypeName System.Object)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.PhoneNumber)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value $(
+                  if ($ReportingItem.ApplicationId -eq 'ce933385-9390-45d1-9512-c8d228074e07')
+                  {
+                     'Auto Attendant Resource Account'
+                  }
+                  elseif ($ReportingItem.ApplicationId -eq '11cd3e2e-fccb-42ad-ad00-878b93575e07')
+                  {
+                     'Call Queue Resource Account'
+                  }
+                  else
+                  {
+                     'Unknown Resource Account'
+                  }
+               ))
 
-	#region Output
-	switch ($OutputType)
- {
-		CSV
-		{
-			$FilePath = ($FilePath + '.csv')
+            # Remove existing User entry (Apps have an user object as well)
+            $ReportData = ($ReportData | Where-Object -FilterScript {
+                  ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
+               } -Verbose:$VerboseValue -Debug:$DebugValue)
 
-			$paramConvertToCsv = @{
-				Delimiter         = ','
-				NoTypeInformation = $true
-				Verbose           = $VerboseValue
-				Debug             = $DebugValue
-				ErrorAction       = 'Continue'
-				WarningAction     = 'Continue'
-			}
-			$PsCsv = ($Report | ConvertTo-Csv @paramConvertToCsv)
+            # Add to array
+            $null = ($ReportData += $ReportingObject)
+         }
+      }
+   }
+   #endregion ResourceAccounts
 
-			$paramOutFile = @{
-				FilePath      = $FilePath
-				Force         = $true
-				Append        = $false
-				Encoding      = 'utf8'
-				ErrorAction   = 'Continue'
-				WarningAction = 'Continue'
-				Verbose       = $VerboseValue
-				Debug         = $DebugValue
-			}
-			($PsCsv | Out-File @paramOutFile)
+   # Sort the Array data, based on the LineURI object
+   $paramSortObject = @{
+      Property = 'LineURI'
+      Verbose  = $VerboseValue
+      Debug    = $DebugValue
+   }
+   $ReportData = ($ReportData | Sort-Object @paramSortObject)
 
-			Write-Verbose -Message ('Your CSV report was saved to: {0}' -f $FilePath)
-		}
-		JSON
-		{
-			$FilePath = ($FilePath + '.json')
+   #region Output
+   switch ($OutputType)
+   {
+      CSV
+      {
+         $FilePath = ($FilePath + '.csv')
 
-			$PsJson = @($Report | ConvertTo-Json -Depth 5 -Verbose:$VerboseValue -Debug:$DebugValue)
+         $paramConvertToCsv = @{
+            Delimiter         = ','
+            NoTypeInformation = $true
+            Verbose           = $VerboseValue
+            Debug             = $DebugValue
+            ErrorAction       = 'Continue'
+            WarningAction     = 'Continue'
+         }
+         $PsCsv = ($ReportData | ConvertTo-Csv @paramConvertToCsv)
 
-			$paramOutFile = @{
-				FilePath      = $FilePath
-				Force         = $true
-				Append        = $false
-				Encoding      = 'utf8'
-				ErrorAction   = 'Continue'
-				WarningAction = 'Continue'
-				Verbose       = $VerboseValue
-				Debug         = $DebugValue
-			}
-			($PsJson | Out-File @paramOutFile)
+         $paramOutFile = @{
+            FilePath      = $FilePath
+            Force         = $true
+            Append        = $false
+            Encoding      = 'utf8'
+            ErrorAction   = 'Continue'
+            WarningAction = 'Continue'
+            Verbose       = $VerboseValue
+            Debug         = $DebugValue
+         }
+         ($PsCsv | Out-File @paramOutFile)
 
-			Write-Verbose -Message ('Your JSON report was saved to: {0}' -f $FilePath)
-		}
-		YAML
-		{
-			if (Get-Command -Name 'ConvertTo-Yaml' -ErrorAction SilentlyContinue)
-			{
-				$FilePath = ($FilePath + '.yml')
+         Write-Verbose -Message ('Your CSV report was saved to: {0}' -f $FilePath)
+      }
+      JSON
+      {
+         $FilePath = ($FilePath + '.json')
 
-				<#
+         $paramConvertToJson = @{
+            Depth         = 5
+            ErrorAction   = 'Continue'
+            WarningAction = 'Continue'
+            Verbose       = $VerboseValue
+            Debug         = $DebugValue
+         }
+         $PsJson = @($ReportData | ConvertTo-Json @paramConvertToJson)
+
+         $paramOutFile = @{
+            FilePath      = $FilePath
+            Force         = $true
+            Append        = $false
+            Encoding      = 'utf8'
+            ErrorAction   = 'Continue'
+            WarningAction = 'Continue'
+            Verbose       = $VerboseValue
+            Debug         = $DebugValue
+         }
+         ($PsJson | Out-File @paramOutFile)
+
+         Write-Verbose -Message ('Your JSON report was saved to: {0}' -f $FilePath)
+      }
+      YAML
+      {
+         if (Get-Command -Name 'ConvertTo-Yaml' -ErrorAction SilentlyContinue)
+         {
+            $FilePath = ($FilePath + '.yml')
+
+            <#
                   Workaround for ConvertTo-Yaml
             #>
-				$Report = @($Report | ConvertTo-Json | ConvertFrom-Json)
+            $paramJsonWorkaround = @{
+               ErrorAction   = 'Continue'
+               WarningAction = 'Continue'
+               Verbose       = $VerboseValue
+               Debug         = $DebugValue
+            }
+            $ReportData = @($ReportData | ConvertTo-Json @paramJsonWorkaround | ConvertFrom-Json @paramJsonWorkaround)
 
-				$paramConvertToYaml = @{
-					Data          = $Report
-					Force         = $true
-					ErrorAction   = 'Continue'
-					WarningAction = 'Continue'
-					Verbose       = $VerboseValue
-					Debug         = $DebugValue
-				}
-				$PsYaml = (ConvertTo-Yaml @paramConvertToYaml)
+            $paramConvertToYaml = @{
+               Data          = $ReportData
+               Force         = $true
+               ErrorAction   = 'Continue'
+               WarningAction = 'Continue'
+               Verbose       = $VerboseValue
+               Debug         = $DebugValue
+            }
+            $PsYaml = (ConvertTo-Yaml @paramConvertToYaml)
 
-				$paramOutFile = @{
-					FilePath      = $FilePath
-					Force         = $true
-					Append        = $false
-					Encoding      = 'utf8'
-					ErrorAction   = 'Continue'
-					WarningAction = 'Continue'
-					Verbose       = $VerboseValue
-					Debug         = $DebugValue
-				}
-				($PsYaml | Out-File @paramOutFile)
+            $paramOutFile = @{
+               FilePath      = $FilePath
+               Force         = $true
+               Append        = $false
+               Encoding      = 'utf8'
+               ErrorAction   = 'Continue'
+               WarningAction = 'Continue'
+               Verbose       = $VerboseValue
+               Debug         = $DebugValue
+            }
+            ($PsYaml | Out-File @paramOutFile)
 
-				Write-Verbose -Message ('Your YAML report was saved to: {0}' -f $FilePath)
-			}
-			else
-			{
-				Write-Error -Exception 'The ConvertTo-Yaml command was not found' -Message 'Please ensure, that the ''powershell-yaml'' module is installed.' -Category NotInstalled -RecommendedAction 'Please use ''Install-Module -Name powershell-yaml'' to install the required module!' -ErrorAction Stop
-			}
-		}
-		XML
-		{
-			$FilePath = ($FilePath + '.xml')
+            Write-Verbose -Message ('Your YAML report was saved to: {0}' -f $FilePath)
+         }
+         else
+         {
+            $paramWriteError = @{
+               Exception         = 'The ConvertTo-Yaml command was not found'
+               Message           = 'Please ensure, that the ''powershell-yaml'' module is installed.'
+               Category          = 'NotInstalled'
+               RecommendedAction = 'Please use ''Install-Module -Name powershell-yaml'' to install the required module!'
+               ErrorAction       = 'Stop'
+            }
+            Write-Error @paramWriteError
+         }
+      }
+      XML
+      {
+         $FilePath = ($FilePath + '.xml')
 
-			$paramConvertToXml = @{
-				As                = 'Stream'
-				InputObject       = $Report
-				NoTypeInformation = $true
-				ErrorAction       = 'Continue'
-				WarningAction     = 'Continue'
-				Verbose           = $VerboseValue
-				Debug             = $DebugValue
-			}
-			$PsXML = (ConvertTo-Xml @paramConvertToXml)
+         $paramConvertToXml = @{
+            As                = 'Stream'
+            InputObject       = $ReportData
+            NoTypeInformation = $true
+            ErrorAction       = 'Continue'
+            WarningAction     = 'Continue'
+            Verbose           = $VerboseValue
+            Debug             = $DebugValue
+         }
+         $PsXML = (ConvertTo-Xml @paramConvertToXml)
 
-			$paramOutFile = @{
-				FilePath      = $FilePath
-				Force         = $true
-				Append        = $false
-				Encoding      = 'utf8'
-				ErrorAction   = 'Continue'
-				WarningAction = 'Continue'
-				Verbose       = $VerboseValue
-				Debug         = $DebugValue
-			}
-			($PsXML | Out-File @paramOutFile)
+         $paramOutFile = @{
+            FilePath      = $FilePath
+            Force         = $true
+            Append        = $false
+            Encoding      = 'utf8'
+            ErrorAction   = 'Continue'
+            WarningAction = 'Continue'
+            Verbose       = $VerboseValue
+            Debug         = $DebugValue
+         }
+         ($PsXML | Out-File @paramOutFile)
 
-			Write-Verbose -Message ('Your XML report was saved to: {0}' -f $FilePath)
-		}
-		HTML
-		{
-			$FilePath = ($FilePath + '.html')
+         Write-Verbose -Message ('Your XML report was saved to: {0}' -f $FilePath)
+      }
+      HTML
+      {
+         $FilePath = ($FilePath + '.html')
 
-			$Header = @"
+         $Header = @"
 <title>Microsoft Teams assigned phone number report</title>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -491,55 +559,55 @@ process
 </style>
 "@
 
-			$htmlParams = @{
-				Title       = 'Microsoft Teams assigned phone number report'
-				Head        = $Header
-				body        = '<h3>Microsoft Teams assigned phone number report</h3>'
-				PreContent  = '<p>The following Phone numbers are assigned in Microsoft Teams:</p>'
-				PostContent = '<p><i>Last updated: ' + ((Get-Date).ToUniversalTime()).ToString('HH:MM dd.MM.yyyy (UTC)') + '</i></p>'
-				Verbose     = $VerboseValue
-				Debug       = $DebugValue
-			}
-			$PsHtml = ($Report | ConvertTo-Html @htmlParams)
+         $htmlParams = @{
+            Title       = 'Microsoft Teams assigned phone number report'
+            Head        = $Header
+            body        = '<h3>Microsoft Teams assigned phone number report</h3>'
+            PreContent  = '<p>The following Phone numbers are assigned in Microsoft Teams:</p>'
+            PostContent = '<p><i>Last updated: ' + ((Get-Date).ToUniversalTime()).ToString('HH:MM dd.MM.yyyy (UTC)') + '</i></p>'
+            Verbose     = $VerboseValue
+            Debug       = $DebugValue
+         }
+         $PsHtml = ($ReportData | ConvertTo-Html @htmlParams)
 
-			$paramOutFile = @{
-				FilePath      = $FilePath
-				Force         = $true
-				Append        = $false
-				Encoding      = 'utf8'
-				ErrorAction   = 'Continue'
-				WarningAction = 'Continue'
-				Verbose       = $VerboseValue
-				Debug         = $DebugValue
-			}
-			($PsHtml | Out-File @paramOutFile)
+         $paramOutFile = @{
+            FilePath      = $FilePath
+            Force         = $true
+            Append        = $false
+            Encoding      = 'utf8'
+            ErrorAction   = 'Continue'
+            WarningAction = 'Continue'
+            Verbose       = $VerboseValue
+            Debug         = $DebugValue
+         }
+         ($PsHtml | Out-File @paramOutFile)
 
-			Write-Verbose -Message ('Your HTML report was saved to: {0}' -f $FilePath)
-		}
-		CONSOLE
-		{
-			$paramFormatTable = @{
-				AutoSize = $true
-				Property = 'LineURI', 'DDI', 'Ext', 'DisplayName', 'Type'
-				Verbose  = $VerboseValue
-				Debug    = $DebugValue
-			}
-			($Report | Format-Table @paramFormatTable)
+         Write-Verbose -Message ('Your HTML report was saved to: {0}' -f $FilePath)
+      }
+      CONSOLE
+      {
+         $paramFormatTable = @{
+            AutoSize = $true
+            Property = 'LineURI', 'DDI', 'Ext', 'DisplayName', 'Type'
+            Verbose  = $VerboseValue
+            Debug    = $DebugValue
+         }
+         ($ReportData | Format-Table @paramFormatTable)
 
-			Write-Verbose -Message 'Formated Object was dumped'
-		}
-		default
-		{
-			$Report
+         Write-Verbose -Message 'Formated Object was dumped'
+      }
+      default
+      {
+         $ReportData
 
-			Write-Verbose -Message 'Unformated Object was dumped'
-		}
-	}
-	#endregion Output
+         Write-Verbose -Message 'Unformated Object was dumped'
+      }
+   }
+   #endregion Output
 }
 
 end
 {
-	# Cleanup
-	$Report = $null
+   # Cleanup
+   $ReportData = $null
 }
