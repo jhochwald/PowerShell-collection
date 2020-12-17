@@ -264,15 +264,15 @@ process
 
          foreach ($ReportingItem in $UsersLineURI)
          {
-            $MatchedData = @()
+            $Matches = @()
 
             ($ReportingItem.PhoneNumber -match $LineURIRegex | Out-Null)
 
             $ReportingObject = (New-Object -TypeName System.Object)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.LineURI)
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $Matches[1])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $Matches[2])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'FirstName' -Value $ReportingItem.FirstName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LastName' -Value $ReportingItem.LastName)
@@ -316,15 +316,15 @@ process
 
          foreach ($ReportingItem in $MeetingRoomLineURI)
          {
-            $MatchedData = @()
+            $Matches = @()
 
             ($ReportingItem.PhoneNumber -match $LineURIRegex | Out-Null)
 
             $ReportingObject = (New-Object -TypeName System.Object)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.LineURI)
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $Matches[1])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $Matches[2])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'SipAddress' -Value $($ReportingItem.SipAddress -replace 'sip:', ''))
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Enabled' -Value $ReportingItem.Enabled)
@@ -374,7 +374,7 @@ process
 
          foreach ($ReportingItem in $OnlineApplicationInstanceLineURI)
          {
-            $MatchedData = @()
+            $Matches = @()
 
             ($ReportingItem.PhoneNumber -match $LineURIRegex | Out-Null)
 
@@ -417,12 +417,13 @@ process
             $ReportingObject = (New-Object -TypeName System.Object)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value $ReportingItem.UserPrincipalName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'LineURI' -Value $ReportingItem.PhoneNumber)
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $MatchedData[1])
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $MatchedData[2])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DDI' -Value $Matches[1])
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Ext' -Value $Matches[2])
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $ReportingItem.DisplayName)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'SipAddress' -Value $isSipAddress)
             $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Enabled' -Value $isAppEnabled)
-            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value $(if ($ReportingItem.ApplicationId -eq 'ce933385-9390-45d1-9512-c8d228074e07')
+            $null = ($ReportingObject | Add-Member -MemberType NoteProperty -Name 'Type' -Value $(
+                  if ($ReportingItem.ApplicationId -eq 'ce933385-9390-45d1-9512-c8d228074e07')
                   {
                      'Auto Attendant Resource Account'
                   }
