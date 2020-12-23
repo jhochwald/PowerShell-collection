@@ -102,15 +102,30 @@ begin
    #endregion Cleanup
 
    #region CheapRequests
-   # Get the A record from the CloudFlare DNS (cheap request)
-   $paramResolveDnsName = @{
-      Name          = ($CF_HOSTNAME + '.' + $CF_DOMAIN)
-      Type          = 'A'
-      Server        = $DNSServer
-      ErrorAction   = 'SilentlyContinue'
-      WarningAction = 'Continue'
+   if (Get-Command -Name Resolve-DnsName -ErrorAction SilentlyContinue)
+   {
+      # Get the A record from the CloudFlare DNS (cheap request)
+      $paramResolveDnsName = @{
+         Name          = ($CF_HOSTNAME + '.' + $CF_DOMAIN)
+         Type          = 'A'
+         Server        = $DNSServer
+         ErrorAction   = 'SilentlyContinue'
+         WarningAction = 'Continue'
+      }
+      [string]$CF_KnownIP = (((Resolve-DnsName @paramResolveDnsName) | Select-Object -ExpandProperty IPAddress).Trim())
    }
-   [string]$CF_KnownIP = (((Resolve-DnsName @paramResolveDnsName) | Select-Object -ExpandProperty IPAddress).Trim())
+   elseif (Get-Command -Name dig -ErrorAction SilentlyContinue)
+   {
+      # This is the Fallback on macOS, due to the missing DnsClient module on PowerShell core here
+      [string]$CF_KnownIP = (((dig A ($CF_HOSTNAME + '.' + $CF_DOMAIN) ('@' + $DNSServer) +short)).Trim())
+   }
+   else
+   {
+      Write-Warning -Message 'Unable to lookup the DNS entry, we try to use the CloudFlare API' -WarningAction Continue
+
+      # Set a dummy (to prevent any null pointer exception during the compare)
+      [string]$CF_KnownIP = '0.0.0.0'
+   }
 
    # Get the external IP via Web Request from our own service (cheap request)
    $paramInvokeRestMethod = @{
