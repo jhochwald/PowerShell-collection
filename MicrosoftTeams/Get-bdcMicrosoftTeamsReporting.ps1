@@ -1,4 +1,4 @@
-﻿function Get-bdcMicrosoftTeamsReporting
+function Get-bdcMicrosoftTeamsReporting
 {
    <#
          .SYNOPSIS

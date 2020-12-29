@@ -1,4 +1,4 @@
-﻿function Get-etLatestNuGetRelease
+function Get-etLatestNuGetRelease
 {
    <#
          .SYNOPSIS

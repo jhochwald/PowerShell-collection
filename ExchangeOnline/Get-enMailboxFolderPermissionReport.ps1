@@ -1,4 +1,4 @@
-﻿function Get-enMailboxFolderPermissionReport
+function Get-enMailboxFolderPermissionReport
 {
    <#
          .SYNOPSIS

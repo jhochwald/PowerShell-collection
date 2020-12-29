@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules NetSecurity -RunAsAdministrator
+#requires -Version 3.0 -Modules NetSecurity -RunAsAdministrator
 
 <#
       .SYNOPSIS

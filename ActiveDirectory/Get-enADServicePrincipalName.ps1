@@ -1,4 +1,4 @@
-﻿function Get-enADServicePrincipalName
+function Get-enADServicePrincipalName
 {
    <#
          .SYNOPSIS

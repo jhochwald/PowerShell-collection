@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Allows you to collect the Lync/Skype for Business Client logs and puts them
       in a Zip file on your desktop.

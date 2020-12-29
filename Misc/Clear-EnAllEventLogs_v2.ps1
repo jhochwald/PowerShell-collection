@@ -1,4 +1,4 @@
-﻿function Clear-EnAllEventLogsv2
+function Clear-EnAllEventLogsv2
 {
    <#
          .SYNOPSIS

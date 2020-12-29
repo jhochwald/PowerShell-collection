@@ -1,4 +1,4 @@
-﻿#requires -Version 1.0 -RunAsAdministrator
+#requires -Version 1.0 -RunAsAdministrator
 
 <#
       .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Out-ZipArchive
+function Out-ZipArchive
 {
    <#
          .SYNOPSIS

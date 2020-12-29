@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules PSWindowsUpdate -RunAsAdministrator
+#requires -Version 3.0 -Modules PSWindowsUpdate -RunAsAdministrator
 
 <#
       .SYNOPSIS

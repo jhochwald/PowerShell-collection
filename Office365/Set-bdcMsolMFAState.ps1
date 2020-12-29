@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules MSOnline
+#requires -Version 3.0 -Modules MSOnline
 function Set-bdcMsolMFAState
 {
    <#

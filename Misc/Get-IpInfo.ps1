@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Get all local IP addresses
 

@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules BitsTransfer
+#requires -Version 3.0 -Modules BitsTransfer
 <#
       .SYNOPSIS
       Download and install latest version of Microsoft Teams

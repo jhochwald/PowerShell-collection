@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Cleanup Microsoft Teams Client
 	

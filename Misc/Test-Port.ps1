@@ -1,4 +1,4 @@
-﻿function Test-Port
+function Test-Port
 {
    <#
       .SYNOPSIS

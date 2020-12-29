@@ -1,4 +1,4 @@
-﻿function Publish-BitbucketDownload
+function Publish-BitbucketDownload
 {
    <#
       .SYNOPSIS

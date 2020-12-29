@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Microsoft Teams Client customisation settings via PowerShell
 

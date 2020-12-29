@@ -1,4 +1,4 @@
-﻿function Remove-FileEndingBlankLines
+function Remove-FileEndingBlankLines
 {
    <#
          .SYNOPSIS

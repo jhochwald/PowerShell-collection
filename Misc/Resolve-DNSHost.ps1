@@ -1,4 +1,4 @@
-﻿function Resolve-DNSHost
+function Resolve-DNSHost
 {
    <#
       .SYNOPSIS

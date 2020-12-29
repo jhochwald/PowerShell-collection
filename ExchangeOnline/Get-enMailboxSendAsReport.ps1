@@ -1,4 +1,4 @@
-﻿function Get-enMailboxSendAsReport
+function Get-enMailboxSendAsReport
 {
    <#
          .SYNOPSIS

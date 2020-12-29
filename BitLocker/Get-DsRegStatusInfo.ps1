@@ -1,4 +1,4 @@
-﻿#requires -Version 1.0
+#requires -Version 1.0
 
 function Get-DsRegStatusInfo
 {

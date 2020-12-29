@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Replace the Domain for all UnifiedGroups (and Microsoft Teams) Primary SMTP Address
 

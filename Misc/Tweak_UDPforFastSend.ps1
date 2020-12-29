@@ -1,4 +1,4 @@
-﻿# Increases the UDP packet size to 1500 bytes for FastSend
+# Increases the UDP packet size to 1500 bytes for FastSend
 # http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=2040065
 $blnIncreaseFastSendDatagramThreshold = $true
 

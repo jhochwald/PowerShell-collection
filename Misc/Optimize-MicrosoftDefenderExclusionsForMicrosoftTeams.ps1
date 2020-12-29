@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Add Defender Antivirus Exclusions for the Teams Desktop Client for a given User
 

@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules ActiveDirectory
+#requires -Version 3.0 -Modules ActiveDirectory
 function Get-enADFSMORole
 {
    <#

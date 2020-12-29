@@ -1,4 +1,4 @@
-﻿function Update-UnifiedGroupsToTeams
+function Update-UnifiedGroupsToTeams
 {
    <#
          .SYNOPSIS

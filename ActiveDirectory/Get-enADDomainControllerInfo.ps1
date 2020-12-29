@@ -1,4 +1,4 @@
-﻿Function Get-enDomainControllerInfo
+Function Get-enDomainControllerInfo
 {
    <#
          .SYNOPSIS

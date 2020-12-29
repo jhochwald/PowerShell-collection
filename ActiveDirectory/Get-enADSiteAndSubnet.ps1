@@ -1,4 +1,4 @@
-﻿function Get-enADSiteAndSubnetInfo
+function Get-enADSiteAndSubnetInfo
 {
    <#
          .SYNOPSIS

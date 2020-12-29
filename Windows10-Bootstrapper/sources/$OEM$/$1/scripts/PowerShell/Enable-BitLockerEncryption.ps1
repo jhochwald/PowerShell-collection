@@ -1,4 +1,4 @@
-﻿#requires -Version 5.0 -Modules BitLocker, Microsoft.PowerShell.Utility, ScheduledTasks -RunAsAdministrator
+#requires -Version 5.0 -Modules BitLocker, Microsoft.PowerShell.Utility, ScheduledTasks -RunAsAdministrator
 <#
       .SYNOPSIS
       Enable BitLocker with both TPM and recovery password key protectors on Windows 10 devices.

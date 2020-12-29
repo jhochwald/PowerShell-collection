@@ -1,4 +1,4 @@
-﻿#requires -Version 2.0 -Modules MicrosoftTeams
+#requires -Version 2.0 -Modules MicrosoftTeams
 
 <#
    .SYNOPSIS

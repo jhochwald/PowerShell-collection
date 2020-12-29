@@ -1,4 +1,4 @@
-﻿function Find-enADDuplicateServicePrincipalName
+function Find-enADDuplicateServicePrincipalName
 {
    <#
          .SYNOPSIS

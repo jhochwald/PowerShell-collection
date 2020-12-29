@@ -1,4 +1,4 @@
-﻿function Install-DSCResourceKit
+function Install-DSCResourceKit
 {
    <#
          .SYNOPSIS

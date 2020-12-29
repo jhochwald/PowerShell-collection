@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules BitsTransfer -RunAsAdministrator
+#requires -Version 3.0 -Modules BitsTransfer -RunAsAdministrator
 <#
       .SYNOPSIS
       Download, install, and Tweak System and Apps for Terminal Server use

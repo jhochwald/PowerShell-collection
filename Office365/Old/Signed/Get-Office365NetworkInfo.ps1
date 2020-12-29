@@ -1,4 +1,4 @@
-﻿function Get-Office365NetworkInfo
+function Get-Office365NetworkInfo
 {
 	<#
 			.SYNOPSIS

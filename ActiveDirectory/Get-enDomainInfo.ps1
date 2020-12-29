@@ -1,4 +1,4 @@
-﻿Function Get-enDomainInfo
+Function Get-enDomainInfo
 {
    <#
          .SYNOPSIS

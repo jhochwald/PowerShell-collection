@@ -1,4 +1,4 @@
-﻿function Export-DistributionGroup2Cloud
+function Export-DistributionGroup2Cloud
 {
   <#
       .SYNOPSIS

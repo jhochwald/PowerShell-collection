@@ -1,4 +1,4 @@
-﻿function Get-MFAUserReport
+function Get-MFAUserReport
 {
    <#
       .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Change the Google Chrome config to some defaults
 

@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules AzureAD, Microsoft.Online.SharePoint.PowerShell
+#requires -Version 3.0 -Modules AzureAD, Microsoft.Online.SharePoint.PowerShell
 <#
       .SYNOPSIS
       Provision new Users personal SharePoint site

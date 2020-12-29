@@ -1,4 +1,4 @@
-﻿$paramGetChildItem = @{
+$paramGetChildItem = @{
 	Path = 'Cert:\CurrentUser\My'
 	Recurse = $true
 	ErrorAction = 'SilentlyContinue'

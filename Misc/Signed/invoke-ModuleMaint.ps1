@@ -1,4 +1,4 @@
-﻿#Requires -Version 3.0 -Modules PowerShellGet -RunAsAdministrator
+#Requires -Version 3.0 -Modules PowerShellGet -RunAsAdministrator
 
 <#
     .SYNOPSIS

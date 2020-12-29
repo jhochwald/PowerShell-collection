@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules NetQos -RunAsAdministrator
+#requires -Version 3.0 -Modules NetQos -RunAsAdministrator
 <#
       .SYNOPSIS
       Apply QoS Settings for Microsoft Teams

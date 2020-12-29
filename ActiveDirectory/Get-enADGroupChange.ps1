@@ -1,4 +1,4 @@
-﻿function Get-enADGroupChange
+function Get-enADGroupChange
 {
    <#
          .SYNOPSIS

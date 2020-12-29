@@ -1,4 +1,4 @@
-﻿#requires -Version 2.0 -Modules MSOnline
+#requires -Version 2.0 -Modules MSOnline
 
 <#
    PowerShell Core (PWSH) is not supported, at least not yet

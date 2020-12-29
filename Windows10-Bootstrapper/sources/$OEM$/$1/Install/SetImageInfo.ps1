@@ -1,4 +1,4 @@
-﻿#requires -Version 5.0 -Modules CimCmdlets -RunAsAdministrator
+#requires -Version 5.0 -Modules CimCmdlets -RunAsAdministrator
 
 <#
       .SYNOPSIS

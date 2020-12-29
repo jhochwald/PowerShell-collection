@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Remove the Wiki tab on Microsoft Teams teams
 

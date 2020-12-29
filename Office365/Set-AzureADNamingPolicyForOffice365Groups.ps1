@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules AzureADPreview
+#requires -Version 3.0 -Modules AzureADPreview
 
 <#
       .SYNOPSIS

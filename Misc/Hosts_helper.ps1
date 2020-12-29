@@ -1,4 +1,4 @@
-﻿function Add-HostsEntry
+function Add-HostsEntry
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Test-IsAdmin
+function Test-IsAdmin
 {
    <#
          .SYNOPSIS

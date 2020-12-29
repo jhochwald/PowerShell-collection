@@ -1,4 +1,4 @@
-﻿function Get-TeamsServiceNumbers
+function Get-TeamsServiceNumbers
 {
    <#
          .SYNOPSIS

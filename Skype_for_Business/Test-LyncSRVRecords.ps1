@@ -1,4 +1,4 @@
-﻿function Test-LyncSRVRecords
+function Test-LyncSRVRecords
 {
    <#
          .SYNOPSIS

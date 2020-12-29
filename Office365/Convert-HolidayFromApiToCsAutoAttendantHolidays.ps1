@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Get German Holidays via API and export them to CSV for Skype for Business (Online).
 

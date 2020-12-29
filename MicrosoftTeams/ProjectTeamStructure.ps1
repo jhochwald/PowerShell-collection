@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Create a Project team in Teams with folder structure in files tab
 

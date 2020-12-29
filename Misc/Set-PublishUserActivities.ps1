@@ -1,4 +1,4 @@
-﻿function Set-PublishUserActivities
+function Set-PublishUserActivities
 {
    <#
       .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Get-LocalIpAddresses
+function Get-LocalIpAddresses
 {
    <#
          .SYNOPSIS

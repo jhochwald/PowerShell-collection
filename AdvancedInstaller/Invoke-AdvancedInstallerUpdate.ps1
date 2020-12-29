@@ -1,4 +1,4 @@
-﻿function Invoke-AdvancedInstallerUpdate
+function Invoke-AdvancedInstallerUpdate
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function ConvertFrom-SafeLinksURL
+function ConvertFrom-SafeLinksURL
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Get-DirectorySize
+function Get-DirectorySize
 {
    <#
          .SYNOPSIS

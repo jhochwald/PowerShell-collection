@@ -1,4 +1,4 @@
-﻿function Copy-ADUserGroupMembership
+function Copy-ADUserGroupMembership
 {
    <#
          .SYNOPSIS

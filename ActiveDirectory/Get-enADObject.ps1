@@ -1,4 +1,4 @@
-﻿function Get-enADObject
+function Get-enADObject
 {
    <#
          .SYNOPSIS

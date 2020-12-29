@@ -1,4 +1,4 @@
-﻿#requires -Version 2.0
+#requires -Version 2.0
 <#
       .SYNOPSIS
       Get information from the local computer such as Azure AD join status, tenant Id, device id

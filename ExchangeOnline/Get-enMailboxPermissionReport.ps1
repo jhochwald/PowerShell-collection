@@ -1,4 +1,4 @@
-﻿function Get-enMailboxPermissionReport
+function Get-enMailboxPermissionReport
 {
    <#
          .SYNOPSIS

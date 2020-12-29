@@ -1,4 +1,4 @@
-﻿function Test-ValidEmail
+function Test-ValidEmail
 {
    <#
       .SYNOPSIS

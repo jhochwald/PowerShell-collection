@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
     Sign all scripts of the PowerShell-collection project
 

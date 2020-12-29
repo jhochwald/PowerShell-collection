@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules MSOnline
+#requires -Version 3.0 -Modules MSOnline
 <#
       .SYNOPSIS
       Find all direct assigned Microsoft 365 licenses

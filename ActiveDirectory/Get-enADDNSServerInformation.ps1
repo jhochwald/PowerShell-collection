@@ -1,4 +1,4 @@
-﻿function Get-enADDNSServerInformation
+function Get-enADDNSServerInformation
 {
    <#
          .SYNOPSIS

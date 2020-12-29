@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules ConfigDefender, NetSecurity
+#requires -Version 3.0 -Modules ConfigDefender, NetSecurity
 
 <#
       .SYNOPSIS

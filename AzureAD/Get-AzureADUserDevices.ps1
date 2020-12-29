@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules AzureAD
+#requires -Version 3.0 -Modules AzureAD
 <#
       .SYNOPSIS
       Script to monitor and return large number of user devices in Azure Active Directory.

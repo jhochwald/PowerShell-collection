@@ -1,4 +1,4 @@
-﻿function Invoke-DSCPerfReqConfigCheck
+function Invoke-DSCPerfReqConfigCheck
 {
    <#
       .SYNOPSIS

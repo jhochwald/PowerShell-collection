@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Update the DistinguishedName Attribute for all Active Directory Users
 

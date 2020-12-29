@@ -1,4 +1,4 @@
-﻿function Get-enADForestInformation
+function Get-enADForestInformation
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Get-MicrosoftCloudTenantInfo
+function Get-MicrosoftCloudTenantInfo
 {
    <#
       .SYNOPSIS

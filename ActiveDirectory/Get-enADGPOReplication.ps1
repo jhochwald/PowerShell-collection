@@ -1,4 +1,4 @@
-﻿function Get-enADGPOReplication
+function Get-enADGPOReplication
 {
    <#
          .SYNOPSIS

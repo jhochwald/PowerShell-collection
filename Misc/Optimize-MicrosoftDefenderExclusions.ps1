@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Apply the Defender exclusions based on recommendations by Microsoft
 

@@ -1,4 +1,4 @@
-﻿<#
+<#
       .SYNOPSIS
       Prevent the installation of Bing Search extension in Chrome by tweak the registry
 

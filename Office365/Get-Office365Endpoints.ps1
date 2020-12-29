@@ -1,4 +1,4 @@
-﻿function Get-Office365Endpoints
+function Get-Office365Endpoints
 {
    <#
       .SYNOPSIS

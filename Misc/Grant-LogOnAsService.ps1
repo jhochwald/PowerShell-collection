@@ -1,4 +1,4 @@
-﻿function Grant-LogOnAsService
+function Grant-LogOnAsService
 {
    <#
       .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Clear-EnAllEventLogs
+function Clear-EnAllEventLogs
 {
    <#
          .SYNOPSIS

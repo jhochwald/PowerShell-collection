@@ -1,4 +1,4 @@
-﻿function Remove-Signature
+function Remove-Signature
 {
    <#
          .SYNOPSIS

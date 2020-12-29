@@ -1,4 +1,4 @@
-﻿function Set-bdcBusylightColor
+function Set-bdcBusylightColor
 {
    <#
          .SYNOPSIS
