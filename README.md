@@ -65,7 +65,7 @@ Please see the [Contribution Guide](CONTRIBUTING.md) for more details!
 
 I still search for a free code signing certificate for my open-source projects. So, does anyone know a source?
 
-Even if there is no "*free*" version for my open-source projects, I would also pay for a valid certificate (again).
+Even if there is no "_free_" version for my open-source projects, I would also pay for a valid certificate (again).
 
 However, most of the sources I found are not cheap!
 
