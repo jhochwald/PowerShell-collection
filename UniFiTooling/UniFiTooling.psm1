@@ -52,43 +52,45 @@ function Add-HostsEntry
    #>
 
    [CmdletBinding(ConfirmImpact = 'Medium',
-   SupportsShouldProcess)]
+      SupportsShouldProcess)]
    param
    (
       [Parameter(Mandatory,
-            Position = 0,
-      HelpMessage = 'The IP address for the hosts entry.')]
+         Position = 0,
+         HelpMessage = 'The IP address for the hosts entry.')]
       [ValidateNotNullOrEmpty()]
       [Alias('ipaddress', 'ip')]
       [string]
       $Address,
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'The hostname for the hosts entry.')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'The hostname for the hosts entry.')]
       [ValidateNotNullOrEmpty()]
       [Alias('Host', 'Name')]
       [string]
       $HostName,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 3)]
+         ValueFromPipelineByPropertyName,
+         Position = 3)]
       [switch]
       $force = $false,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
       [ValidateNotNullOrEmpty()]
       [Alias('filename', 'Hosts', 'hostsfile', 'file')]
       [string]
       $Path = "$env:windir\System32\drivers\etc\hosts"
    )
-   begin {
+   begin
+   {
       Write-Verbose -Message 'Start Add-HostsEntry'
    }
 
-   process {
+   process
+   {
       if ($force)
       {
          try
@@ -154,7 +156,8 @@ function Add-HostsEntry
       }
    }
 
-   end {
+   end
+   {
       Write-Verbose -Message 'Done Add-HostsEntry'
    }
 }
@@ -193,16 +196,16 @@ function ConvertFrom-UnixTimeStamp
    param
    (
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            Position = 0,
-      HelpMessage = 'Timestamp (Epochdate)')]
+         ValueFromPipeline,
+         Position = 0,
+         HelpMessage = 'Timestamp (Epochdate)')]
       [ValidateNotNullOrEmpty()]
       [Alias('Epochdate')]
       [long]
       $TimeStamp,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [Alias('UniFi')]
       [switch]
       $Milliseconds = $false
@@ -252,7 +255,7 @@ function ConvertFrom-UnixTimeStamp
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -319,15 +322,15 @@ function ConvertTo-UnixTimeStamp
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('TimeStamp', 'DateTimeStamp')]
       [datetime]
       $Date = (Get-Date),
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [Alias('UniFi')]
       [switch]
       $Milliseconds = $false
@@ -369,7 +372,7 @@ function ConvertTo-UnixTimeStamp
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -434,15 +437,15 @@ function Get-HostsFile
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Hosts', 'hostsfile', 'file', 'filename')]
       [string]
       $Path = "$env:windir\System32\drivers\etc\hosts",
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [Alias('plain')]
       [switch]
       $raw = $false
@@ -514,7 +517,8 @@ function Get-HostsFile
       }
    }
 
-   end {
+   end
+   {
       Write-Verbose -Message 'Done Get-HostsFile'
    }
 }
@@ -546,8 +550,8 @@ function Get-UniFiConfig
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiConfig')]
       [string]
@@ -587,7 +591,7 @@ function Get-UniFiConfig
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -660,8 +664,8 @@ function Get-UniFiCredentials
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiConfig')]
       [string]
@@ -699,7 +703,7 @@ function Get-UniFiCredentials
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -780,19 +784,19 @@ function Get-UnifiFirewallGroupBody
    param
    (
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'Existing Unfi Firewall Group')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'Existing Unfi Firewall Group')]
       [ValidateNotNullOrEmpty()]
       [Alias('FirewallGroup')]
       [psobject]
       $UnfiFirewallGroup,
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'IPv4 or IPv6 input List')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'IPv4 or IPv6 input List')]
       [ValidateNotNullOrEmpty()]
       [Alias('CidrInput')]
       [psobject]
@@ -921,8 +925,8 @@ function Get-UniFiIsAlive
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -1034,7 +1038,9 @@ function Get-UniFiIsAlive
 
          # That was it!
          $SessionStatus = $false
-      } else {
+      }
+      else
+      {
          $SessionStatus = $true
       }
    }
@@ -1107,17 +1113,17 @@ function Invoke-UniFiCidrWorkaround
    param
    (
       [Parameter(Mandatory = $true,
-               ValueFromPipeline = $true,
-               ValueFromPipelineByPropertyName = $true,
-               Position = 0,
-               HelpMessage = 'Existing CIDR List Object')]
+         ValueFromPipeline = $true,
+         ValueFromPipelineByPropertyName = $true,
+         Position = 0,
+         HelpMessage = 'Existing CIDR List Object')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiCidrList')]
       [psobject]
       $CidrList,
       [Parameter(ValueFromPipeline = $true,
-               ValueFromPipelineByPropertyName = $true,
-               Position = 1)]
+         ValueFromPipelineByPropertyName = $true,
+         Position = 1)]
       [Alias('IPv6', 'V6')]
       [switch]
       $6 = $false
@@ -1204,28 +1210,29 @@ function Remove-HostsEntry
    #>
 
    [CmdletBinding(ConfirmImpact = 'Medium',
-   SupportsShouldProcess)]
+      SupportsShouldProcess)]
    param
    (
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'The hostname for the hosts entry.')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'The hostname for the hosts entry.')]
       [ValidateNotNullOrEmpty()]
       [Alias('Host', 'Name')]
       [string]
       $HostName,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [ValidateNotNullOrEmpty()]
       [Alias('Hosts', 'hostsfile', 'file', 'Filename')]
       [string]
       $Path = "$env:windir\System32\drivers\etc\hosts"
    )
 
-   begin {
+   begin
+   {
       Write-Verbose -Message 'Start Remove-HostsEntry'
 
       try
@@ -1265,7 +1272,8 @@ function Remove-HostsEntry
       $newLines = @()
    }
 
-   process {
+   process
+   {
       foreach ($line in $HostsFileContent)
       {
          $bits = [regex]::Split($line, '\t+')
@@ -1332,14 +1340,15 @@ function Remove-HostsEntry
       }
    }
 
-   end {
+   end
+   {
       Write-Verbose -Message 'Donw Remove-HostsEntry'
    }
 }
 
 function Set-UniFiApiLoginBody
-      {
-         <#
+{
+   <#
                .SYNOPSIS
                Create the request body for the UniFi Login
 
@@ -1354,81 +1363,81 @@ function Set-UniFiApiLoginBody
                .NOTES
                This is an internal helper function only
          #>
-         [CmdletBinding(ConfirmImpact = 'None')]
-         param ()
+   [CmdletBinding(ConfirmImpact = 'None')]
+   param ()
 
-         begin
-         {
-            Write-Verbose -Message 'Start Set-UniFiApiLoginBody'
+   begin
+   {
+      Write-Verbose -Message 'Start Set-UniFiApiLoginBody'
 
-            # Cleanup
-            $RestBody = $null
-            $JsonBody = $null
+      # Cleanup
+      $RestBody = $null
+      $JsonBody = $null
 
-            Write-Verbose -Message 'Check for API Credentials'
-            if ((-not $ApiUsername) -or (-not $ApiPassword))
-            {
-               Write-Error -Message 'Please set the UniFi API Credentials' -ErrorAction Stop
+      Write-Verbose -Message 'Check for API Credentials'
+      if ((-not $ApiUsername) -or (-not $ApiPassword))
+      {
+         Write-Error -Message 'Please set the UniFi API Credentials' -ErrorAction Stop
 
-               # Only here to catch a global ErrorAction overwrite
-               break
-            }
-         }
-
-         process
-         {
-            Write-Verbose -Message 'Create the Body Object'
-
-            $RestBody = [PSCustomObject][ordered]@{
-               username = $ApiUsername
-               password = $ApiPassword
-            }
-
-            # Convert the Body Object to JSON
-            try
-            {
-               $paramConvertToJson = @{
-                  InputObject   = $RestBody
-                  Depth         = 5
-                  ErrorAction   = 'Stop'
-                  WarningAction = 'SilentlyContinue'
-               }
-               $Script:JsonBody = (ConvertTo-Json @paramConvertToJson)
-            }
-            catch
-            {
-               # get error record
-               [Management.Automation.ErrorRecord]$e = $_
-
-               # retrieve information about runtime error
-               $info = [PSCustomObject]@{
-                  Exception = $e.Exception.Message
-                  Reason    = $e.CategoryInfo.Reason
-                  Target    = $e.CategoryInfo.TargetName
-                  Script    = $e.InvocationInfo.ScriptName
-                  Line      = $e.InvocationInfo.ScriptLineNumber
-                  Column    = $e.InvocationInfo.OffsetInLine
-               }
-
-               Write-Verbose -Message $info
-
-               Write-Error -Message ($info.Exception) -ErrorAction Stop
-
-               # Only here to catch a global ErrorAction overwrite
-               break
-            }
-         }
-
-         end
-         {
-            Write-Verbose -Message 'Created the Body Object'
-
-            # Cleanup
-            $RestBody = $null
-
-            Write-Verbose -Message 'Done Set-UniFiApiLoginBody'
-         }
+         # Only here to catch a global ErrorAction overwrite
+         break
       }
+   }
+
+   process
+   {
+      Write-Verbose -Message 'Create the Body Object'
+
+      $RestBody = [PSCustomObject][ordered]@{
+         username = $ApiUsername
+         password = $ApiPassword
+      }
+
+      # Convert the Body Object to JSON
+      try
+      {
+         $paramConvertToJson = @{
+            InputObject   = $RestBody
+            Depth         = 5
+            ErrorAction   = 'Stop'
+            WarningAction = 'SilentlyContinue'
+         }
+         $Script:JsonBody = (ConvertTo-Json @paramConvertToJson)
+      }
+      catch
+      {
+         # get error record
+         [Management.Automation.ErrorRecord]$e = $_
+
+         # retrieve information about runtime error
+         $info = [PSCustomObject]@{
+            Exception = $e.Exception.Message
+            Reason    = $e.CategoryInfo.Reason
+            Target    = $e.CategoryInfo.TargetName
+            Script    = $e.InvocationInfo.ScriptName
+            Line      = $e.InvocationInfo.ScriptLineNumber
+            Column    = $e.InvocationInfo.OffsetInLine
+         }
+
+         Write-Verbose -Message $info
+
+         Write-Error -Message ($info.Exception) -ErrorAction Stop
+
+         # Only here to catch a global ErrorAction overwrite
+         break
+      }
+   }
+
+   end
+   {
+      Write-Verbose -Message 'Created the Body Object'
+
+      # Cleanup
+      $RestBody = $null
+
+      Write-Verbose -Message 'Done Set-UniFiApiLoginBody'
+   }
+}
 
 function Set-UniFiDefaultRequestHeader
 {
@@ -1463,14 +1472,15 @@ function Set-UniFiDefaultRequestHeader
       Write-Verbose -Message 'Create the Default Request Header'
 
       $Global:RestHeader = @{
-         'charset'    = 'utf-8'
+         'charset'      = 'utf-8'
          'Content-Type' = 'application/json'
       }
 
       Write-Verbose -Message ('Default Request Header is {0}' -f $RestHeader)
    }
 
-   end {
+   end
+   {
       Write-Verbose -Message 'Done Set-UniFiDefaultRequestHeader'
    }
 }
@@ -1548,27 +1558,27 @@ function Get-UnifiFirewallGroupDetails
    [OutputType([psobject])]
    param
    (
-      [Parameter(ParameterSetName = 'Request by Id',Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'The ID (_id) of the Firewall Group you would like to get detaild information about.')]
+      [Parameter(ParameterSetName = 'Request by Id', Mandatory,
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'The ID (_id) of the Firewall Group you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('FirewallGroupId')]
       [string[]]
       $Id,
       [Parameter(ParameterSetName = 'Request by Name', Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'The Name (not the _id) of the Firewall Group you would like to get detaild information about.')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'The Name (not the _id) of the Firewall Group you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('FirewallGroupName')]
       [string[]]
       $Name,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -1606,7 +1616,10 @@ function Get-UnifiFirewallGroupDetails
                # Try to Logout
                try
                {
-                  if (-not (Get-UniFiIsAlive)) { Throw }
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     Throw
+                  }
                }
                catch
                {
@@ -1812,7 +1825,7 @@ function Get-UnifiFirewallGroupDetails
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -1896,8 +1909,8 @@ function Get-UnifiFirewallGroups
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -1935,7 +1948,10 @@ function Get-UnifiFirewallGroups
                # Try to Logout
                try
                {
-                  if (-not (Get-UniFiIsAlive)) { Throw }
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     Throw
+                  }
                }
                catch
                {
@@ -2065,7 +2081,7 @@ function Get-UnifiFirewallGroups
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -2198,27 +2214,27 @@ function Get-UnifiNetworkDetails
    [OutputType([psobject])]
    param
    (
-      [Parameter(ParameterSetName = 'Request by Id',Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
+      [Parameter(ParameterSetName = 'Request by Id', Mandatory,
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiNetwork', 'UnifiNetworkId', 'NetworkId')]
       [string[]]
       $Id,
       [Parameter(ParameterSetName = 'Request by Name', Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'The Name (not the ID/network_id) of the network you would like to get detaild information about.')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'The Name (not the ID/network_id) of the network you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiNetworkName', 'NetworkName')]
       [string[]]
       $Name,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -2256,7 +2272,10 @@ function Get-UnifiNetworkDetails
                # Try to Logout
                try
                {
-                  if (-not (Get-UniFiIsAlive)) { Throw }
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     Throw
+                  }
                }
                catch
                {
@@ -2470,7 +2489,7 @@ function Get-UnifiNetworkDetails
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -2554,8 +2573,8 @@ function Get-UnifiNetworkList
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -2593,7 +2612,10 @@ function Get-UnifiNetworkList
                # Try to Logout
                try
                {
-                  if (-not (Get-UniFiIsAlive)) { Throw }
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     Throw
+                  }
                }
                catch
                {
@@ -2727,7 +2749,7 @@ function Get-UnifiNetworkList
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -2873,50 +2895,50 @@ function Get-UnifiSpeedTestResult
          .LINK
          ConvertTo-UnixTimeStamp
    #>
-   [CmdletBinding(DefaultParameterSetName = 'DateSet',ConfirmImpact = 'None')]
+   [CmdletBinding(DefaultParameterSetName = 'DateSet', ConfirmImpact = 'None')]
    [OutputType([psobject])]
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [Alias('Start')]
       [datetime]
       $StartDate,
       [Parameter(ParameterSetName = 'TimeFrameSet',
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [Alias('hours')]
       [int]
       $Timeframe,
       [Parameter(ParameterSetName = 'DateSet',
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [ValidateNotNullOrEmpty()]
       [datetime]
       $EndDate = (Get-Date),
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 3)]
+         ValueFromPipelineByPropertyName,
+         Position = 3)]
       [switch]
       $all = $false,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 4)]
+         ValueFromPipelineByPropertyName,
+         Position = 4)]
       [switch]
       $UniFiValues = $false,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 4)]
+         ValueFromPipelineByPropertyName,
+         Position = 4)]
       [switch]
       $last = $false
    )
@@ -3172,7 +3194,7 @@ function Get-UnifiSpeedTestResult
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -3230,7 +3252,7 @@ function Get-UnifiSpeedTestResult
             }
             else
             {
-               [math]::Round($item.xput_download,1)
+               [math]::Round($item.xput_download, 1)
             }
             upload   = if ($UniFiValues)
             {
@@ -3238,14 +3260,14 @@ function Get-UnifiSpeedTestResult
             }
             else
             {
-               [math]::Round($item.xput_upload,1)
+               [math]::Round($item.xput_upload, 1)
             }
          }
          $Result = ($Result + $Object)
       }
 
       # Give this object a unique typename
-      $null = ($Result.PSObject.TypeNames.Insert(0,'Speedtest.Result'))
+      $null = ($Result.PSObject.TypeNames.Insert(0, 'Speedtest.Result'))
       $null = ($Result | Add-Member MemberSet PSStandardMembers $PSStandardMembers)
 
       #region IfLast
@@ -3411,7 +3433,7 @@ function Invoke-UniFiApiLogin
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -3571,7 +3593,7 @@ function Invoke-UniFiApiLogout
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -3706,47 +3728,47 @@ function Invoke-UnifiAuthorizeGuest
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Client MAC address')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'Client MAC address')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiMac', 'MacAddress')]
       [string]
       $Mac,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
       [Alias('UniFiMinutes')]
       [int]
       $Minutes = 60,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 3)]
+         ValueFromPipelineByPropertyName,
+         Position = 3)]
       [Alias('UniFiUp')]
       [int]
       $Up = $null,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 4)]
+         ValueFromPipelineByPropertyName,
+         Position = 4)]
       [int]
       $Down = $null,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 5)]
+         ValueFromPipelineByPropertyName,
+         Position = 5)]
       [Alias('MBytes', 'UniFiLimit', 'UniFiMBytes')]
       [int]
       $Limit = $null,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 6)]
+         ValueFromPipelineByPropertyName,
+         Position = 6)]
       [Alias('UniFiAccessPoint', 'ApMac', 'UniFiApMac', 'ap_mac')]
       [string]
       $AccessPoint = $null
@@ -4131,17 +4153,17 @@ function Invoke-UnifiBlockClient
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Client MAC address')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'Client MAC address')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiMac', 'MacAddress')]
       [string]
@@ -4474,17 +4496,17 @@ function Invoke-UnifiForgetClient
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Client MAC address')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'Client MAC address')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiMac', 'MacAddress')]
       [string[]]
@@ -4817,17 +4839,17 @@ function Invoke-UnifiReconnectClient
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Client MAC address')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'Client MAC address')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiMac', 'MacAddress')]
       [string]
@@ -5160,17 +5182,17 @@ function Invoke-UnifiUnauthorizeGuest
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Client MAC address')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'Client MAC address')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiMac', 'MacAddress')]
       [string]
@@ -5508,17 +5530,17 @@ function Invoke-UnifiUnblockClient
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
       $UnifiSite = 'default',
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'Client MAC address')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'Client MAC address')]
       [ValidateNotNullOrEmpty()]
       [Alias('UniFiMac', 'MacAddress')]
       [string]
@@ -5862,62 +5884,62 @@ function New-UniFiConfig
    #>
 
    [CmdletBinding(ConfirmImpact = 'None',
-   SupportsShouldProcess)]
+      SupportsShouldProcess)]
    param
    (
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 0)]
+         ValueFromPipelineByPropertyName,
+         Position = 0)]
       [ValidateNotNullOrEmpty()]
       [Alias('enUniFiUsername')]
       [string]
       $UniFiUsername = 'unfi.admin.user',
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 1)]
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
       [ValidateNotNullOrEmpty()]
       [Alias('enUniFiPassword')]
       [string]
       $UniFiPassword = 'mySuperSecretPassworHere',
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
       [ValidateSet('http', 'https', IgnoreCase = $true)]
       [ValidateNotNullOrEmpty()]
       [Alias('enUniFiProtocol')]
       [string]
       $UniFiProtocol = 'https',
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 3)]
+         ValueFromPipelineByPropertyName,
+         Position = 3)]
       [ValidateNotNullOrEmpty()]
       [Alias('enUniFiSelfSignedCert')]
       [bool]
       $UniFiSelfSignedCert = $false,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 4)]
+         ValueFromPipelineByPropertyName,
+         Position = 4)]
       [ValidateNotNullOrEmpty()]
       [Alias('enUniFiHostname')]
       [string]
       $UniFiHostname = 'unifi.contoso.com',
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 5)]
+         ValueFromPipelineByPropertyName,
+         Position = 5)]
       [ValidateNotNullOrEmpty()]
       [Alias('enUniFiPort')]
       [int]
       $UniFiPort = 8443,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 6)]
+         ValueFromPipelineByPropertyName,
+         Position = 6)]
       [ValidateNotNullOrEmpty()]
       [Alias('enConfigPath', 'ConfigPath')]
       [string]
       $Path = '.\UniFiConfig.json',
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 7)]
+         ValueFromPipelineByPropertyName,
+         Position = 7)]
       [switch]
       $force = $false
    )
@@ -6051,26 +6073,26 @@ function Set-UnifiFirewallGroup
    param
    (
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'Unfi Firewall Group')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'Unfi Firewall Group')]
       [ValidateNotNullOrEmpty()]
       [Alias('FirewallGroup')]
       [string]
       $UnfiFirewallGroup,
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'IPv4 or IPv6 input List')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'IPv4 or IPv6 input List')]
       [ValidateNotNullOrEmpty()]
       [Alias('CidrInput')]
       [psobject]
       $UnifiCidrInput,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -6109,7 +6131,10 @@ function Set-UnifiFirewallGroup
                # Try to Logout
                try
                {
-                  if (-not (Get-UniFiIsAlive)) { Throw }
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     Throw
+                  }
                }
                catch
                {
@@ -6174,7 +6199,7 @@ function Set-UnifiFirewallGroup
 
       $TargetFirewallGroup = (Get-UnifiFirewallGroups | Where-Object -FilterScript {
             ($_.Name -eq $UnfiFirewallGroup)
-      })
+         })
 
       if (-not $TargetFirewallGroup)
       {
@@ -6266,7 +6291,7 @@ function Set-UnifiFirewallGroup
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 
@@ -6364,26 +6389,26 @@ function Set-UnifiNetworkDetails
    param
    (
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 0,
-      HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 0,
+         HelpMessage = 'The ID (network_id) of the network you would like to get detaild information about.')]
       [ValidateNotNullOrEmpty()]
       [Alias('UnifiNetworkId', 'NetworkId')]
       [string]
       $UnifiNetwork,
       [Parameter(Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position = 1,
-      HelpMessage = 'JSON formed Body for the Request')]
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1,
+         HelpMessage = 'JSON formed Body for the Request')]
       [ValidateNotNullOrEmpty()]
       [Alias('Body')]
       [string]
       $UniFiBody,
       [Parameter(ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-      Position = 2)]
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
       [ValidateNotNullOrEmpty()]
       [Alias('Site')]
       [string]
@@ -6421,7 +6446,10 @@ function Set-UnifiNetworkDetails
                # Try to Logout
                try
                {
-                  if (-not (Get-UniFiIsAlive)) { Throw }
+                  if (-not (Get-UniFiIsAlive))
+                  {
+                     Throw
+                  }
                }
                catch
                {
@@ -6555,7 +6583,7 @@ function Set-UnifiNetworkDetails
             Reason    = $e.CategoryInfo.Reason
             Target    = $e.CategoryInfo.TargetName
             Script    = $e.InvocationInfo.ScriptName
-            Line	  = $e.InvocationInfo.ScriptLineNumber
+            Line      = $e.InvocationInfo.ScriptLineNumber
             Column    = $e.InvocationInfo.OffsetInLine
          }
 

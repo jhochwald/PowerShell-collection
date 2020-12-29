@@ -44,30 +44,30 @@
       https://powershell24.de/en/2020/08/25/direkt-zugewiesene-plane-auslesen/
 #>
 [CmdletBinding(DefaultParameterSetName = 'Display',
-ConfirmImpact = 'None')]
+   ConfirmImpact = 'None')]
 param
 (
    [Parameter(ParameterSetName = 'Export',
-         ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
    [Alias('ExportInfo', 'ExportCSV')]
    [switch]
    $Export,
    [Parameter(ParameterSetName = 'Display',
-         ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
    [Alias('OutGridView', 'GridView', 'Info')]
    [switch]
    $Display,
    [Parameter(ParameterSetName = 'Export',
-         ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [Alias('CSVPath', 'CSVFile')]
    [string]
    $Path = '.\M365_admin_assignes_licenses.csv',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [Alias('MsolShortName')]
    [string]
    $MsolName = 'contoso'
@@ -108,7 +108,7 @@ begin
    # Filter the licensed users
    $AllUsers = ($AllUsers | Where-Object {
          $_.isLicensed -eq $true
-   })
+      })
    #endregion GetUserInfo
 
    #region CreateObjects

@@ -39,7 +39,7 @@ begin
 
    # Login
    $null = (Invoke-UniFiApiLogin)
-   
+
    # Safe ProgressPreference and Setup SilentlyContinue for the function
    $ExistingProgressPreference = ($ProgressPreference)
    $ProgressPreference = 'SilentlyContinue'
@@ -57,11 +57,11 @@ process
       }
       $NewOffice365Endpoints = ((Get-Office365Endpoints @paramGetOffice365Endpoints) | Where-Object -FilterScript {
             ($PSItem.required -eq $true) -and (($PSItem.tcpPorts -eq '587') -or ($PSItem.tcpPorts -eq '25')) -and ($PSItem.ip -ne $null)
-      } | Select-Object -Property ip, tcpPorts)
+         } | Select-Object -Property ip, tcpPorts)
 
       $NewExo587Endpoints = ($NewOffice365Endpoints | Where-Object -FilterScript {
             ($PSItem.tcpPorts -eq '587')
-      } | Select-Object -Property ip)
+         } | Select-Object -Property ip)
 
       foreach ($item in $NewExo587Endpoints.ip)
       {
@@ -90,7 +90,7 @@ process
 
       $NewExo25Endpoints = ($NewOffice365Endpoints | Where-Object -FilterScript {
             ($PSItem.tcpPorts -eq '25')
-      } |  Select-Object -Property ip)
+         } | Select-Object -Property ip)
 
       # Create new objects
 
@@ -133,7 +133,7 @@ process
          Line      = $e.InvocationInfo.ScriptLineNumber
          Column    = $e.InvocationInfo.OffsetInLine
       }
-   
+
       # output information. Post-process collected info, and log info (optional)
       Write-Warning -Message $info
    }
@@ -143,7 +143,7 @@ end
 {
    # Logoff
    $null = (Invoke-UniFiApiLogout)
-   
+
    # Restore ProgressPreference
    $ProgressPreference = $ExistingProgressPreference
 }

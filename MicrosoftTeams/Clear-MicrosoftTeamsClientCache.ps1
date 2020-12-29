@@ -1,10 +1,10 @@
 <#
       .SYNOPSIS
       Cleanup Microsoft Teams Client
-	
+
       .DESCRIPTION
       Cleanup Microsoft Teams Client by deleting several local cache files
-	
+
       .EXAMPLE
       PS C:\> .\Clear-MicrosoftTeamsClientCache.ps1
 
@@ -23,7 +23,7 @@
       Due to some issues, Windows is not supported at this time!
 #>
 [CmdletBinding(ConfirmImpact = 'Medium',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 if ($IsMacOS -eq $true)
@@ -33,9 +33,9 @@ if ($IsMacOS -eq $true)
 else
 {
    Write-Warning -Message 'Due to some issues, Windows is not supported at this time!'
-	
+
    exit 1
-	
+
    $AppDataBasePath = ($env:APPDATA + '\Microsoft\teams\')
 }
 
@@ -132,6 +132,6 @@ if (Test-Path -Path ($AppDataBasePath + 'installTime.txt'))
    $InstallDateInput = (Get-Content -Path ($AppDataBasePath + 'installTime.txt'))
    $Culture = (New-Object -TypeName System.Globalization.CultureInfo -ArgumentList ('de-DE'))
    $InstallDate = (Get-Date -Date $InstallDateInput -Format ($Culture.DateTimeFormat.ShortDatePattern))
-	
+
    Write-Output -InputObject ('Latest Version of Microsoft Teams from: {0}' -f $InstallDate)
 }

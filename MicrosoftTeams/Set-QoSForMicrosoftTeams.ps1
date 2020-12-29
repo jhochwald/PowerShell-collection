@@ -34,11 +34,11 @@
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param
 (
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [Alias('AppName')]
    [string]
    $AppPathNameMatchCondition = 'Teams.exe'

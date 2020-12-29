@@ -18,7 +18,7 @@
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
@@ -43,7 +43,7 @@ begin
    # Set the full path of the downloaded installer
    [string]$InstallerPackage = ($Target + '\' + $TargetName)
 
-   [string]$InstallerDestination = (($InstallerPackage).Replace('.zip',''))
+   [string]$InstallerDestination = (($InstallerPackage).Replace('.zip', ''))
    [string]$InstallerExecutable = ($InstallerDestination + '\x64\Release\FSLogixAppsSetup.exe')
    $SCT = 'SilentlyContinue'
    $STP = 'Stop'
@@ -169,37 +169,37 @@ process
 
       # Remove the downloaded Installaer Package
       $paramRemoveItem = @{
-         Path		   = $InstallerPackage
-         Confirm	   = $false
-         Force		   = $true
+         Path        = $InstallerPackage
+         Confirm     = $false
+         Force       = $true
          ErrorAction = $SCT
       }
       $null = (Remove-Item @paramRemoveItem)
 
       # Install the expanded stuff
       $paramRemoveItem = @{
-         Path		   = $InstallerDestination
-         Recurse	   = $true
-         Confirm	   = $false
-         Force		   = $true
+         Path        = $InstallerDestination
+         Recurse     = $true
+         Confirm     = $false
+         Force       = $true
          ErrorAction = $SCT
       }
       $null = (Remove-Item @paramRemoveItem)
 
       # Legacy HKLM Path for WVD/VDI/WDS Environment
       $paramNewItem = @{
-         Path		   = 'HKLM:\SOFTWARE\Citrix\PortICA'
-         Confirm	   = $false
-         Force		   = $true
+         Path        = 'HKLM:\SOFTWARE\Citrix\PortICA'
+         Confirm     = $false
+         Force       = $true
          ErrorAction = $SCT
       }
       $null = (New-Item @paramNewItem)
 
       # Ensure that the registry path exists
       $paramNewItem = @{
-         Path		   = 'HKLM:\SOFTWARE\Microsoft\Teams'
-         Confirm	   = $false
-         Force		   = $true
+         Path        = 'HKLM:\SOFTWARE\Microsoft\Teams'
+         Confirm     = $false
+         Force       = $true
          ErrorAction = $SCT
       }
       $null = (New-Item @paramNewItem)
@@ -207,33 +207,33 @@ process
       # Tell Microsoft Teams that it runs in an WVD/VDI/WDS Environment
       # Source: https://docs.microsoft.com/en-us/azure/virtual-desktop/teams-on-wvd
       $paramNewItemProperty = @{
-         Path		    = 'HKLM:\SOFTWARE\Microsoft\Teams'
-         Name		    = 'IsWVDEnvironment'
+         Path         = 'HKLM:\SOFTWARE\Microsoft\Teams'
+         Name         = 'IsWVDEnvironment'
          PropertyType = 'DWORD'
-         Value		    = 1
-         Confirm	    = $false
-         Force		    = $true
+         Value        = 1
+         Confirm      = $false
+         Force        = $true
          ErrorAction  = $SCT
       }
       $null = (New-ItemProperty @paramNewItemProperty)
 
       # Ensure that the registry path exists
       $paramNewItem = @{
-         Path		   = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32'
-         Confirm	   = $false
-         Force		   = $true
+         Path        = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32'
+         Confirm     = $false
+         Force       = $true
          ErrorAction = $SCT
       }
       $null = (New-Item @paramNewItem)
 
       # Do not start Microsoft Teams after Login
       $paramNewItemProperty = @{
-         Path		    = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32'
-         Name		    = 'Teams'
+         Path         = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32'
+         Name         = 'Teams'
          PropertyType = 'Binary'
-         Value		    = ([byte[]](0x01, 0x00, 0x00, 0x00, 0x1a, 0x19, 0xc3, 0xb9, 0x62, 0x69, 0xd5, 0x01))
-         Confirm	    = $false
-         Force		    = $true
+         Value        = ([byte[]](0x01, 0x00, 0x00, 0x00, 0x1a, 0x19, 0xc3, 0xb9, 0x62, 0x69, 0xd5, 0x01))
+         Confirm      = $false
+         Force        = $true
          ErrorAction  = $SCT
       }
       $null = (New-ItemProperty @paramNewItemProperty)

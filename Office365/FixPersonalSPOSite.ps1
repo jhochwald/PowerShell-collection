@@ -31,91 +31,91 @@
 [CmdletBinding(ConfirmImpact = 'Low')]
 param
 (
-	[Parameter(ValueFromPipeline,
-		ValueFromPipelineByPropertyName,
-		Position = 0)]
-	[ValidateNotNullOrEmpty()]
-	[Alias('Tenant')]
-	[string]
-	$TenantName = ' contoso'
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName,
+      Position = 0)]
+   [ValidateNotNullOrEmpty()]
+   [Alias('Tenant')]
+   [string]
+   $TenantName = ' contoso'
 )
 
 begin
 {
-	# Set the URL main part
-	$AdminUrl = ('https://' + $TenantName + '-admin.sharepoint.com')
+   # Set the URL main part
+   $AdminUrl = ('https://' + $TenantName + '-admin.sharepoint.com')
 
-	# Connect to AzureAD
-	Connect-AzureAD -ErrorAction Stop
+   # Connect to AzureAD
+   Connect-AzureAD -ErrorAction Stop
 
-	# Connect to SharePoint Online
-	Connect-SPOService -Url $AdminUrl -ErrorAction Stop
+   # Connect to SharePoint Online
+   Connect-SPOService -Url $AdminUrl -ErrorAction Stop
 }
 
 process
 {
-	# Get all User from the AzureAD
-	# Mind the Gap: -All is not a switch, it IS a Boolean <- WTF?
-	$paramGetAzureADUser = @{
-		All         = $true
-		ErrorAction = 'SilentlyContinue'
-	}
-	$NewODFBUsers = (Get-AzureADUser @paramGetAzureADUser | Select-Object)
+   # Get all User from the AzureAD
+   # Mind the Gap: -All is not a switch, it IS a Boolean <- WTF?
+   $paramGetAzureADUser = @{
+      All         = $true
+      ErrorAction = 'SilentlyContinue'
+   }
+   $NewODFBUsers = (Get-AzureADUser @paramGetAzureADUser | Select-Object)
 
-	# Filter licensed users
-	$NewODFBUsers = ($NewODFBUsers | Where-Object -FilterScript {
-			<#
+   # Filter licensed users
+   $NewODFBUsers = ($NewODFBUsers | Where-Object -FilterScript {
+         <#
                You can Filter much more, if you like
                We Filter:
                1. User with an assigned License
                2. All external users (based on the '#EXT#' in the UserPrincipalName)
                3. All users without a vanity domain (e.g. everyone within @NAME.onmicrosoft.com) <- Review this before using it!!!
          #>
-			(($_.AssignedLicenses -ne $null) -and ($_.UserPrincipalName -notlike ('*#EXT#@*')) -and ($_.UserPrincipalName -notlike ('*@' + $TenantName + '.onmicrosoft.com')))
-		} | Select-Object -ExpandProperty UserPrincipalName -ErrorAction SilentlyContinue)
+         (($_.AssignedLicenses -ne $null) -and ($_.UserPrincipalName -notlike ('*#EXT#@*')) -and ($_.UserPrincipalName -notlike ('*@' + $TenantName + '.onmicrosoft.com')))
+      } | Select-Object -ExpandProperty UserPrincipalName -ErrorAction SilentlyContinue)
 
-	# The Limit of Request-SPOPersonalSite is 200
-	$SliceSize = 150
+   # The Limit of Request-SPOPersonalSite is 200
+   $SliceSize = 150
 
-	# Create a new Index
-	$SliceIndex = 0
+   # Create a new Index
+   $SliceIndex = 0
 
-	# Slice the big array into smaller chunks
-	while ($($SliceSize * $SliceIndex) -lt $NewODFBUsers.Length)
- {
-		# Cleanup
-		$NewODFBUsersSlice = $null
+   # Slice the big array into smaller chunks
+   while ($($SliceSize * $SliceIndex) -lt $NewODFBUsers.Length)
+   {
+      # Cleanup
+      $NewODFBUsersSlice = $null
 
-		# Put the number of peaces into the new chunk (e.g. the new object)
-		$NewODFBUsersSlice = ($NewODFBUsers | Select-Object -First $SliceSize -Skip ($SliceSize * $SliceIndex) -ErrorAction SilentlyContinue)
+      # Put the number of peaces into the new chunk (e.g. the new object)
+      $NewODFBUsersSlice = ($NewODFBUsers | Select-Object -First $SliceSize -Skip ($SliceSize * $SliceIndex) -ErrorAction SilentlyContinue)
 
-		# Just fire the Request, the hard limit is 200 per call
-		$paramRequestSPOPersonalSite = @{
-			UserEmails    = $NewODFBUsersSlice
-			NoWait        = $true
-			ErrorAction   = 'SilentlyContinue'
-			WarningAction = 'SilentlyContinue'
-		}
-		$null = (Request-SPOPersonalSite @paramRequestSPOPersonalSite)
+      # Just fire the Request, the hard limit is 200 per call
+      $paramRequestSPOPersonalSite = @{
+         UserEmails    = $NewODFBUsersSlice
+         NoWait        = $true
+         ErrorAction   = 'SilentlyContinue'
+         WarningAction = 'SilentlyContinue'
+      }
+      $null = (Request-SPOPersonalSite @paramRequestSPOPersonalSite)
 
-		# Count the slice
-		$SliceIndex++
-	}
+      # Count the slice
+      $SliceIndex++
+   }
 
-	# Cool down and let Azure (SPO in this case) do the provisioning job in the background
-	Start-Sleep -Seconds 60
+   # Cool down and let Azure (SPO in this case) do the provisioning job in the background
+   Start-Sleep -Seconds 60
 
-	<#
+   <#
          Reference is Case #:23027858 (One Drive is not accessible via portal.office.com)
          Solution: This get will do the magic! You have to do a Select on the "Owner" object to make the magic work.
          Looks like the get will trigger something in the background!
    #>
-	$paramGetSPOSite = @{
-		IncludePersonalSite = $true
-		Limit               = 'all'
-		Filter              = "Url -like '-my.sharepoint.com/personal/'"
-		ErrorAction         = 'SilentlyContinue'
-		WarningAction       = 'SilentlyContinue'
-	}
-	$null = (Get-SPOSite @paramGetSPOSite | Select-Object -Property Url, Owner)
+   $paramGetSPOSite = @{
+      IncludePersonalSite = $true
+      Limit               = 'all'
+      Filter              = "Url -like '-my.sharepoint.com/personal/'"
+      ErrorAction         = 'SilentlyContinue'
+      WarningAction       = 'SilentlyContinue'
+   }
+   $null = (Get-SPOSite @paramGetSPOSite | Select-Object -Property Url, Owner)
 }
