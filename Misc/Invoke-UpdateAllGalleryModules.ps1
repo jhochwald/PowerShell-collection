@@ -41,247 +41,247 @@
 		Invoke-CleanupOldGalleryModuleVersions.ps1
 #>
 [CmdletBinding(ConfirmImpact = 'None',
-	SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param
 (
-	[Parameter(ValueFromPipeline,
-		ValueFromPipelineByPropertyName)]
-	[Alias('NoProgressBars')]
-	[switch]
-	$Silent
+   [Parameter(ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
+   [Alias('NoProgressBars')]
+   [switch]
+   $Silent
 )
 
 begin
 {
-	#region Defaults
-	$STP = 'Stop'
-	$CNT = 'Continue'
-	$SCT = 'SilentlyContinue'
-	#endregion Defaults
+   #region Defaults
+   $STP = 'Stop'
+   $CNT = 'Continue'
+   $SCT = 'SilentlyContinue'
+   #endregion Defaults
 
-	#region Cleanup
-	$OriginalProgressPreference = $null
-	$AllModules = $null
-	#endregion Cleanup
+   #region Cleanup
+   $OriginalProgressPreference = $null
+   $AllModules = $null
+   #endregion Cleanup
 
-	#region BoundParameters
-	if (($PSCmdlet.MyInvocation.BoundParameters['Verbose']).IsPresent)
-	{
-		$VerboseValue = $true
-	}
-	else
-	{
-		$VerboseValue = $false
-	}
+   #region BoundParameters
+   if (($PSCmdlet.MyInvocation.BoundParameters['Verbose']).IsPresent)
+   {
+      $VerboseValue = $true
+   }
+   else
+   {
+      $VerboseValue = $false
+   }
 
-	if (($PSCmdlet.MyInvocation.BoundParameters['Debug']).IsPresent)
-	{
-		$DebugValue = $true
-	}
-	else
-	{
-		$DebugValue = $false
-	}
+   if (($PSCmdlet.MyInvocation.BoundParameters['Debug']).IsPresent)
+   {
+      $DebugValue = $true
+   }
+   else
+   {
+      $DebugValue = $false
+   }
 
-	if (($PSCmdlet.MyInvocation.BoundParameters['WhatIf']).IsPresent)
-	{
-		$WhatIfValue = $true
-	}
-	else
-	{
-		$WhatIfValue = $false
-	}
-	#endregion BoundParameters
+   if (($PSCmdlet.MyInvocation.BoundParameters['WhatIf']).IsPresent)
+   {
+      $WhatIfValue = $true
+   }
+   else
+   {
+      $WhatIfValue = $false
+   }
+   #endregion BoundParameters
 
-	if (($PSCmdlet.MyInvocation.BoundParameters['Silent']).IsPresent)
-	{
-		# Save the original value
-		$OriginalProgressPreference = $ProgressPreference
+   if (($PSCmdlet.MyInvocation.BoundParameters['Silent']).IsPresent)
+   {
+      # Save the original value
+      $OriginalProgressPreference = $ProgressPreference
 
-		# Silence is golden...
-		$ProgressPreference = $SCT
-	}
+      # Silence is golden...
+      $ProgressPreference = $SCT
+   }
 
-	# Get the Module information
-	$paramGetModule = @{
-		ListAvailable = $true
-		Refresh       = $true
-		ErrorAction   = $CNT
-		WarningAction = $CNT
-		Verbose       = $VerboseValue
-		Debug         = $DebugValue
-	}
-	$AllModules = (Get-Module @paramGetModule | Where-Object -FilterScript {
-			$_.RepositorySourceLocation -like '*powershellgallery*'
-		} | Select-Object -Property Name, Version, Path)
+   # Get the Module information
+   $paramGetModule = @{
+      ListAvailable = $true
+      Refresh       = $true
+      ErrorAction   = $CNT
+      WarningAction = $CNT
+      Verbose       = $VerboseValue
+      Debug         = $DebugValue
+   }
+   $AllModules = (Get-Module @paramGetModule | Where-Object -FilterScript {
+         $_.RepositorySourceLocation -like '*powershellgallery*'
+      } | Select-Object -Property Name, Version, Path)
 }
 
 process
 {
-	foreach ($SingleModule in $AllModules)
-	{
-		# Cleanup
-		$RepositoryInfo = $null
+   foreach ($SingleModule in $AllModules)
+   {
+      # Cleanup
+      $RepositoryInfo = $null
 
-		<#
+      <#
 				The AllowPrerelease is needed here
 				Find-Module ignored the ErrorAction setting, try/catch will not work
 		#>
-		$paramFindModule = @{
-			Name            = (($SingleModule).Name)
-			Repository      = 'PSGallery'
-			AllowPrerelease = $true
-			ErrorAction     = $SCT
-			WarningAction   = $CNT
-			Verbose         = $VerboseValue
-			Debug           = $DebugValue
-		}
-		$RepositoryInfo = (Find-Module @paramFindModule | Select-Object -Property Name, Version)
+      $paramFindModule = @{
+         Name            = (($SingleModule).Name)
+         Repository      = 'PSGallery'
+         AllowPrerelease = $true
+         ErrorAction     = $SCT
+         WarningAction   = $CNT
+         Verbose         = $VerboseValue
+         Debug           = $DebugValue
+      }
+      $RepositoryInfo = (Find-Module @paramFindModule | Select-Object -Property Name, Version)
 
-		#region CleanVersions
-		<#
+      #region CleanVersions
+      <#
 				Remove everything from the version string that violates the System.Version class
 				https://docs.microsoft.com/en-us/dotnet/api/system.version
 
 				e.g. -beta4 or -preview
 		#>
-		# Character that we use as a slipt
-		$SlipPointer = '-'
+      # Character that we use as a slipt
+      $SlipPointer = '-'
 
-		# Create the Wildcard to search for
-		$SplitSearch = ('*' + $SlipPointer + '*')
+      # Create the Wildcard to search for
+      $SplitSearch = ('*' + $SlipPointer + '*')
 
-		if (($SingleModule.Version) -like $SplitSearch)
-		{
-			$SingleModule.Version = (($SingleModule.Version).split($SlipPointer)[0])
-		}
+      if (($SingleModule.Version) -like $SplitSearch)
+      {
+         $SingleModule.Version = (($SingleModule.Version).split($SlipPointer)[0])
+      }
 
-		if (($RepositoryInfo.Version) -like $SplitSearch)
-		{
-			$RepositoryInfo.Version = (($RepositoryInfo.Version).split($SlipPointer)[0])
-		}
-		#endregion CleanVersions
+      if (($RepositoryInfo.Version) -like $SplitSearch)
+      {
+         $RepositoryInfo.Version = (($RepositoryInfo.Version).split($SlipPointer)[0])
+      }
+      #endregion CleanVersions
 
-		# Is the online version newer?
-		if ((($SingleModule).Version) -lt (($RepositoryInfo).Version))
-		{
-			# Cleanup
-			$ModuleScope = $null
+      # Is the online version newer?
+      if ((($SingleModule).Version) -lt (($RepositoryInfo).Version))
+      {
+         # Cleanup
+         $ModuleScope = $null
 
-			# try to figure out the scope
-			if ((($SingleModule).Path) -like ($env:ProgramW6432 + '\*'))
-			{
-				$ModuleScope = 'AllUsers'
-			}
-			else
-			{
-				$ModuleScope = 'CurrentUser'
-			}
+         # try to figure out the scope
+         if ((($SingleModule).Path) -like ($env:ProgramW6432 + '\*'))
+         {
+            $ModuleScope = 'AllUsers'
+         }
+         else
+         {
+            $ModuleScope = 'CurrentUser'
+         }
 
-			try
-			{
-				Write-Verbose -Message ('Try to update {0}' -f ($SingleModule).Name)
+         try
+         {
+            Write-Verbose -Message ('Try to update {0}' -f ($SingleModule).Name)
 
-				# Cleanup
-				$paramUpdateModule = $null
+            # Cleanup
+            $paramUpdateModule = $null
 
-				# Try the Update
-				$paramUpdateModule = @{
-					Name          = (($SingleModule).Name)
-					Scope         = $ModuleScope
-					Force         = $true
-					AcceptLicense = $true
-					Confirm       = $false
-					Verbose       = $VerboseValue
-					Debug         = $DebugValue
-					WhatIf        = $WhatIfValue
-					ErrorAction   = $STP
-					WarningAction = $CNT
-				}
-				$null = (Update-Module @paramUpdateModule)
-			}
-			catch
-			{
-				try
-				{
-					# Get error record
-					[Management.Automation.ErrorRecord]$e = $_
+            # Try the Update
+            $paramUpdateModule = @{
+               Name          = (($SingleModule).Name)
+               Scope         = $ModuleScope
+               Force         = $true
+               AcceptLicense = $true
+               Confirm       = $false
+               Verbose       = $VerboseValue
+               Debug         = $DebugValue
+               WhatIf        = $WhatIfValue
+               ErrorAction   = $STP
+               WarningAction = $CNT
+            }
+            $null = (Update-Module @paramUpdateModule)
+         }
+         catch
+         {
+            try
+            {
+               # Get error record
+               [Management.Automation.ErrorRecord]$e = $_
 
-					# retrieve information about runtime error
-					$info = [PSCustomObject]@{
-						Exception = $e.Exception.Message
-						Reason    = $e.CategoryInfo.Reason
-						Target    = $e.CategoryInfo.TargetName
-						Script    = $e.InvocationInfo.ScriptName
-						Line      = $e.InvocationInfo.ScriptLineNumber
-						Column    = $e.InvocationInfo.OffsetInLine
-					}
+               # retrieve information about runtime error
+               $info = [PSCustomObject]@{
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+               }
 
-					# output information. Post-process collected info, and log info (optional)
-					$info | Out-String | Write-Verbose
+               # output information. Post-process collected info, and log info (optional)
+               $info | Out-String | Write-Verbose
 
-					Write-Verbose -Message ('Retry to update {0}' -f ($SingleModule).Name)
+               Write-Verbose -Message ('Retry to update {0}' -f ($SingleModule).Name)
 
-					# Cleanup
-					$paramUpdateModule = $null
+               # Cleanup
+               $paramUpdateModule = $null
 
-					# Re-Try the update by allowing prereleases
-					$paramUpdateModule = @{
-						Name            = (($SingleModule).Name)
-						AllowPrerelease = $true
-						Scope           = $ModuleScope
-						Force           = $true
-						AcceptLicense   = $true
-						Confirm         = $false
-						Verbose         = $VerboseValue
-						Debug           = $DebugValue
-						WhatIf          = $WhatIfValue
-						ErrorAction     = $STP
-						WarningAction   = $CNT
-					}
-					$null = (Update-Module @paramUpdateModule)
-				}
-				catch
-				{
-					# Get error record
-					[Management.Automation.ErrorRecord]$e = $_
+               # Re-Try the update by allowing prereleases
+               $paramUpdateModule = @{
+                  Name            = (($SingleModule).Name)
+                  AllowPrerelease = $true
+                  Scope           = $ModuleScope
+                  Force           = $true
+                  AcceptLicense   = $true
+                  Confirm         = $false
+                  Verbose         = $VerboseValue
+                  Debug           = $DebugValue
+                  WhatIf          = $WhatIfValue
+                  ErrorAction     = $STP
+                  WarningAction   = $CNT
+               }
+               $null = (Update-Module @paramUpdateModule)
+            }
+            catch
+            {
+               # Get error record
+               [Management.Automation.ErrorRecord]$e = $_
 
-					# retrieve information about runtime error
-					$info = [PSCustomObject]@{
-						Exception = $e.Exception.Message
-						Reason    = $e.CategoryInfo.Reason
-						Target    = $e.CategoryInfo.TargetName
-						Script    = $e.InvocationInfo.ScriptName
-						Line      = $e.InvocationInfo.ScriptLineNumber
-						Column    = $e.InvocationInfo.OffsetInLine
-					}
+               # retrieve information about runtime error
+               $info = [PSCustomObject]@{
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+               }
 
-					# output information. Post-process collected info, and log info (optional)
-					$info | Out-String | Write-Verbose
+               # output information. Post-process collected info, and log info (optional)
+               $info | Out-String | Write-Verbose
 
-					Write-Warning -Message ('Update of {0} failed' -f ($SingleModule).Name)
-				}
-			}
-		}
-		else
-		{
-			Write-Verbose -Message ('No update for {0} found' -f ($SingleModule).Name)
-		}
-	}
+               Write-Warning -Message ('Update of {0} failed' -f ($SingleModule).Name)
+            }
+         }
+      }
+      else
+      {
+         Write-Verbose -Message ('No update for {0} found' -f ($SingleModule).Name)
+      }
+   }
 }
 
 end
 {
-	if ($OriginalProgressPreference)
- {
-		# Restore the old value
-		$ProgressPreference = $OriginalProgressPreference
-	}
+   if ($OriginalProgressPreference)
+   {
+      # Restore the old value
+      $ProgressPreference = $OriginalProgressPreference
+   }
 
-	# Cleanup
-	$AllModules = $null
+   # Cleanup
+   $AllModules = $null
 
-	# Have a great day!
+   # Have a great day!
 }
 
 #region LICENSE

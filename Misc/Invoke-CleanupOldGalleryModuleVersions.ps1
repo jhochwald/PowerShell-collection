@@ -26,216 +26,216 @@
 		Invoke-UpdateAllGalleryModules.ps1
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-	SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
 {
-	#region Defaults
-	$STP = 'Stop'
-	$CNT = 'Continue'
-	$SCT = 'SilentlyContinue'
-	#endregion Defaults
+   #region Defaults
+   $STP = 'Stop'
+   $CNT = 'Continue'
+   $SCT = 'SilentlyContinue'
+   #endregion Defaults
 
-	#region Cleanup
-	$AllModules = $null
-	#endregion Cleanup
+   #region Cleanup
+   $AllModules = $null
+   #endregion Cleanup
 
-	#region BoundParameters
-	if (($PSCmdlet.MyInvocation.BoundParameters['Verbose']).IsPresent)
- {
-		$VerboseValue = $true
-	}
-	else
- {
-		$VerboseValue = $false
-	}
+   #region BoundParameters
+   if (($PSCmdlet.MyInvocation.BoundParameters['Verbose']).IsPresent)
+   {
+      $VerboseValue = $true
+   }
+   else
+   {
+      $VerboseValue = $false
+   }
 
-	if (($PSCmdlet.MyInvocation.BoundParameters['Debug']).IsPresent)
- {
-		$DebugValue = $true
-	}
-	else
- {
-		$DebugValue = $false
-	}
+   if (($PSCmdlet.MyInvocation.BoundParameters['Debug']).IsPresent)
+   {
+      $DebugValue = $true
+   }
+   else
+   {
+      $DebugValue = $false
+   }
 
-	if (($PSCmdlet.MyInvocation.BoundParameters['WhatIf']).IsPresent)
- {
-		$WhatIfValue = $true
-	}
-	else
- {
-		$WhatIfValue = $false
-	}
-	#endregion BoundParameters
+   if (($PSCmdlet.MyInvocation.BoundParameters['WhatIf']).IsPresent)
+   {
+      $WhatIfValue = $true
+   }
+   else
+   {
+      $WhatIfValue = $false
+   }
+   #endregion BoundParameters
 }
 
 process
 {
-	# Get the Module information
-	$paramGetModule = @{
-		ListAvailable = $true
-		Refresh       = $true
-		ErrorAction   = $CNT
-		WarningAction = $CNT
-		Verbose       = $VerboseValue
-		Debug         = $DebugValue
-	}
-	$AllModules = (Get-Module @paramGetModule | Where-Object -FilterScript {
-			$_.RepositorySourceLocation -like '*powershellgallery*'
-		} | Select-Object -ExpandProperty Name)
+   # Get the Module information
+   $paramGetModule = @{
+      ListAvailable = $true
+      Refresh       = $true
+      ErrorAction   = $CNT
+      WarningAction = $CNT
+      Verbose       = $VerboseValue
+      Debug         = $DebugValue
+   }
+   $AllModules = (Get-Module @paramGetModule | Where-Object -FilterScript {
+         $_.RepositorySourceLocation -like '*powershellgallery*'
+      } | Select-Object -ExpandProperty Name)
 
-	$AllModules = ($AllModules | Sort-Object -Unique)
+   $AllModules = ($AllModules | Sort-Object -Unique)
 
-	foreach ($ModuleName in $AllModules)
- {
-		Write-Verbose -Message ('Get all existing versions of {0}' -f $ModuleName)
+   foreach ($ModuleName in $AllModules)
+   {
+      Write-Verbose -Message ('Get all existing versions of {0}' -f $ModuleName)
 
-		$AllModuleVersions = $null
-		$AllModuleVersions = (Get-InstalledModule -Name $ModuleName -AllVersions -ErrorAction $SCT -WarningAction $CNT)
+      $AllModuleVersions = $null
+      $AllModuleVersions = (Get-InstalledModule -Name $ModuleName -AllVersions -ErrorAction $SCT -WarningAction $CNT)
 
-		if (((($AllModuleVersions).Version).count) -gt 1)
-		{
-			$LatestModuleVersion = $null
+      if (((($AllModuleVersions).Version).count) -gt 1)
+      {
+         $LatestModuleVersion = $null
 
-			$LatestModuleVersion = (($AllModuleVersions | Sort-Object -Property $AllModuleVersions.Version)[1])
+         $LatestModuleVersion = (($AllModuleVersions | Sort-Object -Property $AllModuleVersions.Version)[1])
 
-			try
-			{
-				$output = $null
-				$output = ($AllModuleVersions | Where-Object {
-						(($_.Version) -lt ($LatestModuleVersion.Version))
-					} | ForEach-Object -Process {
-						Write-Verbose -Message ('Start to process {0}' -f ($_).Name)
+         try
+         {
+            $output = $null
+            $output = ($AllModuleVersions | Where-Object {
+                  (($_.Version) -lt ($LatestModuleVersion.Version))
+               } | ForEach-Object -Process {
+                  Write-Verbose -Message ('Start to process {0}' -f ($_).Name)
 
-						try
-						{
-							$paramUninstallModule = @{
-								Name          = $_
-								Force         = $true
-								Confirm       = $false
-								WhatIf        = $WhatIfValue
-								Verbose       = $VerboseValue
-								Debug         = $DebugValue
-								ErrorAction   = $STP
-								WarningAction = $CNT
-							}
-							Uninstall-Module @paramUninstallModule
-						}
-						catch
-						{
-							# Get error record
-							[Management.Automation.ErrorRecord]$e = $_
+                  try
+                  {
+                     $paramUninstallModule = @{
+                        Name          = $_
+                        Force         = $true
+                        Confirm       = $false
+                        WhatIf        = $WhatIfValue
+                        Verbose       = $VerboseValue
+                        Debug         = $DebugValue
+                        ErrorAction   = $STP
+                        WarningAction = $CNT
+                     }
+                     Uninstall-Module @paramUninstallModule
+                  }
+                  catch
+                  {
+                     # Get error record
+                     [Management.Automation.ErrorRecord]$e = $_
 
-							# retrieve information about runtime error
-							$info = [PSCustomObject]@{
-								Exception = $e.Exception.Message
-								Reason    = $e.CategoryInfo.Reason
-								Target    = $e.CategoryInfo.TargetName
-								Script    = $e.InvocationInfo.ScriptName
-								Line      = $e.InvocationInfo.ScriptLineNumber
-								Column    = $e.InvocationInfo.OffsetInLine
-							}
+                     # retrieve information about runtime error
+                     $info = [PSCustomObject]@{
+                        Exception = $e.Exception.Message
+                        Reason    = $e.CategoryInfo.Reason
+                        Target    = $e.CategoryInfo.TargetName
+                        Script    = $e.InvocationInfo.ScriptName
+                        Line      = $e.InvocationInfo.ScriptLineNumber
+                        Column    = $e.InvocationInfo.OffsetInLine
+                     }
 
-							# output information. Post-process collected info, and log info (optional)
-							$info | Out-String | Write-Verbose
+                     # output information. Post-process collected info, and log info (optional)
+                     $info | Out-String | Write-Verbose
 
-							$paramWriteError = @{
-								Message      = $e.Exception.Message
-								ErrorAction  = $CNT
-								Exception    = $e.Exception
-								TargetObject = $e.CategoryInfo.TargetName
-							}
-							Write-Error @paramWriteError
-						}
-						finally
-						{
-							if (Test-Path -Path $_.InstalledLocation -ErrorAction $SCT -WarningAction $SCT)
-							{
-								Write-Verbose -Message ('Try to remove {0}' -f ($_).InstalledLocation)
+                     $paramWriteError = @{
+                        Message      = $e.Exception.Message
+                        ErrorAction  = $CNT
+                        Exception    = $e.Exception
+                        TargetObject = $e.CategoryInfo.TargetName
+                     }
+                     Write-Error @paramWriteError
+                  }
+                  finally
+                  {
+                     if (Test-Path -Path $_.InstalledLocation -ErrorAction $SCT -WarningAction $SCT)
+                     {
+                        Write-Verbose -Message ('Try to remove {0}' -f ($_).InstalledLocation)
 
-								try
-								{
-									$paramRemoveItem = @{
-										Path          = $_.InstalledLocation
-										Recurse       = $true
-										Force         = $true
-										Confirm       = $false
-										ErrorAction   = $STP
-										WarningAction = $CNT
-										WhatIf        = $WhatIfValue
-										Verbose       = $VerboseValue
-										Debug         = $DebugValue
-									}
-									Remove-Item @paramRemoveItem
+                        try
+                        {
+                           $paramRemoveItem = @{
+                              Path          = $_.InstalledLocation
+                              Recurse       = $true
+                              Force         = $true
+                              Confirm       = $false
+                              ErrorAction   = $STP
+                              WarningAction = $CNT
+                              WhatIf        = $WhatIfValue
+                              Verbose       = $VerboseValue
+                              Debug         = $DebugValue
+                           }
+                           Remove-Item @paramRemoveItem
 
-									Write-Verbose -Message ('Removed {0}' -f ($_).InstalledLocation)
-								}
-								catch
-								{
-									# Get error record
-									[Management.Automation.ErrorRecord]$e = $_
+                           Write-Verbose -Message ('Removed {0}' -f ($_).InstalledLocation)
+                        }
+                        catch
+                        {
+                           # Get error record
+                           [Management.Automation.ErrorRecord]$e = $_
 
-									# retrieve information about runtime error
-									$info = [PSCustomObject]@{
-										Exception = $e.Exception.Message
-										Reason    = $e.CategoryInfo.Reason
-										Target    = $e.CategoryInfo.TargetName
-										Script    = $e.InvocationInfo.ScriptName
-										Line      = $e.InvocationInfo.ScriptLineNumber
-										Column    = $e.InvocationInfo.OffsetInLine
-									}
+                           # retrieve information about runtime error
+                           $info = [PSCustomObject]@{
+                              Exception = $e.Exception.Message
+                              Reason    = $e.CategoryInfo.Reason
+                              Target    = $e.CategoryInfo.TargetName
+                              Script    = $e.InvocationInfo.ScriptName
+                              Line      = $e.InvocationInfo.ScriptLineNumber
+                              Column    = $e.InvocationInfo.OffsetInLine
+                           }
 
-									# output information. Post-process collected info, and log info (optional)
-									$info | Out-String | Write-Verbose
+                           # output information. Post-process collected info, and log info (optional)
+                           $info | Out-String | Write-Verbose
 
-									$paramWriteError = @{
-										Message      = $e.Exception.Message
-										ErrorAction  = $STP
-										Exception    = $e.Exception
-										TargetObject = $e.CategoryInfo.TargetName
-									}
-									Write-Error @paramWriteError
-								}
-							}
-						}
+                           $paramWriteError = @{
+                              Message      = $e.Exception.Message
+                              ErrorAction  = $STP
+                              Exception    = $e.Exception
+                              TargetObject = $e.CategoryInfo.TargetName
+                           }
+                           Write-Error @paramWriteError
+                        }
+                     }
+                  }
 
-						Write-Verbose -Message ('Removed old versions off {0}' -f ($_).Name)
-					})
-				$output
-			}
-			catch
-			{
-				# Get error record
-				[Management.Automation.ErrorRecord]$e = $_
+                  Write-Verbose -Message ('Removed old versions off {0}' -f ($_).Name)
+               })
+            $output
+         }
+         catch
+         {
+            # Get error record
+            [Management.Automation.ErrorRecord]$e = $_
 
-				# retrieve information about runtime error
-				$info = [PSCustomObject]@{
-					Exception = $e.Exception.Message
-					Reason    = $e.CategoryInfo.Reason
-					Target    = $e.CategoryInfo.TargetName
-					Script    = $e.InvocationInfo.ScriptName
-					Line      = $e.InvocationInfo.ScriptLineNumber
-					Column    = $e.InvocationInfo.OffsetInLine
-				}
+            # retrieve information about runtime error
+            $info = [PSCustomObject]@{
+               Exception = $e.Exception.Message
+               Reason    = $e.CategoryInfo.Reason
+               Target    = $e.CategoryInfo.TargetName
+               Script    = $e.InvocationInfo.ScriptName
+               Line      = $e.InvocationInfo.ScriptLineNumber
+               Column    = $e.InvocationInfo.OffsetInLine
+            }
 
-				# output information. Post-process collected info, and log info (optional)
-				$info | Out-String | Write-Verbose
+            # output information. Post-process collected info, and log info (optional)
+            $info | Out-String | Write-Verbose
 
-				Write-Warning -Message ('Failed to process {0}' -f ($_).Name)
-			}
-		}
-		else
-		{
-			Write-Verbose -Message ('Skip {0}' -f ($AllModuleVersions).Name)
-		}
-	}
+            Write-Warning -Message ('Failed to process {0}' -f ($_).Name)
+         }
+      }
+      else
+      {
+         Write-Verbose -Message ('Skip {0}' -f ($AllModuleVersions).Name)
+      }
+   }
 }
 
 end
 {
-	$AllModules = $null
+   $AllModules = $null
 }
 
 #region LICENSE
