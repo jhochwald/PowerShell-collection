@@ -1,8 +1,8 @@
 # Josh's PowerShell collection
 
-A collection of PowerShell Scripts, Tools, and Modules.
+A collection of PowerShell scripts, tooling, and some of my modules.
 
-Mostly related to some of my projects, my work, or just a blog post.
+Mostly related to some of my projects, my work, or just a post in my [blog](http://hochwald.net).
 
 Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.net).
 
@@ -12,23 +12,26 @@ Most of the stuff here is also available as a [Gist](https://gist.github.com/jho
 
 ## Legacy Notice
 
-I no longer run Exchange, Skype for Business, or any other Office Server on Premises.
+I no longer run or use on any Premises _Exchange_, _Skype for Business_, or any other _Office-Server_.
 
 This is my personal [reaction](https://hochwald.net/microsoft-rolls-back-decision-to-take-away-internal-usage-rights-from-partners/) to the changes that Microsoft [announced](https://hochwald.net/microsoft-is-going-to-kill-internal-use-rights-benefit-for-partners/) for the Internal Use Rights (IUR) program.
 
-I know that they decided to reverse that changes and in theory, I could still legally use the software. However, I decided to decommission everything licensed under the terms of the Internal Use Rights (IUR) program.
+I know that they decided to reverse that changes!
 
-In my opinion, the community always should have some benefits from the Internal Use Rights (IUR) program and/or Action Pack. Now that I decided to drop out, there will be no more such benefits.
-
-I will _no longer maintain_ the scripts related to Microsoft Office (on Premises) servers. They will remain here, but unmaintained.
+I will _no longer maintain_ the scripts related to Microsoft Office-Servers. They will remain here, but unmaintained. I will not develop any new Microsoft Office-Servers related stuff, but sometimes I might release something I created in a project.
 
 Fork the repository and maintain or extend them if you like to. The [License](https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE) allows that easily.
+
+My own small consulting business is now cloud native, and I pay the regular price for the Microsoft 365, and Azure services. Like I do for some Amazon AWS services.
+But I also decided to drop the Microsoft Partner Programm (after the old silver status expired and I started my new small consulting business) and let all the certifications expire.
+
+Nothing offensive, nothing against Microsoft! A result of the pressure that the [announcement](https://hochwald.net/microsoft-is-going-to-kill-internal-use-rights-benefit-for-partners/) of Microsoft generated on my old business.
 
 ## Please note
 
 Some, or better most, of the stuff here was a function.
 
-This is because I like functions more (my personal preference). I converted most to single files.
+This is because I like functions more (my personal preference). I converted some to single files.
 
 You can convert them back if you like.
 
@@ -98,4 +101,4 @@ _By using the Software, you agree to the License, Terms and Conditions above!_
 - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
 - The Software is not supported by Microsoft Corp (MSFT)
 - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
-- If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
+- If you disagree with any of the terms, and any conditions declared: Just delete it and build your own solution
