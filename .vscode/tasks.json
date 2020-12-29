@@ -13,14 +13,22 @@
   // Start PowerShell
   "windows": {
     "command": "powershell.exe",
-    "args": ["-NoProfile", "-ExecutionPolicy", "Bypass"]
+    "args": [
+      "-NoProfile",
+      "-ExecutionPolicy",
+      "Bypass"
+    ]
   },
   "linux": {
     "command": "/usr/bin/pwsh",
-    "args": ["-NoProfile"]
+    "args": [
+      "-NoProfile"
+    ]
   },
   "osx": {
     "command": "/usr/local/bin/pwsh",
-    "args": ["-NoProfile"]
+    "args": [
+      "-NoProfile"
+    ]
   }
 }
