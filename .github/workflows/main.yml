@@ -1,0 +1,85 @@
+---
+name: Linter
+
+# Controls when the action will run.
+# Triggers the workflow on push and/or pull request events but only for the master branch
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install PSScriptAnalyzer module
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted -ErrorAction Stop
+
+          Install-Module -Name PSScriptAnalyzer -Repository PSGallery -ErrorAction Stop
+      - name: Lint with PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          # Cleanup
+          $issues = $null
+          $TestDetails = $null
+          $errors = $null
+          $warnings = $null
+
+          # Tests to exclude
+          $ExcludeRule = (
+            'PSReviewUnusedParameter',
+            'PSPossibleIncorrectComparisonWithNull',
+            'PSAvoidUsingWMICmdlet',
+            'PSUseSingularNouns',
+            'PSAvoidUsingWriteHost',
+            'PSUseDeclaredVarsMoreThanAssignments',
+            'PSAvoidUsingComputerNameHardcoded',
+            'PSAvoidGlobalVars',
+            'PSAvoidUsingUsernameAndPasswordParams'
+          )
+
+          # Splat the Parameters
+          $paramInvokeScriptAnalyzer = @{
+            Path        = '.'
+            Recurse     = $true
+            OutVariable = 'issues'
+            Severity    = 'Warning', 'Error'
+            ExcludeRule = $ExcludeRule
+          }
+
+          # Execute the tests
+          Invoke-ScriptAnalyzer @paramInvokeScriptAnalyzer
+
+          # Store the errors and warnings
+          $errors = $issues | Where-Object -FilterScript {
+            $_.Severity -eq 'Error'
+          }
+          $warnings = $issues | Where-Object -FilterScript {
+            $_.Severity -eq 'Warning'
+          }
+
+          if (($errors) -and ($warnings))
+          {
+            Write-Error -Message ('There were {0} errors and {1} warnings.' -f $errors.Count, $warnings.Count) -ErrorAction Stop
+          }
+          elseif ($errors)
+          {
+            Write-Error -Message ('There were {0} errors.' -f $errors.Count) -ErrorAction Stop
+          }
+          elseif ($warnings)
+          {
+            Write-Warning -Message ('There were {0} warnings.' -f $warnings.Count)
+          }
+          else
+          {
+            Write-Output -InputObject 'OK'
+          }
