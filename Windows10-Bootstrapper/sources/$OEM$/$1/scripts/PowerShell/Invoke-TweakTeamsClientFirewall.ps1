@@ -1,4 +1,5 @@
 #requires -Version 3.0 -Modules NetSecurity -RunAsAdministrator
+
 <#
    .SYNOPSIS
    Tweak the Firewall Rules for Microsoft Teams clients
@@ -10,7 +11,7 @@
    Early testing release
 
    Changelog:
-   1.0.1: Reformated
+   1.0.1: Reformatted
    1.0.0: Initial Release
 
    Version 1.0.1

@@ -9,14 +9,14 @@
 
    .NOTES
    Changelog:
-   1.0.5: Reformatedg:
+   1.0.5: Reformatted:
    1.0.1: First real release
-   1.0.0: Intital beta version
+   1.0.0: Initial beta version
 
    Version 1.0.1
 
    .LINK
-   http://bey5nd-datacenter.com
+   http://beyend-datacenter.com
 
    .LINK
    https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7
@@ -135,7 +135,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -145,10 +145,10 @@ end
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    #>
-   #endregion LICENSE
+#endregion LICENSE
 
-   #region DISCLAIMER
-   <#
+#region DISCLAIMER
+<#
    DISCLAIMER:
    - Use at your own risk, etc.
    - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind

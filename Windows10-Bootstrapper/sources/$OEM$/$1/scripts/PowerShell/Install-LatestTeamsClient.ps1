@@ -5,17 +5,17 @@
    Download and install latest version of Microsoft Teams
 
    .DESCRIPTION
-   Force the download and installion latest version of Microsoft Teams for the used OS architecture
+   Force the download and the installation latest version of Microsoft Teams for the used OS architecture
 
    .NOTES
    Early testing release - Future releases might get some parameters
 
    Changelog:
    2.0.0: Changed back to the MSI installation
-   1.0.4: Reformated
+   1.0.4: Reformatted
    1.0.3: Removed the Firewall Rule creation (Now part of Invoke-TweakTeamsClientFirewall.ps1)
    1.0.2: Removed the WMI call to find OS architecture - Replaced with native .Net type System.IntPtr
-   1.0.1: Use BitsTransfer instad of Invoke-WebRequest
+   1.0.1: Use BitsTransfer instead of Invoke-WebRequest
    1.0.0: Initial Release
 
    Version 2.0.0
@@ -194,7 +194,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -2,7 +2,7 @@
 
 :: ********************************************************************************************************************
 ::
-:: enabling Technology progressive OS deployment (ETPOSD)
+:: enabling Technology progressive OS deployment
 :: Client System Bootstrapper for Windows 10 Enterprise Installations
 ::
 :: Setup Complete Wrapper
@@ -66,7 +66,7 @@ IF EXIST %systemroot%\setup\SCRIPTS\done RD /s /q %systemroot%\setup\SCRIPTS >nu
 ::
 :: License: BSD 3-Clause License
 ::
-:: Copyright 2020, enabling Technology
+:: Copyright 2021, enabling Technology
 :: All rights reserved.
 ::
 :: Redistribution and use in source and binary forms, with or without modification, are permitted provided that the

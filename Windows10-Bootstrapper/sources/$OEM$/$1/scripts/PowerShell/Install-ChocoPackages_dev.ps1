@@ -12,7 +12,7 @@
 
    Changelog:
    1.1.0:  Switched from 'Install' to 'upgrade' as Choco command (More flexible and robust)
-   1.0.13: Add Cache Location to all Choco commands and makle sure it exist
+   1.0.13: Add Cache Location to all Choco commands and make sure it exist
    1.0.12: Removed 'choco-cleaner' (Now part of the Default Workstation install)
    1.0.11: Python is now part of this package
    1.0.10: Removed some packages from the Dev Default
@@ -233,7 +233,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -34,7 +34,8 @@
 [CmdletBinding(ConfirmImpact = 'Low')]
 param ()
 
-begin {
+begin
+{
    Write-Output -InputObject 'Manufacturer specific config and software installation'
 
    #region Defaults
@@ -72,7 +73,8 @@ begin {
 
    if ($Manufacturer)
    {
-      switch ($Manufacturer) {
+      switch ($Manufacturer)
+      {
          'HP'
          {
             $ManufacturerTooling = 'HP'
@@ -168,19 +170,20 @@ begin {
             Internal Helper
       #>
       [CmdletBinding(ConfirmImpact = 'None',
-      SupportsShouldProcess)]
+         SupportsShouldProcess)]
       param
       (
          [Parameter(ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
-         Position = 0)]
+            ValueFromPipelineByPropertyName,
+            Position = 0)]
          [ValidateNotNullOrEmpty()]
          [Alias('OemInfoPath')]
          [string]
          $Path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation'
       )
 
-      begin {
+      begin
+      {
          #region Defaults
          $SCT = 'SilentlyContinue'
          #endregion Defaults
@@ -198,7 +201,8 @@ begin {
          #endregion
       }
 
-      process {
+      process
+      {
          if ($pscmdlet.ShouldProcess('OEM Info', 'Delete'))
          {
             # Cleanup the OEM Info
@@ -233,7 +237,8 @@ begin {
    #endregion RemoveOEMInfo
 }
 
-process {
+process
+{
    #region HP
    if ($ManufacturerTooling -eq 'HP')
    {
@@ -349,7 +354,8 @@ process {
             Wait             = $true
          }
          $null = (Start-Process @paramStartProcess)
-      } else
+      }
+      else
       {
          Write-Warning -Message $ErrorMessage
       }
@@ -421,7 +427,8 @@ process {
             Wait             = $true
          }
          $null = (Start-Process @paramStartProcess)
-      } else
+      }
+      else
       {
          Write-Warning -Message $ErrorMessage
       }
@@ -478,7 +485,8 @@ process {
    #endregion Dell
 }
 
-end {
+end
+{
    $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force @paramSimpleDefaults)
 }
 
@@ -486,7 +494,7 @@ end {
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2021, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

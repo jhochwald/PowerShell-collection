@@ -15,7 +15,7 @@
    1.3.9: Add Cache Location to all Choco commands and makle sure it exist
    1.3.7: Removed vscode-powershell
    1.3.6: Add 'FiraCode-ttf' (Requested) and removed 'notepadplusplus' (Replaced by VSCode)
-   1.3.4: Reformated
+   1.3.4: Reformatted
    1.3.3: Removed Chromium Edge (Now part of Windows 10)
 
    Version 1.4.0
@@ -185,7 +185,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

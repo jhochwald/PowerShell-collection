@@ -1,4 +1,5 @@
 #requires -Version 3.0 -Modules BitsTransfer -RunAsAdministrator
+
 <#
    .SYNOPSIS
    Download, install, and Tweak System and Apps for Terminal Server use
@@ -10,7 +11,7 @@
    Early testing release - Future releases might get some parameters
 
    Changelog:
-   1.0.1: Reformated
+   1.0.1: Reformatted
    1.0.0: Initial Release
 
    Version 1.0.1
@@ -296,7 +297,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

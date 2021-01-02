@@ -90,16 +90,16 @@ begin
       param
       (
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('RegistryPath')]
          [string]
          $Path,
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('Property', 'Type')]
@@ -247,7 +247,7 @@ process
    }
    $sid = ((Get-CimInstance @paramGetCimInstance | Where-Object -FilterScript {
             $_.Name -eq ($env:USERNAME)
-   }).SID)
+         }).SID)
    $paramConfirmRegistryItemProperty = @{
       Path         = ('HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\UserARSO\' + $sid + 'OptOut')
       PropertyType = 'DWord'
@@ -3004,7 +3004,7 @@ process
    }
    if ((Get-CimInstance @paramGetCimInstance | Where-Object -FilterScript {
             $_.AdapterDACType -ne 'Internal'
-   }))
+         }))
    {
       # Determining whether an OS is not installed on a virtual machine
       $paramGetCimInstance = @{
@@ -3115,7 +3115,8 @@ process
 
             Not perfect, but the "No Internet Access" state cause some issues!
       #>
-      try {
+      try
+      {
          $paramGetNetConnectionProfile = @{
             IPv4Connectivity = 'Internet'
             ErrorAction      = 'Stop'
@@ -3416,7 +3417,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2021, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

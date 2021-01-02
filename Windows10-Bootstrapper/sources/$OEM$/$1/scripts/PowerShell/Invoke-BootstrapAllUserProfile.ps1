@@ -94,16 +94,16 @@ begin
       param
       (
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('RegistryPath')]
          [string]
          $Path,
          [Parameter(Mandatory,
-               ValueFromPipeline,
-               ValueFromPipelineByPropertyName,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
             HelpMessage = 'Add help message for user')]
          [ValidateNotNullOrEmpty()]
          [Alias('Property', 'Type')]
@@ -1074,7 +1074,7 @@ process
    $langs = (Get-WinUserLanguageList -ErrorAction $SCT)
    $null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
             $_.LanguageTag -ne 'en-US'
-   }) -Force -ErrorAction $SCT)
+         }) -Force -ErrorAction $SCT)
    #endregion RemoveENKeyboard
 
    #region EnableEnhPointerPrecision
@@ -1876,7 +1876,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2021, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

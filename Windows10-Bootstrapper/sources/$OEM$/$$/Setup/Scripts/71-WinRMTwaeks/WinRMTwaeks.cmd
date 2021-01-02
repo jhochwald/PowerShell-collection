@@ -2,7 +2,7 @@
 
 :: ********************************************************************************************************************
 ::
-:: enabling Technology progressive OS deployment (ETPOSD)
+:: enabling Technology progressive OS deployment
 :: Client System Bootstrapper for Windows 10 Enterprise Installations
 ::
 :: Change Handling and tweaks Windows Remote Management (WinRM) - PLEASE READ THE NOTE BELOW

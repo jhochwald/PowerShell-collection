@@ -1,110 +1,110 @@
 <Configuration ID="722e6ccf-aeaf-447b-90ea-489e3a00c6fe">
-	<!-- Name the configuration -->
-	<Info Description="enabling Technology default Click 2 Run installation" />
-	<!-- Set plattform and update channel - The only supported channel for this kind is PerpetualVL2019 - Can be changed for Microsoft 365 activations -->
-	<Add OfficeClientEdition="64" Channel="PerpetualVL2019">
-		<!-- Office Suite -->
-		<Product ID="ProPlus2019Volume" PIDKEY="NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP">
-			<!-- Default languages to install -->
-			<Language ID="de-de" />
-			<Language ID="en-us" />
-			<!-- Exclude some components -->
-			<ExcludeApp ID="Access" />
-			<ExcludeApp ID="Groove" />
-			<ExcludeApp ID="Lync" />
-			<ExcludeApp ID="OneDrive" />
-			<ExcludeApp ID="Publisher" />
-		</Product>
-		<!-- Viso -->
-		<Product ID="VisioPro2019Volume" PIDKEY="9BGNQ-K37YR-RQHF2-38RQ3-7VCBB">
-			<!-- Default languages to install -->
-			<Language ID="de-de" />
-			<Language ID="en-us" />
-			<!-- Exclude some components -->
-			<ExcludeApp ID="Access" />
-			<ExcludeApp ID="Groove" />
-			<ExcludeApp ID="Lync" />
-			<ExcludeApp ID="OneDrive" />
-			<ExcludeApp ID="Publisher" />
-		</Product>
-		<!-- Project -->
-		<Product ID="ProjectPro2019Volume" PIDKEY="B4NPR-3FKK7-T2MBV-FRQ4W-PKD2B">
-			<!-- Default languages to install -->
-			<Language ID="de-de" />
-			<Language ID="en-us" />
-			<!-- Exclude some components -->
-			<ExcludeApp ID="Access" />
-			<ExcludeApp ID="Groove" />
-			<ExcludeApp ID="Lync" />
-			<ExcludeApp ID="OneDrive" />
-			<ExcludeApp ID="Publisher" />
-		</Product>
-	</Add>
-	<!-- We use KMS -->
-	<Property Name="SharedComputerLicensing" Value="0" />
-	<!-- No default Pin's -->
-	<Property Name="PinIconsToTaskbar" Value="FALSE" />
-	<!--  -->
-	<Property Name="SCLCacheOverride" Value="0" />
-	<!-- Will only work inside the Domain network or via VPN -->
-	<Property Name="AUTOACTIVATE" Value="1" />
-	<!-- Kill all running Office apps -->
-	<Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
-	<!-- Needed for KMS -->
-	<Property Name="DeviceBasedLicensing" Value="0" />
-	<!--  -->
-	<Updates Enabled="TRUE" />
-	<!-- Remove all installed MSI -->
-	<RemoveMSI />
-	<!-- configure the Office apps -->
-	<AppSettings>
-		<!-- Who is the owner of the Office Apps -->
-		<Setup Name="Company" Value="enabling Technology" />
-		<!-- Settings for the proofing tools - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\shared tools\proofing tools\spelling" Name="germanpostreform" Value="1" Type="REG_DWORD" App="office16" Id="L_UseGermanpostreformruleswhenrunningspellcheck" />
-		<!-- Settings common - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\common" Name="disabledocumentchat" Value="0" Type="REG_DWORD" App="office16" Id="L_DocumentChat" />
-		<User Key="software\microsoft\office\16.0\common" Name="qmenable" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableCustomerExperienceImprovementProgram" />
-		<User Key="software\microsoft\office\16.0\common" Name="updatereliabilitydata" Value="1" Type="REG_DWORD" App="office16" Id="L_UpdateReliabilityPolicy" />
-		<User Key="software\microsoft\office\16.0\common" Name="linkedin" Value="1" Type="REG_DWORD" App="office16" Id="L_AllowLinkedInFeatures" />
-		<User Key="software\microsoft\office\16.0\common" Name="default ui theme" Value="0" Type="REG_DWORD" App="office16" Id="L_DefaultUIThemeUser" />
-		<User Key="software\microsoft\office\16.0\common" Name="insiderslabbehavior" Value="1" Type="REG_DWORD" App="office16" Id="L_OfficeInsiderUserExperience" />
-		<User Key="software\microsoft\office\16.0\common\feedback" Name="enabled" Value="0" Type="REG_DWORD" App="office16" Id="L_SendFeedback" />
-		<User Key="software\microsoft\office\16.0\common\ptwatson" Name="ptwoptin" Value="0" Type="REG_DWORD" App="office16" Id="L_ImproveProofingTools" />
-		<User Key="software\microsoft\office\16.0\common\security" Name="useisopasswordverifier" Value="1" Type="REG_DWORD" App="office16" Id="L_SetPasswordHashFormatAsISOCompliant" />
-		<User Key="software\microsoft\office\16.0\common\im" Name="turnoffpresenceintegration" Value="0" Type="REG_DWORD" App="office16" Id="L_TurnOffPresenceIntegration" />
-		<User Key="software\microsoft\office\16.0\common\im" Name="turnoffpresenceicon" Value="0" Type="REG_DWORD" App="office16" Id="L_ConfigurePresenceIcons" />
-		<User Key="software\microsoft\office\16.0\common\internet" Name="allow8bitmime" Value="0" Type="REG_DWORD" App="office16" Id="L_WebArchiveencoding" />
-		<User Key="software\microsoft\office\16.0\common\general" Name="shownfirstrunoptin" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableOptinWizard" />
-		<User Key="software\microsoft\office\16.0\firstrun" Name="disablemovie" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableMovie" />
-		<User Key="software\microsoft\office\16.0\firstrun" Name="bootedrtm" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableOfficeFirstrun" />
-		<User Key="software\microsoft\office\16.0\osm" Name="enableupload" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentUpload" />
-<User Key="software\microsoft\office\16.0\osm" Name="enablefileobfuscation" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentFilemetadataObfuscation" />
-<User Key="software\microsoft\office\16.0\osm" Name="enablelogging" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableLogging" />
-		<!-- Settings for Excel - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\excel" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationExcel" />
-		<User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
-		<!-- Settings for OneNote - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\onenote" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationOneNote" />
-		<User Key="software\microsoft\office\16.0\onenote\options" Name="email attachment" Value="1" Type="REG_DWORD" App="onent16" Id="L_AllowOneNoteemailattachments" />
-		<User Key="software\microsoft\office\16.0\onenote\options" Name="disablepresence" Value="0" Type="REG_DWORD" App="onent16" Id="L_NotebookPresence" />
-		<!-- Settings for Outlook - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\outlook" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationOutlook" />
-		<User Key="software\microsoft\office\16.0\outlook\options\pubcal" Name="restrictedaccessonly" Value="1" Type="REG_DWORD" App="outlk16" Id="L_Accesstopublishedcalendars" />
-		<User Key="software\microsoft\office\16.0\outlook\options\calendar" Name="weeknum" Value="1" Type="REG_DWORD" App="outlk16" Id="L_Calendarweeknumbers" />
-		<User Key="software\microsoft\office\16.0\outlook\options" Name="enableconflictlogging" Value="2" Type="REG_DWORD" App="outlk16" Id="L_TurnOnLoggingForAllConflicts" />
-		<User Key="software\microsoft\office\16.0\outlook\preferences" Name="disablemanualarchive" Value="1" Type="REG_DWORD" App="outlk16" Id="L_DisableFileArchive" />
-		<!-- Settings for PowerPoint - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\powerpoint" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationPowerPoint" />
-		<User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
-		<!-- Settings for Visio - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\visio" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationVisio" />
-		<!-- Settings for Word - Customized by Intune/DSC later -->
-		<User Key="software\microsoft\office\16.0\word" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationWord" />
-		<User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
-	</AppSettings>
-	<!-- Do NOT show the EULA -->
-	<Display Level="None" AcceptEULA="TRUE" />
-	<!-- No logging -->
-	<Logging Level="Off" />
+  <!-- Name the configuration -->
+  <Info Description="enabling Technology default Click 2 Run installation" />
+  <!-- Set plattform and update channel - The only supported channel for this kind is PerpetualVL2019 - Can be changed for Microsoft 365 activations -->
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2019">
+    <!-- Office Suite -->
+    <Product ID="ProPlus2019Volume" PIDKEY="NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP">
+      <!-- Default languages to install -->
+      <Language ID="de-de" />
+      <Language ID="en-us" />
+      <!-- Exclude some components -->
+      <ExcludeApp ID="Access" />
+      <ExcludeApp ID="Groove" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+      <ExcludeApp ID="Publisher" />
+    </Product>
+    <!-- Viso -->
+    <Product ID="VisioPro2019Volume" PIDKEY="9BGNQ-K37YR-RQHF2-38RQ3-7VCBB">
+      <!-- Default languages to install -->
+      <Language ID="de-de" />
+      <Language ID="en-us" />
+      <!-- Exclude some components -->
+      <ExcludeApp ID="Access" />
+      <ExcludeApp ID="Groove" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+      <ExcludeApp ID="Publisher" />
+    </Product>
+    <!-- Project -->
+    <Product ID="ProjectPro2019Volume" PIDKEY="B4NPR-3FKK7-T2MBV-FRQ4W-PKD2B">
+      <!-- Default languages to install -->
+      <Language ID="de-de" />
+      <Language ID="en-us" />
+      <!-- Exclude some components -->
+      <ExcludeApp ID="Access" />
+      <ExcludeApp ID="Groove" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+      <ExcludeApp ID="Publisher" />
+    </Product>
+  </Add>
+  <!-- We use KMS -->
+  <Property Name="SharedComputerLicensing" Value="0" />
+  <!-- No default Pin's -->
+  <Property Name="PinIconsToTaskbar" Value="FALSE" />
+  <!--  -->
+  <Property Name="SCLCacheOverride" Value="0" />
+  <!-- Will only work inside the Domain network or via VPN -->
+  <Property Name="AUTOACTIVATE" Value="1" />
+  <!-- Kill all running Office apps -->
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+  <!-- Needed for KMS -->
+  <Property Name="DeviceBasedLicensing" Value="0" />
+  <!--  -->
+  <Updates Enabled="TRUE" />
+  <!-- Remove all installed MSI -->
+  <RemoveMSI />
+  <!-- configure the Office apps -->
+  <AppSettings>
+    <!-- Who is the owner of the Office Apps -->
+    <Setup Name="Company" Value="enabling Technology" />
+    <!-- Settings for the proofing tools - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\shared tools\proofing tools\spelling" Name="germanpostreform" Value="1" Type="REG_DWORD" App="office16" Id="L_UseGermanpostreformruleswhenrunningspellcheck" />
+    <!-- Settings common - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\common" Name="disabledocumentchat" Value="0" Type="REG_DWORD" App="office16" Id="L_DocumentChat" />
+    <User Key="software\microsoft\office\16.0\common" Name="qmenable" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableCustomerExperienceImprovementProgram" />
+    <User Key="software\microsoft\office\16.0\common" Name="updatereliabilitydata" Value="1" Type="REG_DWORD" App="office16" Id="L_UpdateReliabilityPolicy" />
+    <User Key="software\microsoft\office\16.0\common" Name="linkedin" Value="1" Type="REG_DWORD" App="office16" Id="L_AllowLinkedInFeatures" />
+    <User Key="software\microsoft\office\16.0\common" Name="default ui theme" Value="0" Type="REG_DWORD" App="office16" Id="L_DefaultUIThemeUser" />
+    <User Key="software\microsoft\office\16.0\common" Name="insiderslabbehavior" Value="1" Type="REG_DWORD" App="office16" Id="L_OfficeInsiderUserExperience" />
+    <User Key="software\microsoft\office\16.0\common\feedback" Name="enabled" Value="0" Type="REG_DWORD" App="office16" Id="L_SendFeedback" />
+    <User Key="software\microsoft\office\16.0\common\ptwatson" Name="ptwoptin" Value="0" Type="REG_DWORD" App="office16" Id="L_ImproveProofingTools" />
+    <User Key="software\microsoft\office\16.0\common\security" Name="useisopasswordverifier" Value="1" Type="REG_DWORD" App="office16" Id="L_SetPasswordHashFormatAsISOCompliant" />
+    <User Key="software\microsoft\office\16.0\common\im" Name="turnoffpresenceintegration" Value="0" Type="REG_DWORD" App="office16" Id="L_TurnOffPresenceIntegration" />
+    <User Key="software\microsoft\office\16.0\common\im" Name="turnoffpresenceicon" Value="0" Type="REG_DWORD" App="office16" Id="L_ConfigurePresenceIcons" />
+    <User Key="software\microsoft\office\16.0\common\internet" Name="allow8bitmime" Value="0" Type="REG_DWORD" App="office16" Id="L_WebArchiveencoding" />
+    <User Key="software\microsoft\office\16.0\common\general" Name="shownfirstrunoptin" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableOptinWizard" />
+    <User Key="software\microsoft\office\16.0\firstrun" Name="disablemovie" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableMovie" />
+    <User Key="software\microsoft\office\16.0\firstrun" Name="bootedrtm" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableOfficeFirstrun" />
+    <User Key="software\microsoft\office\16.0\osm" Name="enableupload" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentUpload" />
+    <User Key="software\microsoft\office\16.0\osm" Name="enablefileobfuscation" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentFilemetadataObfuscation" />
+    <User Key="software\microsoft\office\16.0\osm" Name="enablelogging" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableLogging" />
+    <!-- Settings for Excel - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\excel" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationExcel" />
+    <User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
+    <!-- Settings for OneNote - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\onenote" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationOneNote" />
+    <User Key="software\microsoft\office\16.0\onenote\options" Name="email attachment" Value="1" Type="REG_DWORD" App="onent16" Id="L_AllowOneNoteemailattachments" />
+    <User Key="software\microsoft\office\16.0\onenote\options" Name="disablepresence" Value="0" Type="REG_DWORD" App="onent16" Id="L_NotebookPresence" />
+    <!-- Settings for Outlook - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\outlook" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationOutlook" />
+    <User Key="software\microsoft\office\16.0\outlook\options\pubcal" Name="restrictedaccessonly" Value="1" Type="REG_DWORD" App="outlk16" Id="L_Accesstopublishedcalendars" />
+    <User Key="software\microsoft\office\16.0\outlook\options\calendar" Name="weeknum" Value="1" Type="REG_DWORD" App="outlk16" Id="L_Calendarweeknumbers" />
+    <User Key="software\microsoft\office\16.0\outlook\options" Name="enableconflictlogging" Value="2" Type="REG_DWORD" App="outlk16" Id="L_TurnOnLoggingForAllConflicts" />
+    <User Key="software\microsoft\office\16.0\outlook\preferences" Name="disablemanualarchive" Value="1" Type="REG_DWORD" App="outlk16" Id="L_DisableFileArchive" />
+    <!-- Settings for PowerPoint - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\powerpoint" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationPowerPoint" />
+    <User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
+    <!-- Settings for Visio - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\visio" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationVisio" />
+    <!-- Settings for Word - Customized by Intune/DSC later -->
+    <User Key="software\microsoft\office\16.0\word" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationWord" />
+    <User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
+  </AppSettings>
+  <!-- Do NOT show the EULA -->
+  <Display Level="None" AcceptEULA="TRUE" />
+  <!-- No logging -->
+  <Logging Level="Off" />
 </Configuration>

@@ -12,7 +12,7 @@
    IPv6 Support is optional.
 
    .PARAMETER IPv6
-   Enable IPv6 Support, IPv6 Servers will be added to the serverlist
+   Enable IPv6 Support, IPv6 Servers will be added to the server list
 
    .EXAMPLE
    PS C:\> .\Enable-DNSOverHTTPS.ps1
@@ -35,7 +35,7 @@
 
    You can also change the servers below to any service you like, e.g. Google DNS or Quad9 from IBM.
 
-   The Bool as return was requested by a customer, and the Exitcode (0 or 1) is implemented for our bootstrap setup
+   The Bool as return was requested by a customer, and the exit code (0 or 1) is implemented for our bootstrap setup
 
    .LINK
    https://1.1.1.1/dns/
@@ -232,7 +232,8 @@ process
    #endregion DoH
 }
 
-end {
+end
+{
    # Return the Bool
    Write-Output -InputObject $true
 
@@ -244,7 +245,7 @@ end {
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

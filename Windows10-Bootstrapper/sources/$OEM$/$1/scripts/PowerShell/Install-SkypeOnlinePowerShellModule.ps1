@@ -1,4 +1,5 @@
 ﻿#requires -Version 3.0 -Modules BitsTransfer -RunAsAdministrator
+
 <#
       .SYNOPSIS
       Download and install the Skype for Business Online PowerShell Module
@@ -14,7 +15,7 @@
 
       winrm quickconfig
 
-      And optionaly this (for legacy authemtication fallback support):
+      And optionally this (for legacy authentication fallback support):
       winrm set winrm/config/client/auth@{Basic="true"}
 
       Changelog:
@@ -26,11 +27,16 @@
       http://beyond-datacenter.com
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
 {
+   Write-Warning -Message 'This module is no longer supported and recommended!'
+   Write-Warning -Message 'Please use the Microsoft Teams Module instead!!!'
+
+   exit 1
+
    Write-Output -InputObject 'Download and install the Skype for Business Online PowerShell Module'
 
    # Default URL
@@ -118,7 +124,7 @@ process
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2021, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -2,7 +2,7 @@
 
 :: ********************************************************************************************************************
 ::
-:: enabling Technology progressive OS deployment (ETPOSD)
+:: enabling Technology progressive OS deployment
 :: Client System Bootstrapper for Windows 10 Enterprise Installations
 ::
 :: Set Power Plan To Auto

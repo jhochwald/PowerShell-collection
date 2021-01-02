@@ -8,7 +8,7 @@
       Cleanup some scheduled tasks, mostly auto update related
 
       .NOTES
-      The Auto updates are great! But we use Choco and our own soultion to deploy updates.
+      The Auto updates are great! But we use Choco and our own solution to deploy updates.
 
       Version 1.0.0
 
@@ -101,7 +101,7 @@ process
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2021, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

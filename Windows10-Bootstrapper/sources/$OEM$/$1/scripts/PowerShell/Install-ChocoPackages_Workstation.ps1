@@ -17,7 +17,7 @@
    1.1.9:  Add 'choco-cleaner'
    1.1.8:  Removed Python (Now a DEV package)
    1.1.7:  Fix some issues and add some 'Install' packages
-   1.1.6:  Reformated
+   1.1.6:  Reformatted
    1.1.5:  Removed "Firefox", "Chrome", and "graphviz" - All moved to the Developer package selection
 
    Version 1.2.0
@@ -224,7 +224,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

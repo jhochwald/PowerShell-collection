@@ -37,25 +37,25 @@
 param
 (
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [Alias('InstallCompany')]
    [string]
    $Company = 'enabling Technology',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [Alias('InstallImageName')]
    [string]
    $ImageName = 'ETPOSD',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [Alias('InstallImageDescription')]
    [string]
    $ImageDescription = 'enabling Technology progressive OS deployment',
    [Parameter(ValueFromPipeline,
-   ValueFromPipelineByPropertyName)]
+      ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
    [Alias('InstallImageVersion')]
    [string]
@@ -188,7 +188,7 @@ begin
          [string] $NameSpace = 'root\cimv2',
          [string[]] $ComputerName = $Env:COMPUTERNAME,
          [ValidateSet('Default', 'Dcom', 'Wsman')][string] $Protocol = 'Default',
-      [string] $Properties = '*')
+         [string] $Properties = '*')
 
       begin
       {
@@ -321,7 +321,7 @@ process
          $_.IPAddress
       } | Select-Object -ExpandProperty IPAddress | Where-Object -FilterScript {
          $_ -notlike '*:*'
-   })
+      })
 
    #region ImageName
    $paramNewItemProperty = @{
@@ -645,7 +645,7 @@ end
 <#
       BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
+      Copyright (c) 2021, enabling Technology
       All rights reserved.
 
       Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

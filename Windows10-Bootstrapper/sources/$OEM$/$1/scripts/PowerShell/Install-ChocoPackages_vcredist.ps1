@@ -12,7 +12,7 @@
 
    Changelog:
    1.1.0: Switched from 'Install' to 'upgrade' as Choco command (More flexible and robust)
-   1.0.9: Add Cache Location to all Choco commands and makle sure it exist
+   1.0.9: Add Cache Location to all Choco commands and make sure it exist
 
    Version 1.1.0
 
@@ -196,7 +196,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

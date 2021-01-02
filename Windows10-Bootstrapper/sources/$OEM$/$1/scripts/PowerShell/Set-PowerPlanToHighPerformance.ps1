@@ -38,7 +38,7 @@ process
    # Stop Search - Gain performance
    $null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object -FilterScript {
          $_.Status -eq 'Running'
-   } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+      } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
 
    #region
    $null = (& "$env:windir\system32\powercfg.exe" /SETACTIVE 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c)
@@ -112,7 +112,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

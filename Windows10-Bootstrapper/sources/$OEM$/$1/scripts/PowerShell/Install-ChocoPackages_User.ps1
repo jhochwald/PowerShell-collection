@@ -12,7 +12,7 @@
 
    Changelog:
    1.0.0:  Switched from 'Install' to 'upgrade' as Choco command (More flexible and robust)
-   0.0.10: Add Cache Location to all Choco commands and makle sure it exist
+   0.0.10: Add Cache Location to all Choco commands and make sure it exist
    0.0.9:  Initial Test version
 
    Version 1.0.0

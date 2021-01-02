@@ -5,7 +5,7 @@
    Set the Windows Power Plan based on the computer type
 
    .DESCRIPTION
-   Set the Windows Power Plan based on the computer type, it also set the Hybernation
+   Set the Windows Power Plan based on the computer type, it also set the Hibernation
    With Version 1.1 we introduced Support for the Parallels Power Schema
 
    .EXAMPLE
@@ -39,7 +39,7 @@ begin
 
    #region
    if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
- {
+   {
       $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
    }
    #endregion
@@ -166,7 +166,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2021, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
