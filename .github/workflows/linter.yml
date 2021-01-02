@@ -45,6 +45,13 @@ jobs:
             'PSAvoidUsingComputerNameHardcoded',
             'PSAvoidGlobalVars',
             'PSAvoidUsingUsernameAndPasswordParams'
+            'PSUseBOMForUnicodeEncodedFile'
+            'PSAvoidAssignmentToAutomaticVariable'
+            'PSUseShouldProcessForStateChangingFunctions'
+            'PSAvoidUsingPlainTextForPassword'
+            'PSUseProcessBlockForPipelineCommand'
+            'PSShouldProcess'
+            'PSAvoidInvokingEmptyMembers'
           )
 
           # Splat the Parameters
