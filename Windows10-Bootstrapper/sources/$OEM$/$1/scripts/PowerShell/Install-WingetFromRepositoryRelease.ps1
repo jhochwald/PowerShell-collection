@@ -1,68 +1,130 @@
 #requires -Version 3.0 -RunAsAdministrator
 
 <#
-.SYNOPSIS
+   .SYNOPSIS
    Download and install the latest WinGet release from GitHub
 
    .DESCRIPTION
    Download and install the latest WinGet release from GitHub
 
    .NOTES
+   Version 1.0.1
+
    Original Script by Adriano Cahete <https://adrianocahete.dev/>
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
    SupportsShouldProcess)]
 param ()
 
-begin {
+begin
+{
+   $SCT = 'SilentlyContinue'
+
+   if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
+   {
+      $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+   }
+
    $BaseDirectory = 'c:\install\files\'
 
    # Download latest release from GitHub
-   $Repo = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
+   $Repo = 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
 }
 
-process {
+process
+{
    # Query the API to get the url of the zip
-   $APIResponse = (Invoke-RestMethod -Method Get -Uri $Repo)
+   $paramInvokeRestMethod = @{
+      Method      = 'Get'
+      Uri         = $Repo
+      ErrorAction = 'Stop'
+   }
+   $APIResponse = (Invoke-RestMethod @paramInvokeRestMethod)
    $FileUrl = $APIResponse.assets.browser_download_url
 
    # Download the file to the current location
-   $fileName = "$($APIResponse.name.Replace(" ","_")).appxbundle"
+   $fileName = "$($APIResponse.name.Replace(' ', '_')).appxbundle"
    $OutputPath = ($BaseDirectory + $fileName)
 
-   if (-not (Test-Path -Path $BaseDirectory -ErrorAction SilentlyContinue)) {
-      $null = (New-Item -Path $BaseDirectory -ItemType Directory -Force -Confirm:$false -ErrorAction SilentlyContinue)
+   $paramTestPath = @{
+      Path        = $BaseDirectory
+      ErrorAction = $SCT
+   }
+   if (-not (Test-Path @paramTestPath))
+   {
+      $paramNewItem = @{
+         Path        = $BaseDirectory
+         ItemType    = 'Directory'
+         Force       = $true
+         Confirm     = $false
+         ErrorAction = $SCT
+      }
+      $null = (New-Item @paramNewItem)
    }
 
-   $null = (Push-Location -Path $BaseDirectory -ErrorAction SilentlyContinue)
+   $paramPushLocation = @{
+      Path        = $BaseDirectory
+      ErrorAction = $SCT
+   }
+   $null = (Push-Location @paramPushLocation)
 
    Write-Verbose -Message "Downloading $fileName ...`n"
 
-   $null = (Invoke-RestMethod -Method Get -Uri $FileUrl -OutFile $OutputPath)
+   $paramInvokeRestMethod = @{
+      Method      = 'Get'
+      Uri         = $FileUrl
+      OutFile     = $OutputPath
+      ErrorAction = 'Stop'
+   }
+   $null = (Invoke-RestMethod @paramInvokeRestMethod)
 
-   if (Test-Path -Path $OutputPath) {
+   $paramTestPath = @{
+      Path        = $OutputPath
+      ErrorAction = $SCT
+   }
+   if (Test-Path @paramTestPath)
+   {
       Write-Verbose -Message "`nInstalling $fileName ...`n"
 
-      $null = (Add-AppxPackage -Path $OutputPath -ForceTargetApplicationShutdown -InstallAllResources -Confirm:$false -ErrorAction SilentlyContinue)
+      $paramAddAppxPackage = @{
+         Path                           = $OutputPath
+         ForceTargetApplicationShutdown = $true
+         InstallAllResources            = $true
+         Confirm                        = $false
+         ErrorAction                    = $SCT
+      }
+      $null = (Add-AppxPackage @paramAddAppxPackage)
 
-      $null = (Pop-Location)
+      $null = (Pop-Location -ErrorAction $SCT)
 
       # TODO: Check
-      if (Test-Path -Path 'C:\ProgramData\chocolatey\bin\RefreshEnv.cmd') {
+      if (Test-Path -Path 'C:\ProgramData\chocolatey\bin\RefreshEnv.cmd' -ErrorAction $SCT)
+      {
          C:\ProgramData\chocolatey\bin\RefreshEnv.cmd
       }
 
-      try {
-         $WinGetVersion = (winget --version)
-         Write-Output "WinGet version is:  $WinGetVersion"
-         Write-Output "`WinGet is installed. Try to run the 'winget' command.`n"
+      try
+      {
+         $WinGetVersion = (winget.exe --version)
+         Write-Output -InputObject "WinGet version is:  $WinGetVersion"
+         Write-Output -InputObject "`WinGet is installed. Try to run the 'winget' command.`n"
       }
-      catch {
+      catch
+      {
          Write-Error -Message "`WinGet is not installed. Try to install from MS Store instead`n" -ErrorAction Stop
       }
    }
-   else {
+   else
+   {
       Write-Error -Message "`WinGet Installer not found. Try to install from MS Store instead`n" -ErrorAction Stop
+   }
+}
+
+end
+{
+   if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
+   {
+      $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
    }
 }
 
@@ -83,4 +145,3 @@ process {
 # TODO: Check if Sideloading is enabled - https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development
 # TODO: Do the option to enable sideloading from PS console (I don't know even it's possible)
 # TODO: Clear old files before start
-

@@ -8,40 +8,78 @@
       Set the Install Image in the Registry.
       Save several infos to the registry, we use that with some tools later.
 
+      .PARAMETER Company
+      Name of the Company, used to create a registry Tree
+
+      .PARAMETER ImageName
+      Name of the Install Image
+
+      .PARAMETER ImageDescription
+      Description of the Install Image
+
+      .PARAMETER ImageVersion
+      Version of the Install Image.
+      String is used here!
+
       .NOTES
       Changelog:
+      2.0.0: Completly rewritten and renamed
       1.0.2: Add Image Name & Version
       1.0.1: Fixed the site issue (Termination Error)
       1.0.0: Initial public beta
 
-      Version 1.0.2
+      Version 2.0.0
 
       .LINK
       http://beyond-datacenter.com
 #>
-[CmdletBinding(ConfirmImpact = 'Low')]
-param ()
+[CmdletBinding(ConfirmImpact = 'None')]
+param
+(
+   [Parameter(ValueFromPipeline,
+   ValueFromPipelineByPropertyName)]
+   [ValidateNotNullOrEmpty()]
+   [Alias('InstallCompany')]
+   [string]
+   $Company = 'enabling Technology',
+   [Parameter(ValueFromPipeline,
+   ValueFromPipelineByPropertyName)]
+   [ValidateNotNullOrEmpty()]
+   [Alias('InstallImageName')]
+   [string]
+   $ImageName = 'ETPOSD',
+   [Parameter(ValueFromPipeline,
+   ValueFromPipelineByPropertyName)]
+   [ValidateNotNullOrEmpty()]
+   [Alias('InstallImageDescription')]
+   [string]
+   $ImageDescription = 'enabling Technology progressive OS deployment',
+   [Parameter(ValueFromPipeline,
+   ValueFromPipelineByPropertyName)]
+   [ValidateNotNullOrEmpty()]
+   [Alias('InstallImageVersion')]
+   [string]
+   $ImageVersion = 'Test Build'
+)
 
 begin
 {
-	Write-Output -InputObject 'Set the Install Image in the Registry'
+   Write-Output -InputObject 'Set the Install Image in the Registry'
 
-	#region GlobalDefaults
-	$SCT = 'SilentlyContinue'
+   #region GlobalDefaults
+   $SCT = 'SilentlyContinue'
 
-	$RegSz = 'String'
-	$DefaultInfo = 'Unknown'
+   $RegSz = 'String'
+   $DefaultInfo = 'Unknown'
 
-	$Company = 'enabling Technology'
+   # Target Path
+   $RegistryPath = ('HKLM:\Software\' + $Company + '\BaseImage')
+   #endregion GlobalDefaults
 
-	# Target Path
-	$RegistryPath = ('HKLM:\Software\' + $Company + '\BaseImage')
-	#endregion GlobalDefaults
-
-	#region HelperFunctions
-	function Get-ComputerSplit
-	{
-		<#
+   #region HelperFunctions
+   function Get-ComputerSplit
+   {
+      <#
             .SYNOPSIS
             Find the own name via DNS, use the Hostname as fallback
 
@@ -61,59 +99,59 @@ begin
             .LINK
             https://github.com/EvotecIT/PSSharedGoods
       #>
-		[CmdletBinding(ConfirmImpact = 'Low')]
-		param(
-			[string[]] $ComputerName = $ComputerName
-		)
+      [CmdletBinding(ConfirmImpact = 'Low')]
+      param(
+         [string[]] $ComputerName = $ComputerName
+      )
 
-		begin
-		{
-			# Just in case
-			if ($null -eq $ComputerName)
-			{
-				$ComputerName = ($Env:COMPUTERNAME)
-			}
-		}
+      begin
+      {
+         # Just in case
+         if ($null -eq $ComputerName)
+         {
+            $ComputerName = ($Env:COMPUTERNAME)
+         }
+      }
 
-		process
-		{
-			try
-			{
-				# Do we have a registered Hostname in DNS?
-				$LocalComputerDNSName = ([Net.Dns]::GetHostByName($Env:COMPUTERNAME).HostName)
-			}
-			catch
-			{
-				# Fallback
-				$LocalComputerDNSName = ($Env:COMPUTERNAME)
-			}
+      process
+      {
+         try
+         {
+            # Do we have a registered Hostname in DNS?
+            $LocalComputerDNSName = ([Net.Dns]::GetHostByName($Env:COMPUTERNAME).HostName)
+         }
+         catch
+         {
+            # Fallback
+            $LocalComputerDNSName = ($Env:COMPUTERNAME)
+         }
 
-			# Cleanup
-			$ComputersLocal = $null
+         # Cleanup
+         $ComputersLocal = $null
 
-			[Array] $Computers = foreach ($_ in $ComputerName)
-			{
-				if ($_ -eq '' -or $null -eq $_)
-				{
-					$_ = ($Env:COMPUTERNAME)
-				}
+         [Array] $Computers = foreach ($_ in $ComputerName)
+         {
+            if ($_ -eq '' -or $null -eq $_)
+            {
+               $_ = ($Env:COMPUTERNAME)
+            }
 
-				if ($_ -ne $Env:COMPUTERNAME -and $_ -ne $LocalComputerDNSName)
-				{
-					$_
-				}
-				else
-				{
-					$ComputersLocal = ($_)
-				}
-			}
-			, @($ComputersLocal, $Computers)
-		}
-	}
+            if ($_ -ne $Env:COMPUTERNAME -and $_ -ne $LocalComputerDNSName)
+            {
+               $_
+            }
+            else
+            {
+               $ComputersLocal = ($_)
+            }
+         }
+         , @($ComputersLocal, $Computers)
+      }
+   }
 
-	function Get-CimData
-	{
-		<#
+   function Get-CimData
+   {
+      <#
             .SYNOPSIS
             Get CIM Data
 
@@ -145,260 +183,462 @@ begin
             .LINK
             https://github.com/EvotecIT/PSSharedGoods
       #>
-		[CmdletBinding(ConfirmImpact = 'Low')]
-		param([string] $Class,
-			[string] $NameSpace = 'root\cimv2',
-			[string[]] $ComputerName = $Env:COMPUTERNAME,
-			[ValidateSet('Default', 'Dcom', 'Wsman')][string] $Protocol = 'Default',
-			[string[]] $Properties = '*')
+      [CmdletBinding(ConfirmImpact = 'Low')]
+      param([string] $Class,
+         [string] $NameSpace = 'root\cimv2',
+         [string[]] $ComputerName = $Env:COMPUTERNAME,
+         [ValidateSet('Default', 'Dcom', 'Wsman')][string] $Protocol = 'Default',
+      [string] $Properties = '*')
 
-		begin
-		{
-			$SCT = 'SilentlyContinue'
-			$ExcludeProperties = 'CimClass', 'CimInstanceProperties', 'CimSystemProperties', 'SystemCreationClassName', 'CreationClassName'
-		}
+      begin
+      {
+         $SCT = 'SilentlyContinue'
+         $ExcludeProperties = 'CimClass', 'CimInstanceProperties', 'CimSystemProperties', 'SystemCreationClassName', 'CreationClassName'
+      }
 
-		process
-		{
-			[Array] $ComputersSplit = (Get-ComputerSplit -ComputerName $ComputerName)
-			$CimObject = @(# requires removal of this property for query
-				[string[]] $PropertiesOnly = $Properties | Where-Object -FilterScript {
-					$_ -ne 'PSComputerName'
-				}
+      process
+      {
+         [Array] $ComputersSplit = (Get-ComputerSplit -ComputerName $ComputerName)
+         $CimObject = @(# requires removal of this property for query
+            [string[]] $PropertiesOnly = $Properties | Where-Object -FilterScript {
+               $_ -ne 'PSComputerName'
+            }
 
-				$Computers = $ComputersSplit[1]
+            $Computers = $ComputersSplit[1]
 
-				if ($Computers.Count -gt 0)
-				{
-					if ($Protocol -eq 'Default')
-					{
-						(Get-CimInstance -ClassName $Class -ComputerName $Computers -ErrorAction $SCT -Property $PropertiesOnly -Namespace $NameSpace | Select-Object -Property $Properties -ExcludeProperty $ExcludeProperties)
-					}
-					else
-					{
-						$Option = (New-CimSessionOption -Protocol)
-						$Session = (New-CimSession -ComputerName $Computers -SessionOption $Option -ErrorAction $SCT)
-						$Info = (Get-CimInstance -ClassName $Class -CimSession $Session -ErrorAction $SCT -Property $PropertiesOnly -Namespace $NameSpace | Select-Object -Property $Properties -ExcludeProperty $ExcludeProperties)
-						$null = (Remove-CimSession -CimSession $Session -ErrorAction $SCT)
+            if ($Computers.Count -gt 0)
+            {
+               if ($Protocol -eq 'Default')
+               {
+                  (Get-CimInstance -ClassName $Class -ComputerName $Computers -ErrorAction $SCT -Property $PropertiesOnly -Namespace $NameSpace | Select-Object -Property $Properties -ExcludeProperty $ExcludeProperties)
+               }
+               else
+               {
+                  $Option = (New-CimSessionOption -Protocol)
+                  $Session = (New-CimSession -ComputerName $Computers -SessionOption $Option -ErrorAction $SCT)
+                  $Info = (Get-CimInstance -ClassName $Class -CimSession $Session -ErrorAction $SCT -Property $PropertiesOnly -Namespace $NameSpace | Select-Object -Property $Properties -ExcludeProperty $ExcludeProperties)
+                  $null = (Remove-CimSession -CimSession $Session -ErrorAction $SCT)
 
-						$Info
-					}
-				}
+                  $Info
+               }
+            }
 
-				$Computers = $ComputersSplit[0]
+            $Computers = $ComputersSplit[0]
 
-				if ($Computers.Count -gt 0)
-				{
-					$Info = (Get-CimInstance -ClassName $Class -ErrorAction $SCT -Property $PropertiesOnly -Namespace $NameSpace | Select-Object -Property $Properties -ExcludeProperty $ExcludeProperties)
-					$Info | Add-Member -Name 'PSComputerName' -Value $Computers -MemberType NoteProperty -Force
+            if ($Computers.Count -gt 0)
+            {
+               $Info = (Get-CimInstance -ClassName $Class -ErrorAction $SCT -Property $PropertiesOnly -Namespace $NameSpace | Select-Object -Property $Properties -ExcludeProperty $ExcludeProperties)
+               $Info | Add-Member -Name 'PSComputerName' -Value $Computers -MemberType NoteProperty -Force
 
-					$Info
-				}
-			)
+               $Info
+            }
+         )
 
-			$CimComputers = ($CimObject.PSComputerName | Sort-Object -Unique)
+         $CimComputers = ($CimObject.PSComputerName | Sort-Object -Unique)
 
-			foreach ($Computer in $ComputerName)
-			{
-				if ($CimComputers -notcontains $Computer)
-				{
-					Write-Warning -Message ('Get-CimData - No data for computer {0}. Most likely an error on receiving side.' -f $Computer)
-				}
-			}
-		}
+         foreach ($Computer in $ComputerName)
+         {
+            if ($CimComputers -notcontains $Computer)
+            {
+               Write-Warning -Message ('Get-CimData - No data for computer {0}. Most likely an error on receiving side.' -f $Computer)
+            }
+         }
+      }
 
-		end
-		{
-			return $CimObject
-		}
-	}
-	#endregion HelperFunctions
+      end
+      {
+         return $CimObject
+      }
+   }
+   #endregion HelperFunctions
 
-	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+   $paramSetMpPreference = @{
+      EnableControlledFolderAccess = 'Disabled'
+      Force                        = $true
+      ErrorAction                  = $SCT
+   }
+   $null = (Set-MpPreference @paramSetMpPreference)
 }
 
 process
 {
-	# Create Path if needed
-	if (-not (Test-Path -Path $RegistryPath -ErrorAction $SCT))
-	{
-		$null = (New-Item -Path $RegistryPath -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
-	}
+   # Create Path if needed
+   $paramTestPath = @{
+      Path          = $RegistryPath
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   if (-not (Test-Path @paramTestPath))
+   {
+      $paramNewItem = @{
+         Path          = $RegistryPath
+         Force         = $true
+         Confirm       = $false
+         WarningAction = $SCT
+         ErrorAction   = $SCT
+      }
+      $null = (New-Item @paramNewItem)
+   }
 
-	# Set Date/Time
-	$Date = (Get-Date -Format 'yyyy-MM-dd')
-	$Time = (Get-Date -Format 'HH:mm')
+   # Set Date/Time
+   $InstallDate = (Get-Date -Format 'yyyy-MM-dd')
+   $InstallTime = (Get-Date -Format 'HH:mm')
 
-	# Install Site
-	$RegistrySite = 'HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters'
+   # Get system info
+   $paramGetCimData = @{
+      Class         = 'Win32_ComputerSystem'
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $HardwareInfo = (Get-CimData @paramGetCimData)
 
-	if (Test-Path -Path ($RegistrySite + 'DynamicSiteName') -WarningAction $SCT -ErrorAction $SCT)
-	{
-		$Site = (Get-ItemPropertyValue -Path $RegistrySite -Name 'DynamicSiteName' -WarningAction $SCT -ErrorAction $SCT)
-	}
-	else
-	{
-		$Site = $null
-	}
+   # Windows Info
+   $paramGetCimInstance = @{
+      ClassName     = 'Win32_OperatingSystem'
+      Property      = 'CSName', 'Caption', 'Version', 'OSArchitecture'
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $WindowsVersionInfo = (Get-CimInstance @paramGetCimInstance | Select-Object -Property CSName, Caption, Version, OSArchitecture)
 
-	# Get system info
-	$Hardware = (Get-CimData -Class Win32_ComputerSystem -WarningAction $SCT -ErrorAction $SCT)
+   # Release ID (e.g. 1903)
+   $paramGetItemProperty = @{
+      Path          = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+      Name          = 'ReleaseId'
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $WindowsReleaseId = ((Get-ItemProperty @paramGetItemProperty ).ReleaseId)
 
-	# Windows Info
-	$WindowsVersionInfo = (Get-CimInstance -ClassName Win32_OperatingSystem -Property CSName, Caption, Version, OSArchitecture -WarningAction $SCT -ErrorAction $SCT | Select-Object -Property CSName, Caption, Version, OSArchitecture)
+   # Network Info
+   $paramGetCimInstance = @{
+      ClassName     = 'Win32_NetworkAdapterConfiguration'
+      select        = 'IPAddress'
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $WindowsNicInfo = (Get-CimInstance @paramGetCimInstance | Where-Object -FilterScript {
+         $_.IPAddress
+      } | Select-Object -ExpandProperty IPAddress | Where-Object -FilterScript {
+         $_ -notlike '*:*'
+   })
 
-	# Release ID (e.g. 1903)
-	$WindowsReleaseId = ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name ReleaseId -WarningAction $SCT -ErrorAction $SCT).ReleaseId)
+   #region ImageName
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'ImageName'
+      PropertyType  = $RegSz
+      Value         = $ImageName
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion ImageName
 
-	# Network Info
-	$WindowsNicInfo = (Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration -select IPAddress -WarningAction $SCT -ErrorAction $SCT | Where-Object -FilterScript {
-			$_.IPAddress
-		} | Select-Object -ExpandProperty IPAddress | Where-Object -FilterScript {
-			$_ -notlike '*:*'
-		})
+   #region ImageDescription
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'ImageDescription'
+      PropertyType  = $RegSz
+      Value         = $ImageDescription
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion ImageDescription
 
-	#region
-	$null = (New-ItemProperty -Path $RegistryPath -Name ImageName -PropertyType $RegSz -Value $(if ($ImageName)
-			{
-				$ImageName
-			}
-			else
-			{
-				'ETPOSD'
-			}) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region ImageVersion
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'ImageVersion'
+      PropertyType  = $RegSz
+      Value         = $ImageVersion
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion ImageVersion
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name ImageDescription -PropertyType $RegSz -Value $(if ($ImageDescription)
-			{
-				$ImageDescription
-			}
-			else
-			{
-				'enabling Technology progressive OS deployment'
-			}) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region KMSAware
+   $paramTestConnection = @{
+      ComputerName  = 'kms.enatec.net'
+      Quiet         = $true
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   [bool]$KMSAwareValue = (Test-Connection @paramTestConnection)
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name ImageVersion -PropertyType $RegSz -Value $(if ($ImageVersion)
-			{
-				$ImageVersion
-			}
-			else
-			{
-				'Test Build'
-			}) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'KMSAware'
+      PropertyType  = $RegSz
+      Value         = $KMSAwareValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion KMSAware
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name KMSAware -PropertyType $RegSz -Value $(Test-Connection -ComputerName kms.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
-	#endregion
+   #region InstallDate
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallDate'
+      PropertyType  = $RegSz
+      Value         = $InstallDate
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallDate
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallDate -PropertyType $RegSz -Value $(if ($Date)
-			{
-				$Date
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region InstallTime
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallTime'
+      PropertyType  = $RegSz
+      Value         = $InstallTime
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallTime
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallTime -PropertyType $RegSz -Value $(if ($Time)
-			{
-				$Time
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region InstallHostname
+   if ((($HardwareInfo).Name))
+   {
+      $InstallHostnameValue = (($HardwareInfo).Name)
+   }
+   else
+   {
+      $InstallHostnameValue = $DefaultInfo
+   }
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallHostname -PropertyType $RegSz -Value $(if ($Hardware.Name)
-			{
-				$Hardware.Name
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallHostname'
+      PropertyType  = $RegSz
+      Value         = $InstallHostnameValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallHostname
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallIP -PropertyType $RegSz -Value $(if ($WindowsNicInfo)
-			{
-				$WindowsNicInfo
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region InstallIP
+   if ($WindowsNicInfo)
+   {
+      $InstallIPValue = $WindowsNicInfo
+   }
+   else
+   {
+      $InstallIPValue = $DefaultInfo
+   }
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallSite -PropertyType $RegSz -Value $(if (Test-Connection -ComputerName echo.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT)
-			{
-				'FRA1'
-			}
-			elseif (Test-Connection -ComputerName friend.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT)
-			{
-				'FRA2'
-			}
-			elseif (Test-Connection -ComputerName join.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT)
-			{
-				'VPN'
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallIP'
+      PropertyType  = $RegSz
+      Value         = $InstallIPValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallIP
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name HardwareManufacturer -PropertyType $RegSz -Value $(if ($Hardware.Manufacturer)
-			{
-				$Hardware.Manufacturer
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region InstallSite
+   if (Test-Connection -ComputerName echo.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT)
+   {
+      $InstallSiteValue = 'FRA1'
+   }
+   elseif (Test-Connection -ComputerName friend.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT)
+   {
+      $InstallSiteValue = 'FRA2'
+   }
+   elseif (Test-Connection -ComputerName join.enatec.net -Quiet -WarningAction $SCT -ErrorAction $SCT)
+   {
+      $InstallSiteValue = 'VPN'
+   }
+   else
+   {
+      $InstallSiteValue = $DefaultInfo
+   }
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name HardwareModel -PropertyType $RegSz -Value $(if ($Hardware.Model)
-			{
-				$Hardware.Model
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallSite'
+      PropertyType  = $RegSz
+      Value         = $InstallSiteValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallSite
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallOperationsystem -PropertyType $RegSz -Value $(if ($WindowsVersionInfo.Caption)
-			{
-				$WindowsVersionInfo.Caption
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region HardwareManufacturer
+   if ((($HardwareInfo).Manufacturer))
+   {
+      $HardwareManufacturerValue = (($HardwareInfo).Manufacturer)
+   }
+   else
+   {
+      $HardwareManufacturerValue = $DefaultInfo
+   }
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallArchitecture -PropertyType $RegSz -Value $(if ($WindowsVersionInfo.OSArchitecture)
-			{
-				$WindowsVersionInfo.OSArchitecture
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'HardwareManufacturer'
+      PropertyType  = $RegSz
+      Value         = $HardwareManufacturerValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion HardwareManufacturer
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallReleaseId -PropertyType $RegSz -Value $(if ($WindowsReleaseId)
-			{
-				$WindowsReleaseId
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   #region HardwareModel
+   if ((($HardwareInfo).Model))
+   {
+      $HardwareModelValue = (($HardwareInfo).Model)
+   }
+   else
+   {
+      $HardwareModelValue = $DefaultInfo
+   }
 
-	$null = (New-ItemProperty -Path $RegistryPath -Name InstallVersion -PropertyType $RegSz -Value $(if ($WindowsVersionInfo.Version)
-			{
-				$WindowsVersionInfo.Version
-			}
-			else
-			{
-				$DefaultInfo
-   }) -Force -Confirm:$false -WarningAction $SCT -ErrorAction $SCT)
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'HardwareModel'
+      PropertyType  = $RegSz
+      Value         = $HardwareModelValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion HardwareModel
+
+   #region InstallOperationsystem
+   if ((($WindowsVersionInfo).Caption))
+   {
+      $InstallOperationsystemValue = (($WindowsVersionInfo).Caption)
+   }
+   else
+   {
+      $InstallOperationsystemValue = $DefaultInfo
+   }
+
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallOperationsystem'
+      PropertyType  = $RegSz
+      Value         = $InstallOperationsystemValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallOperationsystem
+
+   #region InstallArchitecture
+   if ((($WindowsVersionInfo).OSArchitecture))
+   {
+      $InstallArchitectureValue = (($WindowsVersionInfo).OSArchitecture)
+   }
+   else
+   {
+      $InstallArchitectureValue = $DefaultInfo
+   }
+
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallArchitecture'
+      PropertyType  = $RegSz
+      Value         = $InstallArchitectureValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallArchitecture
+
+   #region InstallReleaseId
+   if ($WindowsReleaseId)
+   {
+      $InstallReleaseIdValue = $WindowsReleaseId
+   }
+   else
+   {
+      $InstallReleaseIdValue = $DefaultInfo
+   }
+
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallReleaseId'
+      PropertyType  = $RegSz
+      Value         = $InstallReleaseIdValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallReleaseId
+
+   #region InstallVersion
+   if ((($WindowsVersionInfo).Version))
+   {
+      $InstallVersionValue = (($WindowsVersionInfo).Version)
+   }
+   else
+   {
+      $InstallVersionValue = $DefaultInfo
+   }
+
+   $paramNewItemProperty = @{
+      Path          = $RegistryPath
+      Name          = 'InstallVersion'
+      PropertyType  = $RegSz
+      Value         = $InstallVersionValue
+      Force         = $true
+      Confirm       = $false
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion InstallVersion
 }
 
 end
 {
-	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+   $paramSetMpPreference = @{
+      EnableControlledFolderAccess = 'Enabled'
+      Force                        = $true
+      ErrorAction                  = $SCT
+   }
+   $null = (Set-MpPreference @paramSetMpPreference)
 }
 
 #region LICENSE

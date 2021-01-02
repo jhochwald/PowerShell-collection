@@ -1,204 +1,259 @@
-#requires -Version 1.0 -RunAsAdministrator
+#requires -Version 3.0 -RunAsAdministrator
 
 <#
-      .SYNOPSIS
-      Download and install chocolatey default packages for developer Workstations
+   .SYNOPSIS
+   Download and install chocolatey default packages for developer Workstations
 
-      .DESCRIPTION
-      Download and install chocolatey default packages for developer Workstations
+   .DESCRIPTION
+   Download and install chocolatey default packages for developer Workstations
 
-      .NOTES
-      Some of the stiff is not for regular workstations
+   .NOTES
+   Some of the stiff is not for regular workstations
 
-      Changelog:
-      1.0.8: Added 'microsoft-edge-insider' and 'microsoft-edge-insider-dev'
-      1.0.7: Added "Firefox", "Chrome", and "graphviz" - Removed from the Default Workstation packages
+   Changelog:
+   1.1.0:  Switched from 'Install' to 'upgrade' as Choco command (More flexible and robust)
+   1.0.13: Add Cache Location to all Choco commands and makle sure it exist
+   1.0.12: Removed 'choco-cleaner' (Now part of the Default Workstation install)
+   1.0.11: Python is now part of this package
+   1.0.10: Removed some packages from the Dev Default
+   1.0.9:  Reformatted
+   1.0.8:  Added 'microsoft-edge-insider' and 'microsoft-edge-insider-dev'
+   1.0.7:  Added "Firefox", "Chrome", and "graphviz" - Removed from the Default Workstation packages
 
-      Version 1.0.8
+   Version 1.1.0
 
-      .LINK
-      http://beyond-datacenter.com
+   .LINK
+   http://beyond-datacenter.com
 
-      .LINK
-      https://chocolatey.org/docs
+   .LINK
+   https://chocolatey.org/docs
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
-	SupportsShouldProcess)]
+   SupportsShouldProcess)]
 param ()
 
 begin
 {
-	Write-Output -InputObject 'Download and install chocolatey default packages for developer Workstations'
+   Write-Output -InputObject 'Download and install chocolatey default packages for developer Workstations'
 
-	#region Defaults
-	$SCT = 'SilentlyContinue'
-	#endregion Defaults
+   #region Defaults
+   $SCT = 'SilentlyContinue'
+   #endregion Defaults
 
-	#region
-	if (-not $env:ChocolateyInstall)
-	{
-		$env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
-	}
-	#endregion
+   #region
+   if (-not $env:ChocolateyInstall)
+   {
+      $env:ChocolateyInstall = 'C:\ProgramData\chocolatey'
+   }
+   #endregion
 
-	#region
-	if (Get-Command -Name Update-SessionEnvironment -WarningAction $SCT -ErrorAction $SCT)
-	{
-		$null = (Update-SessionEnvironment -WarningAction $SCT -ErrorAction $SCT)
-	}
-	elseif (Test-Path -Path "$env:ChocolateyInstall\bin\refreshenv.cmd" -WarningAction $SCT -ErrorAction $SCT)
-	{
-		$null = (& "$env:ChocolateyInstall\bin\refreshenv.cmd")
-	}
-	#endregion
+   #region ChocoCacheLocation
+   $ChocoCacheLocation = "$env:HOMEDRIVE\temp\choco\"
+   $paramTestPath = @{
+      Path          = $ChocoCacheLocation
+      ErrorAction   = $SCT
+      WarningAction = $SCT
+   }
+   if (-not (Test-Path @paramTestPath))
+   {
+      $paramNewItem = @{
+         Path          = $ChocoCacheLocation
+         ItemType      = 'directory'
+         Force         = $true
+         Confirm       = $false
+         ErrorAction   = $SCT
+         WarningAction = $SCT
+      }
+      $null = (New-Item @paramNewItem)
+   }
+   #endregion ChocoCacheLocation
 
-	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+   #region
+   $paramGetCommand = @{
+      Name          = 'Update-SessionEnvironment'
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   $paramTestPath = @{
+      Path          = "$env:ChocolateyInstall\bin\refreshenv.cmd"
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+   if (Get-Command @paramGetCommand)
+   {
+      $null = (Update-SessionEnvironment -WarningAction $SCT -ErrorAction $SCT)
+   }
+   elseif (Test-Path @paramTestPath)
+   {
+      $null = (& "$env:ChocolateyInstall\bin\refreshenv.cmd")
+   }
+   #endregion
 
-	try
-	{
-		$null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
-	}
-	catch
-	{
-		Write-Verbose -Message 'Unable to set PowerShell to use TLS 1.2.'
-	}
+   if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
+   {
+      $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+   }
 
-	# Use Windows built-in compression instead of downloading 7zip
-	$env:chocolateyUseWindowsCompression = 'true'
+   try
+   {
+      $null = ([Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072)
+   }
+   catch
+   {
+      Write-Verbose -Message 'Unable to set PowerShell to use TLS 1.2.'
+   }
 
-	$AllChocoPackages = @(
-		'sql-server-management-studio'
-		'azure-data-studio'
-		'azure-cli'
-		'GoogleChrome'
-		'graphviz'
-		'microsoftazurestorageexplorer'
-		'microsoft-edge-insider'
-		'microsoft-edge-insider-dev'
-		'gh'
-		'github-desktop'
-		'Firefox'
-		'mongodb'
-		'php'
-		'composer'
-		'mysql'
-		'winmerge'
-		'msjsdiag.debugger-for-chrome'
-		'ms-mssql.mssql'
-		'electron'
-		'vscode-edge-debug'
-		'vscode-chrome-debug'
-		'vscode-firefox-debug'
-		'DotNetDeveloperBundle'
-		'cmake'
-		'openjdk'
-		'regextester'
-		'powershell-preview'
-		'brave'
-		'sysinternals'
-		'chromium'
-		'GoogleChrome.Canary'
-		'GoogleChrome'
-		'yarn'
-		'vscode-python'
-		'vscode-yaml'
-		'vscode-gitlens'
-		'nodejs'
-		'NugetPackageExplorer'
-		'NuGet.ContextMenu'
-		'Paket.PowerShell'
-		'choco-cleaner'
-		'postman'
-		'git-fork'
-		'golang'
-		'fiddler'
-		'lockhunter'
-		'dos2unix'
-		'markpad'
-		'dotnetcore-sdk'
-		'dotnetcore-sdk -version 2.2.0'
-	)
+   # Use Windows built-in compression instead of downloading 7zip
+   $env:chocolateyUseWindowsCompression = 'true'
 
-	# Initial Package Counter
-	$PackageCounter = 1
+   $AllChocoPackages = @(
+      'GoogleChrome'
+      'git-fork'
+      'graphviz'
+      'microsoft-edge-insider'
+      'gh'
+      'github-desktop'
+      'Firefox'
+      'winmerge'
+      'electron'
+      'cmake'
+      'regextester'
+      'powershell-preview'
+      'brave'
+      'sysinternals'
+      'chromium'
+      'GoogleChrome'
+      'yarn'
+      'nodejs'
+      'NugetPackageExplorer'
+      'NuGet.ContextMenu'
+      'Paket.PowerShell'
+      'python3'
+      'postman'
+      'fiddler'
+      'lockhunter'
+      'dos2unix'
+      'markpad'
+      'dotnetcore-sdk'
+      'dotnetcore-sdk -version 2.2.0'
+   )
+
+   # Initial Package Counter
+   $PackageCounter = 1
 }
 
 process
 {
-	foreach ($ChocoPackage in $AllChocoPackages)
-	{
-		try
-		{
-			# Stop Search - Gain performance
-			$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+   foreach ($ChocoPackage in $AllChocoPackages)
+   {
+      try
+      {
+         # Stop Search - Gain performance
+         $paramStopService = @{
+            Force       = $true
+            Confirm     = $false
+            ErrorAction = $SCT
+         }
+         $paramGetService = @{
+            Name        = 'WSearch'
+            ErrorAction = $SCT
+         }
+         $null = (Get-Service @paramGetService | Where-Object {
+               $_.Status -eq 'Running'
+            } | Stop-Service @paramStopService)
 
-			Write-Verbose -Message ('Start the installation of ' + $ChocoPackage)
+         Write-Verbose -Message ('Start the installation of ' + $ChocoPackage)
 
-			if ($pscmdlet.ShouldProcess($ChocoPackage, 'Install'))
-			{
-				Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $PackageCounter + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($PackageCounter / $AllChocoPackages.Count) * 100)
+         if ($pscmdlet.ShouldProcess($ChocoPackage, 'Install'))
+         {
+            Write-Progress -Activity ('Installing ' + $ChocoPackage) -Status ('Package ' + $PackageCounter + ' of ' + $($AllChocoPackages.Count)) -PercentComplete (($PackageCounter / $AllChocoPackages.Count) * 100)
 
-				try
-				{
-					# Stop Search - Gain performance
-					$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+            try
+            {
+               # Stop Search - Gain performance
+               $paramStopService = @{
+                  Force       = $true
+                  Confirm     = $false
+                  ErrorAction = $SCT
+               }
+               $paramGetService = @{
+                  Name        = 'WSearch'
+                  ErrorAction = $SCT
+               }
+               $null = (Get-Service @paramGetService | Where-Object {
+                     $_.Status -eq 'Running'
+                  } | Stop-Service @paramStopService)
 
-					$null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
-				}
-				catch
-				{
-					# Stop Search - Gain performance
-					$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+               $null = (& "$env:ChocolateyInstall\bin\choco.exe" upgrade $ChocoPackage --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1' --cacheLocation=$ChocoCacheLocation)
+            }
+            catch
+            {
+               # Stop Search - Gain performance
+               $paramStopService = @{
+                  Force       = $true
+                  Confirm     = $false
+                  ErrorAction = $SCT
+               }
+               $paramGetService = @{
+                  Name        = 'WSearch'
+                  ErrorAction = $SCT
+               }
+               $null = (Get-Service @paramGetService | Where-Object {
+                     $_.Status -eq 'Running'
+                  } | Stop-Service @paramStopService)
 
-					# Retry with --ignore-checksums - A less secure option!!!
-					$null = (& "$env:ChocolateyInstall\bin\choco.exe" install $ChocoPackage --allowemptychecksum --ignore-checksums --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1')
-					# Some Packages (e.g. Sysmon) use the latest and greatest version, the checksum check will cause issues in this case!
-				}
-			}
+               # Retry with --ignore-checksums - A less secure option!!!
+               $null = (& "$env:ChocolateyInstall\bin\choco.exe" upgrade $ChocoPackage --allowemptychecksum --ignore-checksums --ignoredetectedreboot --no-progress --acceptlicense --limitoutput --no-progress --yes --force --params 'ALLUSERS=1' --cacheLocation=$ChocoCacheLocation)
+               # Some Packages (e.g. Sysmon) use the latest and greatest version, the checksum check will cause issues in this case!
+            }
+         }
 
-			# Add Package Step
-			$PackageCounter++
-		}
-		catch
-		{
-			Write-Warning -Message ('Installation of ' + $ChocoPackage + ' failed!')
+         # Add Package Step
+         $PackageCounter++
+      }
+      catch
+      {
+         Write-Warning -Message ('Installation of ' + $ChocoPackage + ' failed!')
 
-			# Add Package Step
-			$PackageCounter++
-		}
-	}
+         # Add Package Step
+         $PackageCounter++
+      }
+   }
 }
 
 end
 {
-	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+   if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
+   {
+      $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+   }
 }
 
 #region LICENSE
 <#
-      BSD 3-Clause License
+   BSD 3-Clause License
 
-      Copyright (c) 2020, Beyond Datacenter
-      All rights reserved.
+   Copyright (c) 2020, Beyond Datacenter
+   All rights reserved.
 
-      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+   1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+   3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
-      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 #endregion LICENSE
 
 #region DISCLAIMER
 <#
-      DISCLAIMER:
-      - Use at your own risk, etc.
-      - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
-      - This is a third-party Software
-      - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-      - The Software is not supported by Microsoft Corp (MSFT)
-      - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
-      - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
+   DISCLAIMER:
+   - Use at your own risk, etc.
+   - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+   - This is a third-party Software
+   - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+   - The Software is not supported by Microsoft Corp (MSFT)
+   - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+   - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
 #>
 #endregion DISCLAIMER

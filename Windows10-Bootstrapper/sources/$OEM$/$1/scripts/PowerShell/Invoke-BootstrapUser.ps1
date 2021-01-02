@@ -11,7 +11,7 @@
       .NOTES
       Lot of the stuff of this version is adopted from Disassembler <disassembler@dasm.cz>
 
-      Version 1.4.8
+      Version 1.7.2
 
       .LINK
       http://beyond-datacenter.com
@@ -24,24 +24,36 @@ param ()
 
 begin
 {
-	Write-Output -InputObject 'Bootstrap Windows 10 User Profile'
+   Write-Output -InputObject 'Bootstrap Windows 10 User Profile'
 
-	#region GlobalDefaults
-	$SCT = 'SilentlyContinue'
+   #region GlobalDefaults
+   $SCT = 'SilentlyContinue'
 
-	$null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+   $paramGetCommand = @{
+      Name        = 'Set-MpPreference'
+      ErrorAction = $SCT
+   }
+   if (Get-Command @paramGetCommand)
+   {
+      $paramSetMpPreference = @{
+         EnableControlledFolderAccess = 'Disabled'
+         Force                        = $true
+         ErrorAction                  = $SCT
+      }
+      $null = (Set-MpPreference @paramSetMpPreference)
+   }
 
-	$paramRemoveItemProperty = @{
-		Force       = $true
-		Confirm     = $false
-		ErrorAction = $SCT
-	}
-	#endregion GlobalDefaults
+   $paramRemoveItemProperty = @{
+      Force       = $true
+      Confirm     = $false
+      ErrorAction = $SCT
+   }
+   #endregion GlobalDefaults
 
-	#region HelperFunction
-	function Confirm-RegistryItemProperty
-	{
-		<#
+   #region HelperFunction
+   function Confirm-RegistryItemProperty
+   {
+      <#
             .SYNOPSIS
             Enforce that an item property in the registry
 
@@ -61,644 +73,1656 @@ begin
             PS C:\> Confirm-RegistryItemProperty -Path 'HKLM:\System\CurrentControlSet\Services\PimIndexMaintenanceSvc\Start' -PropertyType 'DWord' -Value '1'
 
             .NOTES
-            Just an internal Helper function
+            Fixed version of the Helper:
+            Recreate the Key if the Type is wrong (Possible cause the old version had a glitsch)
       #>
+      [CmdletBinding(ConfirmImpact = 'None', SupportsShouldProcess)]
+      param
+      (
+         [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
+         [ValidateNotNullOrEmpty()]
+         [Alias('RegistryPath')]
+         [string]
+         $Path,
+         [Parameter(Mandatory,
+            ValueFromPipeline,
+            ValueFromPipelineByPropertyName,
+            HelpMessage = 'Add help message for user')]
+         [ValidateNotNullOrEmpty()]
+         [Alias('Property', 'Type')]
+         [string]
+         $PropertyType,
+         [Parameter(ValueFromPipeline,
+            ValueFromPipelineByPropertyName)]
+         [AllowEmptyCollection()]
+         [AllowEmptyString()]
+         [AllowNull()]
+         [Alias('RegistryValue')]
+         $Value
+      )
 
-		[CmdletBinding(ConfirmImpact = 'None',
-			SupportsShouldProcess)]
-		param
-		(
-			[Parameter(Mandatory,
-				ValueFromPipeline,
-				ValueFromPipelineByPropertyName,
-				HelpMessage = 'Add help message for user')]
-			[ValidateNotNullOrEmpty()]
-			[Alias('RegistryPath')]
-			[string]
-			$Path,
-			[Parameter(Mandatory,
-				ValueFromPipeline,
-				ValueFromPipelineByPropertyName,
-				HelpMessage = 'Add help message for user')]
-			[ValidateNotNullOrEmpty()]
-			[Alias('Property', 'Type')]
-			[string]
-			$PropertyType,
-			[Parameter(ValueFromPipeline,
-				ValueFromPipelineByPropertyName)]
-			[AllowEmptyCollection()]
-			[AllowEmptyString()]
-			[AllowNull()]
-			[Alias('RegistryValue')]
-			$Value
-		)
+      begin
+      {
+         #region
+         $SCT = 'SilentlyContinue'
+         #endregion
+      }
 
-		begin
-		{
-			#region
-			$SCT = 'SilentlyContinue'
-			#endregion
-		}
+      process
+      {
+         $paramTestPath = @{
+            Path          = ($Path | Split-Path)
+            WarningAction = $SCT
+            ErrorAction   = $SCT
+         }
+         if (-Not (Test-Path @paramTestPath))
+         {
+            $paramNewItem = @{
+               Path          = ($Path | Split-Path)
+               Force         = $true
+               WarningAction = $SCT
+               ErrorAction   = $SCT
+            }
+            $null = (New-Item @paramNewItem)
+         }
 
-		process
-		{
-			if (-Not (Test-Path -Path ($Path | Split-Path) -ErrorAction $SCT))
-			{
-				$null = (New-Item -Path ($Path | Split-Path) -Force -WarningAction $SCT -ErrorAction $SCT)
-			}
+         $paramGetItemProperty = @{
+            Path          = ($Path | Split-Path)
+            Name          = ($Path | Split-Path -Leaf)
+            WarningAction = $SCT
+            ErrorAction   = $SCT
+         }
+         if (-Not (Get-ItemProperty @paramGetItemProperty))
+         {
+            $paramNewItemProperty = @{
+               Path          = ($Path | Split-Path)
+               Name          = ($Path | Split-Path -Leaf)
+               PropertyType  = $PropertyType
+               Value         = $Value
+               Force         = $true
+               Confirm       = $false
+               WarningAction = $SCT
+               ErrorAction   = $SCT
+            }
+            $null = (New-ItemProperty @paramNewItemProperty)
+         }
+         else
+         {
+            #region Workaround
+            $paramGetItem = @{
+               Path          = ($Path | Split-Path)
+               ErrorAction   = $SCT
+               WarningAction = $SCT
+            }
+            if (((Get-Item @paramGetItem).GetValueKind(($Path | Split-Path -Leaf))) -ne $PropertyType)
+            {
+               # The PropertyType is wrong! This might be an issue of our old version! Sorry for the glitsch
+               $paramRemoveItemProperty = @{
+                  Path          = ($Path | Split-Path)
+                  Name          = ($Path | Split-Path -Leaf)
+                  Force         = $true
+                  Confirm       = $false
+                  WarningAction = $SCT
+                  ErrorAction   = $SCT
+               }
+               $null = (Remove-ItemProperty @paramRemoveItemProperty)
 
-			if (-Not (Test-Path -Path $Path -ErrorAction $SCT))
-			{
-				$null = (New-ItemProperty -Path ($Path | Split-Path) -Name ($Path | Split-Path -Leaf) -PropertyType $PropertyType -Value $Value -Force -Confirm:$false -ErrorAction $SCT)
-			}
-			else
-			{
-				$null = (Set-ItemProperty -Path ($Path | Split-Path) -Name ($Path | Split-Path -Leaf) -Value $Value -Force -Confirm:$false -ErrorAction $SCT)
-			}
-		}
-	}
-	#endregion HelperFunction
+               $paramNewItemProperty = @{
+                  Path          = ($Path | Split-Path)
+                  Name          = ($Path | Split-Path -Leaf)
+                  PropertyType  = $PropertyType
+                  Value         = $Value
+                  Force         = $true
+                  Confirm       = $false
+                  WarningAction = $SCT
+                  ErrorAction   = $SCT
+               }
+               $null = (New-ItemProperty @paramNewItemProperty)
+            }
+            else
+            {
+               # Regular handling: PropertyType was correct
+               $paramSetItemProperty = @{
+                  Path          = ($Path | Split-Path)
+                  Name          = ($Path | Split-Path -Leaf)
+                  Value         = $Value
+                  Force         = $true
+                  Confirm       = $false
+                  WarningAction = $SCT
+                  ErrorAction   = $SCT
+               }
+               $null = (Set-ItemProperty @paramSetItemProperty)
+            }
+            #endregion Workaround
+         }
+      }
+   }
+   #endregion HelperFunction
 }
 
 process
 {
-	# Stop Search - Gain performance
-	$null = (Get-Service -Name 'WSearch' -ErrorAction $SCT | Where-Object { $_.Status -eq "Running" } | Stop-Service -Force -Confirm:$false -ErrorAction $SCT)
+   #region PrivacyTweaks
+   #region DisableWindowsErrorDialog
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting\DontShowUI'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableWindowsErrorDialog
 
-	#region PrivacyTweaks
-	#region DisableWindowsErrorDialog
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting\DontShowUI' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableWindowsErrorDialog
+   #region DisableAdvertisingInfo
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableAdvertisingInfo
 
-	#region DisableAdvertisingInfo
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableAdvertisingInfo
+   #region DisableWebSearch
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search\BingSearchEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableWebSearch
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search\BingSearchEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search\CortanaConsent' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableWebSearch
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search\CortanaConsent'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableWebSearch
 
-	#region DisableAppSuggestions
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\ContentDeliveryAllowed' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\OemPreInstalledAppsEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\PreInstalledAppsEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\PreInstalledAppsEverEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SilentInstalledAppsEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-310093Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-314559Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338387Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-353694Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338388Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338389Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338393Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338388Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-353696Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-353698Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SystemPaneSuggestionsEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
+   #region
+   # Do not suggest ways I can finish setting up my device to get the most out of Windows (current user only)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\UserProfileEngagement\ScoobeSystemSettingEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion
 
-	# Empty placeholder tile collection in registry cache and restart Start Menu process to reload the cache
-	if ([Environment]::OSVersion.Version.Build -ge 17134)
-	{
-		$key = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*windows.data.placeholdertilecollection\Current' -WarningAction $SCT -ErrorAction $SCT)
-		$null = (Confirm-RegistryItemProperty -Path ($key.PSPath + 'Data') -PropertyType Binary -Value $key.Data[0..15] -WarningAction $SCT -ErrorAction $SCT)
-		$null = (Stop-Process -Name 'ShellExperienceHost' -Force -WarningAction $SCT -ErrorAction $SCT)
-	}
-	#endregion DisableAppSuggestions
+   #region DisableAppSuggestions
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\ContentDeliveryAllowed'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableActivityHistory
-	#endregion DisableActivityHistory
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\OemPreInstalledAppsEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableBackgroundApps
-	Get-ChildItem -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications' -Exclude 'Microsoft.Windows.Cortana*', 'Microsoft.Windows.ShellExperienceHost*' -WarningAction $SCT -ErrorAction $SCT | ForEach-Object -Process {
-		$null = (Confirm-RegistryItemProperty -Path ($_.PsPath + 'Disabled') -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-		$null = (Confirm-RegistryItemProperty -Path ($_.PsPath + 'DisabledByUser') -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	}
-	#endregion DisableBackgroundApps
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\PreInstalledAppsEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region
-	# Make the "Open", "Print", "Edit" context menu items available, when more than 15 selected
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultipleInvokePromptMinimum' -PropertyType 'DWord' -Value '300' -ErrorAction $SCT)
-	#endregion
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\PreInstalledAppsEverEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableFeedback
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Siuf\Rules\NumberOfSIUFInPeriod' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableFeedback
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SilentInstalledAppsEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableTailoredExperiences
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Policies\Microsoft\Windows\CloudContent\DisableTailoredExperiencesWithDiagnosticData' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy\TailoredExperiencesWithDiagnosticDataEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableTailoredExperiences
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-310093Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableAdvertisingID
-	#endregion DisableAdvertisingID
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-314559Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableWebLangList
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\International\User Profile\HttpAcceptLanguageOptOut' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableWebLangList
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338387Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableCortana
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Personalization\Settings\AcceptedPrivacyPolicy' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\InputPersonalization\RestrictImplicitTextCollection' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\InputPersonalization\RestrictImplicitInkCollection' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore\HarvestContacts' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableCortana
-	#endregion PrivacyTweaks
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-353694Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region SecurityTweaks
-	#region AppAndBrowser_EdgeSmartScreenOff
-	# Dismiss Microsoft Defender offer in the Windows Security about to turn on the SmartScreen filter for Microsoft Edge
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows Security Health\State\AppAndBrowser_EdgeSmartScreenOff' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion AppAndBrowser_EdgeSmartScreenOff
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338388Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region HideDefenderAccountProtectionWarning
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows Security Health\State\AccountProtection_MicrosoftAccount_Disconnected' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion HideDefenderAccountProtectionWarning
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338389Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableDownloadBlocking
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments\SaveZoneInformation' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableDownloadBlocking
-	#endregion SecurityTweaks
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338393Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region LegacyDefaultPrinterMode
-	# Do not let Windows manage default printer
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows\LegacyDefaultPrinterMode' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion LegacyDefaultPrinterMode
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-338388Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region ServiceTweaks
-	#region DisableSharedExperiences
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CDP\RomeSdkChannelUserAuthzPolicy' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableSharedExperiences
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-353696Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableClipboardHistory
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Clipboard' -Name 'EnableClipboardHistory' @paramRemoveItemProperty)
-	#endregion DisableClipboardHistory
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SubscribedContent-353698Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableAutoplay
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DisableAutoplay' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableAutoplay
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager\SystemPaneSuggestionsEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region EnableStorageSense
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\01' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\StoragePoliciesNotified' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+   # Empty placeholder tile collection in registry cache and restart Start Menu process to reload the cache
+   if ([Environment]::OSVersion.Version.Build -ge 17134)
+   {
+      $paramGetItemProperty = @{
+         Path          = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*windows.data.placeholdertilecollection\Current'
+         WarningAction = $SCT
+         ErrorAction   = $SCT
+      }
+      $key = (Get-ItemProperty @paramGetItemProperty)
 
-	# Run Storage Sense every month
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\2048' -PropertyType 'DWord' -Value '30' -ErrorAction $SCT)
+      $paramConfirmRegistryItemProperty = @{
+         Path          = ($key.PSPath + 'Data')
+         PropertyType  = 'Binary'
+         Value         = $key.Data[0 .. 15]
+         WarningAction = $SCT
+         ErrorAction   = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	# Delete temporary files that apps aren't using
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\04' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
+      $paramStopProcess = @{
+         Name          = 'ShellExperienceHost'
+         Force         = $true
+         WarningAction = $SCT
+         ErrorAction   = $SCT
+      }
+      $null = (Stop-Process @paramStopProcess)
+   }
+   #endregion DisableAppSuggestions
 
-	# Delete files in recycle bin if they have been there for over 30 days
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\256' -PropertyType 'DWord' -Value '30' -ErrorAction $SCT)
+   #region DisableActivityHistory
+   #endregion DisableActivityHistory
 
-	# Never delete files in "Downloads" folder
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\512' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion EnableStorageSense
+   #region DisableBackgroundApps
+   $paramGetChildItem = @{
+      Path          = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications'
+      Exclude       = 'Microsoft.Windows.Cortana*', 'Microsoft.Windows.ShellExperienceHost*'
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
 
-	#region EnableRecycleBin
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer' -Name 'NoRecycleFiles' @paramRemoveItemProperty)
-	#endregion EnableRecycleBin
-	#endregion ServiceTweaks
+   $null = (Get-ChildItem @paramGetChildItem | ForEach-Object -Process {
+         $paramConfirmRegistryItemProperty = @{
+            Path         = ($_.PsPath + 'Disabled')
+            PropertyType = 'DWord'
+            Value        = '1'
+            ErrorAction  = $SCT
+         }
+         $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+         $paramConfirmRegistryItemProperty = @{
+            Path         = ($_.PsPath + 'DisabledByUser')
+            PropertyType = 'DWord'
+            Value        = '1'
+            ErrorAction  = $SCT
+         }
+         $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+      })
+   #endregion DisableBackgroundApps
 
-	#region UITweaks
-	#region EnablePerProcessSystemDPI
-	# Let Windows try to fix apps so they're not blurry
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\EnablePerProcessSystemDPI' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion EnablePerProcessSystemDPI
+   #region
+   # Make the "Open", "Print", "Edit" context menu items available, when more than 15 selected
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\MultipleInvokePromptMinimum'
+      PropertyType = 'DWord'
+      Value        = '300'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion
 
-	#region EnableActionCenter
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Policies\Microsoft\Windows\Explorer' -Name 'DisableNotificationCenter' @paramRemoveItemProperty)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications' -Name 'ToastEnabled'@paramRemoveItemProperty)
-	#endregion EnableActionCenter
+   #region DisableFeedback
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Siuf\Rules\NumberOfSIUFInPeriod'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableFeedback
 
-	#region EnableAeroShake
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'DisallowShaking' @paramRemoveItemProperty)
-	#endregion EnableAeroShake
+   #region DisableTailoredExperiences
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Privacy\TailoredExperiencesWithDiagnosticDataEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableTailoredExperiences
 
-	#region DisableAccessibilityKeys
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Accessibility\StickyKeys\Flags' -PropertyType 'String' -Value '506' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Accessibility\ToggleKeys\Flags' -PropertyType String -Value '58' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Accessibility\Keyboard Response\Flags' -PropertyType String -Value '122' -ErrorAction $SCT)
-	#endregion DisableAccessibilityKeys
+   #region DisableAdvertisingID
+   #endregion DisableAdvertisingID
 
-	#region ShowTaskManagerDetails
-	$taskmgr = (Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru -WarningAction $SCT -ErrorAction $SCT)
-	$timeout = 30000
-	$sleep = 100
-	do
-	{
-		$null = (Start-Sleep -Milliseconds $sleep)
-		$timeout -= $sleep
-		$preferences = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager' -Name 'Preferences' -WarningAction $SCT -ErrorAction $SCT)
-	}
-	until ($preferences -or $timeout -le 0)
-	$null = ($taskmgr | Stop-Process -WarningAction $SCT -ErrorAction $SCT)
+   #region DisableWebLangList
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\International\User Profile\HttpAcceptLanguageOptOut'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableWebLangList
 
-	if ($preferences)
-	{
-		$preferences.Preferences[28] = 0
-		$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager\Preferences' -PropertyType Binary -Value $preferences.Preferences -ErrorAction $SCT)
-	}
-	#endregion ShowTaskManagerDetails
+   #region DisableCortana
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Personalization\Settings\AcceptedPrivacyPolicy'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region ShowFileOperationsDetails
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager\EnthusiastMode' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion ShowFileOperationsDetails
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\InputPersonalization\RestrictImplicitTextCollection'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region EnableFileDeleteConfirm
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\ConfirmFileDelete' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion EnableFileDeleteConfirm
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\InputPersonalization\RestrictImplicitInkCollection'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region HideTaskbarSearch
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search\SearchboxTaskbarMode' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion HideTaskbarSearch
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\InputPersonalization\TrainedDataStore\HarvestContacts'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableCortana
+   #endregion PrivacyTweaks
 
-	#region HideTaskView
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowTaskViewButton' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion HideTaskView
+   #region SecurityTweaks
+   #region
+   # Turn off Windows Script Host (current user only)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows Script Host\Settings\Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion
 
-	#region ShowSmallTaskbarIcons
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarSmallIcons' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion ShowSmallTaskbarIcons
+   #region AppAndBrowser_EdgeSmartScreenOff
+   # Dismiss Microsoft Defender offer in the Windows Security about to turn on the SmartScreen filter for Microsoft Edge
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows Security Health\State\AppAndBrowser_EdgeSmartScreenOff'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion AppAndBrowser_EdgeSmartScreenOff
 
-	#region SetTaskbarCombineAlways
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarGlomLevel' @paramRemoveItemProperty)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'MMTaskbarGlomLevel' @paramRemoveItemProperty)
-	#endregion SetTaskbarCombineAlways
+   #region HideDefenderAccountProtectionWarning
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows Security Health\State\AccountProtection_MicrosoftAccount_Disconnected'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideDefenderAccountProtectionWarning
 
-	#region HideTaskbarPeopleIcon
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People\PeopleBand' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion HideTaskbarPeopleIcon
+   #region DisableDownloadBlocking
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments\SaveZoneInformation'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableDownloadBlocking
+   #endregion SecurityTweaks
 
-	#region HideTrayIcons
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer' -Name 'NoAutoTrayNotify' @paramRemoveItemProperty)
-	#endregion HideTrayIcons
+   #region LegacyDefaultPrinterMode
+   # Do not let Windows manage default printer
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows\LegacyDefaultPrinterMode'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion LegacyDefaultPrinterMode
 
-	#region HideSecondsFromTaskbar
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ShowSecondsInSystemClock' @paramRemoveItemProperty)
-	#endregion HideSecondsFromTaskbar
+   #region ServiceTweaks
+   #region DisableSharedExperiences
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CDP\RomeSdkChannelUserAuthzPolicy'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableSharedExperiences
 
-	#region SetControlPanelSmallIcons
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel\StartupPage' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel\AllItemsIconView' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion SetControlPanelSmallIcons
+   #region DisableClipboardHistory
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Clipboard' -Name 'EnableClipboardHistory' @paramRemoveItemProperty)
+   #endregion DisableClipboardHistory
 
-	#region DisableShortcutInName
-	$null = (New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\' -Name 'link' -PropertyType 'Binary' -Value ([byte[]](00, 00, 00, 00)) -Force -ErrorAction $SCT)
-	#endregion DisableShortcutInName
+   #region DisableAutoplay
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers\DisableAutoplay'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableAutoplay
 
-	#region PrintScreenKeyForSnippingEnabled
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Keyboard\PrintScreenKeyForSnippingEnabled' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion PrintScreenKeyForSnippingEnabled
+   #region
+   # Automatically save my restartable apps when signing out and restart them after signing in (current user only)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\RestartApps'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion
 
-	#region SetVisualFXPerformance
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\DragFullWindows' -PropertyType String -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\MenuShowDelay' -PropertyType String -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\UserPreferencesMask' -PropertyType Binary -Value ([byte[]](144, 18, 3, 128, 16, 0, 0, 0)) -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\WindowMetrics\MinAnimate' -PropertyType String -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Keyboard\KeyboardDelay' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ListviewAlphaSelect' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ListviewShadow' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarAnimations' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects\VisualFXSetting' -PropertyType 'DWord' -Value 3 -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\DWM\EnableAeroPeek' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion SetVisualFXPerformance
+   #region EnableStorageSense
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\01'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region EnableTitleBarColor
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\DWM\ColorPrevalence' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion EnableTitleBarColor
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\StoragePoliciesNotified'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableDynamicScrollbars
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Accessibility\DynamicScrollbars' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableDynamicScrollbars
+   # Run Storage Sense every month
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\2048'
+      PropertyType = 'DWord'
+      Value        = '30'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region RemoveENKeyboard
-	$langs = (Get-WinUserLanguageList -ErrorAction $SCT)
-	$null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
-				$_.LanguageTag -ne 'en-US'
+   # Delete temporary files that apps aren't using
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\04'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   # Delete files in recycle bin if they have been there for over 30 days
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\08'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\256'
+      PropertyType = 'DWord'
+      Value        = '30'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   # Never delete files in "Downloads" folder
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\512'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnableStorageSense
+
+   #region EnableRecycleBin
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer' -Name 'NoRecycleFiles' @paramRemoveItemProperty)
+   #endregion EnableRecycleBin
+   #endregion ServiceTweaks
+
+   #region UITweaks
+   #region EnablePerProcessSystemDPI
+   # Let Windows try to fix apps so they're not blurry
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\EnablePerProcessSystemDPI'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnablePerProcessSystemDPI
+
+   #region EnableActionCenter
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Policies\Microsoft\Windows\Explorer' -Name 'DisableNotificationCenter' @paramRemoveItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications' -Name 'ToastEnabled'@paramRemoveItemProperty)
+   #endregion EnableActionCenter
+
+   #region EnableAeroShake
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'DisallowShaking' @paramRemoveItemProperty)
+   #endregion EnableAeroShake
+
+   #region DisableAccessibilityKeys
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Accessibility\StickyKeys\Flags'
+      PropertyType = 'String'
+      Value        = '506'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Accessibility\ToggleKeys\Flags'
+      PropertyType = 'String'
+      Value        = '58'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Accessibility\Keyboard Response\Flags'
+      PropertyType = 'String'
+      Value        = '122'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableAccessibilityKeys
+
+   #region ShowTaskManagerDetails
+   $paramStartProcess = @{
+      WindowStyle   = 'Hidden'
+      FilePath      = 'taskmgr.exe'
+      PassThru      = $true
+      WarningAction = $SCT
+      ErrorAction   = $SCT
+   }
+
+   $taskmgr = (Start-Process @paramStartProcess)
+   $timeout = 30000
+   $sleep = 100
+   $preferences = $null
+   do
+   {
+      $null = (Start-Sleep -Milliseconds $sleep)
+      $timeout -= $sleep
+      $paramGetItemProperty = @{
+         Path          = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager'
+         Name          = 'Preferences'
+         WarningAction = $SCT
+         ErrorAction   = $SCT
+      }
+
+      $preferences = (Get-ItemProperty @paramGetItemProperty)
+   }
+   until ($preferences -or $timeout -le 0)
+   $null = ($taskmgr | Stop-Process -WarningAction $SCT -ErrorAction $SCT)
+
+   if ($preferences)
+   {
+      $preferences.Preferences[28] = 0
+      $paramConfirmRegistryItemProperty = @{
+         Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager\Preferences'
+         PropertyType = 'Binary'
+         Value        = $preferences.Preferences
+         ErrorAction  = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   }
+   #endregion ShowTaskManagerDetails
+
+   #region ShowFileOperationsDetails
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager\EnthusiastMode'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowFileOperationsDetails
+
+   #region EnableFileDeleteConfirm
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\ConfirmFileDelete'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnableFileDeleteConfirm
+
+   #region HideTaskbarSearch
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search\SearchboxTaskbarMode'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideTaskbarSearch
+
+   #region HideTaskView
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowTaskViewButton'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideTaskView
+
+   #region ShowSmallTaskbarIcons
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarSmallIcons'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowSmallTaskbarIcons
+
+   #region SetTaskbarCombineAlways
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarGlomLevel' @paramRemoveItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'MMTaskbarGlomLevel' @paramRemoveItemProperty)
+   #endregion SetTaskbarCombineAlways
+
+   #region HideTaskbarPeopleIcon
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People\PeopleBand'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideTaskbarPeopleIcon
+
+   #region HideTrayIcons
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer' -Name 'NoAutoTrayNotify' @paramRemoveItemProperty)
+   #endregion HideTrayIcons
+
+   #region HideSecondsFromTaskbar
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'ShowSecondsInSystemClock' @paramRemoveItemProperty)
+   #endregion HideSecondsFromTaskbar
+
+   #region SetControlPanelSmallIcons
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel\StartupPage'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel\AllItemsIconView'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion SetControlPanelSmallIcons
+
+   #region DisableShortcutInName
+   $paramNewItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\'
+      Name         = 'link'
+      PropertyType = 'Binary'
+      Value        = ([byte[]](00, 00, 00, 00))
+      Force        = $true
+      ErrorAction  = $SCT
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
+   #endregion DisableShortcutInName
+
+   #region PrintScreenKeyForSnippingEnabled
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Keyboard\PrintScreenKeyForSnippingEnabled'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion PrintScreenKeyForSnippingEnabled
+
+   #region SetVisualFXPerformance
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\DragFullWindows'
+      PropertyType = 'String'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\MenuShowDelay'
+      PropertyType = 'String'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\UserPreferencesMask'
+      PropertyType = 'Binary'
+      Value        = ([byte[]](144, 18, 3, 128, 16, 0, 0, 0))
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\WindowMetrics\MinAnimate'
+      PropertyType = 'String'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Keyboard\KeyboardDelay'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ListviewAlphaSelect'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ListviewShadow'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarAnimations'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects\VisualFXSetting'
+      PropertyType = 'DWord'
+      Value        = 3
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\DWM\EnableAeroPeek'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion SetVisualFXPerformance
+
+   #region EnableTitleBarColor
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\DWM\ColorPrevalence'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnableTitleBarColor
+
+   #region DisableDynamicScrollbars
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Accessibility\DynamicScrollbars'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableDynamicScrollbars
+
+   #region RemoveENKeyboard
+   $langs = (Get-WinUserLanguageList -ErrorAction $SCT)
+   $null = (Set-WinUserLanguageList -LanguageList ($langs | Where-Object {
+            $_.LanguageTag -ne 'en-US'
    }) -Force -ErrorAction $SCT)
-	#endregion RemoveENKeyboard
+   #endregion RemoveENKeyboard
 
-	#region EnableEnhPointerPrecision
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Mouse\MouseSpeed' -PropertyType String -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Mouse\MouseThreshold1' -PropertyType String -Value '6' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Mouse\MouseThreshold2' -PropertyType String -Value '10' -ErrorAction $SCT)
-	#endregion EnableEnhPointerPrecision
+   #region EnableEnhPointerPrecision
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Mouse\MouseSpeed'
+      PropertyType = 'String'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region SetSoundSchemeNone
-	$SoundScheme = '.None'
-	Get-ChildItem -Path 'HKCU:\AppEvents\Schemes\Apps\*\*' -ErrorAction $SCT | ForEach-Object {
-		# If scheme keys do not exist in an event, create empty ones (similar behavior to Sound control panel).
-		if (-not (Test-Path -Path ($_.PsPath + '\' + $SoundScheme) -ErrorAction $SCT))
-		{
-			$null = (New-Item -Path ($_.PsPath + '\' + $SoundScheme) -ErrorAction $SCT)
-		}
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Mouse\MouseThreshold1'
+      PropertyType = 'String'
+      Value        = '6'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-		if (-not (Test-Path -Path ($_.PsPath + '\.Current') -ErrorAction $SCT))
-		{
-			$null = (New-Item -Path ($_.PsPath + '\.Current') -ErrorAction $SCT)
-		}
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Mouse\MouseThreshold2'
+      PropertyType = 'String'
+      Value        = '10'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnableEnhPointerPrecision
 
-		# Get a regular string from any possible kind of value, i.e. resolve REG_EXPAND_SZ, copy REG_SZ or empty from non-existing.
-		$Data = (Get-ItemProperty -Path ($_.PsPath + '\' + $SoundScheme) -Name '(Default)' -ErrorAction $SCT).'(Default)'
+   #region DisableLiveTilesPermanently
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications\NoTileApplicationNotification'
+      PropertyType = 'String'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableLiveTilesPermanently
 
-		if ($Data)
-		{
-			# Replace any kind of value with a regular string (similar behavior to Sound control panel).
-			$null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\' + $SoundScheme) -Name '(Default)' -PropertyType String -Value $Data -ErrorAction $SCT)
+   #region ToastNotificationsToTop
+   # Move Toast Notifications to Top of Screen
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\DisplayToastAtBottom'
+      PropertyType = 'String'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ToastNotificationsToTop
 
-			# Copy data from source scheme to current.
-			$null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\.Current') -Name '(Default)' -PropertyType String -Value $Data -ErrorAction $SCT)
-		}
-	}
+   #region SetSoundSchemeNone
+   $SoundScheme = '.None'
+   $paramGetChildItem = @{
+      Path        = 'HKCU:\AppEvents\Schemes\Apps\*\*'
+      ErrorAction = $SCT
+   }
+   $null = (Get-ChildItem @paramGetChildItem | ForEach-Object {
+         # If scheme keys do not exist in an event, create empty ones (similar behavior to Sound control panel).
+         $paramTestPath = @{
+            Path        = ($_.PsPath + '\' + $SoundScheme)
+            ErrorAction = $SCT
+         }
+         if (-not (Test-Path @paramTestPath))
+         {
+            $paramNewItem = @{
+               Path        = ($_.PsPath + '\' + $SoundScheme)
+               ErrorAction = $SCT
+            }
+            $null = (New-Item @paramNewItem)
+         }
 
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\AppEvents\Schemes\(Default)' -PropertyType String -Value $SoundScheme -ErrorAction $SCT)
-	#endregion SetSoundSchemeNone
+         $paramTestPath = @{
+            Path        = ($_.PsPath + '\.Current')
+            ErrorAction = $SCT
+         }
+         if (-not (Test-Path @paramTestPath))
+         {
+            $paramNewItem = @{
+               Path        = ($_.PsPath + '\.Current')
+               ErrorAction = $SCT
+            }
+            $null = (New-Item @paramNewItem)
+         }
 
-	#region DisableF1HelpKey
-	if (-not (Test-Path -Path 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32' -ErrorAction $SCT))
-	{
-		$null = (New-Item -Path 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32' -Force -ErrorAction $SCT)
-	}
+         # Get a regular string from any possible kind of value, i.e. resolve REG_EXPAND_SZ, copy REG_SZ or empty from non-existing.
+         $paramGetItemProperty = @{
+            Path        = ($_.PsPath + '\' + $SoundScheme)
+            Name        = '(Default)'
+            ErrorAction = $SCT
+         }
+         $Data = ((Get-ItemProperty @paramGetItemProperty).'(Default)')
 
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32\(Default)' -PropertyType 'String' -Value '' -ErrorAction $SCT)
+         if ($Data)
+         {
+            # Replace any kind of value with a regular string (similar behavior to Sound control panel).
+            $paramConfirmRegistryItemProperty = @{
+               Path         = ($_.PsPath + '\' + $SoundScheme)
+               Name         = '(Default)'
+               PropertyType = 'String'
+               Value        = $Data
+               ErrorAction  = $SCT
+            }
+            $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	if (-not (Test-Path -Path 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64' -ErrorAction $SCT))
-	{
-		$null = (New-Item -Path 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64' -Force -ErrorAction $SCT)
-	}
+            # Copy data from source scheme to current.
+            $paramConfirmRegistryItemProperty = @{
+               Path         = ($_.PsPath + '\.Current')
+               Name         = '(Default)'
+               PropertyType = 'String'
+               Value        = $Data
+               ErrorAction  = $SCT
+            }
+            $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+         }
+      })
 
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64\(Default)' -PropertyType 'String' -Value '' -ErrorAction $SCT)
-	#endregion DisableF1HelpKey
-	#endregion UITweaks
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\AppEvents\Schemes\(Default)'
+      PropertyType = 'String'
+      Value        = $SoundScheme
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion SetSoundSchemeNone
 
-	#region ExplorerUITweaks
-	#region DisableXboxGamebar
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR\AppCaptureEnabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\System\GameConfigStore\GameDVR_Enabled' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\GameBar\ShowStartupPanel' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableXboxGamebar
+   #region DisableF1HelpKey
+   $paramTestPath = @{
+      Path        = 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32'
+      ErrorAction = $SCT
+   }
+   if (-not (Test-Path @paramTestPath))
+   {
+      $paramNewItem = @{
+         Path        = 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32'
+         Force       = $true
+         ErrorAction = $SCT
+      }
+      $null = (New-Item @paramNewItem)
+   }
 
-	#region HideExplorerTitleFullPath
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState' -Name 'FullPath' @paramRemoveItemProperty)
-	#endregion HideExplorerTitleFullPath
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32\(Default)'
+      PropertyType = 'String'
+      Value        = ''
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region ShowKnownExtensions
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion ShowKnownExtensions
+   $paramTestPath = @{
+      Path        = 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64'
+      ErrorAction = $SCT
+   }
+   if (-not (Test-Path @paramTestPath))
+   {
+      $paramNewItem = @{
+         Path        = 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64'
+         Force       = $true
+         ErrorAction = $SCT
+      }
+      $null = (New-Item @paramNewItem)
+   }
 
-	#region ShowHiddenFiles
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion ShowHiddenFiles
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64\(Default)'
+      PropertyType = 'String'
+      Value        = ''
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableF1HelpKey
+   #endregion UITweaks
 
-	#region HideSuperHiddenFiles
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowSuperHidden' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion HideSuperHiddenFiles
+   #region ExplorerUITweaks
+   #region DisableXboxGamebar
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR\AppCaptureEnabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region ShowEmptyDrives
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideDrivesWithNoMedia' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion ShowEmptyDrives
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\System\GameConfigStore\GameDVR_Enabled'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region ShowFolderMergeConflicts
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideMergeConflicts' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion ShowFolderMergeConflicts
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\GameBar\ShowStartupPanel'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableXboxGamebar
 
-	#region EnableNavPaneExpand
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\NavPaneExpandToCurrentFolder' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion EnableNavPaneExpand
+   #region HideExplorerTitleFullPath
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState' -Name 'FullPath' @paramRemoveItemProperty)
+   #endregion HideExplorerTitleFullPath
 
-	#region MMTaskbarMode
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\MMTaskbarMode' -PropertyType 'DWord' -Value '2' -ErrorAction $SCT)
-	#endregion MMTaskbarMode
+   #region ShowKnownExtensions
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideFileExt'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowKnownExtensions
 
-	#region HideNavPaneAllFolders
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'NavPaneShowAllFolders' @paramRemoveItemProperty)
-	#endregion HideNavPaneAllFolders
+   #region ShowHiddenFiles
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\Hidden'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowHiddenFiles
 
-	#region EnableFolderSeparateProcess
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\SeparateProcess' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion EnableFolderSeparateProcess
+   #region HideSuperHiddenFiles
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowSuperHidden'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideSuperHiddenFiles
 
-	#region DisableRestoreFldrWindows
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'PersistBrowsers' @paramRemoveItemProperty)
-	#endregion DisableRestoreFldrWindows
+   #region ShowEmptyDrives
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideDrivesWithNoMedia'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowEmptyDrives
 
-	#region ShowEncCompFilesColor
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowEncryptCompressedColor' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion ShowEncCompFilesColor
+   #region ShowFolderMergeConflicts
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\HideMergeConflicts'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowFolderMergeConflicts
 
-	#region DisableSharingWizard
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\SharingWizardOn' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion DisableSharingWizard
+   #region EnableNavPaneExpand
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\NavPaneExpandToCurrentFolder'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnableNavPaneExpand
 
-	#region ShowSelectCheckboxes
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\AutoCheckSelect' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion ShowSelectCheckboxes
+   #region MMTaskbarMode
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\MMTaskbarMode'
+      PropertyType = 'DWord'
+      Value        = '2'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion MMTaskbarMode
 
-	#region ShowSyncNotifications
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowSyncProviderNotifications' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion ShowSyncNotifications
+   #region HideNavPaneAllFolders
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'NavPaneShowAllFolders' @paramRemoveItemProperty)
+   #endregion HideNavPaneAllFolders
 
-	#region HideRecentShortcuts
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ShowRecent' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ShowFrequent' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion HideRecentShortcuts
+   #region EnableFolderSeparateProcess
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\SeparateProcess'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion EnableFolderSeparateProcess
 
-	#region SetExplorerThisPC
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\LaunchTo' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion SetExplorerThisPC
+   #region DisableRestoreFldrWindows
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'PersistBrowsers' @paramRemoveItemProperty)
+   #endregion DisableRestoreFldrWindows
 
-	#region HideQuickAccess
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HubMode' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion HideQuickAccess
+   #region ShowEncCompFilesColor
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowEncryptCompressedColor'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowEncCompFilesColor
 
-	#region ShowRecycleBinOnDesktop
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' @paramRemoveItemProperty)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' @paramRemoveItemProperty)
-	#endregion ShowRecycleBinOnDesktop
+   #region DisableSharingWizard
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\SharingWizardOn'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableSharingWizard
 
-	#region ShowThisPCOnDesktop
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu\{20D04FE0-3AEA-1069-A2D8-08002B30309D}' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel\{20D04FE0-3AEA-1069-A2D8-08002B30309D}' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion ShowThisPCOnDesktop
+   #region ShowSelectCheckboxes
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\AutoCheckSelect'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowSelectCheckboxes
 
-	#region HideUserFolderFromDesktop
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{59031a47-3f72-44a7-89c5-5595fe6b30ee}' @paramRemoveItemProperty)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{59031a47-3f72-44a7-89c5-5595fe6b30ee}' @paramRemoveItemProperty)
-	#endregion HideUserFolderFromDesktop
+   #region ShowSyncNotifications
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\ShowSyncProviderNotifications'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowSyncNotifications
 
-	#region HideControlPanelFromDesktop
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}' @paramRemoveItemProperty)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}' @paramRemoveItemProperty)
-	#endregion HideControlPanelFromDesktop
+   #region HideRecentShortcuts
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ShowRecent'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region HideNetworkFromDesktop
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}' @paramRemoveItemProperty)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}' @paramRemoveItemProperty)
-	#endregion HideNetworkFromDesktop
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ShowFrequent'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideRecentShortcuts
 
-	#region HideBuildNumberFromDesktop
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\PaintDesktopVersion' -PropertyType 'DWord' -Value '0' -ErrorAction $SCT)
-	#endregion HideBuildNumberFromDesktop
+   #region SetExplorerThisPC
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\LaunchTo'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion SetExplorerThisPC
 
-	#region ScreenSaver
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\ScreenSaveActive' -PropertyType 'String' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\ScreenSaverIsSecure' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\ScreenSaveTimeOut' -PropertyType 'DWord' -Value '600' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\scrnsave.exe' -PropertyType 'String' -Value 'c:\windows\system32\scrnsave.scr' -ErrorAction $SCT)
+   #region HideQuickAccess
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HubMode'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideQuickAccess
 
-	#endregion ScreenSaver
+   #region ShowRecycleBinOnDesktop
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' @paramRemoveItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{645FF040-5081-101B-9F08-00AA002F954E}' @paramRemoveItemProperty)
+   #endregion ShowRecycleBinOnDesktop
 
-	#region DisableThumbnails
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\IconsOnly' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableThumbnails
+   #region ShowThisPCOnDesktop
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu\{20D04FE0-3AEA-1069-A2D8-08002B30309D}'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region DisableThumbnailCache
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\DisableThumbnailCache' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableThumbnailCache
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel\{20D04FE0-3AEA-1069-A2D8-08002B30309D}'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ShowThisPCOnDesktop
 
-	#region DisableThumbsDBOnNetwork
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\DisableThumbsDBOnNetworkFolders' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableThumbsDBOnNetwork
+   #region HideUserFolderFromDesktop
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{59031a47-3f72-44a7-89c5-5595fe6b30ee}' @paramRemoveItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{59031a47-3f72-44a7-89c5-5595fe6b30ee}' @paramRemoveItemProperty)
+   #endregion HideUserFolderFromDesktop
 
-	#region DisableDesktopWallpaperQualityReduction
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Control Panel\Desktop\JPEGImportQuality' -PropertyType 'DWord' -Value '100' -ErrorAction $SCT)
-	#endregion DisableDesktopWallpaperQualityReduction
+   #region HideControlPanelFromDesktop
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}' @paramRemoveItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}' @paramRemoveItemProperty)
+   #endregion HideControlPanelFromDesktop
 
-	#region RemoveMicrosoftEdgeShortcut
-	$Value = (Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name Desktop -ErrorAction $SCT)
-	$null = (Remove-Item -Path ($Value + '\Microsoft Edge.lnk') @paramRemoveItemProperty)
-	#endregion RemoveMicrosoftEdgeShortcut
+   #region HideNetworkFromDesktop
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu' -Name '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}' @paramRemoveItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel' -Name '{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}' @paramRemoveItemProperty)
+   #endregion HideNetworkFromDesktop
 
-	#region RemoveHPSupportAssistantShortcut
-	$null = (Remove-Item -Path "$env:PUBLIC\Desktop\HP Support Assistant.lnk" @paramRemoveItemProperty)
-	#endregion RemoveHPSupportAssistantShortcut
-	#endregion ExplorerUITweaks
+   #region HideBuildNumberFromDesktop
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\PaintDesktopVersion'
+      PropertyType = 'DWord'
+      Value        = '0'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion HideBuildNumberFromDesktop
 
-	#region ApplicationTweaks
-	#region DisableFullscreenOptims
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\System\GameConfigStore\GameDVR_DXGIHonorFSEWindowsCompatible' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\System\GameConfigStore\GameDVR_FSEBehavior' -PropertyType 'DWord' -Value 2 -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\System\GameConfigStore\GameDVR_FSEBehaviorMode' -PropertyType 'DWord' -Value 2 -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\System\GameConfigStore\GameDVR_HonorUserFSEBehaviorMode' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion DisableFullscreenOptims
+   #region ScreenSaver
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\ScreenSaveActive'
+      PropertyType = 'String'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\ScreenSaverIsSecure'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\ScreenSaveTimeOut'
+      PropertyType = 'DWord'
+      Value        = '600'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\scrnsave.exe'
+      PropertyType = 'String'
+      Value        = ($env:windir + '\system32\scrnsave.scr')
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion ScreenSaver
 
-	#region OneDriveInsider
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\OneDrive\EnableTeamTier_Internal' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\OneDrive\EnableFasterRingUpdate' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion OneDriveInsider
+   #region
+   # Do not add the "- Shortcut" suffix to the file name of created shortcuts (current user only)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\NamingTemplates\ShortcutNameTemplate'
+      PropertyType = 'String'
+      Value        = '%s.lnk'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion
 
-	#region EnableADALOneDrive
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableADAL' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion EnableADALOneDrive
+   #region DisableThumbnails
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\IconsOnly'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableThumbnails
 
-	#region OneDriveEnableHoldTheFile
-	# Users can choose how to handle Office files in conflict
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableHoldTheFile' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregionEnableHoldTheFile
+   #region DisableThumbnailCache
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\DisableThumbnailCache'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableThumbnailCache
 
-	#region OneDriveEnableAllOcsiClients
-	# Coauthoring and in-app sharing for Office files
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableAllOcsiClients' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion OneDriveEnableAllOcsiClients
+   #region DisableThumbsDBOnNetwork
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\DisableThumbsDBOnNetworkFolders'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableThumbsDBOnNetwork
 
-	#region Office2016Telemetry
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\software\policies\microsoft\office\16.0\osm\enablelogging' -PropertyType 'DWord' -Value '1' -ErrorAction $SCT)
-	#endregion Office2016Telemetry
-	#endregion ApplicationTweaks
+   #region DisableDesktopWallpaperQualityReduction
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Control Panel\Desktop\JPEGImportQuality'
+      PropertyType = 'DWord'
+      Value        = '100'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableDesktopWallpaperQualityReduction
 
-	#region Unpinning
-	#region UnpinStartMenuTiles
-	if ([Environment]::OSVersion.Version.Build -ge 15063 -And [Environment]::OSVersion.Version.Build -le 16299)
-	{
-		Get-ChildItem -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Include '*.group' -Recurse -WarningAction $SCT -ErrorAction $SCT | ForEach-Object {
-			$data = ((Get-ItemProperty -Path ($_.PsPath + '\Current') -Name 'Data' -WarningAction $SCT -ErrorAction $SCT).Data -Join ',')
-			$data = ($data.Substring(0, $data.IndexOf(',0,202,30') + 9) + ',0,202,80,0,0')
+   #region RemoveMicrosoftEdgeShortcut
+   $paramGetItemPropertyValue = @{
+      Path        = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders'
+      Name        = 'Desktop'
+      ErrorAction = $SCT
+   }
+   $Value = (Get-ItemPropertyValue @paramGetItemPropertyValue)
+   $null = (Remove-Item -Path ($Value + '\Microsoft Edge.lnk') @paramRemoveItemProperty)
+   #endregion RemoveMicrosoftEdgeShortcut
 
-			$null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\Current\Data') -PropertyType Binary -Value $data.Split(',') -WarningAction $SCT -ErrorAction $SCT)
-		}
-	}
-	elseif ([Environment]::OSVersion.Version.Build -ge 17134)
-	{
-		$key = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current" -WarningAction $SCT -ErrorAction $SCT)
-		$data = $key.Data[0 .. 25] + ([byte[]](202, 50, 0, 226, 44, 1, 1, 0, 0))
+   #region RemoveHPSupportAssistantShortcut
+   $null = (Remove-Item -Path "$env:PUBLIC\Desktop\HP Support Assistant.lnk" @paramRemoveItemProperty)
+   #endregion RemoveHPSupportAssistantShortcut
+   #endregion ExplorerUITweaks
 
-		$null = (Confirm-RegistryItemProperty -Path ($key.PSPath + '\Data') -PropertyType Binary -Value $data -ErrorAction $SCT)
+   #region ApplicationTweaks
+   #region DisableFullscreenOptims
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\System\GameConfigStore\GameDVR_DXGIHonorFSEWindowsCompatible'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-		$null = (Stop-Process -Name 'ShellExperienceHost' -Force -WarningAction $SCT -ErrorAction $SCT)
-	}
-	#endregion UnpinStartMenuTiles
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\System\GameConfigStore\GameDVR_FSEBehavior'
+      PropertyType = 'DWord'
+      Value        = 2
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region UnpinTaskbarIcons
-	$null = (Confirm-RegistryItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband\Favorites' -PropertyType Binary -Value ([byte[]](255)) -ErrorAction $SCT)
-	$null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband' -Name 'FavoritesResolve' @paramRemoveItemProperty)
-	#endregion UnpinTaskbarIcons
-	#endregion Unpinning
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\System\GameConfigStore\GameDVR_FSEBehaviorMode'
+      PropertyType = 'DWord'
+      Value        = 2
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	#region FinalTouches
-	#region PowerShellProfiles
-	# Create all PowerShell related Profiles as dummy (empty)
-	$AllSystemProfiles = @(
-		"$PROFILE.CurrentUserCurrentHost"
-		"$PROFILE.CurrentUserAllHosts"
-		"$PROFILE.AllUsersCurrentHost"
-		"$PROFILE.AllUsersAllHosts"
-		"$PSHOME\Microsoft.VSCode_profile.ps1"
-		"$env:DOCUMENTS\PowerShell\Microsoft.VSCode_profile.ps1'"
-	)
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\System\GameConfigStore\GameDVR_HonorUserFSEBehaviorMode'
+      PropertyType = 'DWord'
+      Value        = '1'
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   #endregion DisableFullscreenOptims
 
-	foreach ($SystemProfile in $AllSystemProfiles)
-	{
-		if (-not (Test-Path -Path $SystemProfile -ErrorAction $SCT))
-		{
-			$null = (New-Item -ItemType File -Path $SystemProfile -Force -ErrorAction $SCT)
-		}
-	}
-	#endregion PowerShellProfiles
+   if (-not ($env:COMPUTERNAME -match 'ENSHARED-'))
+   {
+      #region OneDriveInsider
+      $paramConfirmRegistryItemProperty = @{
+         Path         = 'HKCU:\Software\Microsoft\OneDrive\EnableTeamTier_Internal'
+         PropertyType = 'DWord'
+         Value        = '1'
+         ErrorAction  = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
 
-	# Restart Start menu
-	$null = (Stop-Process -Name StartMenuExperienceHost -Force -ErrorAction $SCT)
+      $paramConfirmRegistryItemProperty = @{
+         Path         = 'HKCU:\Software\Microsoft\OneDrive\EnableFasterRingUpdate'
+         PropertyType = 'DWord'
+         Value        = '1'
+         ErrorAction  = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+      #endregion OneDriveInsider
 
-	# Refresh desktop icons, environment variables and taskbar without restarting File Explorer
-	$UpdateEnvExplorerAPI = @{
-		Namespace        = 'WinAPI'
-		Name             = 'UpdateEnvExplorer'
-		Language         = 'CSharp'
-		MemberDefinition = @'
-     private static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
-     private const int WM_SETTINGCHANGE = 0x1a;
-     private const int SMTO_ABORTIFHUNG = 0x0002;
-     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-     static extern bool SendNotifyMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
-     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-     private static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, IntPtr lpdwResult);
-     [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-     private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
-     public static void Refresh()
-     {
-       // Update desktop icons
-       SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
-       // Update environment variables
-       SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, null, SMTO_ABORTIFHUNG, 100, IntPtr.Zero);
-       // Update taskbar
-       SendNotifyMessage(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, "TraySettings");
-     }
+      #region EnableADALOneDrive
+      $paramConfirmRegistryItemProperty = @{
+         Path         = 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableADAL'
+         PropertyType = 'DWord'
+         Value        = '1'
+         ErrorAction  = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+      #endregion EnableADALOneDrive
+
+      #region OneDriveEnableHoldTheFile
+      # Users can choose how to handle Office files in conflict
+      $paramConfirmRegistryItemProperty = @{
+         Path         = 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableHoldTheFile'
+         PropertyType = 'DWord'
+         Value        = '1'
+         ErrorAction  = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+      #endregionEnableHoldTheFile
+
+      #region OneDriveEnableAllOcsiClients
+      # Coauthoring and in-app sharing for Office files
+      $paramConfirmRegistryItemProperty = @{
+         Path         = 'HKCU:\SOFTWARE\Microsoft\OneDrive\EnableAllOcsiClients'
+         PropertyType = 'DWord'
+         Value        = '1'
+         ErrorAction  = $SCT
+      }
+      $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+      #endregion OneDriveEnableAllOcsiClients
+   }
+   #endregion ApplicationTweaks
+
+   #region Unpinning
+   #region UnpinStartMenuTiles
+   # TODO: Convert to Switch
+   <#
+         if ([Environment]::OSVersion.Version.Build -ge 15063 -And [Environment]::OSVersion.Version.Build -le 16299)
+         {
+         Get-ChildItem -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Include '*.group' -Recurse -WarningAction $SCT -ErrorAction $SCT | ForEach-Object {
+         $Data = ((Get-ItemProperty -Path ($_.PsPath + '\Current') -Name 'Data' -WarningAction $SCT -ErrorAction $SCT).Data -Join ',')
+         $Data = ($Data.Substring(0, $Data.IndexOf(',0,202,30') + 9) + ',0,202,80,0,0')
+
+         $null = (Confirm-RegistryItemProperty -Path ($_.PsPath + '\Current\Data') -PropertyType Binary -Value $Data.Split(',') -WarningAction $SCT -ErrorAction $SCT)
+         }
+         }
+         elseif ([Environment]::OSVersion.Version.Build -ge 17134)
+         {
+         $key = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current" -WarningAction $SCT -ErrorAction $SCT)
+         $Data = $key.Data[0 .. 25] + ([byte[]](202, 50, 0, 226, 44, 1, 1, 0, 0))
+
+         $null = (Confirm-RegistryItemProperty -Path ($key.PSPath + '\Data') -PropertyType Binary -Value $Data -ErrorAction $SCT)
+
+         $null = (Stop-Process -Name 'ShellExperienceHost' -Force -WarningAction $SCT -ErrorAction $SCT)
+         }
+   #>
+   #endregion UnpinStartMenuTiles
+
+   #region UnpinTaskbarIcons
+   $paramConfirmRegistryItemProperty = @{
+      Path         = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband\Favorites'
+      PropertyType = 'Binary'
+      Value        = ([byte[]](255))
+      ErrorAction  = $SCT
+   }
+   $null = (Confirm-RegistryItemProperty @paramConfirmRegistryItemProperty)
+   $null = (Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband' -Name 'FavoritesResolve' @paramRemoveItemProperty)
+   #endregion UnpinTaskbarIcons
+   #endregion Unpinning
+
+   #region FinalTouches
+   #region PowerShellProfiles
+   # Create all PowerShell related Profiles as dummy (empty)
+   $AllSystemProfiles = @(
+      (($PROFILE).CurrentUserCurrentHost)
+      (($PROFILE).CurrentUserAllHosts)
+      (($PROFILE).AllUsersCurrentHost)
+      (($PROFILE).AllUsersAllHosts)
+      ($PSHOME + '\Microsoft.VSCode_profile.ps1')
+   )
+
+   foreach ($SystemProfile in $AllSystemProfiles)
+   {
+      $paramTestPath = @{
+         Path        = $SystemProfile
+         ErrorAction = $SCT
+      }
+      if (-not (Test-Path @paramTestPath))
+      {
+         $paramNewItem = @{
+            ItemType    = 'File'
+            Path        = $SystemProfile
+            Force       = $true
+            ErrorAction = $SCT
+         }
+         $null = (New-Item @paramNewItem)
+      }
+   }
+   #endregion PowerShellProfiles
+
+   # Restart Start menu
+   $paramStopProcess = @{
+      Name        = 'StartMenuExperienceHost'
+      Force       = $true
+      ErrorAction = $SCT
+   }
+   $null = (Stop-Process @paramStopProcess)
+
+   # Refresh desktop icons, environment variables and taskbar without restarting File Explorer
+   $UpdateEnvExplorerAPI = @{
+      Namespace        = 'WinAPI'
+      Name             = 'UpdateEnvExplorer'
+      Language         = 'CSharp'
+      MemberDefinition = @'
+private static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
+private const int WM_SETTINGCHANGE = 0x1a;
+private const int SMTO_ABORTIFHUNG = 0x0002;
+[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+static extern bool SendNotifyMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
+[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+private static extern IntPtr SendMessageTimeout(IntPtr hWnd, int Msg, IntPtr wParam, string lParam, int fuFlags, int uTimeout, IntPtr lpdwResult);
+[DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
+public static void Refresh()
+{
+   // Update desktop icons
+   SHChangeNotify(0x8000000, 0x1000, IntPtr.Zero, IntPtr.Zero);
+   // Update environment variables
+   SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, null, SMTO_ABORTIFHUNG, 100, IntPtr.Zero);
+   // Update taskbar
+   SendNotifyMessage(HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, "TraySettings");
+}
 '@
-	}
+   }
 
-	if (-not ('WinAPI.UpdateEnvExplorer' -as [type]))
-	{
-		$null = (Add-Type @UpdateEnvExplorerAPI)
-	}
+   if (-not ('WinAPI.UpdateEnvExplorer' -as [type]))
+   {
+      $null = (Add-Type @UpdateEnvExplorerAPI)
+   }
 
-	$null = ([WinAPI.UpdateEnvExplorer]::Refresh())
-	#endregion FinalTouches
+   $null = ([WinAPI.UpdateEnvExplorer]::Refresh())
+   #endregion FinalTouches
 }
 
 end
 {
-	$null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
+   $paramGetCommand = @{
+      Name        = 'Set-MpPreference'
+      ErrorAction = $SCT
+   }
+   if (Get-Command @paramGetCommand)
+   {
+      $paramSetMpPreference = @{
+         EnableControlledFolderAccess = 'Enabled'
+         Force                        = $true
+         ErrorAction                  = $SCT
+      }
+      $null = (Set-MpPreference @paramSetMpPreference)
+   }
 }
 
 #region LICENSE

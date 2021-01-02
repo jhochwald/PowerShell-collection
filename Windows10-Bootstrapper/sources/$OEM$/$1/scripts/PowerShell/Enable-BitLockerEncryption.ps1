@@ -1,22 +1,25 @@
-#requires -Version 5.0 -Modules BitLocker, Microsoft.PowerShell.Utility, ScheduledTasks -RunAsAdministrator
+#requires -Version 5.0 -RunAsAdministrator
+
 <#
-      .SYNOPSIS
-      Enable BitLocker with both TPM and recovery password key protectors on Windows 10 devices.
+   .SYNOPSIS
+   Enable BitLocker with both TPM and recovery password key protectors on Windows 10 devices.
 
-      .DESCRIPTION
-      Enable BitLocker with both TPM and recovery password key protectors on Windows 10 devices.
+   .DESCRIPTION
+   Enable BitLocker with both TPM and recovery password key protectors on Windows 10 devices.
 
-      .PARAMETER EncryptionMethod
-      Define the encryption method to be used when enabling BitLocker.
+   .PARAMETER EncryptionMethod
+   Define the encryption method to be used when enabling BitLocker.
 
-      .PARAMETER OperationalMode
-      Set the operational mode of this script.
+   .PARAMETER OperationalMode
+   Set the operational mode of this script.
 
-      .PARAMETER CompanyName
-      Set the company name to be used as registry root when running in Backup mode.
+   .PARAMETER CompanyName
+   Set the company name to be used as registry root when running in Backup mode.
 
-      .NOTES
-      Adopted version of Enable-BitLockerEncryption.ps1 from Nickolaj Andersen (@NickolajA)
+   .NOTES
+   Version 1.0.1
+
+   Adopted version of Enable-BitLockerEncryption.ps1 from Nickolaj Andersen (@NickolajA)
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param (
@@ -33,355 +36,389 @@ param (
    $CompanyName = 'enabling Technology'
 )
 
-begin {
+begin
+{
    Write-Output -InputObject 'Enable BitLocker with both TPM and recovery password key protectors'
 
    #region
-	$STP = 'Stop'
-	#endregion
+   $STP = 'Stop'
+   $SCT = 'SilentlyContinue'
+   #endregion
 
-	#region
-	function Write-LogEntry
-	{
-		<#
-            .SYNOPSIS
-            Describe purpose of "Write-LogEntry" in 1-2 sentences.
+   if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
+   {
+      $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
+   }
 
-            .DESCRIPTION
-            Add a more complete description of what the function does.
+   #region
+   function Write-LogEntry
+   {
+      <#
+         .SYNOPSIS
+         Describe purpose of "Write-LogEntry" in 1-2 sentences.
 
-            .PARAMETER Value
-            Describe parameter -Value.
+         .DESCRIPTION
+         Add a more complete description of what the function does.
 
-            .PARAMETER Severity
-            Describe parameter -Severity.
+         .PARAMETER Value
+         Describe parameter -Value.
 
-            .EXAMPLE
-            Write-LogEntry -Value Value -Severity Value
-            Describe what this call does
+         .PARAMETER Severity
+         Describe parameter -Severity.
 
-            .NOTES
-            Place additional notes here.
+         .EXAMPLE
+         Write-LogEntry -Value Value -Severity Value
+         Describe what this call does
 
-            .LINK
-            URLs to related sites
-            The first link is opened by Get-Help -Online Write-LogEntry
+         .NOTES
+         Place additional notes here.
 
-            .INPUTS
-            List of input types that are accepted by this function.
+         .LINK
+         URLs to related sites
+         The first link is opened by Get-Help -Online Write-LogEntry
 
-            .OUTPUTS
-            List of output types produced by this function.
+         .INPUTS
+         List of input types that are accepted by this function.
+
+         .OUTPUTS
+         List of output types produced by this function.
       #>
-		param (
-			[parameter(Mandatory, HelpMessage = 'Value added to the log file.')]
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$Value,
-			[parameter(Mandatory, HelpMessage = 'Severity for the log entry. 1 for Informational, 2 for Warning and 3 for Error.')]
-			[ValidateNotNullOrEmpty()]
-			[ValidateSet('1', '2', '3')]
-			[string]
-			$Severity
-		)
+      param (
+         [parameter(Mandatory, HelpMessage = 'Value added to the log file.')]
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $Value,
+         [parameter(Mandatory, HelpMessage = 'Severity for the log entry. 1 for Informational, 2 for Warning and 3 for Error.')]
+         [ValidateNotNullOrEmpty()]
+         [ValidateSet('1', '2', '3')]
+         [string]
+         $Severity
+      )
+      begin
+      {
+         $SCT = 'SilentlyContinue'
+      }
 
-		process {
-		# Determine log file location
-		$paramJoinPath = @{
-			Path      = (Join-Path -Path $env:windir -ChildPath 'Temp')
-			ChildPath = 'Enable-BitLockerEncryption.log'
-		}
-		$LogFilePath = (Join-Path @paramJoinPath)
+      process
+      {
+         # Determine log file location
+         $paramJoinPath = @{
+            Path        = (Join-Path -Path $env:windir -ChildPath 'Temp' -ErrorAction $SCT)
+            ChildPath   = 'Enable-BitLockerEncryption.log'
+            ErrorAction = $SCT
+         }
+         $LogFilePath = (Join-Path @paramJoinPath)
 
-		# Construct time stamp for log entry
-		if (-not (Test-Path -Path 'variable:global:TimezoneBias'))
-		{
-			[string]$global:TimezoneBias = [TimeZoneInfo]::Local.GetUtcOffset((Get-Date)).TotalMinutes
+         # Construct time stamp for log entry
+         $paramTestPath = @{
+            Path        = 'variable:global:TimezoneBias'
+            ErrorAction = $SCT
+         }
+         if (-not (Test-Path @paramTestPath))
+         {
+            [string]$global:TimezoneBias = [TimeZoneInfo]::Local.GetUtcOffset((Get-Date)).TotalMinutes
 
-			if ($TimezoneBias -match '^-')
-			{
-				$TimezoneBias = $TimezoneBias.Replace('-', '+')
-			}
-			else
-			{
-				$TimezoneBias = '-' + $TimezoneBias
-			}
-		}
+            if ($TimezoneBias -match '^-')
+            {
+               $TimezoneBias = $TimezoneBias.Replace('-', '+')
+            }
+            else
+            {
+               $TimezoneBias = '-' + $TimezoneBias
+            }
+         }
 
-		$Time = -join @((Get-Date -Format 'HH:mm:ss.fff'), $TimezoneBias)
+         $Time = -join @((Get-Date -Format 'HH:mm:ss.fff'), $TimezoneBias)
 
-		# Construct date for log entry
-		$Date = (Get-Date -Format 'MM-dd-yyyy')
+         # Construct date for log entry
+         $Date = (Get-Date -Format 'MM-dd-yyyy')
 
-		# Construct context for log entry
-		$Context = $([Security.Principal.WindowsIdentity]::GetCurrent().Name)
+         # Construct context for log entry
+         $Context = $([Security.Principal.WindowsIdentity]::GetCurrent().Name)
 
-		# Construct final log entry
-		$LogText = "<![LOG[$($Value)]LOG]!><time=""$($Time)"" date=""$($Date)"" component=""BitLockerEncryption"" context=""$($Context)"" type=""$($Severity)"" thread=""$($PID)"" file="""">"
+         # Construct final log entry
+         $LogText = "<![LOG[$($Value)]LOG]!><time=""$($Time)"" date=""$($Date)"" component=""BitLockerEncryption"" context=""$($Context)"" type=""$($Severity)"" thread=""$($PID)"" file="""">"
 
-		# Add value to log file
-		try
-		{
-			$null = (Out-File -InputObject $LogText -Append -NoClobber -Encoding Default -FilePath $LogFilePath -ErrorAction Stop)
-		}
-		catch
-		{
-			Write-Warning -Message "Unable to append log entry to Enable-BitLockerEncryption.log file. Error message at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)"
-		}
-	}
-}
+         # Add value to log file
+         try
+         {
+            $paramOutFile = @{
+               Append      = $true
+               NoClobber   = $true
+               Encoding    = 'Default'
+               FilePath    = $LogFilePath
+               ErrorAction = 'Stop'
+            }
+            $null = ($LogText | Out-File @paramOutFile)
+         }
+         catch
+         {
+            Write-Warning -Message "Unable to append log entry to Enable-BitLockerEncryption.log file. Error message at line $($_.InvocationInfo.ScriptLineNumber): $($_.Exception.Message)"
+         }
+      }
+   }
 
-	function Invoke-Executable
-	{
-		<#
-            .SYNOPSIS
-            Describe purpose of "Invoke-Executable" in 1-2 sentences.
+   function Invoke-Executable
+   {
+      <#
+         .SYNOPSIS
+         Describe purpose of "Invoke-Executable" in 1-2 sentences.
 
-            .DESCRIPTION
-            Add a more complete description of what the function does.
+         .DESCRIPTION
+         Add a more complete description of what the function does.
 
-            .PARAMETER FilePath
-            Describe parameter -FilePath.
+         .PARAMETER FilePath
+         Describe parameter -FilePath.
 
-            .PARAMETER Arguments
-            Describe parameter -Arguments.
+         .PARAMETER Arguments
+         Describe parameter -Arguments.
 
-            .EXAMPLE
-            Invoke-Executable -FilePath Value -Arguments Value
-            Describe what this call does
+         .EXAMPLE
+         Invoke-Executable -FilePath Value -Arguments Value
+         Describe what this call does
 
-            .NOTES
-            Place additional notes here.
+         .NOTES
+         Place additional notes here.
 
-            .LINK
-            URLs to related sites
-            The first link is opened by Get-Help -Online Invoke-Executable
+         .LINK
+         URLs to related sites
+         The first link is opened by Get-Help -Online Invoke-Executable
 
-            .INPUTS
-            List of input types that are accepted by this function.
+         .INPUTS
+         List of input types that are accepted by this function.
 
-            .OUTPUTS
-            List of output types produced by this function.
+         .OUTPUTS
+         List of output types produced by this function.
       #>
-		param (
-			[parameter(Mandatory, HelpMessage = 'Specify the file name or path of the executable to be invoked, including the extension')]
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$FilePath,
-			[ValidateNotNull()]
-			[string]
-			$Arguments
-		)
+      param (
+         [parameter(Mandatory, HelpMessage = 'Specify the file name or path of the executable to be invoked, including the extension')]
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $FilePath,
+         [ValidateNotNull()]
+         [string]
+         $Arguments
+      )
 
-		process {
-		# Construct a hash-table for default parameter splatting
-		$SplatArgs = @{
-			FilePath               = $FilePath
-			NoNewWindow            = $true
-			Passthru               = $true
-			RedirectStandardOutput = 'null.txt'
-			ErrorAction            = 'Stop'
-		}
+      process
+      {
+         # Construct a hash-table for default parameter splatting
+         $SplatArgs = @{
+            FilePath               = $FilePath
+            NoNewWindow            = $true
+            Passthru               = $true
+            RedirectStandardOutput = 'null.txt'
+            ErrorAction            = 'Stop'
+         }
 
-		# Add ArgumentList param if present
-		if (-not ([string]::IsNullOrEmpty($Arguments)))
-		{
-			$SplatArgs.Add('ArgumentList', $Arguments)
-		}
+         # Add ArgumentList param if present
+         if (-not ([string]::IsNullOrEmpty($Arguments)))
+         {
+            $SplatArgs.Add('ArgumentList', $Arguments)
+         }
 
-		# Invoke executable and wait for process to exit
-		try
-		{
-			$Invocation = (Start-Process @SplatArgs)
-			$Handle = $Invocation.Handle
-			$Invocation.WaitForExit()
+         # Invoke executable and wait for process to exit
+         try
+         {
+            $Invocation = (Start-Process @SplatArgs)
+            $Handle = $Invocation.Handle
+            $Invocation.WaitForExit()
 
-			# Remove redirected output file
-			$paramRemoveItem = @{
-				Path  = (Join-Path -Path $PSScriptRoot -ChildPath 'null.txt')
-				Force = $true
-			}
-			$null = (Remove-Item @paramRemoveItem)
-		}
-		catch
-		{
-			Write-Warning -Message $_.Exception.Message
-			break
-		}
+            # Remove redirected output file
+            $paramRemoveItem = @{
+               Path  = (Join-Path -Path $PSScriptRoot -ChildPath 'null.txt' -ErrorAction Continue)
+               Force = $true
+            }
+            $null = (Remove-Item @paramRemoveItem)
+         }
+         catch
+         {
+            Write-Warning -Message $_.Exception.Message
+            break
+         }
 
-		return $Invocation.ExitCode
-	}
-}
+         return $Invocation.ExitCode
+      }
+   }
 
-	function Test-RegistryValue
-	{
-		<#
-            .SYNOPSIS
-            Describe purpose of "Test-RegistryValue" in 1-2 sentences.
+   function Test-RegistryValue
+   {
+      <#
+         .SYNOPSIS
+         Describe purpose of "Test-RegistryValue" in 1-2 sentences.
 
-            .DESCRIPTION
-            Add a more complete description of what the function does.
+         .DESCRIPTION
+         Add a more complete description of what the function does.
 
-            .PARAMETER Path
-            Describe parameter -Path.
+         .PARAMETER Path
+         Describe parameter -Path.
 
-            .PARAMETER Name
-            Describe parameter -Name.
+         .PARAMETER Name
+         Describe parameter -Name.
 
-            .EXAMPLE
-            Test-RegistryValue -Path Value -Name Value
-            Describe what this call does
+         .EXAMPLE
+         Test-RegistryValue -Path Value -Name Value
+         Describe what this call does
 
-            .NOTES
-            Place additional notes here.
+         .NOTES
+         Place additional notes here.
 
-            .LINK
-            URLs to related sites
-            The first link is opened by Get-Help -Online Test-RegistryValue
+         .LINK
+         URLs to related sites
+         The first link is opened by Get-Help -Online Test-RegistryValue
 
-            .INPUTS
-            List of input types that are accepted by this function.
+         .INPUTS
+         List of input types that are accepted by this function.
 
-            .OUTPUTS
-            List of output types produced by this function.
+         .OUTPUTS
+         List of output types produced by this function.
       #>
-		param (
-			[parameter(Mandatory, HelpMessage = 'Add help message for user')]
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$Path,
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$Name
-		)
+      param (
+         [parameter(Mandatory, HelpMessage = 'Add help message for user')]
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $Path,
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $Name
+      )
 
-		begin {
-		# If item property value exists return True, else catch the failure and return False
-		$STP = 'Stop'
-		}
+      begin
+      {
+         # If item property value exists return True, else catch the failure and return False
+         $STP = 'Stop'
+      }
 
-		process {
-		try
-		{
-			if ($PSBoundParameters['Name'])
-			{
-				$paramGetItemProperty = @{
-					Path = $Path
-				}
-				$Existence = (Get-ItemProperty @paramGetItemProperty | Select-Object -ExpandProperty $Name -ErrorAction $STP)
-			}
-			else
-			{
-				$paramGetItemProperty = @{
-					Path        = $Path
-					ErrorAction = $STP
-				}
-				$Existence = (Get-ItemProperty @paramGetItemProperty)
-			}
+      process
+      {
+         try
+         {
+            if ($PSBoundParameters['Name'])
+            {
+               $paramGetItemProperty = @{
+                  Path        = $Path
+                  ErrorAction = $STP
+               }
+               $Existence = (Get-ItemProperty @paramGetItemProperty | Select-Object -ExpandProperty $Name -ErrorAction $STP)
+            }
+            else
+            {
+               $paramGetItemProperty = @{
+                  Path        = $Path
+                  ErrorAction = $STP
+               }
+               $Existence = (Get-ItemProperty @paramGetItemProperty)
+            }
 
-			if ($Existence)
-			{
-				return $true
-			}
-		}
-		catch
-		{
-			return $false
-		}
-	}
-	}
+            if ($Existence)
+            {
+               return $true
+            }
+         }
+         catch
+         {
+            return $false
+         }
+      }
+   }
 
-	function Set-RegistryValue
-	{
-		<#
-            .SYNOPSIS
-            Describe purpose of "Set-RegistryValue" in 1-2 sentences.
+   function Set-RegistryValue
+   {
+      <#
+         .SYNOPSIS
+         Describe purpose of "Set-RegistryValue" in 1-2 sentences.
 
-            .DESCRIPTION
-            Add a more complete description of what the function does.
+         .DESCRIPTION
+         Add a more complete description of what the function does.
 
-            .PARAMETER Path
-            Describe parameter -Path.
+         .PARAMETER Path
+         Describe parameter -Path.
 
-            .PARAMETER Name
-            Describe parameter -Name.
+         .PARAMETER Name
+         Describe parameter -Name.
 
-            .PARAMETER Value
-            Describe parameter -Value.
+         .PARAMETER Value
+         Describe parameter -Value.
 
-            .EXAMPLE
-            Set-RegistryValue -Path Value -Name Value -Value Value
-            Describe what this call does
+         .EXAMPLE
+         Set-RegistryValue -Path Value -Name Value -Value Value
+         Describe what this call does
 
-            .NOTES
-            Place additional notes here.
+         .NOTES
+         Place additional notes here.
 
-            .LINK
-            URLs to related sites
-            The first link is opened by Get-Help -Online Set-RegistryValue
+         .LINK
+         URLs to related sites
+         The first link is opened by Get-Help -Online Set-RegistryValue
 
-            .INPUTS
-            List of input types that are accepted by this function.
+         .INPUTS
+         List of input types that are accepted by this function.
 
-            .OUTPUTS
-            List of output types produced by this function.
+         .OUTPUTS
+         List of output types produced by this function.
       #>
-		param (
-			[parameter(Mandatory, HelpMessage = 'Add help message for user')]
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$Path,
-			[parameter(Mandatory, HelpMessage = 'Add help message for user')]
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$Name,
-			[parameter(Mandatory, HelpMessage = 'Add help message for user')]
-			[ValidateNotNullOrEmpty()]
-			[string]
-			$Value
-		)
+      param (
+         [parameter(Mandatory, HelpMessage = 'Add help message for user')]
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $Path,
+         [parameter(Mandatory, HelpMessage = 'Add help message for user')]
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $Name,
+         [parameter(Mandatory, HelpMessage = 'Add help message for user')]
+         [ValidateNotNullOrEmpty()]
+         [string]
+         $Value
+      )
+      begin
+      {
+         $SCT = 'SilentlyContinue'
+         $STP = 'Stop'
+      }
 
-		process {
-			try
-			{
-				$paramGetItemProperty = @{
-					Path        = $Path
-					Name        = $Name
-					ErrorAction = 'SilentlyContinue'
-				}
-				$RegistryValue = (Get-ItemProperty @paramGetItemProperty)
+      process
+      {
+         try
+         {
+            $paramGetItemProperty = @{
+               Path        = $Path
+               Name        = $Name
+               ErrorAction = $SCT
+            }
+            $RegistryValue = (Get-ItemProperty @paramGetItemProperty)
 
-				if ($RegistryValue)
-				{
-					$paramSetItemProperty = @{
-						Path        = $Path
-						Name        = $Name
-						Value       = $Value
-						Force       = $true
-						ErrorAction = 'Stop'
-					}
-					$null = (Set-ItemProperty @paramSetItemProperty)
-				}
-				else
-				{
-					$paramNewItemProperty = @{
-						Path         = $Path
-						Name         = $Name
-						PropertyType = 'String'
-						Value        = $Value
-						Force        = $true
-						ErrorAction  = 'Stop'
-					}
-					$null = (New-ItemProperty @paramNewItemProperty)
-				}
-			}
-			catch
-			{
-				Write-LogEntry -Value "Failed to create or update registry value '$($Name)' in '$($Path)'. Error message: $($_.Exception.Message)" -Severity 3
-			}
-		}
-	}
-	#endregion
+            if ($RegistryValue)
+            {
+               $paramSetItemProperty = @{
+                  Path        = $Path
+                  Name        = $Name
+                  Value       = $Value
+                  Force       = $true
+                  ErrorAction = $STP
+               }
+               $null = (Set-ItemProperty @paramSetItemProperty)
+            }
+            else
+            {
+               $paramNewItemProperty = @{
+                  Path         = $Path
+                  Name         = $Name
+                  PropertyType = 'String'
+                  Value        = $Value
+                  Force        = $true
+                  ErrorAction  = $STP
+               }
+               $null = (New-ItemProperty @paramNewItemProperty)
+            }
+         }
+         catch
+         {
+            Write-LogEntry -Value "Failed to create or update registry value '$($Name)' in '$($Path)'. Error message: $($_.Exception.Message)" -Severity 3
+         }
+      }
+   }
+   #endregion
 }
 
 process
@@ -915,5 +952,13 @@ process
             }
          }
       }
+   }
+}
+
+end
+{
+   if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
+   {
+      $null = (Set-MpPreference -EnableControlledFolderAccess Enabled -Force -ErrorAction $SCT)
    }
 }

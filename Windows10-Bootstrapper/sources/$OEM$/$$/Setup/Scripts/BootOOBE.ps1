@@ -1,14 +1,84 @@
-Set-Location $PSScriptRoot
-Get-Process sysprep -ea SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+#requires -Version 3.0
 
-#Cleanup
-Remove-Item C:\Windows\Panther\unattend.xml -Force -ea SilentlyContinue
-Remove-Item C:\Windows\Setup\Scripts\init.ps1 -Recurse -Force -ea SilentlyContinue #Prevent loop after OOBE
-Rename-Item C:\Windows\Setup\Scripts\init2.ps1 init.ps1 -ea SilentlyContinue #Run Cleanup after OOBE
+<#
+   .SYNOPSIS
+   Interrupt the OOBE Process and starts our own
 
-Get-Process sysprep -ea SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-Start-Sleep 2
+   .DESCRIPTION
+   Interrupt the OOBE Process and starts our own
 
-#old &C:\Windows\System32\Sysprep\sysprep.exe /oobe /shutdown /unattend:c:\windows\system32\sysprep\unattend.xml
-Start-Process -FilePath "C:\Windows\System32\Sysprep\sysprep.exe" -ArgumentList "/oobe /quiet /reboot /unattend:C:\Windows\system32\sysprep\unattend.xml" -Wait
-exit(0)
+   .EXAMPLE
+   PS C:\> .\BootOOBE.ps1
+
+   .NOTES
+   Adopted from Roger Zander (@rzander)
+
+   .LINK
+   https://github.com/rzander/mOSD
+#>
+[CmdletBinding(ConfirmImpact = 'None')]
+param ()
+
+begin
+{
+	$SCT = 'SilentlyContinue'
+
+	$PantherUA = "$env:windir\Panther\unattend.xml"
+
+	#region
+	$paramGetProcess = @{
+		Name        = 'sysprep'
+		ErrorAction = $SCT
+	}
+	$paramStopProcess = @{
+		Force       = $true
+		ErrorAction = $SCT
+	}
+	#endregion
+}
+
+process
+{
+	$paramSetLocation = @{
+		Path        = $PSScriptRoot
+		ErrorAction = $SCT
+	}
+	$null = (Set-Location @paramSetLocation)
+
+	$null = (Get-Process @paramGetProcess | Stop-Process @paramStopProcess)
+
+	#Cleanup
+	$paramTestPath = @{
+		Path        = $PantherUA
+		ErrorAction = $SCT
+	}
+	if (Test-Path @paramTestPath)
+	{
+		$paramRemoveItem = @{
+			Path        = $PantherUA
+			Force       = $true
+			Confirm     = $false
+			ErrorAction = $SCT
+		}
+		$null = (Remove-Item @paramRemoveItem)
+	}
+
+	$null = (Get-Process @paramGetProcess | Stop-Process @paramStopProcess)
+
+	Start-Sleep -Seconds 2
+
+	# Start the sysprep process
+	try
+	{
+		$null = (Start-Process -FilePath "$env:windir\System32\Sysprep\sysprep.exe" -ArgumentList '/oobe /quiet /reboot /unattend:C:\Windows\system32\sysprep\unattend.xml' -Wait)
+	}
+	catch
+	{
+		exit (1)
+	}
+}
+
+end
+{
+	exit (0)
+}

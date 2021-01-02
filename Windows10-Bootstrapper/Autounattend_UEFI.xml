@@ -62,7 +62,7 @@
 						<ModifyPartition wcm:action="add">
 							<Order>4</Order>
 							<PartitionID>4</PartitionID>
-							<Label>OS</Label>
+							<Label>Boot</Label>
 							<Letter>C</Letter>
 							<Format>NTFS</Format>
 						</ModifyPartition>
@@ -138,16 +138,15 @@
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<RunSynchronous>
 				<RunSynchronousCommand wcm:action="add">
-					<Path>powershell.exe -noprofile -command set-executionpolicy bypass -force</Path>
 					<Order>1</Order>
+					<Description>Set Execution Policy 64 Bit</Description>
+					<Path>C:\Windows\system32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Force -ErrorAction SilentlyContinue"</Path>
 					<WillReboot>Never</WillReboot>
-					<Description>PowerShell Execution Policy</Description>
 				</RunSynchronousCommand>
-				<!-- This will be the last step in this sequence -->
 				<RunSynchronousCommand wcm:action="add">
 					<Order>2</Order>
-					<Description>Installing Provisioning Package</Description>
-					<Path>powershell.exe -noprofile -File c:\windows\setup\scripts\PolicyPPKG.ps1</Path>
+					<Description>Set Execution Policy 32 Bit</Description>
+					<Path>C:\Windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy -ExecutionPolicy Bypass -Force -ErrorAction SilentlyContinue"</Path>
 					<WillReboot>Never</WillReboot>
 				</RunSynchronousCommand>
 			</RunSynchronous>
@@ -188,14 +187,9 @@
 			xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<RunSynchronous>
-				<RunSynchronousCommand wcm:action="add">
-					<Description>Copy Files</Description>
-					<Path>powershell.exe -noprofile -command &quot;move-item -Path c:\windows\temp\* -Destination $env:temp -ea SilentlyContinue;exit(0)&quot;</Path>
-					<Order>1</Order>
-				</RunSynchronousCommand>
 				<!-- This will be the last step in this sequence -->
 				<RunSynchronousCommand wcm:action="add">
-					<Order>2</Order>
+					<Order>1</Order>
 					<Path>powershell.exe -noprofile -File c:\windows\setup\scripts\BootOOBE.ps1</Path>
 					<WillReboot>Never</WillReboot>
 					<Description>Prepare OOBE</Description>

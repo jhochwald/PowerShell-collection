@@ -65,51 +65,51 @@ begin {
    $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force @paramSimpleDefaults)
 
 
-   if (-not $ManufacturerModel) 
+   if (-not $ManufacturerModel)
    {
       $ManufacturerModel = 'Unknown'
    }
 
-   if ($Manufacturer) 
+   if ($Manufacturer)
    {
       switch ($Manufacturer) {
-         'HP' 
+         'HP'
          {
             $ManufacturerTooling = 'HP'
          }
-         'Hewlett-Packard' 
+         'Hewlett-Packard'
          {
             $ManufacturerTooling = 'HP'
          }
-         'Dell' 
+         'Dell'
          {
             $ManufacturerTooling = 'Dell'
             Write-Warning -Message 'Dell support is in still in development'
          }
-         'LENOVO' 
+         'LENOVO'
          {
             $ManufacturerTooling = 'LENOVO'
             Write-Warning -Message 'Lenovo support is in still in development'
          }
-         'Microsoft Corporation' 
+         'Microsoft Corporation'
          {
             $ManufacturerTooling = 'HYPERV'
             Write-Warning -Message 'Microsoft Hyper-V is not (yet) supported, but planned'
             Return
          }
-         'VMware, Inc.' 
+         'VMware, Inc.'
          {
             $ManufacturerTooling = 'VMware'
             Write-Warning -Message 'VMware is not (yet) supported'
             Return
          }
-         'Parallels Software International Inc.' 
+         'Parallels Software International Inc.'
          {
             $ManufacturerTooling = 'Parallels'
             Write-Warning -Message 'Parallels is not (yet) supported'
             Return
          }
-         Default 
+         Default
          {
             $ManufacturerTooling = $null
             Write-Warning -Message 'Unknown and/or unsupported manufacturer'
@@ -117,7 +117,7 @@ begin {
          }
       }
    }
-   else 
+   else
    {
       $ManufacturerTooling = $null
       Write-Warning -Message 'Unknown and/or unsupported manufacturer'
@@ -146,7 +146,7 @@ begin {
    #endregion Defaults
 
    #region RemoveOEMInfo
-   function Remove-OEMInfo 
+   function Remove-OEMInfo
    {
       <#
             .SYNOPSIS
@@ -199,10 +199,10 @@ begin {
       }
 
       process {
-         if ($pscmdlet.ShouldProcess('OEM Info', 'Delete')) 
+         if ($pscmdlet.ShouldProcess('OEM Info', 'Delete'))
          {
             # Cleanup the OEM Info
-            foreach ($ValueToClean in $ValuesToClean) 
+            foreach ($ValueToClean in $ValuesToClean)
             {
                $paramGetItemPropertyValue = @{
                   Path          = $Path
@@ -211,7 +211,7 @@ begin {
                   WarningAction = $SCT
                }
 
-               if (Get-ItemPropertyValue @paramGetItemPropertyValue) 
+               if (Get-ItemPropertyValue @paramGetItemPropertyValue)
                {
                   $paramRemoveItemProperty = @{
                      Path          = $Path
@@ -235,19 +235,19 @@ begin {
 
 process {
    #region HP
-   if ($ManufacturerTooling -eq 'HP') 
+   if ($ManufacturerTooling -eq 'HP')
    {
       # Cleanup the OEM Info
       $null = (Remove-OEMInfo @paramSimpleDefaults)
 
       # Copy the OEM Logo
-      if (Test-Path -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\hp\SYSTEM.BMP" @paramSimpleDefaults) 
+      if (Test-Path -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\hp\SYSTEM.BMP" @paramSimpleDefaults)
       {
          $null = (Copy-Item -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\hp\SYSTEM.BMP" @paramCopyItem)
       }
 
       # Set the new OEM Info
-      if ($ManufacturerModel) 
+      if ($ManufacturerModel)
       {
          $null = (New-ItemProperty -Name 'Model' -Value $ManufacturerModel @paramNewItemProperty)
       }
@@ -273,7 +273,7 @@ process {
          Path        = $DriverTempDir
          ErrorAction = $SCT
       }
-      if (-not (Test-Path @paramTestPath)) 
+      if (-not (Test-Path @paramTestPath))
       {
          $paramNewItem = @{
             Path     = $DriverTempDir
@@ -292,7 +292,7 @@ process {
          Path        = $DriverExtractDest
          ErrorAction = $SCT
       }
-      if (-not (Test-Path @paramTestPath)) 
+      if (-not (Test-Path @paramTestPath))
       {
          $paramNewItem = @{
             Path     = $DriverExtractDest
@@ -309,7 +309,7 @@ process {
          Path        = $Installer
          ErrorAction = $SCT
       }
-      if (-not (Test-Path @paramTestPath)) 
+      if (-not (Test-Path @paramTestPath))
       {
          # Use BitsTransfer to download the latest installer
          $paramStartBitsTransfer = @{
@@ -338,7 +338,7 @@ process {
          Path        = $HPInstaller
          ErrorAction = $SCT
       }
-      if (Test-Path @paramTestPath) 
+      if (Test-Path @paramTestPath)
       {
          $HPSilentSwitches = $HPSilentSwitchesDefault
          $paramStartProcess = @{
@@ -349,7 +349,7 @@ process {
             Wait             = $true
          }
          $null = (Start-Process @paramStartProcess)
-      } else 
+      } else
       {
          Write-Warning -Message $ErrorMessage
       }
@@ -364,7 +364,7 @@ process {
          Path        = $DriverExtractDest
          ErrorAction = $SCT
       }
-      if (-not (Test-Path @paramTestPath)) 
+      if (-not (Test-Path @paramTestPath))
       {
          $paramNewItem = @{
             Path     = $DriverExtractDest
@@ -381,7 +381,7 @@ process {
          Path        = $Installer
          ErrorAction = $SCT
       }
-      if (-not (Test-Path @paramTestPath)) 
+      if (-not (Test-Path @paramTestPath))
       {
          # Use BitsTransfer to download the latest installer
          $paramStartBitsTransfer = @{
@@ -410,7 +410,7 @@ process {
          Path        = $HPInstaller
          ErrorAction = $SCT
       }
-      if (Test-Path @paramTestPath) 
+      if (Test-Path @paramTestPath)
       {
          $HPSilentSwitches = $HPSilentSwitchesDefault
          $paramStartProcess = @{
@@ -421,7 +421,7 @@ process {
             Wait             = $true
          }
          $null = (Start-Process @paramStartProcess)
-      } else 
+      } else
       {
          Write-Warning -Message $ErrorMessage
       }
@@ -430,19 +430,19 @@ process {
    #endregion HP
 
    #region LENOVO
-   if ($ManufacturerTooling -eq 'LENOVO') 
+   if ($ManufacturerTooling -eq 'LENOVO')
    {
       # Cleanup the OEM Info
       $null = (Remove-OEMInfo @paramSimpleDefaults)
 
       # Copy the OEM Logo
-      if (Test-Path -Path 'Lenovo\SYSTEM.BMP' @paramSimpleDefaults) 
+      if (Test-Path -Path 'Lenovo\SYSTEM.BMP' @paramSimpleDefaults)
       {
          $null = (Copy-Item -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\Lenovo\SYSTEM.BMP" @paramCopyItem)
       }
 
       # Set the new OEM Info
-      if ($ManufacturerModel) 
+      if ($ManufacturerModel)
       {
          $null = (New-ItemProperty -Name 'Model' -Value $ManufacturerModel @paramNewItemProperty)
       }
@@ -454,19 +454,19 @@ process {
    #endregion LENOVO
 
    #region Dell
-   if ($ManufacturerTooling -eq 'Dell') 
+   if ($ManufacturerTooling -eq 'Dell')
    {
       # Cleanup the OEM Info
       $null = (Remove-OEMInfo @paramSimpleDefaults)
 
       # Copy the OEM Logo
-      if (Test-Path -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\Dell\SYSTEM.BMP" @paramSimpleDefaults) 
+      if (Test-Path -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\Dell\SYSTEM.BMP" @paramSimpleDefaults)
       {
          $null = (Copy-Item -Path "$env:HOMEDRIVE\install\ManufacturerSpecific\Dell\SYSTEM.BMP" @paramCopyItem)
       }
 
       # Set the new OEM Info
-      if ($ManufacturerModel) 
+      if ($ManufacturerModel)
       {
          $null = (New-ItemProperty -Name 'Model' -Value $ManufacturerModel @paramNewItemProperty)
       }
