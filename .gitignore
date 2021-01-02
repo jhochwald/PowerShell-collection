@@ -116,3 +116,4 @@ module/PSScriptAnalyzer
 .editorconfig
 .eslintrc.json
 .gitattributes
+SignAllFiles.ps1
