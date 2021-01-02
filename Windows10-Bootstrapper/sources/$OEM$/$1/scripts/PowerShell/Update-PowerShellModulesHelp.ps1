@@ -8,7 +8,7 @@
    Update all help files for all installed PowerShell Modules
 
    .LINK
-   http://beyond-datacenter.com
+   http://enatec.io
 
    .NOTES
    Version 1.0.2

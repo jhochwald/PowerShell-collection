@@ -15,18 +15,6 @@
       PS C:\> .\Clear-EnAllEventLogs_TESTS.ps1
 
       .NOTES
-      Version: 1.0.0
-
-      GUID: a0a633ca-6fd1-4806-a160-05bf1f76342b
-
-      Author: Joerg Hochwald
-
-      Companyname: enabling Technology
-
-      Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-
-      License: https://opensource.org/licenses/BSD-3-Clause
-
       Releasenotes:
       1.0.0 2019-07-24 Initial Version
 
@@ -79,19 +67,7 @@ function Clear-EnAllEventLogs
          Delete all Windows EventLog Entries on the Computers with the names FRADC01 and FRADC02.
 
          .NOTES
-         Version: 1.2.3
-
-         GUID: a0a633ca-6fd1-4806-a160-05bf1f76342b
-
-         Author: Joerg Hochwald
-
-         Companyname: enabling Technology
-
-         Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-
-         License: https://opensource.org/licenses/BSD-3-Clause
-
-         Releasenotes:
+          Releasenotes:
 
          THIS CODE IS MADE AVAILABLE AS IS, WITHOUT WARRANTY OF ANY KIND. THE ENTIRE RISK OF THE USE OR THE RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
 
@@ -188,18 +164,6 @@ function Clear-EnAllEventLogsv2
          Delete all Windows EventLog Entries on the Computers with the names FRADC01 and FRADC02.
 
          .NOTES
-         Version: 2.0.0
-
-         GUID: 0b2fcd13-0b5e-48df-9970-7c5fab649ee7
-
-         Author: Joerg Hochwald
-
-         Companyname: enabling Technology
-
-         Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-
-         License: https://opensource.org/licenses/BSD-3-Clause
-
          Releasenotes:
          2.0.0 2019-07-23: Refactored version
 
@@ -268,28 +232,16 @@ function Invoke-CreateTestData
 {
    <#
          .SYNOPSIS
-         Crete 10.000 a few Dummy entries
+         Create 10.000 dummy entries
 
          .DESCRIPTION
-         Crete 10.000 a few Dummy entrie
+         Create 10.000 dummy entries
 
          .EXAMPLE
          PS C:\> Invoke-CreateTestData
 
          .NOTES
          Internal Helper Function to create some useless Test Data
-
-         Version: 1.0.1
-
-         GUID: bb8bf55b-c3f3-4046-a6e8-2e389fd525d7
-
-         Author: Joerg Hochwald
-
-         Companyname: enabling Technology
-
-         Copyright: Copyright (c) 2ß18-2019, enabling Technology - All rights reserved.
-
-         License: https://opensource.org/licenses/BSD-3-Clause
 
          Releasenotes:
          1.0.1 2019-07-23: Splat the parameters for better radability
@@ -392,29 +344,30 @@ Write-Verbose -Message 'Time measured in milliseconds' -Verbose
 
 #region LICENSE
 <#
-      BSD 3-Clause License
+   BSD 3-Clause License
 
-      Copyright (c) 2021, enabling Technology
-      All rights reserved.
+   Copyright (c) 2021, enabling Technology
+   All rights reserved.
 
-      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+   3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 #endregion LICENSE
 
 #region DISCLAIMER
 <#
-      DISCLAIMER:
-      - Use at your own risk, etc.
-      - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
-      - This is a third-party Software
-      - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-      - The Software is not supported by Microsoft Corp (MSFT)
-      - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
-      - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
+   DISCLAIMER:
+   - Use at your own risk, etc.
+   - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+   - This is a third-party Software
+   - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+   - The Software is not supported by Microsoft Corp (MSFT)
+   - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+   - If you disagree with any of the terms, and any conditions declared: Just delete it and build your own solution
 #>
 #endregion DISCLAIMER

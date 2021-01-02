@@ -24,7 +24,7 @@
    Version 1.0.4
 
    .LINK
-   http://beyond-datacenter.com
+   http://enatec.io
 
    .LINK
    https://support.microsoft.com/en-ie/help/822158/virus-scanning-recommendations-for-enterprise-computers-that-are-runni

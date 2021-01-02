@@ -27,7 +27,7 @@
    All guest accounts on this system are one time users, so they are disabled after each use anyway.
 
    .LINK
-   http://beyond-datacenter.com
+   http://enatec.io
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
    SupportsShouldProcess)]

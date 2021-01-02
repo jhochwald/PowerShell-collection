@@ -24,7 +24,7 @@
       Lot of the stuff of this version is adopted from Disassembler <disassembler@dasm.cz>
 
       .LINK
-      http://beyond-datacenter.com
+      http://enatec.io
 
       .LINK
       https://github.com/Disassembler0/Win10-Initial-Setup-Script

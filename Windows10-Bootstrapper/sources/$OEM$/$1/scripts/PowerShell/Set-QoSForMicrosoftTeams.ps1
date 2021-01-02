@@ -32,7 +32,7 @@
    https://docs.microsoft.com/en-us/microsoftteams/qos-in-teams-clients
 
    .LINK
-   http://beyond-datacenter.com
+   http://enatec.io
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
    SupportsShouldProcess)]

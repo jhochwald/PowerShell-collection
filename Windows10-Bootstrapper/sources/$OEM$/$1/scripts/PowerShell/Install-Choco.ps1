@@ -19,7 +19,7 @@
    Version 1.3.7
 
    .LINK
-   http://beyond-datacenter.com
+   http://enatec.io
 
    .LINK
    https://chocolatey.org/docs

@@ -24,7 +24,7 @@
       Version 1.0.0
 
       .LINK
-      http://beyond-datacenter.com
+      http://enatec.io
 #>
 [CmdletBinding(ConfirmImpact = 'Low',
    SupportsShouldProcess)]

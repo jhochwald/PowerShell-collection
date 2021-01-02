@@ -21,7 +21,7 @@
    Version 2.0.0
 
    .LINK
-   http://beyond-datacenter.com
+   http://enatec.io
 
    .LINK
    https://docs.microsoft.com/en-us/microsoftteams/msi-deployment

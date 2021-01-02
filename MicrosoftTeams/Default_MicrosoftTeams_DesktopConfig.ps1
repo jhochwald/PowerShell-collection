@@ -1,9 +1,9 @@
 <#
       .SYNOPSIS
-      Microsoft Teams Client customisation settings via PowerShell
+      Microsoft Teams Client customization settings via PowerShell
 
       .DESCRIPTION
-      Microsoft Teams Client customisation settings via PowerShell
+      Microsoft Teams Client customization settings via PowerShell
 
       .EXAMPLE
       PS C:\> .\Default_MicrosoftTeams_DesktopConfig.ps1
@@ -115,7 +115,7 @@ process
       #region
       if ($Teams.appPreferenceSettings)
       {
-         if ($Teams.appPreferenceSettings.openAsHidden -ne $null)
+         if ($Teams.appPreferenceSettings.openAsHidden)
          {
             if ($Teams.appPreferenceSettings.openAsHidden -ne $AppPrefSetOpenAsHidden)
             {
@@ -154,7 +154,7 @@ process
             Write-Verbose -Message 'The Parameter openAsHidden was created with the desired default value'
          }
 
-         if ($Teams.appPreferenceSettings.openAtLogin -ne $null)
+         if ($Teams.appPreferenceSettings.openAtLogin)
          {
             if ($Teams.appPreferenceSettings.openAtLogin -ne $AppPrefSetOpenAtLogin)
             {
@@ -199,7 +199,7 @@ process
          }
          else
          {
-            if ($Teams.appPreferenceSettings.registerAsIMProvider -ne $null)
+            if ($Teams.appPreferenceSettings.registerAsIMProvider)
             {
                if ($Teams.appPreferenceSettings.registerAsIMProvider -ne $AppPrefSetRegisterAsIMProvider)
                {
@@ -239,7 +239,7 @@ process
             }
          }
 
-         if ($Teams.appPreferenceSettings.runningOnClose -ne $null)
+         if ($Teams.appPreferenceSettings.runningOnClose)
          {
             if ($Teams.appPreferenceSettings.runningOnClose -ne $AppPrefSetRunningOnClose)
             {
@@ -279,7 +279,7 @@ process
          }
       }
 
-      if ($Teams.notificationWindowOnClose -ne $null)
+      if ($Teams.notificationWindowOnClose)
       {
          if ($Teams.notificationWindowOnClose -ne $NotificationWindowOnClose)
          {
@@ -318,7 +318,7 @@ process
          Write-Verbose -Message 'The Parameter currentWebLanguage was created with the desired default value'
       }
 
-      if ($Teams.overrideOpenAsHiddenProperty -ne $null)
+      if ($Teams.overrideOpenAsHiddenProperty)
       {
          if ($Teams.overrideOpenAsHiddenProperty -ne $OverrideOpenAsHiddenProperty)
          {
@@ -357,7 +357,7 @@ process
          Write-Verbose -Message 'The Parameter overrideOpenAsHiddenProperty was created with the desired default value'
       }
 
-      if ($Teams.isAppFirstRun -ne $null)
+      if ($Teams.isAppFirstRun)
       {
          if ($Teams.isAppFirstRun -ne $IsAppFirstRun)
          {
@@ -396,7 +396,7 @@ process
          Write-Verbose -Message 'The Parameter isAppFirstRun was created with the desired default value'
       }
 
-      if ($Teams.currentWebLanguage -ne $null)
+      if ($Teams.currentWebLanguage)
       {
          if ($Teams.currentWebLanguage -ne $CurrentWebLanguage)
          {
@@ -506,29 +506,30 @@ process
 
 #region LICENSE
 <#
-      BSD 3-Clause License
+   BSD 3-Clause License
 
-      Copyright (c) 2021, enabling Technology
-      All rights reserved.
+   Copyright (c) 2021, enabling Technology
+   All rights reserved.
 
-      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+   3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #>
 #endregion LICENSE
 
 #region DISCLAIMER
 <#
-      DISCLAIMER:
-      - Use at your own risk, etc.
-      - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
-      - This is a third-party Software
-      - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-      - The Software is not supported by Microsoft Corp (MSFT)
-      - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
-      - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
+   DISCLAIMER:
+   - Use at your own risk, etc.
+   - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+   - This is a third-party Software
+   - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+   - The Software is not supported by Microsoft Corp (MSFT)
+   - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+   - If you disagree with any of the terms, and any conditions declared: Just delete it and build your own solution
 #>
 #endregion DISCLAIMER

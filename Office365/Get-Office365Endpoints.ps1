@@ -121,7 +121,7 @@ function Get-Office365Endpoints
       .EXAMPLE
       PS C:\> ((Get-Office365Endpoints.ps1 -Instance Worldwide -NoIPv6).ip | Sort-Object -Unique) -join "," | Out-String
 
-      Get a list of IP addreses and exclude IPv6. The benefit of this parameter is the NoIPv6 parameter: The call will exclude the IPv6 Data from the response, and that might be smarter than filter it. It might be handy if you do NOT use IPv6 within your network - If this is the case, you might miss the future of networking! Think about that, before ignoring IPv6.
+      Get a list of IP addresses and exclude IPv6. The benefit of this parameter is the NoIPv6 parameter: The call will exclude the IPv6 Data from the response, and that might be smarter than filter it. It might be handy if you do NOT use IPv6 within your network - If this is the case, you might miss the future of networking! Think about that, before ignoring IPv6.
 
       .EXAMPLE
       $ExchangeOnlineSMTPEndpoints = (Get-Office365Endpoints.ps1 -Services Exchange) | Where-Object -FilterScript {
@@ -136,11 +136,11 @@ function Get-Office365Endpoints
 
       .NOTES
       Function that uses the new Microsoft Service. A few things are still missing or not rock solid.
-      However, we needed a solution to configure ExpressRoute now, so we started with some rework to use the new Webservice.
+      However, we needed a solution to configure ExpressRoute now, so we started with some rework to use the new web service.
 
-      This function is part of the commercial en.Office365 PowerShell Module - Distributed separately as OpenSouce with a very flexible license (See below)
+      This function is part of the commercial en.Office365 PowerShell Module - Distributed separately as OpenSource with a very flexible license (See below)
 
-      Some parts of the script are based upon the example that Microsoft published on the info page of the new Webservice!
+      Some parts of the script are based upon the example that Microsoft published on the info page of the new web service!
 
       .LINK
       https://github.com/jhochwald/PowerShell-collection/blob/master/Office365/Get-Office365Endpoints.ps1
@@ -266,7 +266,7 @@ function Get-Office365Endpoints
       #endregion TweakOutputHandler
 
       #region ConfigurationVariables
-      # Webservice root URL
+      # Web service root URL
       $BaseURI = 'https://endpoints.office.com'
       Write-Verbose -Message ('We use {0} as Base URL' -f $BaseURI)
 
@@ -645,7 +645,7 @@ function Get-Office365Endpoints
          #region DumpInfoNothing
          <#
           This 'else' loop is here as a placeholder in this script!
-          We use this in the comemrcial version (function within the commercial module)
+          We use this in the commercial version (function within the commercial module)
       #>
 
          Write-Output -InputObject ('The {0} Office 365 endpoints are up-to-date' -f $Instance)
@@ -688,38 +688,37 @@ function Get-Office365Endpoints
       [ADD] This changelog within the code - Reflect the changes within the dedicated function (PSMO365-46)
 
       0.8.0 - 2018-08-18:
-      [INIT] Intitial public release
+      [INIT] Initial public release
   #>
    #endregion CHANGELOG
-
-   #region LICENSE
-   <#
-      LICENSE:
-
-      Copyright 2018 by enabling Technology - http://enatec.io
-
-      Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-      1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-      2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-      3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-      By using the Software, you agree to the License, Terms and Conditions above!
-  #>
-   #endregion LICENSE
-
-   #region DISCLAIMER
-   <#
-      DISCLAIMER:
-
-      - Use at your own risk, etc.
-      - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
-      - This is a third-party Software
-      - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
-      - The Software is not supported by Microsoft Corp (MSFT)
-      - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
-      - If you disagree with any of the Terms, and any Conditions declared: Just delete it and build your own solution
-  #>
-   #endregion DISCLAIMER
 }
+
+#region LICENSE
+<#
+   BSD 3-Clause License
+
+   Copyright (c) 2021, enabling Technology
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+   3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#>
+#endregion LICENSE
+
+#region DISCLAIMER
+<#
+   DISCLAIMER:
+   - Use at your own risk, etc.
+   - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+   - This is a third-party Software
+   - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+   - The Software is not supported by Microsoft Corp (MSFT)
+   - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+   - If you disagree with any of the terms, and any conditions declared: Just delete it and build your own solution
+#>
+#endregion DISCLAIMER

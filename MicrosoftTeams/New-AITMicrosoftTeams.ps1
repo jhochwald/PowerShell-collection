@@ -41,40 +41,40 @@
       Multiple values are supported.
 
       .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -mfa -DisplayName 'Alright Support'
+      PS C:\> .\New-AITMicrosoftTeams -mfa -DisplayName 'Contoso Support'
 
-      Creates the Microsoft Team 'Alright Support'. Uses Weblog (supports MFA)
+      Creates the Microsoft Team 'Contoso Support'. Uses Weblog (supports MFA)
 
       .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -msTeamsCreds $O365 -DisplayName 'Alright Support'
+      PS C:\> .\New-AITMicrosoftTeams -msTeamsCreds $O365 -DisplayName 'Contoso Support'
 
-      Creates the Microsoft Team 'Alright Support'. Uses existing credentials stored in the variable $O365 to authenticate.
+      Creates the Microsoft Team 'Contoso Support'. Uses existing credentials stored in the variable $O365 to authenticate.
       This might be the perfect way for automation, but use stored credentials might also be insecure.
 
       .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Alright Support'
+      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Contoso Support'
 
-      Creates the Microsoft Team 'Alright Support'
-
-      .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Alright Support' -Alias 'AITSupport'
-
-      Creates the Microsoft Team 'Alright Support' with an Alias 'AITSupport'
+      Creates the Microsoft Team 'Contoso Support'
 
       .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Alright Infopool' -AccessType 'public'
+      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Contoso Support' -Alias 'AITSupport'
 
-      Creates the Microsoft Team 'Alright Infopool', public mean open to join for every member of the oganisation.
-
-      .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Alright Development' -Description 'Alright IT Development Team' -Owner 'john.doe@alright-it.com'
-
-      Creates the Microsoft Team 'Alright Development', sets a description and add 'john.doe@alright-it.com' as Owner.
+      Creates the Microsoft Team 'Contoso Support' with an Alias 'AITSupport'
 
       .EXAMPLE
-      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Alright Core Dev' -AddCreatorAsMember $true
+      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Contoso Info-pool' -AccessType 'public'
 
-      Creates the Microsoft Team 'Alright Core Dev' and adds the creator to the new Team.
+      Creates the Microsoft Team 'Contoso Info-pool', public mean open to join for every member of the organization.
+
+      .EXAMPLE
+      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Contoso Development' -Description 'Contoso IT Development Team' -Owner 'john.doe@acontoso.com'
+
+      Creates the Microsoft Team 'Contoso Development', sets a description and add 'john.doe@contoso.com' as Owner.
+
+      .EXAMPLE
+      PS C:\> .\New-AITMicrosoftTeams -DisplayName 'Contoso Core Dev' -AddCreatorAsMember $true
+
+      Creates the Microsoft Team 'Contoso Core Dev' and adds the creator to the new Team.
 
       .EXAMPLE
       PS C:\> Install-Module -Name MicrosoftTeams
@@ -82,18 +82,6 @@
       Install the dependency Module from Microsoft via PowerShellGet.
 
       .NOTES
-      Version: 1.0.3
-
-      GUID: 0bb4aede-bf99-480a-aa7f-8535c742b417
-
-      Author: Joerg Hochwald
-
-      Companyname: Alright IT GmbH
-
-      Copyright: Copyright (c) 2019, Alright IT GmbH - All rights reserved.
-
-      License: https://opensource.org/licenses/BSD-3-Clause
-
       Releasenotes:
       1.0.3 2019-04-26: Fix Module Statement to use the correct version (0.9.6) to avoid issues with our workaround.
       1.0.2 2019-02-05: Reintroduce the -MFA switch to support the web based authentication. Prevent issues in non ADFS implementations.
@@ -108,9 +96,6 @@
 
       Install it with PowerShellGet:
       PS C:\> Install-Module -Name MicrosoftTeams -RequiredVersion 0.9.6
-
-      .LINK
-      https://www.alright-it.com
 
       .LINK
       https://www.powershellgallery.com/packages/MicrosoftTeams/0.9.6
@@ -431,3 +416,33 @@ end
 {
    Write-Verbose -Message ('Created the Team {0}' -f $DisplayName)
 }
+
+#region LICENSE
+<#
+   BSD 3-Clause License
+
+   Copyright (c) 2021, enabling Technology
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+   3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#>
+#endregion LICENSE
+
+#region DISCLAIMER
+<#
+   DISCLAIMER:
+   - Use at your own risk, etc.
+   - This is open-source software, if you find an issue try to fix it yourself. There is no support and/or warranty in any kind
+   - This is a third-party Software
+   - The developer of this Software is NOT sponsored by or affiliated with Microsoft Corp (MSFT) or any of its subsidiaries in any way
+   - The Software is not supported by Microsoft Corp (MSFT)
+   - By using the Software, you agree to the License, Terms, and any Conditions declared and described above
+   - If you disagree with any of the terms, and any conditions declared: Just delete it and build your own solution
+#>
+#endregion DISCLAIMER

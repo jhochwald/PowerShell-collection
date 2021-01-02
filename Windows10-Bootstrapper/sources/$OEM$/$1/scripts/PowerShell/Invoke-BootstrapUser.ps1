@@ -14,7 +14,7 @@
       Version 1.7.2
 
       .LINK
-      http://beyond-datacenter.com
+      http://enatec.io
 
       .LINK
       https://github.com/Disassembler0/Win10-Initial-Setup-Script

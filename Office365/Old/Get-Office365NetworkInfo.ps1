@@ -1,13 +1,13 @@
 function Get-Office365NetworkInfo
 {
-	<#
+   <#
 			.SYNOPSIS
 			The function gets the Office 365 URLs and IP address ranges.
-	
+
 			.DESCRIPTION
 			Office 365 URLs and IP address ranges via the Microsoft published XML format.
 			You can filter what product (e.g. O365, SPO, etc.) and type (IPV4, IPV6, or URL) and select the Environment to use.
-	
+
 			.PARAMETER Type
 			Service Types to get, default is All for everything
 			Multiple values are allowd
@@ -17,7 +17,7 @@ function Get-Office365NetworkInfo
 			URL = Only URLs
 			IPv4 = Only IPv4 Information
 			IPv6 = Only IPv6 Information
-	
+
 			.PARAMETER Product
 			Products to get, default is All for everthing
 			Multiple values are allowd
@@ -39,7 +39,7 @@ function Get-Office365NetworkInfo
 			RCA = Office 365 remote analyzer tools
 			Sway = Microsoft Sway
 			EX-Fed = Exchange Federation
-			OfficeMobile = 
+			OfficeMobile =
 			CRLs = Certificate revocation list
 			OfficeiPad = Office for iOS
 			EOP = Exchange Online Protection
@@ -49,7 +49,7 @@ function Get-Office365NetworkInfo
 
 			.PARAMETER Environment
 			The Office365/Azure Environment to use, Default is Office 365 Worldwide (+GCC)
-			Multiple values are not allowd
+			Multiple values are not allowed
 
 			Possible values are:
 			Default = Office 365 Worldwide (+GCC)
@@ -132,200 +132,200 @@ function Get-Office365NetworkInfo
 			[Changed] Refactored some older code
 			[Removed] Removed extensive comments (Great job Josh)
 			[Removed] Cisco Config Output (Has an own Filter-Function now)
-			[Fix] Add missing products for USDefense & USDoD 
+			[Fix] Add missing products for USDefense & USDoD
 	#>
-	
-	[CmdletBinding()]
-	[OutputType([psobject])]
-	param
-	(
-		
-		[Parameter(ValueFromPipeline,
-				ValueFromPipelineByPropertyName,
-		Position = 1)]
-		[ValidateNotNullOrEmpty()]
-		[ValidateSet('All', 'o365', 'Portal', 'OfficeOnline', 'SfB', 'LYO', 'Planner', 'Teams', 'ProPlus', 'OneNote', 'Yammer', 'EXO', 'Identity', 'Office365Video', 'WAC', 'SPO', 'RCA', 'Sway', 'EX-Fed', 'OfficeMobile', 'CRLs', 'OfficeiPad', 'EOP', IgnoreCase)]
-		[string[]]
-		$Product = 'All',
-		[Parameter(ValueFromPipeline,
-				ValueFromPipelineByPropertyName,
-		Position = 2)]
-		[ValidateNotNullOrEmpty()]
-		[ValidateSet('All', 'URL', 'IPv4', 'IPv6', IgnoreCase)]
-		[string[]]
-		$Type = 'All',
-		[Parameter(ValueFromPipeline,
-				ValueFromPipelineByPropertyName,
-		Position = 3)]
-		[ValidateSet('USDefense', 'USDoD', 'Telekom', '21Vianet', 'Default')]
-		[Alias('AzureEnvironment' ,'Office365Environment' ,'O365Environment')]
-		[string]
-		$Environment = 'Default'
-	)
 
-	begin
-	{
-		# Cleanup
-		$Office365IPAddresses = $null
+   [CmdletBinding()]
+   [OutputType([psobject])]
+   param
+   (
 
-		switch ($Environment)
-		{
-			'USDefense'
-			{
-				$Office365IPAddresses = 'https://support.content.office.net/en-us/static/O365IPAddresses_USDefense.xml'
-			}
-			'USDoD'
-			{
-				$Office365IPAddresses = 'https://support.content.office.net/en-us/static/O365IPAddresses_USDoD.xml'
-			}
-			'Telekom'
-			{
-				# Download only: https://www.microsoft.com/en-us/download/confirmation.aspx?id=54770
-				Write-Warning -Message 'There is no dedicated List for Germany avalible, yet!'
-				Write-Warning -Message  'Ask Microsoft to publish them'
-				$Office365IPAddresses = $null
-			}
-			'21Vianet'
-			{
-				# Download only: https://www.microsoft.com/en-ca/download/confirmation.aspx?id=42064
-				Write-Warning -Message 'There is no dedicated List for Chine avalible, yet!'
-				Write-Warning -Message  'Ask Microsoft to publish them'
-				$Office365IPAddresses = $null
-			}
-			
-			default
-			{
-				$Office365IPAddresses = 'https://support.content.office.net/en-us/static/O365IPAddresses.xml'
-			}
-		}
+      [Parameter(ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 1)]
+      [ValidateNotNullOrEmpty()]
+      [ValidateSet('All', 'o365', 'Portal', 'OfficeOnline', 'SfB', 'LYO', 'Planner', 'Teams', 'ProPlus', 'OneNote', 'Yammer', 'EXO', 'Identity', 'Office365Video', 'WAC', 'SPO', 'RCA', 'Sway', 'EX-Fed', 'OfficeMobile', 'CRLs', 'OfficeiPad', 'EOP', IgnoreCase)]
+      [string[]]
+      $Product = 'All',
+      [Parameter(ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 2)]
+      [ValidateNotNullOrEmpty()]
+      [ValidateSet('All', 'URL', 'IPv4', 'IPv6', IgnoreCase)]
+      [string[]]
+      $Type = 'All',
+      [Parameter(ValueFromPipeline,
+         ValueFromPipelineByPropertyName,
+         Position = 3)]
+      [ValidateSet('USDefense', 'USDoD', 'Telekom', '21Vianet', 'Default')]
+      [Alias('AzureEnvironment' , 'Office365Environment' , 'O365Environment')]
+      [string]
+      $Environment = 'Default'
+   )
 
-		if (-not ($Office365IPAddresses)) 
-		{
-			exit 1
-		}
+   begin
+   {
+      # Cleanup
+      $Office365IPAddresses = $null
 
-		Write-Verbose -Message ('Get the Office 365 URLs and IP address ranges from {0}.' -f $Office365IPAddresses)
+      switch ($Environment)
+      {
+         'USDefense'
+         {
+            $Office365IPAddresses = 'https://support.content.office.net/en-us/static/O365IPAddresses_USDefense.xml'
+         }
+         'USDoD'
+         {
+            $Office365IPAddresses = 'https://support.content.office.net/en-us/static/O365IPAddresses_USDoD.xml'
+         }
+         'Telekom'
+         {
+            # Download only: https://www.microsoft.com/en-us/download/confirmation.aspx?id=54770
+            Write-Warning -Message 'There is no dedicated List for Germany avalible, yet!'
+            Write-Warning -Message  'Ask Microsoft to publish them'
+            $Office365IPAddresses = $null
+         }
+         '21Vianet'
+         {
+            # Download only: https://www.microsoft.com/en-ca/download/confirmation.aspx?id=42064
+            Write-Warning -Message 'There is no dedicated List for Chine avalible, yet!'
+            Write-Warning -Message  'Ask Microsoft to publish them'
+            $Office365IPAddresses = $null
+         }
 
-		# Cleanup
-		$Office365IPAddressObj = @()
-		$Office365ObjectInfoProduct = @()
-		$Office365ObjectInfoType = @()
+         default
+         {
+            $Office365IPAddresses = 'https://support.content.office.net/en-us/static/O365IPAddresses.xml'
+         }
+      }
 
-		# ExpressRoute Information (Both list are not finished yet)
-		$ExpressRouteEnabled = @(
-			'EXO', 
-			'EOP', 
-			'LYO', 
-			'Teams', 
-			'o365', 
-			'SPO'
-		)
+      if (-not ($Office365IPAddresses))
+      {
+         exit 1
+      }
 
-		$ExpressRouteDisabled = @(
-			'Office365Video', 
-			'Yammer', 
-			'Sway', 
-			'Planner', 
-			'ProPlus', 
-			'CRLs'
-		)
-	}
-	
-	process
-	{
-		try
-		{
-			$paramInvokeWebRequest = @{
-				Uri              = $Office365IPAddresses
-				DisableKeepAlive = $true
-				ErrorAction      = 'Stop'
-			}
-			[XML]$Office365XMLData = (Invoke-WebRequest @paramInvokeWebRequest)
-		}
-		catch
-		{
-			Write-Error -Message ('Failed to get the Office 365 IP address & URL information from {0}.' -f $Office365IPAddresses) -ErrorAction Stop
-			
-			exit 1
-		}
+      Write-Verbose -Message ('Get the Office 365 URLs and IP address ranges from {0}.' -f $Office365IPAddresses)
 
-		ForEach($Office365Product in $Office365XMLData.Products.Product)
-		{
-			ForEach($AddressList in $Office365Product.AddressList)
-			{
-				if ($AddressList.Address) 
-				{
-					# Try to figure out if ExpressRoute is enabled for this product
-					if ($ExpressRouteEnabled -contains $Office365Product.Name) 
-					{
-						$ExpressRoute = 'Yes'
-					}
-					elseif ($ExpressRouteDisabled -contains $Office365Product.Name) 
-					{
-						$ExpressRoute = 'No'
-					}
-					else 
-					{
-						# Everything else
-						$ExpressRoute = 'Unknown'
-					}
+      # Cleanup
+      $Office365IPAddressObj = @()
+      $Office365ObjectInfoProduct = @()
+      $Office365ObjectInfoType = @()
 
-					# Ordered is slower, but we like it this way
-					$Office365IPAddressParams = [ordered]@{
-						Product      = $Office365Product.Name
-						Type         = $AddressList.Type
-						Addresses    = $AddressList.Address
-						ExpressRoute = $ExpressRoute
-					}
+      # ExpressRoute Information (Both list are not finished yet)
+      $ExpressRouteEnabled = @(
+         'EXO',
+         'EOP',
+         'LYO',
+         'Teams',
+         'o365',
+         'SPO'
+      )
 
-					# Append to our Object
-					$Office365IPAddressObj += (New-Object -TypeName PSObject -Property $Office365IPAddressParams)
-				}
-			}
-		}
+      $ExpressRouteDisabled = @(
+         'Office365Video',
+         'Yammer',
+         'Sway',
+         'Planner',
+         'ProPlus',
+         'CRLs'
+      )
+   }
 
-		# Do we Filter?
-		if ($Product -ne 'All') 
-		{
-			Write-Verbose -Message ('Display only the {0}' -f $Product)
+   process
+   {
+      try
+      {
+         $paramInvokeWebRequest = @{
+            Uri              = $Office365IPAddresses
+            DisableKeepAlive = $true
+            ErrorAction      = 'Stop'
+         }
+         [XML]$Office365XMLData = (Invoke-WebRequest @paramInvokeWebRequest)
+      }
+      catch
+      {
+         Write-Error -Message ('Failed to get the Office 365 IP address & URL information from {0}.' -f $Office365IPAddresses) -ErrorAction Stop
 
-			foreach ($SingleProduct in $Product) 
-			{
-				$Office365ObjectInfoProduct += $Office365IPAddressObj | Where-Object -FilterScript {
-					$_.Product -eq $SingleProduct
-				}
-			}
-		}
-		else 
-		{
-			$Office365ObjectInfoProduct += $Office365IPAddressObj
-		}
+         exit 1
+      }
+
+      ForEach ($Office365Product in $Office365XMLData.Products.Product)
+      {
+         ForEach ($AddressList in $Office365Product.AddressList)
+         {
+            if ($AddressList.Address)
+            {
+               # Try to figure out if ExpressRoute is enabled for this product
+               if ($ExpressRouteEnabled -contains $Office365Product.Name)
+               {
+                  $ExpressRoute = 'Yes'
+               }
+               elseif ($ExpressRouteDisabled -contains $Office365Product.Name)
+               {
+                  $ExpressRoute = 'No'
+               }
+               else
+               {
+                  # Everything else
+                  $ExpressRoute = 'Unknown'
+               }
+
+               # Ordered is slower, but we like it this way
+               $Office365IPAddressParams = [ordered]@{
+                  Product      = $Office365Product.Name
+                  Type         = $AddressList.Type
+                  Addresses    = $AddressList.Address
+                  ExpressRoute = $ExpressRoute
+               }
+
+               # Append to our Object
+               $Office365IPAddressObj += (New-Object -TypeName PSObject -Property $Office365IPAddressParams)
+            }
+         }
+      }
+
+      # Do we Filter?
+      if ($Product -ne 'All')
+      {
+         Write-Verbose -Message ('Display only the {0}' -f $Product)
+
+         foreach ($SingleProduct in $Product)
+         {
+            $Office365ObjectInfoProduct += $Office365IPAddressObj | Where-Object -FilterScript {
+               $_.Product -eq $SingleProduct
+            }
+         }
+      }
+      else
+      {
+         $Office365ObjectInfoProduct += $Office365IPAddressObj
+      }
 
 
-		if ($Type -ne 'All') 
-		{
-			Write-Verbose -Message ('Display only {0}' -f $Type)
+      if ($Type -ne 'All')
+      {
+         Write-Verbose -Message ('Display only {0}' -f $Type)
 
-			foreach ($SingleType in $Type) 
-			{
-				$Office365ObjectInfoType += $Office365ObjectInfoProduct | Where-Object -FilterScript {
-					$_.Type -eq $SingleType
-				}
-			}
-		}
-		else 
-		{
-			$Office365ObjectInfoType += $Office365ObjectInfoProduct
-		}
-	}
-	
-	end
-	{
-		$Office365ObjectInfoType | Sort-Object -Property Product
-		
-	}
+         foreach ($SingleType in $Type)
+         {
+            $Office365ObjectInfoType += $Office365ObjectInfoProduct | Where-Object -FilterScript {
+               $_.Type -eq $SingleType
+            }
+         }
+      }
+      else
+      {
+         $Office365ObjectInfoType += $Office365ObjectInfoProduct
+      }
+   }
 
-	<#
+   end
+   {
+      $Office365ObjectInfoType | Sort-Object -Property Product
+
+   }
+
+   <#
 			Original Notes from the Author:
 
 			I created this function a while ago. Basically, it was built to create several lists for equipment is used.
@@ -333,7 +333,7 @@ function Get-Office365NetworkInfo
 			It started as something I created just for myself, to tweak my own stuff.
 	#>
 
-	<#
+   <#
 			Original License from the Author:
 
 			Copyright 2015-2017 by Joerg Hochwald
