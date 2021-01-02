@@ -1,4 +1,4 @@
-﻿function Get-Unifi5minutesApStats
+function Get-Unifi5minutesApStats
 {
    <#
          .SYNOPSIS

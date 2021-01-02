@@ -1,4 +1,4 @@
-﻿function Invoke-UnifiReconnectClient
+function Invoke-UnifiReconnectClient
 {
    <#
          .SYNOPSIS

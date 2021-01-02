@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules Pester
+#requires -Version 3.0 -Modules Pester
 
 
 # Taken with love from https://raw.githubusercontent.com/RamblingCookieMonster/PSDiskPart/master/Tests/appveyor.pester.ps1

@@ -1,4 +1,4 @@
-﻿#region CHANGELOG
+#region CHANGELOG
 <#
       Version: 1.0.11 - 2019-02-01
 

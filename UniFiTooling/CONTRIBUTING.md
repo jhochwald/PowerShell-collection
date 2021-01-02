@@ -1,4 +1,4 @@
-﻿# Contribution Guide
+# Contribution Guide
 
 This is a guide for everyone interested in contributing to our open source projects. It's based on well known community workflows.
 

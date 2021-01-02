@@ -1,4 +1,4 @@
-﻿function Get-UnifiHourlySiteStats
+function Get-UnifiHourlySiteStats
 {
    <#
          .SYNOPSIS

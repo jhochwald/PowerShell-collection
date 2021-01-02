@@ -1,4 +1,4 @@
-﻿function Get-ADExchangeServers
+function Get-ADExchangeServers
 {
 	<#
 			.SYNOPSIS

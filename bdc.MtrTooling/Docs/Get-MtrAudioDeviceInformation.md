@@ -1,4 +1,4 @@
-﻿# Get-MtrAudioDeviceInformation
+# Get-MtrAudioDeviceInformation
 
 ## SYNOPSIS
 Get information about all attached Audio devices

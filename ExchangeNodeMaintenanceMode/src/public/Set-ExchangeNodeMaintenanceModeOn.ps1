@@ -1,4 +1,4 @@
-﻿function Set-ExchangeNodeMaintenanceModeOn
+function Set-ExchangeNodeMaintenanceModeOn
 {
 	<#
 			.SYNOPSIS

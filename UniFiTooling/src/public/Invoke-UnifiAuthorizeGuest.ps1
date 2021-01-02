@@ -1,4 +1,4 @@
-﻿function Invoke-UnifiAuthorizeGuest
+function Invoke-UnifiAuthorizeGuest
 {
    <#
          .SYNOPSIS

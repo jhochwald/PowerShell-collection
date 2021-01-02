@@ -1,4 +1,4 @@
-﻿function ConvertTo-UnixTimeStamp
+function ConvertTo-UnixTimeStamp
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Get-UnifiDailySiteStats
+function Get-UnifiDailySiteStats
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿function Get-ExchangeAdminExecution
+function Get-ExchangeAdminExecution
 {
 	<#
 			.SYNOPSIS

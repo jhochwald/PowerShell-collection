@@ -1,4 +1,4 @@
-﻿---
+---
 external help file: UniFiTooling-help.xml
 HelpVersion: 1.0.8
 Locale: en-US

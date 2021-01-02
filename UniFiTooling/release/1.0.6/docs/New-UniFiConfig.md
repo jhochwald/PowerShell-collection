@@ -1,4 +1,4 @@
-﻿---
+---
 author: Joerg Hochwald
 external help file: UniFiTooling-help.xml
 Module Name: UniFiTooling

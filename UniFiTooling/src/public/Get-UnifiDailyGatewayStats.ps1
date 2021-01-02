@@ -1,4 +1,4 @@
-﻿function Get-UnifiDailyGatewayStats
+function Get-UnifiDailyGatewayStats
 {
    <#
          .SYNOPSIS

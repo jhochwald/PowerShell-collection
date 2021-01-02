@@ -1,4 +1,4 @@
-﻿function Get-UniFiIsAlive
+function Get-UniFiIsAlive
 {
    <#
          .SYNOPSIS

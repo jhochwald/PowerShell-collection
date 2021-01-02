@@ -1,4 +1,4 @@
-﻿function ConvertTo-UniFiValidMacAddress
+function ConvertTo-UniFiValidMacAddress
 {
    <#
          .SYNOPSIS

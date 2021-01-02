@@ -1,4 +1,4 @@
-﻿# Invoke-mtrDisableModernAuthentication
+# Invoke-mtrDisableModernAuthentication
 
 ## SYNOPSIS
 Disable Modern Authentication for a Microsoft Teams Room Device Account

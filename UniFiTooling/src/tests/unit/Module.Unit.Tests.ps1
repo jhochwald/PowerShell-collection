@@ -1,4 +1,4 @@
-﻿
+
 #TODO: Replace PATH
 $here = 'C:\scripts\PowerShell\dev\UniFiTooling'
 

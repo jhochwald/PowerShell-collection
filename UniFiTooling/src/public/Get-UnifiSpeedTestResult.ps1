@@ -1,4 +1,4 @@
-﻿function Get-UnifiSpeedTestResult
+function Get-UnifiSpeedTestResult
 {
    <#
          .SYNOPSIS

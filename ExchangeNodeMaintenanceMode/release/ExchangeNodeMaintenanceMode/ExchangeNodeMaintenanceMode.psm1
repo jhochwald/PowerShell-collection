@@ -1,4 +1,4 @@
-﻿## Pre-Loaded Module code ##
+## Pre-Loaded Module code ##
 
 <#
  Put all code that must be run prior to function dot sourcing here.

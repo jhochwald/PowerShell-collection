@@ -1,4 +1,4 @@
-﻿#region ModulePreLoaded
+#region ModulePreLoaded
 <#
    This is an early beta version! I can't recommend using it in production.
 #>

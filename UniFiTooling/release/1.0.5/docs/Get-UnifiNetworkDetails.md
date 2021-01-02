@@ -1,4 +1,4 @@
-﻿---
+---
 author: Joerg Hochwald
 category: UNIFITOOLING
 external help file: UniFiTooling-help.xml

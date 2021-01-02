@@ -1,4 +1,4 @@
-﻿# Get-MtrVideoDeviceInformation
+# Get-MtrVideoDeviceInformation
 
 ## SYNOPSIS
 Get information about all attached Video devices

@@ -1,4 +1,4 @@
-﻿function Set-UniFiDefaultRequestHeader
+function Set-UniFiDefaultRequestHeader
 {
    <#
          .SYNOPSIS

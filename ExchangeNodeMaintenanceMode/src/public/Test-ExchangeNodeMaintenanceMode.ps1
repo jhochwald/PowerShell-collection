@@ -1,4 +1,4 @@
-﻿function Test-ExchangeNodeMaintenanceMode
+function Test-ExchangeNodeMaintenanceMode
 {
 	<#
 			.SYNOPSIS

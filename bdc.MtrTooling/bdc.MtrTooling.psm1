@@ -1,4 +1,4 @@
-﻿function New-MtrConfigrationFile
+function New-MtrConfigrationFile
 {
    <#
          .SYNOPSIS

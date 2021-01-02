@@ -1,4 +1,4 @@
-﻿function New-UnifiClientDevice
+function New-UnifiClientDevice
 {
    <#
          .SYNOPSIS

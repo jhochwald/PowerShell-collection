@@ -1,4 +1,4 @@
-﻿function Get-CallerPreference {
+function Get-CallerPreference {
     <#
     .Synopsis
        Fetches "Preference" variable values from the caller's scope.

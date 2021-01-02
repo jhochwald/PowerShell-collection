@@ -1,4 +1,4 @@
-﻿# New-MtrConfigrationFile
+# New-MtrConfigrationFile
 
 ## SYNOPSIS
 Generate a  Microsoft Teams Room (MTR) System configuration file

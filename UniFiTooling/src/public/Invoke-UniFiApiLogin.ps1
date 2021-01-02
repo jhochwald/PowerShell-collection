@@ -1,4 +1,4 @@
-﻿function Invoke-UniFiApiLogin
+function Invoke-UniFiApiLogin
 {
    <#
          .SYNOPSIS

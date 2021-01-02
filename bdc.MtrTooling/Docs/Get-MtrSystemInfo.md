@@ -1,4 +1,4 @@
-﻿# Get-MtrSystemInfo
+# Get-MtrSystemInfo
 
 ## SYNOPSIS
 Get System information about the the Microsoft Teams Room Device

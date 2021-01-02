@@ -1,4 +1,4 @@
-﻿## TOPIC
+## TOPIC
 ```
 	Microsoft Teams Room (MTR) System Tooling
 ```

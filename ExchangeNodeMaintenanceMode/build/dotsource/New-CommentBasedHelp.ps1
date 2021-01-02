@@ -1,4 +1,4 @@
-﻿function Script:New-CommentBasedHelp {
+function Script:New-CommentBasedHelp {
     <#
     .SYNOPSIS
         Create comment based help for a function.

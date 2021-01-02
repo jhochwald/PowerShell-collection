@@ -1,4 +1,4 @@
-﻿function Get-UnifiDailyApStats
+function Get-UnifiDailyApStats
 {
    <#
          .SYNOPSIS

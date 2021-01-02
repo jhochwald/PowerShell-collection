@@ -1,4 +1,4 @@
-﻿# Get-MtrDisplayDeviceInformation
+# Get-MtrDisplayDeviceInformation
 
 ## SYNOPSIS
 Get information about all attached Display devices

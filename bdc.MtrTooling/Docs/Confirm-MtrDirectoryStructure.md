@@ -1,4 +1,4 @@
-﻿# Confirm-MtrDirectoryStructure
+# Confirm-MtrDirectoryStructure
 
 ## SYNOPSIS
 Create the Wallpapers folder within the MTR local state directory

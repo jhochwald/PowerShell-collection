@@ -1,4 +1,4 @@
-﻿# Test-MtrWallpaper
+# Test-MtrWallpaper
 
 ## SYNOPSIS
 Check if a given Wallpaperfile has the correct resolution

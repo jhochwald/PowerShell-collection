@@ -1,4 +1,4 @@
-﻿function Invoke-UnifiBlockClient
+function Invoke-UnifiBlockClient
 {
    <#
          .SYNOPSIS

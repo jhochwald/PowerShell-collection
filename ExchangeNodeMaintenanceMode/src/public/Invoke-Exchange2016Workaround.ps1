@@ -1,4 +1,4 @@
-﻿function Invoke-Exchange2016Workaround
+function Invoke-Exchange2016Workaround
 {
 	<#
 			.SYNOPSIS

@@ -1,4 +1,4 @@
-﻿#Requires -version 5
+#Requires -version 5
 function Script:Upload-ProjectToPSGallery {
     <#
         .SYNOPSIS

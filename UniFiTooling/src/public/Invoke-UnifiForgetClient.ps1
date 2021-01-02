@@ -1,4 +1,4 @@
-﻿function Invoke-UnifiForgetClient
+function Invoke-UnifiForgetClient
 {
    <#
          .SYNOPSIS

@@ -1,4 +1,4 @@
-﻿# Get-MtrAppStatus
+# Get-MtrAppStatus
 
 ## SYNOPSIS
 Get information about the Teams Room App Status

@@ -1,4 +1,4 @@
-﻿#requires -Version 3.0 -Modules Pester
+#requires -Version 3.0 -Modules Pester
 
 <#
 		.SYNOPSIS

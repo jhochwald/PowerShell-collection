@@ -1,4 +1,4 @@
-﻿function New-UniFiConfig
+function New-UniFiConfig
 {
    <#
          .SYNOPSIS

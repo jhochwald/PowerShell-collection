@@ -1,4 +1,4 @@
-﻿function Invoke-CrapCleaner 
+function Invoke-CrapCleaner 
 	{
 		<#
 				.SYNOPSIS

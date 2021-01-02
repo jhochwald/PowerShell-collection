@@ -1,4 +1,4 @@
-﻿function Restart-ExchangeClusterNode
+function Restart-ExchangeClusterNode
 {
 	<#
 			.SYNOPSIS

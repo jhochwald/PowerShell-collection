@@ -1,4 +1,4 @@
-﻿function Get-UnifiFirewallGroupBody
+function Get-UnifiFirewallGroupBody
 {
    <#
          .SYNOPSIS

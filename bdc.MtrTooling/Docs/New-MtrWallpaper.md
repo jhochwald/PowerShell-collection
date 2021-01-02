@@ -1,4 +1,4 @@
-﻿# New-MtrWallpaper
+# New-MtrWallpaper
 
 ## SYNOPSIS
 Configure a new wallpaper for Microsoft Teams Room (MTR) System
