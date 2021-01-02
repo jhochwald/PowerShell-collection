@@ -1,0 +1,10 @@
+{
+	"Login": {
+		"Username": "unfi.admin.user",
+		"Password": "mySuperSecretPassworHere"
+	},
+	"protocol": "https",
+	"SelfSignedCert": true,
+	"Hostname": "unifi.contoso.com",
+	"Port": 8443
+}

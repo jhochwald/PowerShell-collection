@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpInfo xmlns="http://schemas.microsoft.com/powershell/help/2010/05">
+  <HelpContentURI>https://github.com/Enatec/UniFiTooling/raw/master/docs/README.md</HelpContentURI>
+  <SupportedUICultures>
+    <UICulture>
+      <UICultureName>en-US</UICultureName>
+      <UICultureVersion>1.0.8</UICultureVersion>
+    </UICulture>
+  </SupportedUICultures>
+</HelpInfo>

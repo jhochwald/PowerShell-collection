@@ -1,0 +1,1429 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Code Health Report - UniFiTooling (Unit Tests)">
+    <meta name="author" content="PSCodeHealth">
+
+    <title>Code Health Report - UniFiTooling (Unit Tests)</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="all" rel="stylesheet">
+    <style>
+        header > .row {
+            margin-bottom: 22px;
+        }
+        .left-header {
+            margin-top: 9px;
+        }
+        .left-header a,
+        .left-header a:hover,
+        .left-header a:focus {
+            text-decoration: none;
+        }
+        .right-header {
+            margin-top: 47px;
+            text-align: left;
+        }
+        .right-header-data {
+            color: #777;
+        }
+        .logo {
+            margin-right: 32px;
+            width: 80px;
+        }
+        /* Hide for mobile, show later */
+        .sidebar {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 1000;
+                display: block;
+                padding: 158px 2px 2px 7px;
+                overflow-x: hidden;
+                overflow-y: auto; /* Scrollable content */
+            }
+        }
+
+        /* Sidebar navigation */
+        .nav-sidebar {
+            margin-right: -21px;
+            margin-bottom: 20px;
+            margin-left: -20px;
+        }
+        .nav-stacked > li + li {
+            margin-top: 0px
+        }
+        .nav-sidebar > li > a {
+            padding: 13px 1px 13px 27px;
+            font-weight: 600;
+            border-bottom: 1px solid #bce8f1;
+        }
+        .nav-sidebar > li:first-child {
+            border-top: 1px solid #bce8f1;
+        }
+        .nav-sidebar > li > a:hover {
+            background-color: #bce8f1;
+        }
+        .nav-sidebar > li > a:active,
+        .nav-sidebar > li > a:focus {
+            background-color: #d9edf7;
+        }
+        .nav-sidebar > li.active {
+            background-color: #d9edf7;
+        }
+
+        /* Panels */
+        .panelContainer {
+            padding: 0px 13px;
+        }
+        .panel-success .panel-body > h2 {
+            margin: 0px;
+            color: #3c763d;
+        }
+        .panel-info .panel-body > h2 {
+            margin: 0px;
+            color: #31708f;
+        }
+        .panel-warning .panel-body > h2 {
+            margin: 0px;
+            color: #8a6d3b;
+        }
+        .panel-danger .panel-body > h2 {
+            margin: 0px;
+            color: #a94442;
+        }
+
+        /* Tables */
+        tr:last-child {
+            font-weight: bold
+        }
+        .text-success {
+            color: #3c763d;
+        }
+        .text-warning {
+            color: #8a6d3b;
+        }
+        .text-danger {
+            color: #a94442;
+        }
+        .tablePanel {
+            margin-top: 18px;
+        }
+        .tablePanel .panel-title {
+            font-weight: 600;
+            margin: 7px 0px;
+        }
+        .tablePanel thead > tr {
+            border-bottom: 3px solid rgb(221, 221, 221);
+        }
+        .tablePanel tr:last-child {
+            font-weight: normal;
+        }
+        .tablePanel td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+        td.info {
+            color: #31708f;
+            background-color: #d9edf7;
+        }
+        td.danger {
+            color: rgb(169, 68, 66);
+            background-color: rgb(242, 222, 222);
+        }
+        td.warning {
+            color: rgb(138, 109, 59);
+            background-color: rgb(252, 248, 227);
+        }
+        td.success {
+            color: rgb(60, 118, 61);
+            background-color: rgb(223, 240, 216);
+        }
+        td > button.btn {
+            margin-bottom: 2px;
+        }
+        td.cell-largeContent {
+            font-weight: normal !important;
+            padding: 9px 0px;
+            border-bottom: 1px solid;
+            border-top: 1px solid;
+            border-collapse: collapse;
+        }
+        td > table {
+            display: block;
+        }
+        th.widecolumn {
+            width: 37%;
+        }
+        th.narrowColum {
+            width: 21%;
+        }
+
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="container-fluid">
+            <div class="row">
+                <div class="col-sm-5 col-sm-offset-3 col-md-6 col-md-offset-1 col-lg-6 col-lg-offset-2 left-header">
+                    <h1>
+                        <a href="https://github.com/MathieuBuisson/PSCodeHealth" target="_blank">
+                            <img class="logo" src= "https://github.com/MathieuBuisson/PSCodeHealth/raw/master/PSCodeHealth/Assets/PSCodeHealthLogo.png" alt="PSCodeHealth Logo"/>
+                        </a>
+                        Code Health Report - UniFiTooling <small>(Unit Tests)</small>
+                    </h1>
+                </div>
+                <div class="col-sm-4 col-md-5 col-lg-4 right-header">
+                    <h5>
+                        Analyzed path :<span class="right-header-data"> C:\scripts\PowerShell\dev\UniFiTooling\src\public\</span><br>
+                        Analysis date :<span class="right-header-data"> 2019-02-01 21:40:07Z</span>
+                    </h5>
+                </div>
+            </div>
+        </header>
+        <div class="tab-content">
+            <div class="row">
+                <div class="col-sm-3 col-md-1 col-lg-2 sidebar" role="navigation">
+                    <ul class="nav nav-sidebar nav-stacked">
+                    <li class="active"><a href="#summary" data-toggle="tab" aria-expanded="true">Summary</a></li>
+                    <li><a href="#bestPractices" data-toggle="tab">Style &amp; Best Practices</a></li>
+                    <li><a href="#maintainability" data-toggle="tab">Maintainability</a></li>
+                    <li><a href="#tests" data-toggle="tab">Tests</a></li>
+                    </ul>
+                </div>
+            </div>
+            <section id="summary" class="tab-pane fade in active">
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-file-code-o" aria-hidden="true">&nbsp;</i> Number of Files</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>29</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-code" aria-hidden="true">&nbsp;</i> Number of Functions</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>29</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-arrows-v" aria-hidden="true">&nbsp;</i> Lines of Code - Total</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>10080</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-plus-square-o" aria-hidden="true">&nbsp;</i> ScriptAnalyzer Findings</h3>
+                            </div>
+                            <table class="table">
+                                <tr class="text-success"><td>Errors</td><td>0</td></tr>
+                                <tr class="text-success"><td>Warnings</td><td>2</td></tr>
+                                <tr class="text-success"><td>Information</td><td>0</td></tr>
+                                <tr class="text-success"><td>Total</td><td>2</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o" aria-hidden="true">&nbsp;</i> Tests Pass Rate (%)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <canvas class="testPassRateChart" height="197"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-pie-chart" aria-hidden="true">&nbsp;</i> Test Coverage (%)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <canvas class="testCoverageChart" height="197"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="bestPractices" class="tab-pane fade">
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-plus-square-o" aria-hidden="true">&nbsp;</i> ScriptAnalyzer Findings - Total</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>2</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-ban" aria-hidden="true">&nbsp;</i> ScriptAnalyzer Errors</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-exclamation-triangle" aria-hidden="true">&nbsp;</i> ScriptAnalyzer Warnings</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>2</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-bar-chart" aria-hidden="true">&nbsp;</i> ScriptAnalyzer Findings - Average</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>0.07</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-info-circle" aria-hidden="true">&nbsp;</i> ScriptAnalyzer Info</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-question-circle" aria-hidden="true">&nbsp;</i> Functions Without Help</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2 col-sm-6 col-md-8 col-lg-7">
+                    <div class="panel panel-default tablePanel">
+                        <div class="panel-heading">
+                            <h2 class="panel-title"> Per Function Information</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-condensed text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="col-xs-3">Function Name</th>
+                                        <th class="col-xs-2">ScriptAnalyzer Findings</th>
+                                        <th class="col-xs-5">ScriptAnalyzer Findings Details</th>
+                                        <th class="col-xs-2">Contains Help</th>
+                                    </tr>                            
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Get-Unifi5minutesApStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesClientStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesGatewayStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesSiteStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyApStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyClientStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyGatewayStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailySiteStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiFirewallGroupDetails</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiFirewallGroups</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyApStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyClientStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyGatewayStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlySiteStats</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiNetworkDetails</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiNetworkList</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiSpeedTestResult</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UniFiApiLogin</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UniFiApiLogout</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiAuthorizeGuest</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiBlockClient</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiForgetClient</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiReconnectClient</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiUnauthorizeGuest</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiUnblockClient</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>New-UnifiClientDevice</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>New-UniFiConfig</td>
+                                        <td class="success">0</td>
+                                        <td class=""></td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Set-UnifiFirewallGroup</td>
+                                        <td class="success">1</td>
+                                        <td class="warning">
+                                            <button type="button" class="btn btn-warning btn-sm cell-expand-collapse"> Expand</button>
+                                            <table>
+                                                 <tr>
+                                                    <td class="warning cell-largeContent">ScriptName : Set-UnifiFirewallGroup.ps1<br>
+Line (in the function) : 1<br>
+Severity                      : Warning<br>
+RuleName                      : PSUseShouldProcessForStateChangingFunctions<br>
+Message                       : Function 'Set-UnifiFirewallGroup' has verb that could change system state. Therefore, the function has to support 'ShouldProcess'.<br>
+                                                    </td>
+                                                </tr>
+                                             </table>
+                                        </td>
+                                        <td class="success">True</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Set-UnifiNetworkDetails</td>
+                                        <td class="success">1</td>
+                                        <td class="warning">
+                                            <button type="button" class="btn btn-warning btn-sm cell-expand-collapse"> Expand</button>
+                                            <table>
+                                                 <tr>
+                                                    <td class="warning cell-largeContent">ScriptName : Set-UnifiNetworkDetails.ps1<br>
+Line (in the function) : 1<br>
+Severity                      : Warning<br>
+RuleName                      : PSUseShouldProcessForStateChangingFunctions<br>
+Message                       : Function 'Set-UnifiNetworkDetails' has verb that could change system state. Therefore, the function has to support 'ShouldProcess'.<br>
+                                                    </td>
+                                                </tr>
+                                             </table>
+                                        </td>
+                                        <td class="success">True</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="maintainability" class="tab-pane fade">
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-arrows-v" aria-hidden="true">&nbsp;</i> Lines of Code - Total</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>10080</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-arrows-alt" aria-hidden="true">&nbsp;</i> Complexity - Highest</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>83</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-object-group" aria-hidden="true">&nbsp;</i> Nesting Depth - Highest</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>8</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-arrows-v" aria-hidden="true">&nbsp;</i> Lines of Code - Average</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>347.59</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-arrows-alt" aria-hidden="true">&nbsp;</i> Complexity - Average</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>31.41</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-object-group" aria-hidden="true">&nbsp;</i> Nesting Depth - Average</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>6.31</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2 col-sm-6">
+                    <div class="panel panel-default tablePanel">
+                        <div class="panel-heading">
+                            <h2 class="panel-title"> Per Function Information</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-condensed text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="wideColumn">Function Name</th>
+                                        <th class="narrowColum">Lines of Code</th>
+                                        <th class="narrowColum">Complexity</th>
+                                        <th class="narrowColum">Maximum Nesting Depth</th>
+                                    </tr>                            
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Get-Unifi5minutesApStats</td>
+                                        <td class="danger">336</td>
+                                        <td class="warning">16</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesClientStats</td>
+                                        <td class="danger">476</td>
+                                        <td class="danger">57</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesGatewayStats</td>
+                                        <td class="danger">521</td>
+                                        <td class="danger">83</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesSiteStats</td>
+                                        <td class="danger">484</td>
+                                        <td class="danger">74</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyApStats</td>
+                                        <td class="danger">335</td>
+                                        <td class="warning">16</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyClientStats</td>
+                                        <td class="danger">476</td>
+                                        <td class="danger">57</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyGatewayStats</td>
+                                        <td class="danger">521</td>
+                                        <td class="danger">83</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailySiteStats</td>
+                                        <td class="danger">484</td>
+                                        <td class="danger">74</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiFirewallGroupDetails</td>
+                                        <td class="danger">314</td>
+                                        <td class="warning">16</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiFirewallGroups</td>
+                                        <td class="danger">235</td>
+                                        <td class="success">12</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyApStats</td>
+                                        <td class="danger">335</td>
+                                        <td class="warning">16</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyClientStats</td>
+                                        <td class="danger">476</td>
+                                        <td class="danger">57</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyGatewayStats</td>
+                                        <td class="danger">521</td>
+                                        <td class="danger">83</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlySiteStats</td>
+                                        <td class="danger">484</td>
+                                        <td class="danger">74</td>
+                                        <td class="warning">8</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiNetworkDetails</td>
+                                        <td class="danger">322</td>
+                                        <td class="warning">17</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiNetworkList</td>
+                                        <td class="danger">240</td>
+                                        <td class="success">12</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiSpeedTestResult</td>
+                                        <td class="danger">404</td>
+                                        <td class="warning">27</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UniFiApiLogin</td>
+                                        <td class="danger">165</td>
+                                        <td class="success">4</td>
+                                        <td class="success">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UniFiApiLogout</td>
+                                        <td class="danger">138</td>
+                                        <td class="success">4</td>
+                                        <td class="success">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiAuthorizeGuest</td>
+                                        <td class="danger">372</td>
+                                        <td class="warning">20</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiBlockClient</td>
+                                        <td class="danger">288</td>
+                                        <td class="success">13</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiForgetClient</td>
+                                        <td class="danger">288</td>
+                                        <td class="success">13</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiReconnectClient</td>
+                                        <td class="danger">288</td>
+                                        <td class="success">13</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiUnauthorizeGuest</td>
+                                        <td class="danger">293</td>
+                                        <td class="success">13</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiUnblockClient</td>
+                                        <td class="danger">288</td>
+                                        <td class="success">13</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>New-UnifiClientDevice</td>
+                                        <td class="danger">324</td>
+                                        <td class="warning">16</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>New-UniFiConfig</td>
+                                        <td class="danger">147</td>
+                                        <td class="success">3</td>
+                                        <td class="success">3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Set-UnifiFirewallGroup</td>
+                                        <td class="danger">272</td>
+                                        <td class="success">13</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Set-UnifiNetworkDetails</td>
+                                        <td class="danger">253</td>
+                                        <td class="success">12</td>
+                                        <td class="warning">6</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="tests" class="tab-pane fade">
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-list" aria-hidden="true">&nbsp;</i> Number of Tests</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>265</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-times" aria-hidden="true">&nbsp;</i> Number of Failed Tests</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>29</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o" aria-hidden="true">&nbsp;</i> Number of Passed Tests</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>236</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2">
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-times" aria-hidden="true">&nbsp;</i> Number of Missed Commands</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h2>5460</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o" aria-hidden="true">&nbsp;</i> Tests Pass Rate (%)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <canvas class="testPassRateChart" height="197"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 panelContainer">
+                        <div class="panel panel-danger">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-pie-chart" aria-hidden="true">&nbsp;</i> Test Coverage (%)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <canvas class="testCoverageChart" height="197"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2 col-sm-7 col-md-9 col-lg-8">
+                    <div class="panel panel-default tablePanel">
+                        <div class="panel-heading">
+                            <h2 class="panel-title"> Failed Tests Details</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="col-xs-2">File</th>
+                                        <th class="col-xs-1">Line</th>
+                                        <th class="col-xs-2">Describe</th>
+                                        <th class="col-xs-3">Test Name</th>
+                                        <th class="col-xs-4">Error Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-Unifi5minutesApStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-Unifi5minutesApStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-Unifi5minutesClientStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-Unifi5minutesClientStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-Unifi5minutesGatewayStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-Unifi5minutesGatewayStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-Unifi5minutesSiteStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-Unifi5minutesSiteStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiDailyApStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiDailyApStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiDailyClientStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiDailyClientStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiDailyGatewayStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiDailyGatewayStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiDailySiteStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiDailySiteStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiFirewallGroupDetails.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiFirewallGroupDetails.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiFirewallGroups.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiFirewallGroups.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiHourlyApStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiHourlyApStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiHourlyClientStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiHourlyClientStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiHourlyGatewayStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiHourlyGatewayStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiHourlySiteStats.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiHourlySiteStats.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiNetworkDetails.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiNetworkDetails.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiNetworkList.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiNetworkList.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Get-UnifiSpeedTestResult.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Get-UnifiSpeedTestResult.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UniFiApiLogin.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UniFiApiLogin.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UniFiApiLogout.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UniFiApiLogout.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UnifiAuthorizeGuest.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UnifiAuthorizeGuest.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UnifiBlockClient.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UnifiBlockClient.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UnifiForgetClient.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UnifiForgetClient.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UnifiReconnectClient.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UnifiReconnectClient.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UnifiUnauthorizeGuest.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UnifiUnauthorizeGuest.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Invoke-UnifiUnblockClient.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Invoke-UnifiUnblockClient.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>New-UnifiClientDevice.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\New-UnifiClientDevice.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>New-UniFiConfig.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\New-UniFiConfig.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Set-UnifiFirewallGroup.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Set-UnifiFirewallGroup.Tests.ps1} to exist</td>
+                                    </tr>
+                                    <tr>
+                                        <td>at line</td>
+                                        <td></td>
+                                        <td>UniFiTooling Module Tests</td>
+                                        <td>Set-UnifiNetworkDetails.Tests.ps1 should exist</td>
+                                        <td>Expected: {C:\scripts\PowerShell\dev\UniFiTooling\src\tests\Set-UnifiNetworkDetails.Tests.ps1} to exist</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-sm-offset-3 col-md-offset-1 col-lg-offset-2 col-sm-6">
+                    <div class="panel panel-default tablePanel">
+                        <div class="panel-heading">
+                            <h2 class="panel-title"> Per Function Information</h2>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-condensed text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Function Name</th>
+                                        <th>Test Coverage  &nbsp;(%)</th>
+                                        <th>Missed Commands</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Get-Unifi5minutesApStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">146</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesClientStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">313</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesGatewayStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">385</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-Unifi5minutesSiteStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">353</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyApStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">146</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyClientStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">313</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailyGatewayStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">385</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiDailySiteStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">353</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiFirewallGroupDetails</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">124</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiFirewallGroups</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">95</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyApStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">146</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyClientStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">313</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlyGatewayStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">385</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiHourlySiteStats</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">353</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiNetworkDetails</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">125</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiNetworkList</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">95</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Get-UnifiSpeedTestResult</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">178</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UniFiApiLogin</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">77</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UniFiApiLogout</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">63</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiAuthorizeGuest</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">151</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiBlockClient</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">117</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiForgetClient</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">118</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiReconnectClient</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">117</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiUnauthorizeGuest</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">119</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Invoke-UnifiUnblockClient</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">117</td>
+                                    </tr>
+                                    <tr>
+                                        <td>New-UnifiClientDevice</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">123</td>
+                                    </tr>
+                                    <tr>
+                                        <td>New-UniFiConfig</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">43</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Set-UnifiFirewallGroup</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">112</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Set-UnifiNetworkDetails</td>
+                                        <td class="danger">0</td>
+                                        <td class="danger">95</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        Chart.pluginService.register({
+            afterUpdate: function (chart) {
+                if (chart.config.options.elements.center) {
+                    var helpers = Chart.helpers;
+                    var centerConfig = chart.config.options.elements.center;
+                    var globalConfig = Chart.defaults.global;
+                    var ctx = chart.chart.ctx;
+
+                    var fontStyle = helpers.getValueOrDefault(centerConfig.fontStyle, globalConfig.defaultFontStyle);
+                    var fontFamily = helpers.getValueOrDefault(centerConfig.fontFamily, globalConfig.defaultFontFamily);
+
+                    // Figure out the best font size, if one is not specified
+                    ctx.save();
+                    var fontSize = helpers.getValueOrDefault(centerConfig.minFontSize, 12);
+                    var maxFontSize = helpers.getValueOrDefault(centerConfig.maxFontSize, 55);
+                    var maxText = helpers.getValueOrDefault(centerConfig.maxText, centerConfig.text);
+
+                    do {
+                        ctx.font = helpers.fontString(fontSize, fontStyle, fontFamily);
+                        var textWidth = ctx.measureText(maxText).width;
+
+                        // Check if it fits, is within configured limits and that we are not simply toggling back and forth
+                        if (textWidth < chart.innerRadius * 2 && fontSize < maxFontSize)
+                            fontSize += 1;
+                        else {
+                            // Reverse last step
+                            fontSize -= 1;
+                            break;
+                        }
+                    } while (true);
+                    ctx.restore();
+
+                    // save properties
+                    chart.center = {
+                        font: helpers.fontString(fontSize, fontStyle, fontFamily),
+                        fillStyle: helpers.getValueOrDefault(centerConfig.fontColor, globalConfig.defaultFontColor)
+                    };
+                }
+            },
+            afterDraw: function (chart) {
+                if (chart.center) {
+                    var centerConfig = chart.config.options.elements.center;
+                    var ctx = chart.chart.ctx;
+
+                    ctx.save();
+                    ctx.font = chart.center.font;
+                    ctx.fillStyle = chart.center.fillStyle;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+                    var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+                    ctx.fillText(centerConfig.text, centerX, centerY);
+                    ctx.restore();
+                }
+            },
+        });
+
+        function createTestPassRateChart(ctx) {
+            var data = {
+                labels: ["Pass","Fail"],
+                datasets: [
+                {
+                    data: [236,29],
+                    backgroundColor: ["#a3d48d","#d59595"],
+                    hoverBackgroundColor: ["#a3d48d","#d59595"]
+                }]
+            };
+            var newTestPassRateChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    cutoutPercentage: 64,
+                    legend: { position: 'top' },
+                    elements: {
+                        center: {
+                            // This evaluates the max length of the text
+                            maxText: '99.99%',
+                            text: '89.06%',
+                            fontColor: '#a3d48d',
+                            fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            fontStyle: 'normal'
+                        }
+                    }
+                }
+            });
+        }
+        var testPassRateCharts = $(".testPassRateChart");
+        for (var i = 0; i < testPassRateCharts.length; i++) {
+            createTestPassRateChart(testPassRateCharts[i]);
+        }
+
+        function createTestCoverageChart(ctx) {
+            var data = {
+                labels: ["Covered","Missed"],
+                datasets: [
+                {
+                    data: [0,100],
+                    backgroundColor: ["#a3d48d","#d59595"],
+                    hoverBackgroundColor: ["#a3d48d","#d59595"]
+                }]
+            };
+            var newTestCoverageChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    cutoutPercentage: 64,
+                    legend: { position: 'top' },
+                    elements: {
+                        center: {
+                            // This evaluates the max length of the text
+                            maxText: '99.99%',
+                            text: '0%',
+                            fontColor: '#d59595',
+                            fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                            fontStyle: 'normal'
+                        }
+                    }
+                }
+            });
+        }
+        var testCoverageCharts = $(".testCoverageChart");
+        for (var i = 0; i < testCoverageCharts.length; i++) {
+            createTestCoverageChart(testCoverageCharts[i]);
+        }
+
+        $(document).ready(function(){
+            $("td > table").hide();
+            var expandCollapseButtons = $(".cell-expand-collapse");
+
+            if (expandCollapseButtons.length) {
+                expandCollapseButtons.click(function(){
+                    var elementToToggle = $(this).siblings("table");
+                    elementToToggle.slideToggle("fast");
+                    $(this).text($(this).text() == ' Expand' ? ' Collapse' : ' Expand');
+                });
+            }
+        });
+
+    </script>
+</body>
+</html>
