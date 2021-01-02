@@ -1,9 +1,0 @@
-[submodule "ExchangeNodeMaintenanceMode"]
-	path = ExchangeNodeMaintenanceMode
-	url = https://github.com/jhochwald/ExchangeNodeMaintenanceMode
-[submodule "UniFiTooling"]
-	path = UniFiTooling
-	url = https://github.com/Enatec/UniFiTooling
-[submodule "bdc.MtrTooling"]
-	path = bdc.MtrTooling
-	url = https://github.com/jhochwald/bdc.MtrTooling
