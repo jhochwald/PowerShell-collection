@@ -7,3 +7,6 @@
 [submodule "PSNLog"]
 	path = PSNLog
 	url = https://github.com/jhochwald/PSNLog.git
+[submodule "UniFiTooling"]
+	path = UniFiTooling
+	url = https://github.com/Enatec/UniFiTooling.git
