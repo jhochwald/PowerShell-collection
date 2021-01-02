@@ -1,0 +1,90 @@
+// Available variables which can be used inside of strings.
+// ${workspaceRoot}: the root folder of the team
+// ${file}: the current opened file
+// ${relativeFile}: the current opened file relative to workspaceRoot
+// ${fileBasename}: the current opened file's basename
+// ${fileDirname}: the current opened file's dirname
+// ${fileExtname}: the current opened file's extension
+// ${cwd}: the current working directory of the spawned process
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+	"version": "2.0.0",
+
+    // Start PowerShell
+    "windows": {
+        "command": "powershell.exe",
+        "args": [ "-NoProfile", "-ExecutionPolicy", "Bypass" ]
+    },
+    "linux": {
+        "command": "/usr/bin/powershell",
+        "args": [ "-NoProfile" ]
+    },
+    "osx": {
+        "command": "/usr/local/bin/powershell",
+        "args": [ "-NoProfile" ]
+    },
+
+	// Show the output window always
+	"showOutput": "always",
+
+    "tasks": [
+        {
+            "taskName": "Build",
+            "suppressTaskName": true,
+            "isBuildCommand": true,
+            "args": [
+              "${workspaceRoot}\\Build.ps1"
+            ]
+        },
+        {
+            "taskName": "PublishPSGallery",
+            "suppressTaskName": true,
+            "args": [
+              "Invoke-Build -Task PublishPSGallery"
+            ]
+        },
+        {
+            "taskName": "Analyze",
+            "suppressTaskName": true,
+            "args": [
+                "Invoke-Build -Task AnalyzePublic"
+            ]
+        },
+        {
+            "taskName": "InsertMissingCBH",
+            "suppressTaskName": true,
+            "args": [
+                "Invoke-Build InsertMissingCBH"
+            ]
+        },
+        {
+            "taskName": "Test",
+            "suppressTaskName": true,
+            "isTestCommand": true,
+            "showOutput": "always",
+            "args": [
+                "Write-Host 'Invoking Pester'; Invoke-Pester -PesterOption @{IncludeVSCodeMarker=$true};",
+                "Invoke-Command { Write-Host 'Completed Test task in task runner.' }"
+            ],
+            "problemMatcher": [
+                {
+                    "owner": "powershell",
+                    "fileLocation": ["absolute"],
+                    "severity": "error",
+                    "pattern": [
+                        {
+                            "regexp": "^\\s*(\\[-\\]\\s*.*?)(\\d+)ms\\s*$",
+                            "message": 1
+                        },
+                        {
+                            "regexp": "^\\s+at\\s+[^,]+,\\s*(.*?):\\s+line\\s+(\\d+)$",
+                            "file": 1,
+                            "line": 2
+                        }
+                    ]
+                }
+            ]
+        }
+	]
+}
