@@ -111,3 +111,8 @@ module/PSScriptAnalyzer
 
 # JetBrains generated file (Rider, intelliJ)
 .idea/
+
+# misc
+.editorconfig
+.eslintrc.json
+.gitattributes
