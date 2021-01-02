@@ -1,0 +1,17 @@
+TOPIC
+    about_UniFiTooling
+
+SHORT DESCRIPTION
+    Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller
+
+LONG DESCRIPTION
+    Ubiquiti UniFi Security Gateway automation via the API of the Ubiquiti UniFi Controller
+
+EXAMPLES
+    TBD
+
+KEYWORDS
+    UniFi,API,Automation,Ubiquiti,USG,RESTful
+
+SEE ALSO
+    https://github.com/jhochwald/PowerShell-collection
