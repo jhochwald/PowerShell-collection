@@ -1,0 +1,3 @@
+[submodule "ExchangeNodeMaintenanceMode"]
+	path = ExchangeNodeMaintenanceMode
+	url = https://github.com/jhochwald/ExchangeNodeMaintenanceMode.git
