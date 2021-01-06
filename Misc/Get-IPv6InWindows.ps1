@@ -1,4 +1,4 @@
-﻿function Get-IPv6IinWindows
+﻿function Get-IPv6InWindows
 {
    <#
          .SYNOPSIS
@@ -6,20 +6,20 @@
 
          .DESCRIPTION
          Get the configured IPv6 value from the registry
-         Transforms the Registry value into human understanable values
+         Transforms the Registry value into human understandable values
 
          .EXAMPLE
-         PS C:\> Get-IPv6IinWindows
+         PS C:\> Get-IPv6InWindows
          All IPv6 components are enabled (0)
 
          .EXAMPLE
-         PS C:\> Get-IPv6IinWindows -verbose
+         PS C:\> Get-IPv6InWindows -verbose
          Prefer IPv4 over IPv6 (32)
 
          Get the configured IPv6 value from the registry, with verbose output
 
          .LINK
-         Set-IPv6IinWindows
+         Set-IPv6InWindows
 
          .LINK
          https://docs.microsoft.com/en-us/troubleshoot/windows-server/networking/configure-ipv6-in-windows
@@ -33,7 +33,7 @@
 
          If you find any further values (other then the supported), please let me know!
 
-         Want to modify your IPv6 configuration? Use its companion Set-IPv6IinWindows
+         Want to modify your IPv6 configuration? Use its companion Set-IPv6InWindows
    #>
    [CmdletBinding(ConfirmImpact = 'None')]
    [OutputType([string])]

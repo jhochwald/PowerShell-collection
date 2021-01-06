@@ -1,4 +1,4 @@
-﻿function Set-IPv6IinWindows
+﻿function Set-IPv6InWindows
 {
    <#
          .SYNOPSIS
@@ -15,17 +15,17 @@
          Specifies the value of the property.
 
          .EXAMPLE
-         PS C:\> Set-IPv6IinWindows -Value 0 -WhatIf
+         PS C:\> Set-IPv6InWindows -Value 0 -WhatIf
 
          Enable all IPv6 components
 
          .EXAMPLE
-         PS C:\> Set-IPv6IinWindows -Value 32 -verbose
+         PS C:\> Set-IPv6InWindows -Value 32 -verbose
 
          Prefer IPv4 over IPv6 will be set, with a verbose output
 
          .LINK
-         Get-IPv6IinWindows
+         Get-IPv6InWindows
 
          .LINK
          https://docs.microsoft.com/en-us/troubleshoot/windows-server/networking/configure-ipv6-in-windows
@@ -37,7 +37,7 @@
          Next version might also support test inputs instead of the numbers (Dec).
          This is just a quick and dirty initial version!
 
-         Want to knwo what is set in your registry? Use its companion Get-IPv6IinWindows
+         Want to knwo what is set in your registry? Use its companion Get-IPv6InWindows
    #>
    [CmdletBinding(ConfirmImpact = 'Medium',
       SupportsShouldProcess)]
