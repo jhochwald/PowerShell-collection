@@ -184,26 +184,25 @@ function Search-MailboxItemDeletion
             .INPUTS
             psobject, string
          #>
-         [CmdletBinding()]
+         [CmdletBinding(ConfirmImpact = 'None')]
          [OutputType([psobject])]
          param
          (
-            [Parameter(Mandatory = $true,
-               ValueFromPipeline = $true,
-               ValueFromPipelineByPropertyName = $true,
+            [Parameter(Mandatory,
+               ValueFromPipeline,
+               ValueFromPipelineByPropertyName,
                HelpMessage = 'The input object, must be a psobject.')]
             [ValidateNotNull()]
             [ValidateNotNullOrEmpty()]
             [psobject]
             $InputObject,
-            [Parameter(ValueFromPipeline = $true,
-               ValueFromPipelineByPropertyName = $true,
-               HelpMessage = 'The properties to select from the given input object.')]
+            [Parameter(ValueFromPipeline,
+               ValueFromPipelineByPropertyName)]
             [ValidateNotNull()]
             [ValidateNotNullOrEmpty()]
             [Alias('DefaultProperties')]
             [string[]]
-            $Properties
+            $Properties = $null
          )
 
          process
@@ -258,11 +257,11 @@ function Search-MailboxItemDeletion
 
             if ($AuditData.ResultStatus -eq 'PartiallySucceeded')
             {
-               $EMailSubject = '# Not fully deleted by' + $AuditData.ClientInfoString + ' #'
+               $MessageSubject = '# Not fully deleted by' + $AuditData.ClientInfoString + ' #'
             }
             else
             {
-               $EMailSubject = ($AuditData.AffectedItems.Subject -split '\n')[0]
+               $MessageSubject = ($AuditData.AffectedItems.Subject -split '\n')[0]
             }
 
             $ReportLine = [PSCustomObject] @{
@@ -272,7 +271,7 @@ function Search-MailboxItemDeletion
                Status            = $AuditData.ResultStatus
                Mailbox           = $AuditData.MailboxOwnerUPN
                MailboxGuid       = $AuditData.MailboxGuid
-               Subject           = $EMailSubject
+               Subject           = $MessageSubject
                MessageId         = ($AuditData.AffectedItems.Id -split '\n')[0]
                InternetMessageId = ($AuditData.AffectedItems.InternetMessageId -split '\n')[0]
                Folder            = $AuditData.Folder.Path.Split('\')[1]
