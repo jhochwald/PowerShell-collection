@@ -31,9 +31,9 @@
    [OutputType([string])]
    param
    (
-      [Parameter(Mandatory,HelpMessage = 'Format must be something like P<days>DT<hours>H<minutes>M<seconds>S',
-            ValueFromPipeline,
-      ValueFromPipelineByPropertyName)]
+      [Parameter(Mandatory, HelpMessage = 'Format must be something like P<days>DT<hours>H<minutes>M<seconds>S',
+         ValueFromPipeline,
+         ValueFromPipelineByPropertyName)]
       [ValidateNotNullOrEmpty()]
       [Alias('TimeDateString')]
       [string]
@@ -63,7 +63,7 @@
                $DateInterval = $DateInterval.Split('D')[1]
             }
          }
-   
+
          if ($DateInterval -match '^[T]')
          {
             # Remove the leading "T"
@@ -80,13 +80,13 @@
                $DateInterval = $DateInterval.Split('H')[1]
             }
          }
-   
+
          if ($DateInterval -match '^[T]')
          {
             # Remove the leading "T"
             $DateInterval = $DateInterval.Split('T')[1]
          }
-   
+
          # Does it start with a Number?
          if ($DateInterval -match '^\d')
          {
@@ -97,13 +97,13 @@
                $DateInterval = $DateInterval.Split('M')[1]
             }
          }
-   
+
          if ($DateInterval -match '^[T]')
          {
             # Remove the leading "T"
             $DateInterval = $DateInterval.Split('T')[1]
          }
-   
+
          # Does it start with a Number?
          if ($DateInterval -match '^\d')
          {
@@ -111,14 +111,14 @@
             {
                # Do we have a seconds value?
                $seconds = $DateInterval.Split('S')[0]
-               
+
                if ($DateInterval.EndsWith('S'))
                {
                   $null = (Remove-Variable -Name DateInterval -Force -Confirm:$false -ErrorAction SilentlyContinue)
                }
             }
          }
-         
+
          if ($DateInterval)
          {
             # We have some leftovers, this is not good and we will not continue!
@@ -129,31 +129,31 @@
             $paramNewTimeSpan = @{
                ErrorAction = 'SilentlyContinue'
             }
-      
+
             if ($days)
             {
-               $paramNewTimeSpan.Add('Days',$days)
+               $paramNewTimeSpan.Add('Days', $days)
             }
-      
+
             if ($hours)
             {
-               $paramNewTimeSpan.Add('Hours',$hours)
+               $paramNewTimeSpan.Add('Hours', $hours)
             }
 
             if ($minutes)
             {
-               $paramNewTimeSpan.Add('Minutes',$minutes)
+               $paramNewTimeSpan.Add('Minutes', $minutes)
             }
 
             if ($seconds)
             {
-               $paramNewTimeSpan.Add('Seconds',$seconds)
+               $paramNewTimeSpan.Add('Seconds', $seconds)
             }
-      
+
             $AllTime = (New-TimeSpan @paramNewTimeSpan)
             '{0:dd}d {0:hh}h {0:mm}m {0:ss}s' -f $AllTime
          }
-   
+
          $days = $null
          $hours = $null
          $minutes = $null
