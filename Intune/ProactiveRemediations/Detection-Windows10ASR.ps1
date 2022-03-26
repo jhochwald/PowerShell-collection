@@ -23,7 +23,7 @@
 param ()
 
 #region IntuneWorkaround
-# We do NOT have the CSV for Intune Check/Remediation, so we simmulate it
+# We do NOT have the CSV for Intune Check/Remediation, so we simulate it
 
 <#
       I reuse this as much as possible, so I try to keep it generic!
@@ -56,33 +56,33 @@ $AttackSurfaceReductionRules = ($AttackSurfaceReductionRulesList | ConvertFrom-C
       Expression = {
          switch ($_.Action)
          {
-            AuditMode 
+            AuditMode
             {
                2
             }
-            Disabled 
+            Disabled
             {
                0
             }
-            Enabled 
+            Enabled
             {
                1
             }
-            NotConfigured 
+            NotConfigured
             {
                5
             }
-            Warn 
+            Warn
             {
                6
             }
-            default 
+            default
             {
                5
             }
          }
       }
-})
+   })
 #endregion IntuneWorkaround
 
 # Get the configured Rules
@@ -107,12 +107,12 @@ foreach ($RulesId in $RulesIds)
    {
       if ($RulesActions[$RuleCounter] -ne ($AttackSurfaceReductionRules | Where-Object -FilterScript {
                $_.GUID -eq $RulesId
-      }).AttackSurfaceReductionRules_Actions)
+            }).AttackSurfaceReductionRules_Actions)
       {
          # This rule does NOT match the desired state
          exit 1
       }
-      
+
       # Count up
       $RuleCounter++
    }

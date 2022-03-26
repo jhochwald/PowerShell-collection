@@ -1,21 +1,21 @@
 ﻿#region Check
 $RegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity'
 
-try 
+try
 {
-   if(-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
+   if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
    {
-      return $false 
+      return $false
    }
 
-   if(-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'Enabled' -ErrorAction SilentlyContinue) -eq 1)) 
+   if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'Enabled' -ErrorAction SilentlyContinue) -eq 1))
    {
-      return $false 
-   } 
+      return $false
+   }
 }
-catch 
+catch
 {
-   return $false 
+   return $false
 }
 
 return $true
