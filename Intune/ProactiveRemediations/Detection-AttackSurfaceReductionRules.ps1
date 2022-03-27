@@ -110,7 +110,7 @@ foreach ($RulesId in $RulesIds)
             }).AttackSurfaceReductionRules_Actions)
       {
          # This rule does NOT match the desired state
-         exit 1
+         return $false
       }
 
       # Count up
@@ -123,4 +123,4 @@ foreach ($RulesId in $RulesIds)
 }
 
 # We are good to go
-exit 0
+return $true

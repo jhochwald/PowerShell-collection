@@ -121,7 +121,7 @@ foreach ($RulesId in $RulesIds)
          {
             Write-Warning -Message 'How can this be the case?'
 
-            exit 1
+            return $false
          }
       }
 
@@ -135,4 +135,4 @@ foreach ($RulesId in $RulesIds)
 }
 
 # We are good to go
-exit 0
+return $true

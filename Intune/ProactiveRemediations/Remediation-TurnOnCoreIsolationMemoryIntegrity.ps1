@@ -7,4 +7,6 @@ if ((Test-Path -LiteralPath $RegistryPath -ErrorAction) -ne $true)
 }
 
 $null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'Enabled' -Value 1 -PropertyType DWord -Force -Confirm:$false -ErrorAction SilentlyContinue)
+
+return $true
 #endregion Remediation
