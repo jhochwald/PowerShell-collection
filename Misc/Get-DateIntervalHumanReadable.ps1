@@ -2,14 +2,16 @@
 {
    <#
          .SYNOPSIS
-         Make a given DateInterval string HumanReadable
+         Make a given Repetition Pattern/DateInterval string HumanReadable
 
          .DESCRIPTION
-         Make a given DateInterval string HumanReadable
+         Make a given Repetition Pattern/DateInterval string HumanReadable
 
          .PARAMETER DateInterval
-         The DateInterval.
+         The Repetition Pattern/DateInterval as string.
          Format must be something like P<days>DT<hours>H<minutes>M<seconds>S
+
+         Please see https://docs.microsoft.com/en-us/windows/win32/taskschd/repetitionpattern?redirectedfrom=MSDN#properties
 
          .EXAMPLE
          PS C:\> Get-DateIntervalHumanReadable -DateInterval 'P24DT3H59M17S'
@@ -23,9 +25,18 @@
          PS C:\> Get-DateIntervalHumanReadable -DateInterval '24DT3H59M17S'
          Unknown
 
+         .LINK
+         https://msdn.microsoft.com/en-us/library/windows/desktop/aa382117%28v=vs.85%29.aspx#properties
+
+         .LINK
+         https://devblogs.microsoft.com/scripting/working-with-task-scheduler-xml/
+
+         .LINK
+         https://jdhitsolutions.com/blog/powershell/4414/converting-timespans-to-repetition-patterns/
+
          .NOTES
-        Very quick and dirty hack to convert a DateInterval string in an CSV file
-        It might still need some love to get more robust.
+         Very quick and dirty hack to convert a DateInterval string in an CSV file
+         It might still need some love to get more robust.
    #>
    [CmdletBinding(ConfirmImpact = 'None')]
    [OutputType([string])]
