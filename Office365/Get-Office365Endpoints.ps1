@@ -53,40 +53,40 @@ function Get-Office365Endpoints
       Force the download and ignore the existing version information
 
       .EXAMPLE
-      PS C:\> Get-Office365Endpoints.ps1
+      PS C:\> Get-Office365Endpoints
 
       It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges.
 
       .EXAMPLE
-      PS C:\> Get-Office365Endpoints.ps1 -Instance Germany
+      PS C:\> Get-Office365Endpoints -Instance Germany
 
       It gets the Office 365 Germany URLs, IPv4 address ranges. It would also return IPv6, but IPv6 is not supported, at least not yet.
 
       .EXAMPLE
-      PS C:\> Get-Office365Endpoints.ps1 -Instance Germany -Category Optimize
+      PS C:\> Get-Office365Endpoints -Instance Germany -Category Optimize
 
       It gets the Office 365 Germany URLs, IPv4 address ranges. Only in the category 'Optimize'. It would also return IPv6, but IPv6 is not supported, at least not yet.
 
       .EXAMPLE
-      PS C:\> Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Required
+      PS C:\> Get-Office365Endpoints -Instance Worldwide -Services Exchange -Required
 
       It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services).
 
       .EXAMPLE
-      PS C:\> Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Required -Tenant 'contoso'
+      PS C:\> Get-Office365Endpoints -Instance Worldwide -Services Exchange -Required -Tenant 'contoso'
 
       It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
       The Tenant based URLs are generated and not checked, so please make sure you use the correct name!
 
       .EXAMPLE
-      PS C:\> ((Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required).url | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> ((Get-Office365Endpoints -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required).url | Sort-Object -Unique) -join "," | Out-String
 
       It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
       The Tenant based URLs are generated and not checked, so please make sure you use the correct name! !
       It just dumps the URLs in a comma separated (CSV) format. Useful for Proxy Servers.
 
       .EXAMPLE
-      PS C:\> ((Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required -SkipVersionCheck).url | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> ((Get-Office365Endpoints -Instance Worldwide -Services Exchange -Tenant 'contoso' -Output URLs -Required -SkipVersionCheck).url | Sort-Object -Unique) -join "," | Out-String
 
       It gets the International (Worldwide) Office 365 URLs, IPv4, and IPv6 address ranges for Exchange and everything to be supported (includes CDNs and other, even external, services); this example includes URLs for the tenant with the Name 'contoso'.
       The Tenant based URLs are generated and not checked, so please make sure you use the correct name! !
@@ -94,37 +94,37 @@ function Get-Office365Endpoints
       The SkipVersionCheck Switch enforce the Download, without checking the local version.
 
       .EXAMPLE
-      PS C:\> (((Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv4) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '587'}).ip | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> (((Get-Office365Endpoints -Instance Worldwide -Services Exchange -Output IPv4) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '587'}).ip | Sort-Object -Unique) -join "," | Out-String
 
       It gets the International (Worldwide) Office 365 IPv4 addresses for Exchange Submission (SMTP) Servers who use Port 587. It dumps a comma separated (CSV) format. Useful for Firewalls.
 
       .EXAMPLE
-      PS C:\> (((Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output IPv6) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '25'}).ip | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> (((Get-Office365Endpoints -Instance Worldwide -Services Exchange -Output IPv6) | Where-Object -FilterScript {$PSItem.tcpPorts -eq '25'}).ip | Sort-Object -Unique) -join "," | Out-String
 
       It gets the International (Worldwide) Office 365 IPv4 addresses for Exchange SMTP Servers who use Port 25. It dumps a comma separated (CSV) format. Useful for Firewalls.
 
       .EXAMPLE
-      PS C:\> (((Get-Office365Endpoints.ps1 -Instance Worldwide -Services Exchange -Output URLs) | Where-Object -FilterScript {$PSItem.notes -like '*Exchange Hybrid Configuration Wizard*' }).url | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> (((Get-Office365Endpoints -Instance Worldwide -Services Exchange -Output URLs) | Where-Object -FilterScript {$PSItem.notes -like '*Exchange Hybrid Configuration Wizard*' }).url | Sort-Object -Unique) -join "," | Out-String
 
       Get a List of Exchange Online URLs that you might need if you want to run the Exchange Hybrid Configuration Wizard.
 
       .EXAMPLE
-      PS C:\> ((Get-Office365Endpoints.ps1 -Instance Worldwide -Output 'IPv4' -ExpressRoute).ip | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> ((Get-Office365Endpoints -Instance Worldwide -Output 'IPv4' -ExpressRoute).ip | Sort-Object -Unique) -join "," | Out-String
 
       Get a List of IPv4 addresses for ExpressRoute configuration.
 
       .EXAMPLE
-      PS C:\> ((Get-Office365Endpoints.ps1 -Instance Worldwide -Output 'IPv6' -ExpressRoute).ip | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> ((Get-Office365Endpoints -Instance Worldwide -Output 'IPv6' -ExpressRoute).ip | Sort-Object -Unique) -join "," | Out-String
 
       Get a List of IPv6 addresses for ExpressRoute configuration. Please note: IPv6 is not supported with ExpressRoute in every Instance, (example: Germany)
 
       .EXAMPLE
-      PS C:\> ((Get-Office365Endpoints.ps1 -Instance Worldwide -NoIPv6).ip | Sort-Object -Unique) -join "," | Out-String
+      PS C:\> ((Get-Office365Endpoints -Instance Worldwide -NoIPv6).ip | Sort-Object -Unique) -join "," | Out-String
 
       Get a list of IP addresses and exclude IPv6. The benefit of this parameter is the NoIPv6 parameter: The call will exclude the IPv6 Data from the response, and that might be smarter than filter it. It might be handy if you do NOT use IPv6 within your network - If this is the case, you might miss the future of networking! Think about that, before ignoring IPv6.
 
       .EXAMPLE
-      $ExchangeOnlineSMTPEndpoints = (Get-Office365Endpoints.ps1 -Services Exchange) | Where-Object -FilterScript {
+      $ExchangeOnlineSMTPEndpoints = (Get-Office365Endpoints -Services Exchange) | Where-Object -FilterScript {
       $PSItem.ip -and
       $PSItem.DisplayName -eq 'Exchange Online' -and
       $PSItem.tcpPorts -contains '25'
