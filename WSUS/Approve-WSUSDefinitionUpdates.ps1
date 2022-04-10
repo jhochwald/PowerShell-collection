@@ -107,7 +107,7 @@ begin
 
    $DefinitionUpdates = $null
    $DefinitionUpdates = $WSUS.GetUpdateClassifications() | Where-Object -FilterScript {
-      $_.Title -eq 'Definition Updates'
+      $PSItem.Title -eq 'Definition Updates'
    }
 
    if (-not $DefinitionUpdates)
@@ -121,7 +121,7 @@ begin
 
    $AllDefinitionUpdates = $null
    $AllDefinitionUpdates = $DefinitionUpdates.GetUpdates() | Where-Object -FilterScript {
-      ($_.Title -like 'Definition Update for Microsoft Security Essentials*') -or ($_.Title -like 'Update for Windows Defender Antivirus antimalware platforms*') -or ($_.Title -like 'Definition Update for Windows Defender Antivirus*')
+      ($PSItem.Title -like 'Definition Update for Microsoft Security Essentials*') -or ($PSItem.Title -like 'Update for Windows Defender Antivirus antimalware platforms*') -or ($PSItem.Title -like 'Definition Update for Windows Defender Antivirus*')
    }
 
    if (-not $AllDefinitionUpdates)
@@ -198,7 +198,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

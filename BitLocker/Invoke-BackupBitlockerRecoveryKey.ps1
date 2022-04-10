@@ -48,7 +48,7 @@ process
    {
       # Get BitLocker Volume info
       $BitLockerVolumeInfo = (Get-BitLockerVolume -ErrorAction $STP | Where-Object -FilterScript {
-            $_.VolumeType -eq 'OperatingSystem'
+            $PSItem.VolumeType -eq 'OperatingSystem'
          })
 
       # Get the Mount Point
@@ -67,7 +67,7 @@ process
 
       # Get the correct ID (The one from the RecoveryPassword)
       $BitLockerKeyProtectorId = ($BitLockerVolumeInfo.KeyProtector | Where-Object -FilterScript {
-            $_.KeyProtectorType -eq 'RecoveryPassword'
+            $PSItem.KeyProtectorType -eq 'RecoveryPassword'
          } | Select-Object -ExpandProperty KeyProtectorId)
 
       # Check if we have a recovery password/id
@@ -125,7 +125,7 @@ process
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

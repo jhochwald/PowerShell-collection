@@ -94,167 +94,167 @@ function Get-enADObject
             @{
                n = 'OU'
                e = {
-                  $_.DistinguishedName -replace '^.+?,(?=(OU|CN)=)'
+                  $PSItem.DistinguishedName -replace '^.+?,(?=(OU|CN)=)'
                }
             },
             @{
                n = 'proxyAddresses'
                e = {
-                  ($_.proxyAddresses | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join '|'
+                  ($PSItem.proxyAddresses | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join '|'
                }
             },
             @{
                n = 'altRecipientBL'
                e = {
-                  ($_.altRecipientBL | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.altRecipientBL | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'AuthenticationPolicy'
                e = {
-                  ($_.AuthenticationPolicy | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.AuthenticationPolicy | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'AuthenticationPolicySilo'
                e = {
-                  ($_.AuthenticationPolicySilo | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.AuthenticationPolicySilo | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'Certificates'
                e = {
-                  ($_.Certificates | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.Certificates | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'CompoundIdentitySupported'
                e = {
-                  ($_.CompoundIdentitySupported | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.CompoundIdentitySupported | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'dSCorePropagationData'
                e = {
-                  ($_.dSCorePropagationData | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.dSCorePropagationData | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'KerberosEncryptionType'
                e = {
-                  ($_.KerberosEncryptionType | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.KerberosEncryptionType | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'managedObjects'
                e = {
-                  ($_.managedObjects | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.managedObjects | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'MemberOf'
                e = {
-                  ($_.MemberOf | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.MemberOf | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'msExchADCGlobalNames'
                e = {
-                  ($_.msExchADCGlobalNames | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.msExchADCGlobalNames | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'msExchPoliciesExcluded'
                e = {
-                  ($_.msExchPoliciesExcluded | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.msExchPoliciesExcluded | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'PrincipalsAllowedToDelegateToAccount'
                e = {
-                  ($_.PrincipalsAllowedToDelegateToAccount | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.PrincipalsAllowedToDelegateToAccount | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'protocolSettings'
                e = {
-                  ($_.protocolSettings | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.protocolSettings | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'publicDelegatesBL'
                e = {
-                  ($_.publicDelegatesBL | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.publicDelegatesBL | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'securityProtocol'
                e = {
-                  ($_.securityProtocol | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.securityProtocol | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'ServicePrincipalNames'
                e = {
-                  ($_.ServicePrincipalNames | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.ServicePrincipalNames | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'showInAddressBook'
                e = {
-                  ($_.showInAddressBook | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.showInAddressBook | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'SIDHistory'
                e = {
-                  ($_.SIDHistory | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.SIDHistory | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'userCertificate'
                e = {
-                  ($_.userCertificate | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.userCertificate | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             }
          )
@@ -286,31 +286,31 @@ function Get-enADObject
             @{
                n = 'proxyAddresses'
                e = {
-                  ($_.proxyAddresses | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join '|'
+                  ($PSItem.proxyAddresses | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join '|'
                }
             },
             @{
                n = 'OU'
                e = {
-                  $_.DistinguishedName -replace '^.+?,(?=(OU|CN)=)'
+                  $PSItem.DistinguishedName -replace '^.+?,(?=(OU|CN)=)'
                }
             },
             @{
                n = 'MemberOf'
                e = {
-                  ($_.MemberOf | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.MemberOf | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             },
             @{
                n = 'msExchPoliciesExcluded'
                e = {
-                  ($_.msExchPoliciesExcluded | Where-Object -FilterScript {
-                        $_ -ne $null
-                     }) -join ';'
+                  ($PSItem.msExchPoliciesExcluded | Where-Object -FilterScript {
+                     $_ -ne $null
+                  }) -join ';'
                }
             }
          )
@@ -351,7 +351,7 @@ function Get-enADObject
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

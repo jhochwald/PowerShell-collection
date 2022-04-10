@@ -1,8 +1,8 @@
-# Contribution Guide
+20# Contribution Guide
 
 This is a guide for everyone interested in contributing to our open source projects. It's based on well known community workflows.
 
-I love PowerShell, and i love to share knowledge, you are encouraged to fork all my open source repositories and make adjustments according to your own preferences. If you really want to contribute, you should consider a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls), this will help me to improve and to share this improvement with the community.
+I love PowerShell, and I love to share knowledge, you are encouraged to fork all my open source repositories and make adjustments according to your own preferences. If you really want to contribute, you should consider a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls), this will help me to improve and to share this improvement with the community.
 
 ## General Bug Report
 

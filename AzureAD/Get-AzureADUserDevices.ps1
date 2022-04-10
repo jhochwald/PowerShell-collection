@@ -142,7 +142,7 @@ process
    {
       # For each user returned, count their Registered Devices
       $Device = ($Devices | Where-Object {
-            $_.UserPrincipalName -eq $User.UserPrincipalName
+            $PSItem.UserPrincipalName -eq $User.UserPrincipalName
          } | Measure-Object)
 
       # If the number of registered devices measured is high, create a new PSObject
@@ -172,7 +172,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -170,7 +170,7 @@ function Get-enMailboxPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox'
                }
             }
          }
@@ -178,7 +178,7 @@ function Get-enMailboxPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox'
                }
             }
          }
@@ -186,7 +186,7 @@ function Get-enMailboxPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -194,7 +194,7 @@ function Get-enMailboxPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -202,7 +202,7 @@ function Get-enMailboxPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox' -or $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox' -or $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -210,7 +210,7 @@ function Get-enMailboxPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox' -or $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox' -or $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -250,12 +250,12 @@ function Get-enMailboxPermissionReport
             $paramWriteProgress = @{
                Status          = $ProgressStatus
                Activity        = $ProgressActivity
-               PercentComplete = (($MailboxCount/$MailboxCounter) * 100)
+               PercentComplete = (($MailboxCount / $MailboxCounter) * 100)
             }
             Write-Progress @paramWriteProgress
 
             $MailboxPermissionReport += $SingleMailbox | Get-MailboxPermission | Where-Object -FilterScript {
-               ($_.IsInherited -eq $false) -and -not ($_.User -match 'NT AUTHORITY')
+               ($PSItem.IsInherited -eq $false) -and -not ($PSItem.User -match 'NT AUTHORITY')
             } | Select-Object -Property 'Identity', @{
                Name       = 'UserPrincipalName'
                Expression = {
@@ -264,7 +264,7 @@ function Get-enMailboxPermissionReport
             }, 'User', @{
                Name       = 'Access Rights'
                Expression = {
-                  $_.AccessRights -join ','
+                  $PSItem.AccessRights -join ','
                }
             } -ErrorAction $CNT -WarningAction $CNT
          }
@@ -308,7 +308,7 @@ function Get-enMailboxPermissionReport
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

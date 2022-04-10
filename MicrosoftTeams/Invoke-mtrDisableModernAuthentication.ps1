@@ -136,7 +136,7 @@ function Invoke-mtrDisableModernAuthentication
 
       #region DisconnectExchangeOnline
       $ExchangeSessionID = (Get-PSSession | Where-Object {
-            $_.ComputerName -eq 'outlook.office365.com'
+            $PSItem.ComputerName -eq 'outlook.office365.com'
          } | Select-Object -ExpandProperty Id)
 
       if ($ExchangeSessionID)
@@ -168,11 +168,11 @@ function Invoke-mtrDisableModernAuthentication
       #region FinalCleanup
       # Just in case: We remove all sessions that might still be around
       $null = ((Get-PSSession -ErrorAction $SCT | Where-Object {
-               $_.ComputerName -eq 'outlook.office365.com'
+               $PSItem.ComputerName -eq 'outlook.office365.com'
             }) | Remove-PSSession @RemovePSSessionDefaultParams)
 
       $null = ((Get-PSSession -ErrorAction $SCT | Where-Object {
-               $_.ComputerName -like 'admin*.online.lync.com'
+               $PSItem.ComputerName -like 'admin*.online.lync.com'
             }) | Remove-PSSession @RemovePSSessionDefaultParams)
 
       # Remove the Modules (Here just in case we missed something above)

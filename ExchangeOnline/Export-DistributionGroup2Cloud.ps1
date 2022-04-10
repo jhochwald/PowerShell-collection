@@ -86,7 +86,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -106,7 +106,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -135,7 +135,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -166,7 +166,7 @@ function Export-DistributionGroup2Cloud
                }
                catch
                {
-                  $line = ($_.InvocationInfo.ScriptLineNumber)
+                  $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                   # Dump the Info
                   Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -191,7 +191,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -229,7 +229,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
 
@@ -264,7 +264,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -331,7 +331,7 @@ function Export-DistributionGroup2Cloud
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
 
@@ -366,7 +366,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -388,7 +388,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -414,7 +414,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -429,12 +429,12 @@ function Export-DistributionGroup2Cloud
          try
          {
             $NewAddresses = $OldAddresses | ForEach-Object -Process {
-               $_.EmailAddress.Replace('X500', 'x500')
+               $PSItem.EmailAddress.Replace('X500', 'x500')
             }
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -458,7 +458,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
 
@@ -487,7 +487,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
 
@@ -513,7 +513,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
 
@@ -540,7 +540,7 @@ function Export-DistributionGroup2Cloud
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -590,7 +590,7 @@ function Export-DistributionGroup2Cloud
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

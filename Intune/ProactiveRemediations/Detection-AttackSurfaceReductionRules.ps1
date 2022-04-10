@@ -54,7 +54,7 @@ $AttackSurfaceReductionRulesList = '
 $AttackSurfaceReductionRules = ($AttackSurfaceReductionRulesList | ConvertFrom-Csv -Delimiter ',' -Header 'Name', 'IntuneName', 'GUID', 'Action' -ErrorAction SilentlyContinue | Select-Object -Property 'Name', 'GUID', 'Action', @{
       Label      = 'AttackSurfaceReductionRules_Actions'
       Expression = {
-         switch ($_.Action)
+         switch ($PSItem.Action)
          {
             AuditMode
             {
@@ -106,7 +106,7 @@ foreach ($RulesId in $RulesIds)
    if ($AttackSurfaceReductionRules.GUID -contains $RulesId)
    {
       if ($RulesActions[$RuleCounter] -ne ($AttackSurfaceReductionRules | Where-Object -FilterScript {
-               $_.GUID -eq $RulesId
+               $PSItem.GUID -eq $RulesId
             }).AttackSurfaceReductionRules_Actions)
       {
          # This rule does NOT match the desired state

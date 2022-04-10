@@ -96,35 +96,35 @@ if ($PSCmdlet.ShouldProcess('Microsoft Teams Client', 'Hard Kill'))
 #endregion
 
 Get-ChildItem -Path ($AppDataBasePath + 'blob_storage') @paramGetChildItem -Verbose -Debug | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem -WhatIf
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem -WhatIf
 }
 
 Get-ChildItem -Path ($AppDataBasePath + 'databases') @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem
 }
 
 Get-ChildItem -Path ($AppDataBasePath + 'Cache') @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem
 }
 
 Get-ChildItem -Path ($AppDataBasePath + 'gpucache') @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem
 }
 
 Get-ChildItem -Path ($AppDataBasePath + 'IndexedDB') @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName -Confirm:$false -Force -Recurse -ErrorAction SilentlyContinue
+   Remove-Item -Path $PSItem.FullName -Confirm:$false -Force -Recurse -ErrorAction SilentlyContinue
 }
 
 Get-ChildItem -Path ($AppDataBasePath + 'Local Storage') @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem
 }
 
 Get-ChildItem -Path ($AppDataBasePath + 'tmp') @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem
 }
 
 Get-ChildItem -Path $AppDataBasePath -Include 'old_logs_*.txt', 'logs.txt', 'in_progress_download_metadata_store' @paramGetChildItem | ForEach-Object -Process {
-   Remove-Item -Path $_.FullName @paramRemoveItem
+   Remove-Item -Path $PSItem.FullName @paramRemoveItem
 }
 
 if (Test-Path -Path ($AppDataBasePath + 'installTime.txt'))
@@ -140,7 +140,7 @@ if (Test-Path -Path ($AppDataBasePath + 'installTime.txt'))
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

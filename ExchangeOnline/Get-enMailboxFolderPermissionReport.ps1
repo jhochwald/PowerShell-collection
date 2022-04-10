@@ -176,7 +176,7 @@ function Get-enMailboxFolderPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox'
                }
             }
          }
@@ -184,7 +184,7 @@ function Get-enMailboxFolderPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox'
                }
             }
          }
@@ -192,7 +192,7 @@ function Get-enMailboxFolderPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -200,7 +200,7 @@ function Get-enMailboxFolderPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -208,7 +208,7 @@ function Get-enMailboxFolderPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox' -or $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox' -or $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -216,7 +216,7 @@ function Get-enMailboxFolderPermissionReport
          {
             $paramWhereObject = @{
                FilterScript = {
-                  $_.RecipientTypeDetails -eq 'UserMailbox' -or $_.RecipientTypeDetails -eq 'SharedMailbox'
+                  $PSItem.RecipientTypeDetails -eq 'UserMailbox' -or $PSItem.RecipientTypeDetails -eq 'SharedMailbox'
                }
             }
          }
@@ -256,15 +256,15 @@ function Get-enMailboxFolderPermissionReport
             $paramWriteProgress = @{
                Status          = $ProgressStatus
                Activity        = $ProgressActivity
-               PercentComplete = (($MailboxCount/$MailboxCounter) * 100)
+               PercentComplete = (($MailboxCount / $MailboxCounter) * 100)
             }
             Write-Progress @paramWriteProgress
 
             # Get all folder for the mailbox
             $AllFolders = ($SingleMailbox | Get-MailboxFolderStatistics -FolderScope All | ForEach-Object -Process {
-                  $_.folderpath
+                  $PSItem.folderpath
                } | ForEach-Object -Process {
-                  $_.replace('/', '\')
+                  $PSItem.replace('/', '\')
                })
 
             ForEach ($SingleFolder in $AllFolders)
@@ -277,7 +277,7 @@ function Get-enMailboxFolderPermissionReport
                $paramWriteProgress = @{
                   Status          = $ProgressStatus
                   Activity        = $ProgressActivity
-                  PercentComplete = (($MailboxCount/$MailboxCounter) * 100)
+                  PercentComplete = (($MailboxCount / $MailboxCounter) * 100)
                }
                Write-Progress @paramWriteProgress
 
@@ -291,7 +291,7 @@ function Get-enMailboxFolderPermissionReport
 
                # store results in variable
                $MailboxPermissionReport += $MailboxFolderPermission | Where-Object -FilterScript {
-                  $_.User -notlike 'Default' -and $_.User -notlike 'Anonymous' -and $_.AccessRights -notlike 'None' -and $_.AccessRights -notlike 'Owner'
+                  $PSItem.User -notlike 'Default' -and $PSItem.User -notlike 'Anonymous' -and $PSItem.AccessRights -notlike 'None' -and $PSItem.AccessRights -notlike 'Owner'
                } | Select-Object -Property @{
                   name       = 'Name'
                   expression = {
@@ -305,12 +305,12 @@ function Get-enMailboxFolderPermissionReport
                }, FolderName, @{
                   name       = 'User'
                   expression = {
-                     $_.User -join ','
+                     $PSItem.User -join ','
                   }
                }, @{
                   name       = 'AccessRights'
                   expression = {
-                     $_.AccessRights -join ','
+                     $PSItem.AccessRights -join ','
                   }
                }
 
@@ -366,7 +366,7 @@ function Get-enMailboxFolderPermissionReport
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

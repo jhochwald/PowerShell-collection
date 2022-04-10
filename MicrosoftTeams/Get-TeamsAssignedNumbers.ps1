@@ -334,7 +334,7 @@ process
             if ($ReportData.UserPrincipalName -contains $ReportingItem.UserPrincipalName)
             {
                $ReportData = ($ReportData | Where-Object -FilterScript {
-                     ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
+                     ($PSItem.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
                   })
             }
 
@@ -365,7 +365,7 @@ process
          Debug    = $DebugValue
       }
       $OnlineApplicationInstanceLineURI = (Get-CsOnlineApplicationInstance @paramGetCsOnlineApplicationInstance | Where-Object -FilterScript {
-            ($_.PhoneNumber -ne $null)
+            ($PSItem.PhoneNumber -ne $null)
          } -ErrorAction SilentlyContinue -WarningAction SilentlyContinue | Select-Object @paramSelectObject)
 
       if ($OnlineApplicationInstanceLineURI)
@@ -392,7 +392,7 @@ process
                $WorkaroundInfo = $null
 
                $WorkaroundInfo = ($ReportData | Where-Object -FilterScript {
-                     ($_.UserPrincipalName -eq $ReportingItem.UserPrincipalName)
+                     ($PSItem.UserPrincipalName -eq $ReportingItem.UserPrincipalName)
                   } | Select-Object -Property 'Enabled', 'SipAddress')
 
                if (($WorkaroundInfo).Enabled)
@@ -441,7 +441,7 @@ process
             if ($ReportData.UserPrincipalName -contains $ReportingItem.UserPrincipalName)
             {
                $ReportData = ($ReportData | Where-Object -FilterScript {
-                     ($_.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
+                     ($PSItem.UserPrincipalName -ne $ReportingItem.UserPrincipalName)
                   })
             }
 
@@ -604,7 +604,7 @@ process
       {
          $FilePath = ($FilePath + '.html')
 
-         $Header = @"
+         $Header = @'
 <title>Microsoft Teams assigned phone number report</title>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -631,7 +631,7 @@ process
       border-color: black;
    }
 </style>
-"@
+'@
 
          $htmlParams = @{
             Title       = 'Microsoft Teams assigned phone number report'
@@ -690,7 +690,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

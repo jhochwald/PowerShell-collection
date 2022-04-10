@@ -42,7 +42,7 @@ process
 {
    # Get BitLocker Volume info
    $BitLockerVolumeInfo = (Get-BitLockerVolume | Where-Object -FilterScript {
-         $_.VolumeType -eq 'OperatingSystem'
+         $PSItem.VolumeType -eq 'OperatingSystem'
       })
 
    # Get the Mount Point
@@ -117,7 +117,7 @@ process
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

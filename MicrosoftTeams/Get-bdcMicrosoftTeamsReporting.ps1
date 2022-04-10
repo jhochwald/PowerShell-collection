@@ -35,14 +35,14 @@ function Get-bdcMicrosoftTeamsReporting
 
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting | Where-Object -FilterScript {
-         $_.owners -eq 0
+         $PSItem.owners -eq 0
          } | Select-Object -ExpandProperty DisplayName
 
          Find all Teams without an owner.
 
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting | Where-Object -FilterScript {
-         $_.owners -eq 1
+         $PSItem.owners -eq 1
          } | Select-Object -ExpandProperty DisplayName | ForEach-Object -Process {
          Write-Warning -Message "Looks like $_ is an orphaned objects, it has no owner!" -ErrorAction Continue
          }
@@ -51,7 +51,7 @@ function Get-bdcMicrosoftTeamsReporting
 
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting | Where-Object -FilterScript {
-         ($_.Members -eq 0) -and ($_.Guests -eq 0)
+         ($PSItem.Members -eq 0) -and ($PSItem.Guests -eq 0)
          } | Select-Object -ExpandProperty DisplayName | ForEach-Object -Process {
          Write-Warning -Message "Looks like $_ has no members and guests!" -ErrorAction Continue
          }
@@ -60,7 +60,7 @@ function Get-bdcMicrosoftTeamsReporting
 
          .EXAMPLE
          PS C:\> Get-bdcMicrosoftTeamsReporting | Where-Object -FilterScript {
-         ($_.Archived -eq $true) -and ($_.ShowInTeamsSearchAndSuggestions -eq $true)
+         ($PSItem.Archived -eq $true) -and ($PSItem.ShowInTeamsSearchAndSuggestions -eq $true)
          } | Select-Object -ExpandProperty DisplayName | ForEach-Object -Process {
          Write-Warning -Message "Looks like $_ is archived but searchable!" -ErrorAction Continue
          }
@@ -205,61 +205,61 @@ function Get-bdcMicrosoftTeamsReporting
          Get-Team -ErrorAction Stop | ForEach-Object -Process {
             try
             {
-               Write-Verbose -Message ('Generate the Report for the Microsoft Teams Team {0}' -f $_.DisplayName)
+               Write-Verbose -Message ('Generate the Report for the Microsoft Teams Team {0}' -f $PSItem.DisplayName)
 
                # Cleanup
                $TeamUserDetails = $null
 
                # Get the User information for the Microsoft Teams Team and save it for reuse
                $TeamUserDetails = $null
-               $TeamUserDetails = (Get-TeamUser -GroupId $_.GroupID -ErrorAction Stop)
+               $TeamUserDetails = (Get-TeamUser -GroupId $PSItem.GroupID -ErrorAction Stop)
 
                # Get the Channel information for the Microsoft Teams Team
                $TeamChannelDetails = $null
-               $TeamChannelDetails = ((Get-TeamChannel -GroupId $_.GroupID -ErrorAction Stop).count)
+               $TeamChannelDetails = ((Get-TeamChannel -GroupId $PSItem.GroupID -ErrorAction Stop).count)
 
                # Put all details into an object
                $SingleTeamReport = (New-Object -TypeName PSobject)
 
                #region FillSingleTeamReport
-               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $_.DisplayName
-               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Description' -Value $_.Description
-               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Visibility' -Value $_.Visibility
+               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DisplayName' -Value $PSItem.DisplayName
+               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Description' -Value $PSItem.Description
+               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Visibility' -Value $PSItem.Visibility
 
-               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Archived' -Value $_.Archived
-               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'ShowInTeamsSearchAndSuggestions' -Value $_.ShowInTeamsSearchAndSuggestions
+               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Archived' -Value $PSItem.Archived
+               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'ShowInTeamsSearchAndSuggestions' -Value $PSItem.ShowInTeamsSearchAndSuggestions
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Channels' -Value $TeamChannelDetails
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Owners' -Value (($TeamUserDetails | Where-Object -FilterScript {
-                        $_.Role -like 'owner'
+                        $PSItem.Role -like 'owner'
                      }).count)
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Members' -Value (($TeamUserDetails | Where-Object -FilterScript {
-                        $_.Role -like 'member'
+                        $PSItem.Role -like 'member'
                      }).count)
                $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Guests' -Value (($TeamUserDetails | Where-Object -FilterScript {
-                        $_.Role -like 'guest'
+                        $PSItem.Role -like 'guest'
                      }).count)
 
                #region GiphyDetails
                if ($GiphyDetails -or $AllDetails)
                {
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGiphy' -Value $_.AllowGiphy
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'GiphyContentRating' -Value $_.GiphyContentRating
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGiphy' -Value $PSItem.AllowGiphy
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'GiphyContentRating' -Value $PSItem.GiphyContentRating
                }
                #endregion GiphyDetails
 
                #region MemesDetails
                if ($MemesDetails -or $AllDetails)
                {
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowStickersAndMemes' -Value $_.AllowStickersAndMemes
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCustomMemes' -Value $_.AllowCustomMemes
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowStickersAndMemes' -Value $PSItem.AllowStickersAndMemes
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCustomMemes' -Value $PSItem.AllowCustomMemes
                }
                #endregion MemesDetails
 
                #region GuestDetails
                if ($GuestDetails -or $AllDetails)
                {
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGuestCreateUpdateChannels' -Value $_.AllowGuestCreateUpdateChannels
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGuestDeleteChannels' -Value $_.AllowGuestDeleteChannels
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGuestCreateUpdateChannels' -Value $PSItem.AllowGuestCreateUpdateChannels
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowGuestDeleteChannels' -Value $PSItem.AllowGuestDeleteChannels
                }
                #endregion GuestDetails
 
@@ -267,7 +267,7 @@ function Get-bdcMicrosoftTeamsReporting
                if ($Detailed -or $AllDetails)
                {
                   # Based on the idea of Tom Arbuthnot (https://github.com/tomarbuthnot/Microsoft-Teams-PowerShell)
-                  $DescriptionWordCount = (($_.Description | Out-String | Measure-Object -Word).words)
+                  $DescriptionWordCount = (($PSItem.Description | Out-String | Measure-Object -Word).words)
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DescriptionWordCount' -Value $DescriptionWordCount
 
                   $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'DescriptionScore' -Value $(if ($DescriptionWordCount -eq 0)
@@ -293,9 +293,9 @@ function Get-bdcMicrosoftTeamsReporting
                   )
 
                   # As requested by Peter Duda
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Classification' -Value $(if ($_.Classification)
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'Classification' -Value $(if ($PSItem.Classification)
                      {
-                        $_.Classification
+                        $PSItem.Classification
                      }
                      else
                      {
@@ -304,9 +304,9 @@ function Get-bdcMicrosoftTeamsReporting
                   )
 
                   # New since 2020/01
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'MailNickName' -Value $(if ($_.MailNickName)
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'MailNickName' -Value $(if ($PSItem.MailNickName)
                      {
-                        $_.MailNickName
+                        $PSItem.MailNickName
                      }
                      else
                      {
@@ -315,21 +315,21 @@ function Get-bdcMicrosoftTeamsReporting
                   )
 
                   # Verbose reporting
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateChannels' -Value $_.AllowCreateUpdateChannels
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowDeleteChannels' -Value $_.AllowDeleteChannels
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowAddRemoveApps' -Value $_.AllowAddRemoveApps
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateRemoveTabs' -Value $_.AllowCreateUpdateRemoveTabs
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateRemoveConnectors' -Value $_.AllowCreateUpdateRemoveConnectors
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowUserEditMessages' -Value $_.AllowUserEditMessages
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowUserDeleteMessages' -Value $_.AllowUserDeleteMessages
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowOwnerDeleteMessages' -Value $_.AllowOwnerDeleteMessages
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowTeamMentions' -Value $_.AllowTeamMentions
-                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowChannelMentions' -Value $_.AllowChannelMentions
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateChannels' -Value $PSItem.AllowCreateUpdateChannels
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowDeleteChannels' -Value $PSItem.AllowDeleteChannels
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowAddRemoveApps' -Value $PSItem.AllowAddRemoveApps
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateRemoveTabs' -Value $PSItem.AllowCreateUpdateRemoveTabs
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowCreateUpdateRemoveConnectors' -Value $PSItem.AllowCreateUpdateRemoveConnectors
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowUserEditMessages' -Value $PSItem.AllowUserEditMessages
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowUserDeleteMessages' -Value $PSItem.AllowUserDeleteMessages
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowOwnerDeleteMessages' -Value $PSItem.AllowOwnerDeleteMessages
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowTeamMentions' -Value $PSItem.AllowTeamMentions
+                  $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'AllowChannelMentions' -Value $PSItem.AllowChannelMentions
                }
                #endregion DetailedReport
 
                #region FinalValue
-               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'GroupId' -Value $_.GroupId
+               $SingleTeamReport | Add-Member -MemberType NoteProperty -Name 'GroupId' -Value $PSItem.GroupId
                #endregion FinalValue
                #endregion FillSingleTeamReport
 
@@ -419,7 +419,7 @@ function Get-bdcMicrosoftTeamsReporting
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

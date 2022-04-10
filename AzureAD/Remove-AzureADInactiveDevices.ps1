@@ -59,7 +59,7 @@ process
       WarningAction = 'SilentlyContinue'
    }
    $null = ((Get-AzureADDevice @paramGetAzureADDevice | Where-Object -FilterScript {
-            $_.ApproximateLastLogonTimeStamp -le $InactivityTimeFrame
+            $PSItem.ApproximateLastLogonTimeStamp -le $InactivityTimeFrame
          }) | ForEach-Object -Process {
          # Inform the operator
          Write-Output -InputObject ('Removing device {0}' -f $PSItem.ObjectId)

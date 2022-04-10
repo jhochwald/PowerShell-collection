@@ -25,17 +25,17 @@ function Search-MailboxItemDeletion
       Get all deletes, for all mailboxes
 
       .EXAMPLE
-      PS C:\> Search-MailboxItemDeletion -Days 2 | Where-Object -FilterScript { $_.Folder -ne 'Deleted Items' }
+      PS C:\> Search-MailboxItemDeletion -Days 2 | Where-Object -FilterScript { $PSItem.Folder -ne 'Deleted Items' }
 
       Get all deletes of the last 2 days, for all mailboxes, but we exclude one Folder.
 
       .EXAMPLE
-      PS C:\> Search-MailboxItemDeletion -Days 7 | Where-Object -FilterScript { $_.Folder -ne 'Deleted Items' }
+      PS C:\> Search-MailboxItemDeletion -Days 7 | Where-Object -FilterScript { $PSItem.Folder -ne 'Deleted Items' }
 
       Get all deletes of the last 7 days, for all mailboxes, but we exclude one Folder.
 
       .EXAMPLE
-      PS C:\> Search-MailboxItemDeletion -Days 30 | Where-Object -FilterScript { ($_.Folder -ne 'Drafts') -and ($_.Action -ne 'SoftDelete') }
+      PS C:\> Search-MailboxItemDeletion -Days 30 | Where-Object -FilterScript { ($PSItem.Folder -ne 'Drafts') -and ($PSItem.Action -ne 'SoftDelete') }
 
       Get all deletes of the last 30 days, for all mailboxes, but we exclude one Folder and the 'SoftDelete' action
 
@@ -313,7 +313,7 @@ function Search-MailboxItemDeletion
          {
             $Output = ($Report | Where-Object -FilterScript {
                   # You might want to tweak the filter to support Wildcards or more the one mailbox
-                  $_.Mailbox -eq $Mailbox
+                  $PSItem.Mailbox -eq $Mailbox
                })
          }
          'All'
@@ -343,7 +343,7 @@ function Search-MailboxItemDeletion
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

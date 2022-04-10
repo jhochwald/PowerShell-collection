@@ -128,7 +128,7 @@ function Get-enADGroupChange
 
             # Querry the info and add to the Object
             $Members += (Get-ADReplicationAttributeMetadata -Server $Server -Object $SingleGroup -ShowAllLinkedValues | Where-Object -FilterScript {
-                  $_.IsLinkValue
+                  $PSItem.IsLinkValue
                } | Select-Object -Property @{
                   name       = 'GroupDN'
                   expression = {
@@ -144,7 +144,7 @@ function Get-enADGroupChange
 
          # Filter
          $Members | Where-Object -FilterScript {
-            $_.LastOriginatingChangeTime -gt (Get-Date).AddHours(-1 * $Hour)
+            $PSItem.LastOriginatingChangeTime -gt (Get-Date).AddHours(-1 * $Hour)
          }
       }
       catch
@@ -183,7 +183,7 @@ function Get-enADGroupChange
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

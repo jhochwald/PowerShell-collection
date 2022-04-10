@@ -35,7 +35,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
    try
    {
       $AllUsers = (Get-ADUser -Filter * -Properties SamAccountName, UserPrincipalName, DistinguishedName -ErrorAction Stop | Select-Object -Property SamAccountName, UserPrincipalName, DistinguishedName | Where-Object -FilterScript {
-            ($_.UserPrincipalName) -and ($_.SamAccountName)
+            ($PSItem.UserPrincipalName) -and ($PSItem.SamAccountName)
          })
    }
    catch
@@ -67,7 +67,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
          $OldRDN = (($User | Select-Object -Property @{
                   l = 'OldRDN'
                   e = {
-                     $_.DistinguishedName.split(',')[0].split('=')[1]
+                     $PSItem.DistinguishedName.split(',')[0].split('=')[1]
                   }
                }) | Select-Object -ExpandProperty OldRDN)
 
@@ -103,7 +103,7 @@ if ($pscmdlet.ShouldProcess('All Users', 'Set'))
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

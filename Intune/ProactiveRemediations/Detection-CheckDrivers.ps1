@@ -23,19 +23,19 @@ else
 }
 
 $Drivers_Test = (Get-WmiObject -Class Win32_PNPEntity -ErrorAction SilentlyContinue | Where-Object -FilterScript {
-      $_.ConfigManagerErrorCode -gt 0
+      $PSItem.ConfigManagerErrorCode -gt 0
    })
 $Search_Disabled_Missing_Drivers = ($Drivers_Test | Where-Object -FilterScript {
-      (($_.ConfigManagerErrorCode -eq 22) -or ($_.ConfigManagerErrorCode -eq 28))
+      (($PSItem.ConfigManagerErrorCode -eq 22) -or ($PSItem.ConfigManagerErrorCode -eq 28))
    })
 
 If (($Search_Disabled_Missing_Drivers).count -gt 0)
 {
    $Search_Missing_Drivers = ($Search_Disabled_Missing_Drivers | Where-Object -FilterScript {
-         $_.ConfigManagerErrorCode -eq 28
+         $PSItem.ConfigManagerErrorCode -eq 28
       }).count
    $Search_Disabled_Drivers = ($Search_Disabled_Missing_Drivers | Where-Object -FilterScript {
-         $_.ConfigManagerErrorCode -eq 22
+         $PSItem.ConfigManagerErrorCode -eq 22
       }).count
 
    Write_Log -Message_Type 'ERROR' -Message ('There is an issue with drivers. Missing drivers: {0} - Disabled drivers: {1}' -f $Search_Missing_Drivers, $Search_Disabled_Drivers) -ErrorAction SilentlyContinue

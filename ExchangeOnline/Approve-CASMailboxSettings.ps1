@@ -211,7 +211,7 @@ process
 
       # Remove all existing Exchange Online Sessions
       $null = (Get-PSSession @paramGetPSSession | Where-Object {
-            $_.ComputerName -eq 'outlook.office365.com'
+            $PSItem.ComputerName -eq 'outlook.office365.com'
          } | Remove-PSSession @paramRemovePSSession)
 
       # Splat the parameters
@@ -360,7 +360,7 @@ end
 
    # Remove all existing Exchange Online Sessions
    $null = (Get-PSSession @paramGetPSSession | Where-Object {
-         $_.ComputerName -eq 'outlook.office365.com'
+         $PSItem.ComputerName -eq 'outlook.office365.com'
       } | Remove-PSSession @paramRemovePSSession)
 }
 
@@ -368,7 +368,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

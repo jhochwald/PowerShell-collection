@@ -19,22 +19,22 @@ function Get-enADServicePrincipalName
          Retrieves all Service Principal Names (SPNs) from Active Directory
 
          .EXAMPLE
-         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $_.ObjectClass -eq 'user' }
+         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $PSItem.ObjectClass -eq 'user' }
 
          Retrieves all user class Service Principal Names (SPNs) from Active Directory
 
          .EXAMPLE
-         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $_.DNSHostName -like 'server01.contoso.com' }
+         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $PSItem.DNSHostName -like 'server01.contoso.com' }
 
          Retrieves all Service Principal Names (SPNs) for the Server 'server01.contoso.com' from Active Directory
 
          .EXAMPLE
-         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $_.Name -like '*Krb*' }
+         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $PSItem.Name -like '*Krb*' }
 
          Retrieves all Kerberos related Service Principal Names (SPNs) from Active Directory
 
          .EXAMPLE
-         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $_.SPN -like '*Krb*' }
+         PS ~> Get-enADServicePrincipalName | Where-Object -FilterScript { $PSItem.SPN -like '*Krb*' }
 
          Retrieves all Kerberos related Service Principal Names (SPNs) from Active Directory
 
@@ -151,7 +151,7 @@ function Get-enADServicePrincipalName
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
