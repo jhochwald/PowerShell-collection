@@ -67,12 +67,12 @@ function Get-MFAUserReport
          try
          {
             $Accounts = (Get-MsolUser -All -ErrorAction $STP -WarningAction $CNT | Where-Object -FilterScript {
-                  $_.StrongAuthenticationMethods -ne $Null
+                  $Null -ne $PSItem.StrongAuthenticationMethods
                } | Sort-Object -Property DisplayName)
          }
          catch
          {
-            $line = ($_.InvocationInfo.ScriptLineNumber)
+            $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
             # Dump the Info
             Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -104,9 +104,9 @@ function Get-MFAUserReport
             $State = ($Account | Select-Object -ExpandProperty StrongAuthenticationRequirements)
 
             $Methods | ForEach-Object -Process {
-               if ($_.IsDefault -eq $true)
+               if ($PSItem.IsDefault -eq $true)
                {
-                  $Method = $_.MethodType
+                  $Method = $PSItem.MethodType
                }
             }
 
@@ -148,7 +148,7 @@ function Get-MFAUserReport
             }
             catch
             {
-               $line = ($_.InvocationInfo.ScriptLineNumber)
+               $line = ($PSItem.InvocationInfo.ScriptLineNumber)
 
                # Dump the Info
                Write-Warning -Message ('Error was in Line {0}' -f $line)
@@ -173,7 +173,7 @@ function Get-MFAUserReport
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

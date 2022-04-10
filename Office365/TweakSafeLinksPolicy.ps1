@@ -1,6 +1,6 @@
 # Get your active SafeLinks Policy/Policies
 Get-SafeLinksPolicy | Where-Object -FilterScript {
-   $_.IsEnabled -eq $true
+   $PSItem.IsEnabled -eq $true
 } | Select-Object -ExpandProperty Identity
 
 # I use the default policy in this example

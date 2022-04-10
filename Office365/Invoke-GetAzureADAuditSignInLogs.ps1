@@ -91,61 +91,61 @@ process
 
       # Rest is done with filtering
       $AzureAdSignInFail = ($AzureAdSignInAll | Where-Object -FilterScript {
-            $_.status.errorCode -ne 0
+            $PSItem.status.errorCode -ne 0
          })
       $AzureAdSignInGood = ($AzureAdSignInAll | Where-Object -FilterScript {
-            $_.status.errorCode -eq 0
+            $PSItem.status.errorCode -eq 0
          })
 
       #region StructureData
       $AzureAdSignInGood = ($AzureAdSignInGood | Select-Object -Property CreatedDateTime, UserPrincipalName, RiskState, AppId, ClientAppUsed, IpAddress, @{
             N = 'City'
             E = {
-               $_.Location.City
+               $PSItem.Location.City
             }
          }, @{
             N = 'CountryOrRegion'
             E = {
-               $_.Location.CountryOrRegion
+               $PSItem.Location.CountryOrRegion
             }
          }, @{
             N = 'FailureReason'
             E = {
-               $_.Status.FailureReason
+               $PSItem.Status.FailureReason
             }
          }, ConditionalAccessStatus)
 
       $AzureAdSignInAll = ($AzureAdSignInAll | Select-Object -Property CreatedDateTime, UserPrincipalName, RiskState, AppId, ClientAppUsed, IpAddress, @{
             N = 'City'
             E = {
-               $_.Location.City
+               $PSItem.Location.City
             }
          }, @{
             N = 'CountryOrRegion'
             E = {
-               $_.Location.CountryOrRegion
+               $PSItem.Location.CountryOrRegion
             }
          }, @{
             N = 'FailureReason'
             E = {
-               $_.Status.FailureReason
+               $PSItem.Status.FailureReason
             }
          }, ConditionalAccessStatus)
 
       $AzureAdSignInFail = ($AzureAdSignInFail | Select-Object -Property CreatedDateTime, UserPrincipalName, RiskState, AppId, ClientAppUsed, IpAddress, @{
             N = 'City'
             E = {
-               $_.Location.City
+               $PSItem.Location.City
             }
          }, @{
             N = 'CountryOrRegion'
             E = {
-               $_.Location.CountryOrRegion
+               $PSItem.Location.CountryOrRegion
             }
          }, @{
             N = 'FailureReason'
             E = {
-               $_.Status.FailureReason
+               $PSItem.Status.FailureReason
             }
          }, ConditionalAccessStatus)
       #endregion StructureData
@@ -153,15 +153,15 @@ process
       #region ConditionalAccessFilter
       # BUG: Does not work as expected
       $AzureAdSignInAllCAfail = ($AzureAdSignInAll | Where-Object -FilterScript {
-            (($_.ConditionalAccessStatus -ne 'success') -and ($_.ConditionalAccessStatus -ne 'notApplied'))
+            (($PSItem.ConditionalAccessStatus -ne 'success') -and ($PSItem.ConditionalAccessStatus -ne 'notApplied'))
          })
 
       $AzureAdSignInFailCAfail = ($AzureAdSignInFail | Where-Object -FilterScript {
-            (($_.ConditionalAccessStatus -ne 'success') -and ($_.ConditionalAccessStatus -ne 'notApplied'))
+            (($PSItem.ConditionalAccessStatus -ne 'success') -and ($PSItem.ConditionalAccessStatus -ne 'notApplied'))
          })
 
       $AzureAdSignInGoodCAfail = ($AzureAdSignInGood | Where-Object -FilterScript {
-            (($_.ConditionalAccessStatus -ne 'success') -and ($_.ConditionalAccessStatus -ne 'notApplied'))
+            (($PSItem.ConditionalAccessStatus -ne 'success') -and ($PSItem.ConditionalAccessStatus -ne 'notApplied'))
          })
       #endregion ConditionalAccessFilter
 

@@ -59,7 +59,7 @@ begin
 process
 {
    $AllUnifiedGroups = (Get-UnifiedGroup | Where-Object -FilterScript {
-         $_.PrimarySmtpAddress -like ('*' + $OldMailFilter)
+         $PSItem.PrimarySmtpAddress -like ('*' + $OldMailFilter)
       } | Select-Object -Property Identity, DisplayName, PrimarySmtpAddress)
 
    if ($AllUnifiedGroups)

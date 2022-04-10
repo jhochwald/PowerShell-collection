@@ -71,7 +71,7 @@ process
                2. All external users (based on the '#EXT#' in the UserPrincipalName)
                3. All users without a vanity domain (e.g. everyone within @NAME.onmicrosoft.com) <- Review this before using it!!!
          #>
-         (($_.AssignedLicenses -ne $null) -and ($_.UserPrincipalName -notlike ('*#EXT#@*')) -and ($_.UserPrincipalName -notlike ('*@' + $TenantName + '.onmicrosoft.com')))
+         (($PSItem.AssignedLicenses -ne $null) -and ($PSItem.UserPrincipalName -notlike ('*#EXT#@*')) -and ($PSItem.UserPrincipalName -notlike ('*@' + $TenantName + '.onmicrosoft.com')))
       } | Select-Object -ExpandProperty UserPrincipalName -ErrorAction SilentlyContinue)
 
    # The Limit of Request-SPOPersonalSite is 200
@@ -124,7 +124,7 @@ process
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -337,10 +337,10 @@ function Convert-MsolServicePlanName
       PS> Get-MsolAccountSku | Select-Object -Property @{
       Name       = 'ServicePlanName'
       Expression = {
-      $_.ServiceStatus.ServicePlan.ServiceName
+      $PSItem.ServiceStatus.ServicePlan.ServiceName
       }
       } | ForEach-Object -Process {
-      $_.ServicePlanName
+      $PSItem.ServicePlanName
       } | Convert-MsolServicePlanName
 
       Teams/Skype for Business Cloud PBX
@@ -408,8 +408,8 @@ function Convert-MsolServicePlanName
       if ($ServicePlanFriendlyName)
       {
          ($ServicePlanFriendlyList.GetEnumerator() | Where-Object -FilterScript {
-               $_.Value -eq "$ServicePlanFriendlyName"
-            }).Name
+            $PSItem.Value -eq "$ServicePlanFriendlyName"
+         }).Name
       }
    }
 }
@@ -488,8 +488,8 @@ function Convert-MsolAccountSkuName
       if ($SkuPartNumberFriendlyName)
       {
          ($SkuPartNumberFriendlyNameList.GetEnumerator() | Where-Object -FilterScript {
-               $_.Value -eq "$SkuPartNumberFriendlyName"
-            }).Name
+            $PSItem.Value -eq "$SkuPartNumberFriendlyName"
+         }).Name
       }
    }
 }
@@ -500,10 +500,10 @@ Write-Output -InputObject 'MsolServicePlanName:'
 Get-MsolAccountSku | Select-Object -Property @{
    Name       = 'ServicePlanName'
    Expression = {
-      $_.ServiceStatus.ServicePlan.ServiceName
+      $PSItem.ServiceStatus.ServicePlan.ServiceName
    }
 } | ForEach-Object -Process {
-   $_.ServicePlanName
+   $PSItem.ServicePlanName
 } | Convert-MsolServicePlanName
 
 Write-Output -InputObject ''
@@ -517,7 +517,7 @@ Get-MsolAccountSku | Select-Object -ExpandProperty SkuPartNumber | Convert-MsolA
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

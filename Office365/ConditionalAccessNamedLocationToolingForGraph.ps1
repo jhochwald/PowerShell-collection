@@ -832,7 +832,7 @@ begin
             if ($_ -match '/32')
             {
                # Change to the new address in Sigle IP CIDR (fixed value only)
-               $_.cidrAddress = ($UpdatedIP + '/32')
+               $PSItem.cidrAddress = ($UpdatedIP + '/32')
             }
          }
 

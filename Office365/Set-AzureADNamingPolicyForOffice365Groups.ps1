@@ -129,7 +129,7 @@ process
    {
       # Get the existing template
       $template = (Get-AzureADDirectorySettingTemplate -ErrorAction Stop | Where-Object -FilterScript {
-            $_.displayname -eq 'group.unified'
+            $PSItem.displayname -eq 'group.unified'
          })
 
       # Modify the settings
@@ -193,7 +193,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

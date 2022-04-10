@@ -25,7 +25,7 @@ function Get-MicrosoftWhiteboardReport
       Get all Whiteboards for the User 'john.doe@contoso.com'
 
       .EXAMPLE
-      PS C:\> Get-MicrosoftWhiteboardReport -UserName 'john.doe@contoso.com' | Where-Object {$_.Id -eq '01b3d6ee-edbb-456a-8805-f768aaedcc6a'}
+      PS C:\> Get-MicrosoftWhiteboardReport -UserName 'john.doe@contoso.com' | Where-Object {$PSItem.Id -eq '01b3d6ee-edbb-456a-8805-f768aaedcc6a'}
 
       Get the infomation about the Whiteboard with the ID '01b3d6ee-edbb-456a-8805-f768aaedcc6a' ot hte user 'john.doe@contoso.com'
 
@@ -283,7 +283,7 @@ function Get-MicrosoftWhiteboardReport
 #region LICENSE
 <#
    BSD 3-Clause License
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
    1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
