@@ -100,8 +100,8 @@ $null = (Get-NetFirewallRule @paramGetNetFirewallRule | Set-NetFirewallRule @par
       Set the diagnostic data collection to minimum
 #>
 if (Get-WindowsEdition -Online -ErrorAction $SCT | Where-Object -FilterScript {
-      $_.Edition -like 'Enterprise*' -or $_.Edition -eq 'Education'
-})
+      $PSItem.Edition -like 'Enterprise*' -or $PSItem.Edition -eq 'Education'
+   })
 {
    # Diagnostic data off
    $paramNewItemProperty = @{
@@ -211,8 +211,8 @@ $null = (New-ItemProperty @paramNewItemProperty)
       The sign-in info to automatically finish setting up device after an update
 #>
 $SID = (Get-CimInstance -ClassName 'Win32_UserAccount' -ErrorAction $SCT | Where-Object -FilterScript {
-      $_.Name -eq $env:USERNAME
-}).SID
+      $PSItem.Name -eq $env:USERNAME
+   }).SID
 
 $paramTestPath = @{
    Path        = ('HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\UserARSO\{0}' -f $SID)
@@ -1079,7 +1079,7 @@ if ($env:TEMP -ne "$env:SystemDrive\Temp")
       ErrorAction = $SCT
    }
    $null = (Restart-Service @paramRestartService)
-   
+
    # Stop OneDrive processes
    $paramStopProcess = @{
       Name        = 'OneDrive'
@@ -1093,7 +1093,7 @@ if ($env:TEMP -ne "$env:SystemDrive\Temp")
       ErrorAction = $SCT
    }
    $null = (Stop-Process @paramStopProcess)
-   
+
    $paramTestPath = @{
       Path        = ($env:SystemDrive + '\Temp')
       ErrorAction = $SCT
@@ -1109,7 +1109,7 @@ if ($env:TEMP -ne "$env:SystemDrive\Temp")
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    # Cleaning up folders
    $paramRemoveItem = @{
       Path        = ($env:SystemRoot + '\Temp')
@@ -1125,9 +1125,9 @@ if ($env:TEMP -ne "$env:SystemDrive\Temp")
       ErrorAction = $SCT
    }
    $null = (Get-Item @paramGetItem | Where-Object -FilterScript {
-         $_.LinkType -ne 'SymbolicLink'
-   } | Remove-Item -Recurse -Force -Confirm:$false -ErrorAction $SCT)
-   
+         $PSItem.LinkType -ne 'SymbolicLink'
+      } | Remove-Item -Recurse -Force -Confirm:$false -ErrorAction $SCT)
+
    $paramTestPath = @{
       Path = ($env:LOCALAPPDATA + '\Temp')
    }
@@ -1142,7 +1142,7 @@ if ($env:TEMP -ne "$env:SystemDrive\Temp")
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    # If there are some files or folders left in %LOCALAPPDATA\Temp%
    $paramGetChildItem = @{
       Path        = $env:TEMP
@@ -1173,12 +1173,12 @@ public static bool MarkFileDelete (string sourcefile)
 }
 '@
       }
-      
+
       if (-not ('WinAPI.DeleteFiles' -as [type]))
       {
          $null = (Add-Type @Signature)
       }
-      
+
       try
       {
          $paramGetChildItem = @{
@@ -1192,19 +1192,19 @@ public static bool MarkFileDelete (string sourcefile)
       {
          # If files are in use remove them at the next boot
          Get-ChildItem -Path $env:TEMP -Recurse -Force | ForEach-Object -Process {
-            [WinAPI.DeleteFiles]::MarkFileDelete($_.FullName)
+            [WinAPI.DeleteFiles]::MarkFileDelete($PSItem.FullName)
          }
       }
-      
+
       $SymbolicLinkTask = @"
 Get-ChildItem -Path `$env:LOCALAPPDATA\Temp -Recurse -Force | Remove-Item -Recurse -Force
 
-Get-Item -Path `$env:LOCALAPPDATA\Temp -Force | Where-Object -FilterScript {`$_.LinkType -ne """SymbolicLink"""} | Remove-Item -Recurse -Force
+Get-Item -Path `$env:LOCALAPPDATA\Temp -Force | Where-Object -FilterScript {`$PSItem.LinkType -ne """SymbolicLink"""} | Remove-Item -Recurse -Force
 New-Item -Path `$env:LOCALAPPDATA\Temp -ItemType SymbolicLink -Value `$env:SystemDrive\Temp -Force
 
 Unregister-ScheduledTask -TaskName SymbolicLink -Confirm:`$false
 "@
-      
+
       # Create a temporary scheduled task to create a symbolic link to the %SystemDrive%\Temp folder
       $paramNewScheduledTaskAction = @{
          Execute  = 'powershell.exe'
@@ -1249,7 +1249,7 @@ Unregister-ScheduledTask -TaskName SymbolicLink -Confirm:`$false
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    #region main
    # Change the %TEMP% environment variable path to %LOCALAPPDATA%\Temp
    # The additional registry key creating are needed to fix the property type of the keys: SetEnvironmentVariable creates them with the "String" type instead of "ExpandString" as by default
@@ -1266,7 +1266,7 @@ Unregister-ScheduledTask -TaskName SymbolicLink -Confirm:`$false
       ErrorAction  = $SCT
    }
    $null = (New-ItemProperty @paramNewItemProperty)
-   
+
    [Environment]::SetEnvironmentVariable('TEMP', ($env:SystemDrive + '\Temp'), 'User')
    [Environment]::SetEnvironmentVariable('TEMP', ($env:SystemDrive + '\Temp'), 'Machine')
    [Environment]::SetEnvironmentVariable('TEMP', ($env:SystemDrive + '\Temp'), 'Process')
@@ -1505,7 +1505,7 @@ $paramRemoveItemProperty = @{
 #>
 # Check how the script was invoked: via a preset or Function.ps1
 $PresetName = (Get-PSCallStack -ErrorAction $SCT).Position | Where-Object -FilterScript {
-   (($_.File -match '.ps1') -and ($_.File -notmatch 'Functions.ps1')) -and (($_.Text -eq 'WinPrtScrFolder -Desktop') -or ($_.Text -match 'Invoke-Expression'))
+   (($PSItem.File -match '.ps1') -and ($PSItem.File -notmatch 'Functions.ps1')) -and (($PSItem.Text -eq 'WinPrtScrFolder -Desktop') -or ($PSItem.Text -match 'Invoke-Expression'))
 }
 
 if ($null -ne $PresetName)
@@ -1530,7 +1530,7 @@ if ($null -ne $PresetName)
       ErrorAction  = $SCT
    }
    $OneDriveInstalled = (Get-Package @paramGetPackage)
-   
+
    if (($OneDriveUninstallFunctionUncommented) -or (-not $OneDriveInstalled))
    {
       $paramGetItemPropertyValue = @{
@@ -1835,8 +1835,8 @@ if (-not (Get-CimInstance @paramGetCimInstance).PartOfDomain)
 {
    $FirewallRules = @(
       # File and printer sharing
-      '@FirewallAPI.dll,-32752', 
-      
+      '@FirewallAPI.dll,-32752',
+
       # Network discovery
       '@FirewallAPI.dll,-28502'
    )
@@ -1893,7 +1893,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    # Find the current GUID of Windows Terminal
    $paramGetAppxPackage = @{
       Name        = 'Microsoft.WindowsTerminal'
@@ -1902,7 +1902,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
    $PackageFullName = (Get-AppxPackage @paramGetAppxPackage).PackageFullName
    Get-ChildItem -Path ('HKLM:\SOFTWARE\Classes\PackagedCom\Package\{0}\Class' -f $PackageFullName) -ErrorAction $SCT | ForEach-Object -Process {
       $paramGetItemPropertyValue = @{
-         Path        = $_.PSPath
+         Path        = $PSItem.PSPath
          Name        = 'ServerId'
          ErrorAction = 'SilentlyContinue'
       }
@@ -1912,16 +1912,16 @@ if (Get-AppxPackage @paramGetAppxPackage)
             Path         = 'HKCU:\Console\%%Startup'
             Name         = 'DelegationConsole'
             PropertyType = 'String'
-            Value        = $_.PSChildName
+            Value        = $PSItem.PSChildName
             Force        = $true
             Confirm      = $false
             ErrorAction  = 'SilentlyContinue'
          }
          $null = (New-ItemProperty @paramNewItemProperty)
       }
-      
+
       $paramGetItemPropertyValue = @{
-         Path        = $_.PSPath
+         Path        = $PSItem.PSPath
          Name        = 'ServerId'
          ErrorAction = 'SilentlyContinue'
       }
@@ -1931,7 +1931,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
             Path         = 'HKCU:\Console\%%Startup'
             Name         = 'DelegationTerminal'
             PropertyType = 'String'
-            Value        = $_.PSChildName
+            Value        = $PSItem.PSChildName
             Force        = $true
             Confirm      = $false
             ErrorAction  = 'SilentlyContinue'
@@ -1966,7 +1966,7 @@ if ((-not (Get-AppxPackage -Name 'Microsoft.HEVCVideoExtension' -ErrorAction $SC
          {
             return
          }
-         
+
          $Parameters = @{
             Method          = 'Post'
             Uri             = 'https://store.rg-adguard.net/api/GetFiles'
@@ -1981,14 +1981,14 @@ if ((-not (Get-AppxPackage -Name 'Microsoft.HEVCVideoExtension' -ErrorAction $SC
             ErrorAction     = $SCT
          }
          $Raw = (Invoke-WebRequest @Parameters)
-         
+
          # Parsing the page
          $Raw | Select-String -Pattern '<tr style.*<a href=\"(?<url>.*)"\s.*>(?<text>.*)<\/a>' -AllMatches | ForEach-Object -Process {
-            $_.Matches
+            $PSItem.Matches
          } | ForEach-Object -Process {
-            $TempURL = $_.Groups[1].Value
-            $Package = $_.Groups[2].Value
-            
+            $TempURL = $PSItem.Groups[1].Value
+            $Package = $PSItem.Groups[2].Value
+
             if ($Package -like 'Microsoft.HEVCVideoExtension_*_x64__8wekyb3d8bbwe.appx')
             {
                $paramGetItemPropertyValue = @{
@@ -2004,7 +2004,7 @@ if ((-not (Get-AppxPackage -Name 'Microsoft.HEVCVideoExtension' -ErrorAction $SC
                   ErrorAction     = 'SilentlyContinue'
                }
                Invoke-WebRequest @Parameters
-               
+
                # Installing "HEVC Video Extensions from Device Manufacturer"
                $paramAddAppxPackage = @{
                   Path        = ('{0}\{1}' -f $DownloadsFolder, $Package)
@@ -2057,7 +2057,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    $paramNewItemProperty = @{
       Path         = 'Registry::HKEY_CLASSES_ROOT\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\Microsoft.549981C3F5F10_8wekyb3d8bbwe\CortanaStartupId'
       Name         = 'State'
@@ -2096,7 +2096,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    $paramNewItemProperty = @{
       Path         = 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\SystemAppData\MicrosoftTeams_8wekyb3d8bbwe\TeamsStartupTask'
       Name         = 'State'
@@ -2180,8 +2180,8 @@ $paramGetCimInstance = @{
    ErrorAction = $SCT
 }
 if (Get-CimInstance @paramGetCimInstance | Where-Object -FilterScript {
-      ($_.AdapterDACType -ne 'Internal') -and ($null -ne $_.AdapterDACType)
-})
+      ($PSItem.AdapterDACType -ne 'Internal') -and ($null -ne $PSItem.AdapterDACType)
+   })
 {
    # Determining whether an OS is not installed on a virtual machine
    $paramGetCimInstance = @{
@@ -2197,7 +2197,7 @@ if (Get-CimInstance @paramGetCimInstance | Where-Object -FilterScript {
          ErrorAction = $SCT
       }
       $WddmVersion_Min = (Get-ItemPropertyValue @paramGetItemPropertyValue)
-      
+
       if ($WddmVersion_Min -ge 2700)
       {
          $paramNewItemProperty = @{
@@ -2516,8 +2516,8 @@ $paramGetWindowsEdition = @{
    ErrorAction = $SCT
 }
 if (Get-WindowsEdition @paramGetWindowsEdition | Where-Object -FilterScript {
-      ($_.Edition -eq 'Professional') -or ($_.Edition -like 'Enterprise*')
-})
+      ($PSItem.Edition -eq 'Professional') -or ($PSItem.Edition -like 'Enterprise*')
+   })
 {
    # Checking whether x86 virtualization is enabled in the firmware
    $paramGetCimInstance = @{
@@ -2847,8 +2847,8 @@ $paramGetWindowsEdition = @{
    ErrorAction = $SCT
 }
 if (Get-WindowsEdition @paramGetWindowsEdition | Where-Object -FilterScript {
-      $_.Edition -eq 'Professional' -or $_.Edition -like 'Enterprise*'
-})
+      $PSItem.Edition -eq 'Professional' -or $PSItem.Edition -like 'Enterprise*'
+   })
 {
    $paramRemoveItemProperty = @{
       Path        = 'Registry::HKEY_CLASSES_ROOT\Drive\shell\encrypt-bde-elev'
@@ -2970,7 +2970,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
       }
       $null = (New-Item @paramNewItem)
    }
-   
+
    $paramNewItemProperty = @{
       Path         = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked'
       Name         = '{9F156763-7844-4DC4-B2B1-901F640F5155}'
@@ -2989,7 +2989,7 @@ if (Get-AppxPackage @paramGetAppxPackage)
       Hide the "Open in Windows Terminal" (Admin) item from the Desktop and folders context menu
 #>
 $Items = @(
-   'Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas', 
+   'Registry::HKEY_CLASSES_ROOT\Directory\Background\shell\runas',
    'Registry::HKEY_CLASSES_ROOT\Directory\shell\runas'
 )
 $paramRemoveItem = @{

@@ -28,10 +28,10 @@ process
    # Get the Info using Net.Dns
    $IpAddressInfo = @(
       (([Net.DNS]::GetHostAddresses([Net.Dns]::GetHostByName(($env:COMPUTERNAME)).HostName) | Where-Object -FilterScript {
-               $_.IsIPv6LinkLocal -eq $false
-            }).IPAddressToString | Where-Object -FilterScript {
-            $_ -ne '::1'
-         })
+            $PSItem.IsIPv6LinkLocal -eq $false
+         }).IPAddressToString | Where-Object -FilterScript {
+         $_ -ne '::1'
+      })
    )
 }
 
@@ -48,7 +48,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

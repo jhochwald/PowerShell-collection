@@ -21,84 +21,84 @@
       Hours to get, e.g. 24
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' -Hours 24 | Where-Object {(($_.ipv4 -ne $null) -or ($_.ipv6 -ne $null))}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' -Hours 24 | Where-Object {(($PSItem.ipv4 -ne $null) -or ($PSItem.ipv6 -ne $null))}
 
       Get only entries with IPv4 or IPv6 values, of the last 24 hours
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' -Hours 48 | Where-Object {($_.ipv6 -ne $null)}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' -Hours 48 | Where-Object {($PSItem.ipv6 -ne $null)}
 
       Get only entries with IPv6 values, of the last 48 hours
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like 'Die Systemzeit wurde erfolgreich aktualisiert von Zeitserver*')}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like 'Die Systemzeit wurde erfolgreich aktualisiert von Zeitserver*')}
 
       Get all events where the time was set via a time server, no time limit
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like 'Die Systemzeit wurde erfolgreich aktualisiert von Zeitserver*')} | Select-Object -ExpandProperty IPv4
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like 'Die Systemzeit wurde erfolgreich aktualisiert von Zeitserver*')} | Select-Object -ExpandProperty IPv4
 
       Get all events where the time was set via a time server, only return the IPv4 addresses, no time limit
 
       .EXAMPLE
-      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like 'Die Systemzeit wurde erfolgreich aktualisiert von Zeitserver*')})[0] | Select-Object -ExpandProperty IPv4)
+      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like 'Die Systemzeit wurde erfolgreich aktualisiert von Zeitserver*')})[0] | Select-Object -ExpandProperty IPv4)
 
       Get all events where the time was set via a time server, only return the IPv4 address of the latest (youngest) event
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like '*main-repeater*')}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like '*main-repeater*')}
 
       Only return events from a repeater with the name main-repeater, no time limit
 
       .EXAMPLE
-      PS C:\> (Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like '*main-repeater*')})[0]
+      PS C:\> (Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like '*main-repeater*')})[0]
 
       Only return the latest (youngest) events from a repeater with the name main-repeater, no time limit
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like '*Zeitserver * antwortet nicht.')}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like '*Zeitserver * antwortet nicht.')}
 
       Only return events where the Timeserver does NOT answer, no time limit
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like '*verschlüsselten DNS-Servern*')}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like '*verschlüsselten DNS-Servern*')}
 
       All events related to encrypted DNS, no time limit
 
       .EXAMPLE
-      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' -Hours 24 | Where-Object {($_.Message -like '*Authentifizierungsfehler*')}
+      PS C:\> Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' -Hours 24 | Where-Object {($PSItem.Message -like '*Authentifizierungsfehler*')}
 
       Only events with authentication errors, of the last 24 hours
 
       .EXAMPLE
-      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like '*(verfügbare Bitrate)*')})[0] | Select-Object -ExpandProperty Message)
+      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like '*(verfügbare Bitrate)*')})[0] | Select-Object -ExpandProperty Message)
 
       The latest (youngest) event that has the bitrate info (capacity)
 
       .EXAMPLE
-      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like 'Internetverbindung wurde erfolgreich hergestellt.*')})[0] | Select-Object -ExpandProperty IPv4)
+      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like 'Internetverbindung wurde erfolgreich hergestellt.*')})[0] | Select-Object -ExpandProperty IPv4)
 
       Get the public IPv4 address
 
       .EXAMPLE
-      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($_.Message -like 'Internetverbindung IPv6 wurde erfolgreich hergestellt.*')})[0] | Select-Object -ExpandProperty IPv6)
+      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {($PSItem.Message -like 'Internetverbindung IPv6 wurde erfolgreich hergestellt.*')})[0] | Select-Object -ExpandProperty IPv6)
 
       Get the public IPv6 address
 
       .EXAMPLE
-      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {(($_.Message -like '*IPv6-Präfix wurde erfolgreich bezogen.*') -and ($_.ipv6 -ne $null))})[0] | Select-Object -ExpandProperty IPv6)
+      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {(($PSItem.Message -like '*IPv6-Präfix wurde erfolgreich bezogen.*') -and ($PSItem.ipv6 -ne $null))})[0] | Select-Object -ExpandProperty IPv6)
 
       Get the latest public IPv6 prefix (CIDR)
 
       .EXAMPLE
-      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {(($_.Message -like 'Freigabe als Exposed Host auf * (*) hinzugefügt.') -and ($_.ipv4 -ne $null))})[0] | Select-Object -ExpandProperty IPv4)
+      PS C:\> ((Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {(($PSItem.Message -like 'Freigabe als Exposed Host auf * (*) hinzugefügt.') -and ($PSItem.ipv4 -ne $null))})[0] | Select-Object -ExpandProperty IPv4)
 
       get the exposed host IPv4
 
       .EXAMPLE
-      PS C:\> $IPv6TMP = (Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {(($_.Message -like 'Freigabe als Exposed Host auf * (*) hinzugefügt.') -and ($_.ipv4 -eq $null))} | Select-Object -ExpandProperty Message)
+      PS C:\> $IPv6TMP = (Get-FritzBoxEvents -FritzBoxUser 'myFritz' -FritzBoxPassword 'ThePassw0rd' -FritzBoxHost 'http://myfritz.box' | Where-Object {(($PSItem.Message -like 'Freigabe als Exposed Host auf * (*) hinzugefügt.') -and ($PSItem.ipv4 -eq $null))} | Select-Object -ExpandProperty Message)
       PS C:\> $regex = [regex]'(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))'
-      PS C:\> $regex.Matches($IPv6TMP) | ForEach-Object{ $_.value }
+      PS C:\> $regex.Matches($IPv6TMP) | ForEach-Object{ $PSItem.value }
 
       Get the exposed host IPv6 address and/or IPv6 CIDR (of exists)
 
@@ -207,7 +207,7 @@
             $md5.ComputeHash([Text.Encoding]::utf8.getbytes($Text)) | ForEach-Object -Process {
                $HC = ''
             } {
-               $HC += $_.tostring('x2')
+               $HC += $PSItem.tostring('x2')
             } {
                $HC
             }
@@ -439,7 +439,7 @@
 #region LICENSE
 <#
    BSD 3-Clause License
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
    1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.

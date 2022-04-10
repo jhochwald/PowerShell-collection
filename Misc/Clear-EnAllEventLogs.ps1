@@ -38,10 +38,10 @@ function Clear-EnAllEventLogs
                List         = $true
             }
             $null = (Get-EventLog @paramGetEventLog | ForEach-Object -Process {
-                  if ($_.Entries)
+                  if ($PSItem.Entries)
                   {
                      $paramClearEventLog = @{
-                        LogName     = $_.Log
+                        LogName     = $PSItem.Log
                         Confirm     = $false
                         ErrorAction = 'SilentlyContinue'
                      }
@@ -57,7 +57,7 @@ function Clear-EnAllEventLogs
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -39,7 +39,7 @@ begin
 
    #region
    if (Get-Command -Name 'Set-MpPreference' -ErrorAction $SCT)
- {
+   {
       $null = (Set-MpPreference -EnableControlledFolderAccess Disabled -Force -ErrorAction $SCT)
    }
    #endregion
@@ -88,7 +88,7 @@ begin
       {
          #$AllPowerPlans = (Get-WmiObject @paramGetWmiObject | Select-Object -Property ElementName, InstanceID, IsActive)
          $ActivePowerPlan = ($AllPowerPlans | Where-Object -FilterScript {
-               $_.IsActive -eq $true
+               $PSItem.IsActive -eq $true
             } | Select-Object -ExpandProperty ElementName)
       }
 
@@ -114,7 +114,7 @@ process
    {
       # Looks like this system is a VM on Parallels
       $RunOnParallels = ($AllPowerPlans | Where-Object {
-            $_.ElementName -ccontains 'Parallels'
+            $PSItem.ElementName -ccontains 'Parallels'
          } | Select-Object -ExpandProperty InstanceID)
 
       # Extract the ID of the Power Schema
@@ -166,7 +166,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2020, Beyond Datacenter
+   Copyright (c) 2022, Beyond Datacenter
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

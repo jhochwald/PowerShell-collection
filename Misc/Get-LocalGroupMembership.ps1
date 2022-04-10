@@ -61,7 +61,7 @@ function Get-LocalGroupMembership
       foreach ($LocalGroup in $AllGroups)
       {
          if (Get-LocalGroupMember -Group $LocalGroup.Name -ErrorAction SilentlyContinue | Where-Object -FilterScript {
-               $_.name -eq $UserName
+               $PSItem.name -eq $UserName
             })
          {
             $LocalGroupMembership += $LocalGroup.Name
@@ -79,7 +79,7 @@ function Get-LocalGroupMembership
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

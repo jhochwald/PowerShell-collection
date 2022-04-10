@@ -83,7 +83,7 @@ process
       Debug         = $DebugValue
    }
    $AllModules = (Get-Module @paramGetModule | Where-Object -FilterScript {
-         $_.RepositorySourceLocation -like '*powershellgallery*'
+         $PSItem.RepositorySourceLocation -like '*powershellgallery*'
       } | Select-Object -ExpandProperty Name)
 
    $AllModules = ($AllModules | Sort-Object -Unique)
@@ -105,7 +105,7 @@ process
          {
             $output = $null
             $output = ($AllModuleVersions | Where-Object {
-                  (($_.Version) -lt ($LatestModuleVersion.Version))
+                  (($PSItem.Version) -lt ($LatestModuleVersion.Version))
                } | ForEach-Object -Process {
                   Write-Verbose -Message ('Start to process {0}' -f ($_).Name)
 
@@ -151,14 +151,14 @@ process
                   }
                   finally
                   {
-                     if (Test-Path -Path $_.InstalledLocation -ErrorAction $SCT -WarningAction $SCT)
+                     if (Test-Path -Path $PSItem.InstalledLocation -ErrorAction $SCT -WarningAction $SCT)
                      {
                         Write-Verbose -Message ('Try to remove {0}' -f ($_).InstalledLocation)
 
                         try
                         {
                            $paramRemoveItem = @{
-                              Path          = $_.InstalledLocation
+                              Path          = $PSItem.InstalledLocation
                               Recurse       = $true
                               Force         = $true
                               Confirm       = $false
@@ -242,7 +242,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

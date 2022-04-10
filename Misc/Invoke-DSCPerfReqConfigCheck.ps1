@@ -102,7 +102,7 @@ function Invoke-DSCPerfReqConfigCheck
       catch
       {
          $paramWriteVerbose = @{
-            Message       = "$_.Exception.Message - Line Number: $_.InvocationInfo.ScriptLineNumber"
+            Message       = "$PSItem.Exception.Message - Line Number: $PSItem.InvocationInfo.ScriptLineNumber"
             ErrorAction   = $SC
             WarningAction = $SC
          }
@@ -118,7 +118,7 @@ function Invoke-DSCPerfReqConfigCheck
 
       # TODO: That is fast, but the code looks bad!
       $SuccessResult = (Get-WinEvent @GetWinEventParams | Group-Object -Property {
-            $_.Properties[0].value
+            $PSItem.Properties[0].value
          }).Group.LevelDisplayName -notcontains 'Error'
    }
 
@@ -132,7 +132,7 @@ function Invoke-DSCPerfReqConfigCheck
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

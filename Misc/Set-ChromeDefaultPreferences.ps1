@@ -375,12 +375,12 @@ process
    #region ValueVariables
    # The existing configuration
    $ChromePreferencesValues = ($ChromePreferences.psobject.Properties | Where-Object -FilterScript {
-         $_.MemberType -eq 'NoteProperty'
+         $PSItem.MemberType -eq 'NoteProperty'
       })
 
    # The recommended configuration
    $DefaultConfigValues = ($DefaultConfig.psobject.Properties | Where-Object -FilterScript {
-         $_.MemberType -eq 'NoteProperty'
+         $PSItem.MemberType -eq 'NoteProperty'
       })
    #endregion ValueVariables
 
@@ -493,7 +493,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

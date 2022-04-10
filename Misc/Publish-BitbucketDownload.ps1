@@ -190,8 +190,8 @@ Content-Type: application/octet-stream
             [GC]::Collect()
 
             # For the Build logs (will not break the build)
-            Write-Warning -Message 'StatusCode:' $_.Exception.Response.StatusCode.value__
-            Write-Warning -Message 'StatusDescription:' $_.Exception.Response.StatusDescription
+            Write-Warning -Message 'StatusCode:' $PSItem.Exception.Response.StatusCode.value__
+            Write-Warning -Message 'StatusDescription:' $PSItem.Exception.Response.StatusDescription
 
             # Saved in the verbose logs for this build
             Write-Verbose -Message $_
@@ -218,7 +218,7 @@ Content-Type: application/octet-stream
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

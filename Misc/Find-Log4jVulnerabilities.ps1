@@ -80,7 +80,7 @@ process
 {
    # Get all local disk drives
    $AllFixedDisks = (Get-Volume -ErrorAction SilentlyContinue | Where-Object -FilterScript {
-         (($_.DriveType -eq 'Fixed') -and ($_.DriveLetter -ne $null))
+         (($PSItem.DriveType -eq 'Fixed') -and ($PSItem.DriveLetter -ne $null))
       })
 
    foreach ($FixedDisk in $AllFixedDisks.DriveLetter)
@@ -90,7 +90,7 @@ process
       # Search all local drives for log4j* files
       Get-ChildItem -Path ('{0}:\' -f $FixedDisk) -Filter 'log4j*.jar' -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object -Process {
          $isclean = $false
-         $JARArchiveFile = $_.FullName
+         $JARArchiveFile = $PSItem.FullName
 
          Write-Verbose -Message ('Scann {0}' -f $JARArchiveFile)
 
@@ -102,11 +102,11 @@ process
 
          # Get version from Manifest file
          (Get-Content -Path ('{0}\META-INF\MANIFEST.MF' -f ($UnpackedDirectory)) -ErrorAction SilentlyContinue | ForEach-Object -Process {
-               if ($_ -match 'Implementation-Version')
-               {
-                  $ver = $_ -replace '^.*: ', ''
-               }
-            })
+            if ($_ -match 'Implementation-Version')
+            {
+               $ver = $_ -replace '^.*: ', ''
+            }
+         })
 
          # Split version string into separate numbers to compare them
          $vertok = $ver -split '\.'
@@ -144,7 +144,7 @@ process
          {
             # Look for JndiLookup class and notify user/logfile
             Get-ChildItem -Path $UnpackedDirectory -Filter 'JndiLookup.class' -Recurse -ErrorAction SilentlyContinue | ForEach-Object -Process {
-               Write-Verbose -Message ('POTENTIAL EXPLOIT:  Found in {0}' -f $_.FullName)
+               Write-Verbose -Message ('POTENTIAL EXPLOIT:  Found in {0}' -f $PSItem.FullName)
 
                ('POTENTIAL AFFECTED: {0}' -f ($JARArchiveFile)) | Out-File -Append -FilePath $LogFile
 
@@ -155,11 +155,11 @@ process
             if ($AutoFix)
             {
                Get-ChildItem -Path $UnpackedDirectory -Filter 'JndiLookup.class' -Recurse -ErrorAction SilentlyContinue | ForEach-Object -Process {
-                  Write-Verbose -Message ('Removing {0}...' -f $_.FullName)
+                  Write-Verbose -Message ('Removing {0}...' -f $PSItem.FullName)
 
-                  $null = (Remove-Item -Path $($_.FullName) -Force -Confirm:$false -ErrorAction SilentlyContinue)
+                  $null = (Remove-Item -Path $($PSItem.FullName) -Force -Confirm:$false -ErrorAction SilentlyContinue)
 
-                  ('REMOVED: {0}' -f $_.FullName) | Out-File -Append -FilePath $LogFile
+                  ('REMOVED: {0}' -f $PSItem.FullName) | Out-File -Append -FilePath $LogFile
                }
 
                # Write new JAR archive file

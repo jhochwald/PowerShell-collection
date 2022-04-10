@@ -160,7 +160,7 @@ process
             ErrorAction = $SCT
          }
          $IpConfig = (Get-NetIPConfiguration @paramGetNetIPConfiguration | Where-Object -FilterScript {
-               $MACAddress -eq $_.NetAdapter.MacAddress
+               $MACAddress -eq $PSItem.NetAdapter.MacAddress
             })
 
          $paramSetDnsClientServerAddress = @{
@@ -245,7 +245,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

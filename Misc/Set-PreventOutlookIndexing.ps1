@@ -29,7 +29,7 @@ function Set-PreventOutlookIndexing
    }
    catch
    {
-      $errorMessage = $_.Exception.Message
+      $errorMessage = $PSItem.Exception.Message
       Write-Warning -Message ('Exception thrown in Set-PreventOutlookIndexing; {0}' -f $errorMessage)
       $errorMessage = $null
    }

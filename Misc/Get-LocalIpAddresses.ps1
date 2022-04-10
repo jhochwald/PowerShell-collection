@@ -52,8 +52,8 @@ function Get-LocalIpAddresses
    {
       $IpInfo = ($TargetName | ForEach-Object -Process {
             (([Net.DNS]::GetHostAddresses([Net.Dns]::GetHostByName($_).HostName) | Where-Object -FilterScript {
-                     $_.IsIPv6LinkLocal -eq $IPv6LinkLocal
-                  }).IPAddressToString)
+                  $PSItem.IsIPv6LinkLocal -eq $IPv6LinkLocal
+               }).IPAddressToString)
          })
    }
 
@@ -68,7 +68,7 @@ function Get-LocalIpAddresses
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

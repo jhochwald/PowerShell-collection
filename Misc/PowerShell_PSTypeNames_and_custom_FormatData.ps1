@@ -126,17 +126,17 @@ function Get-MyProcessTwo
    # Gather the Info
    $ProcessList = Get-Process | ForEach-Object -Process {
       [PSCustomObject]@{
-         Name           = $_.Name
-         Id             = $_.Id
-         PriorityClass  = $_.PriorityClass
-         FileVersion    = $_.FileVersion
-         Path           = $_.Path
-         Company        = $_.Company
-         CPU            = $_.CPU
-         ProductVersion = $_.ProductVersion
-         Description    = $_.Description
-         Product        = $_.Product
-         ProcessName    = $_.ProcessName
+         Name           = $PSItem.Name
+         Id             = $PSItem.Id
+         PriorityClass  = $PSItem.PriorityClass
+         FileVersion    = $PSItem.FileVersion
+         Path           = $PSItem.Path
+         Company        = $PSItem.Company
+         CPU            = $PSItem.CPU
+         ProductVersion = $PSItem.ProductVersion
+         Description    = $PSItem.Description
+         Product        = $PSItem.Product
+         ProcessName    = $PSItem.ProcessName
       }
    }
 
@@ -206,17 +206,17 @@ function Get-MyProcessThree
    $ProcessList = Get-Process | ForEach-Object -Process {
       [PSCustomObject]@{
          PSTypeName     = 'MyProcessList'
-         Name           = $_.Name
-         Id             = $_.Id
-         PriorityClass  = $_.PriorityClass
-         FileVersion    = $_.FileVersion
-         Path           = $_.Path
-         Company        = $_.Company
-         CPU            = $_.CPU
-         ProductVersion = $_.ProductVersion
-         Description    = $_.Description
-         Product        = $_.Product
-         ProcessName    = $_.ProcessName
+         Name           = $PSItem.Name
+         Id             = $PSItem.Id
+         PriorityClass  = $PSItem.PriorityClass
+         FileVersion    = $PSItem.FileVersion
+         Path           = $PSItem.Path
+         Company        = $PSItem.Company
+         CPU            = $PSItem.CPU
+         ProductVersion = $PSItem.ProductVersion
+         Description    = $PSItem.Description
+         Product        = $PSItem.Product
+         ProcessName    = $PSItem.ProcessName
       }
    }
 
@@ -301,17 +301,17 @@ function Get-MyProcessFour
    $ProcessList = Get-Process | ForEach-Object -Process {
       [PSCustomObject]@{
          PSTypeName     = 'MyProcessList'
-         Name           = $_.Name
-         Id             = $_.Id
-         PriorityClass  = $_.PriorityClass
-         FileVersion    = $_.FileVersion
-         Path           = $_.Path
-         Company        = $_.Company
-         CPU            = $_.CPU
-         ProductVersion = $_.ProductVersion
-         Description    = $_.Description
-         Product        = $_.Product
-         ProcessName    = $_.ProcessName
+         Name           = $PSItem.Name
+         Id             = $PSItem.Id
+         PriorityClass  = $PSItem.PriorityClass
+         FileVersion    = $PSItem.FileVersion
+         Path           = $PSItem.Path
+         Company        = $PSItem.Company
+         CPU            = $PSItem.CPU
+         ProductVersion = $PSItem.ProductVersion
+         Description    = $PSItem.Description
+         Product        = $PSItem.Product
+         ProcessName    = $PSItem.ProcessName
       }
    }
 
@@ -461,17 +461,17 @@ function Get-MyProcessFive
    $ProcessList = Get-Process | ForEach-Object -Process {
       [PSCustomObject]@{
          PSTypeName     = 'MyProcessListView'
-         Name           = $_.Name
-         Id             = $_.Id
-         PriorityClass  = $_.PriorityClass
-         FileVersion    = $_.FileVersion
-         Path           = $_.Path
-         Company        = $_.Company
-         CPU            = $_.CPU
-         ProductVersion = $_.ProductVersion
-         Description    = $_.Description
-         Product        = $_.Product
-         ProcessName    = $_.ProcessName
+         Name           = $PSItem.Name
+         Id             = $PSItem.Id
+         PriorityClass  = $PSItem.PriorityClass
+         FileVersion    = $PSItem.FileVersion
+         Path           = $PSItem.Path
+         Company        = $PSItem.Company
+         CPU            = $PSItem.CPU
+         ProductVersion = $PSItem.ProductVersion
+         Description    = $PSItem.Description
+         Product        = $PSItem.Product
+         ProcessName    = $PSItem.ProcessName
       }
    }
 

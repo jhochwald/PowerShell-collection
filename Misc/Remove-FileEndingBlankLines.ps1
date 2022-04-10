@@ -118,8 +118,8 @@ function Remove-FileEndingBlankLines
    {
       # Make sure only files are processed and get the minimal info
       (Get-ChildItem @paramGetChildItem | Where-Object -FilterScript {
-            -not $_.PSIsContainer
-         } | Select-Object -ExpandProperty FullName) | ForEach-Object -Process {
+         -not $PSItem.PSIsContainer
+      } | Select-Object -ExpandProperty FullName) | ForEach-Object -Process {
          Write-Verbose -Message ('Try to unclutter {0}' -f $_)
 
          $UnclutteredText = (((Get-Content -Path $_ -Raw).TrimEnd()).ToString())
@@ -130,7 +130,7 @@ function Remove-FileEndingBlankLines
             {
                Write-Verbose -Message ('Try to unclutter {0} (no final new line)' -f $_)
 
-               $null = ([io.file]::WriteAllText($_.FullName, $UnclutteredText))
+               $null = ([io.file]::WriteAllText($PSItem.FullName, $UnclutteredText))
             }
             else
             {
@@ -184,7 +184,7 @@ function Remove-FileEndingBlankLines
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

@@ -106,7 +106,7 @@ process
          Write-Verbose -Message 'Get a list of modules'
 
          $AllInstalledModule = (Get-InstalledModule -ErrorAction SilentlyContinue -WarningAction $CNT | Where-Object -FilterScript {
-               $_.Repository -eq $Repository
+               $PSItem.Repository -eq $Repository
             } | Select-Object -ExpandProperty name)
 
          # Export the List to a given File
@@ -254,7 +254,7 @@ end
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

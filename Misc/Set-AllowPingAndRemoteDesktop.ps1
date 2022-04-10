@@ -73,7 +73,7 @@ process
       {
          # Allow Remote Desktop (The Group)
          $null = (Get-NetFirewallRule -DisplayGroup 'Remote Desktop' -ErrorAction SilentlyContinue | Where-Object {
-               $_.Enabled -ne $true
+               $PSItem.Enabled -ne $true
             } | Enable-NetFirewallRule @paramEnableNetFirewallRule)
       }
    }
@@ -83,11 +83,11 @@ process
       {
          # Alternative Approach: Enable the minimum, not the Group
          Get-NetFirewallRule -Name 'RemoteDesktop-UserMode-In-TCP' -ErrorAction SilentlyContinue | Where-Object {
-            $_.Enabled -ne $true
+            $PSItem.Enabled -ne $true
          } | Enable-NetFirewallRule @paramEnableNetFirewallRule
 
          Get-NetFirewallRule -DisplayName 'Remote Desktop - User Mode (TCP-In)' -ErrorAction SilentlyContinue | Where-Object {
-            $_.Enabled -ne $true
+            $PSItem.Enabled -ne $true
          } | Enable-NetFirewallRule @paramEnableNetFirewallRule
       }
    }
@@ -97,7 +97,7 @@ process
       # Allow Ping for IPv4 and IPv6
       # NOTE: The wildcard (ICMPv?) will select both. Replace it with 4 or 6 to use just one of them
       Get-NetFirewallRule -DisplayName 'File and Printer Sharing (Echo Request - ICMPv?-In)' -ErrorAction SilentlyContinue | Where-Object {
-         $_.Enabled -ne $true
+         $PSItem.Enabled -ne $true
       } | Enable-NetFirewallRule @paramEnableNetFirewallRule
    }
 }
@@ -106,7 +106,7 @@ process
 <#
    BSD 3-Clause License
 
-   Copyright (c) 2021, enabling Technology
+   Copyright (c) 2022, enabling Technology
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
