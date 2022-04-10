@@ -181,10 +181,10 @@ process
          WarningAction = $SCT
       }
       $null = ((Get-Mailbox @paramGetMailbox) | Where-Object -FilterScript {
-            ($_.RecipientTypeDetails -ne 'DiscoveryMailbox') -and ($_.AuditEnabled -ne $true)
+            ($PSItem.RecipientTypeDetails -ne 'DiscoveryMailbox') -and ($PSItem.AuditEnabled -ne $true)
          } | ForEach-Object -Process {
             $paramSetMailbox = @{
-               Identity      = $_.UserPrincipalName
+               Identity      = $PSItem.UserPrincipalName
                AuditEnabled  = $true
                ErrorAction   = $SCT
                WarningAction = $SCT
@@ -252,7 +252,7 @@ process
       $null = (Get-CASMailbox @paramGetCASMailbox | Select-Object -Property @{
             Name       = 'Identity'
             Expression = {
-               $_.PrimarySmtpAddress
+               $PSItem.PrimarySmtpAddress
             }
          } | Set-CASMailbox @paramSetCASMailbox)
       Write-Output -InputObject 'POP3 and IMAP4 are disabled - CAS Mailbox'
@@ -464,7 +464,7 @@ process
       WarningAction = $SCT
    }
    if (-not (Get-TransportRule @paramGetTransportRule | Where-Object -FilterScript {
-            $_.Name -eq $BlockForwardingRuleName
+            $PSItem.Name -eq $BlockForwardingRuleName
          }))
    {
       try
@@ -510,7 +510,7 @@ process
       WarningAction = $SCT
    }
    if (-not (Get-TransportRule @paramGetTransportRule | Where-Object -FilterScript {
-            $_.Name -eq $ExternalSenderWithInternalDisplayNameRuleName
+            $PSItem.Name -eq $ExternalSenderWithInternalDisplayNameRuleName
          }))
    {
       try
@@ -561,7 +561,7 @@ process
       WarningAction = $SCT
    }
    if (-not (Get-TransportRule @paramGetTransportRule | Where-Object -FilterScript {
-            $_.Name -eq $MarkExternalMessagesRuleName
+            $PSItem.Name -eq $MarkExternalMessagesRuleName
          }))
    {
       try
