@@ -48,8 +48,7 @@ begin
    $paramTestPath = @{
       Path          = $ChocoCacheLocation
       ErrorAction   = $SCT
-      WarningAction = '-'
-      Filter        = $SCT
+      WarningAction = $SCT
    }
    if (-not (Test-Path @paramTestPath))
    {
