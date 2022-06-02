@@ -29,7 +29,7 @@ if (-not ($RegistryRoot))
    $paramNewPSDrive = $null
 }
 
-If (Get-Item -Path ('{0}:\ms-msdt' -f $RegistryRoot) -ErrorAction $SCT)
+If (Get-Item -Path ('{0}:\search-ms' -f $RegistryRoot) -ErrorAction $SCT)
 {
    return $false
 }

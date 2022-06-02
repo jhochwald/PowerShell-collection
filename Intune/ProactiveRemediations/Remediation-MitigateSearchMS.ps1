@@ -32,11 +32,11 @@ if (-not ($RegistryRoot))
 
 try
 {
-   If (Get-Item -Path ('{0}:\ms-msdt' -f $RegistryRoot) -ErrorAction $SCT)
+   If (Get-Item -Path ('{0}:\search-ms' -f $RegistryRoot) -ErrorAction $SCT)
    {
       # Guidance for CVE-2022-30190 Microsoft Support Diagnostic Tool Vulnerability
       $paramRemoveItem = @{
-         Path          = ('{0}:\ms-msdt' -f $RegistryRoot)
+         Path          = ('{0}:\search-ms' -f $RegistryRoot)
          Force         = $true
          Recurse       = $true
          ErrorAction   = $STP
