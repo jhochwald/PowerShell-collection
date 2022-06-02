@@ -1,4 +1,4 @@
-﻿#region Check
+#region Check
 #region Defaults
 $SCT = 'SilentlyContinue'
 #endregion Defaults

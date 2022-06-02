@@ -1,4 +1,4 @@
-﻿#region Remediation
+#region Remediation
 #region Defaults
 $STP = 'Stop'
 $SCT = 'SilentlyContinue'
