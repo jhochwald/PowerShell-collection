@@ -53,4 +53,3 @@ If (Get-Item -Path ('{0}:\ms-msdt' -f $RegistryRoot) -ErrorAction $SCT)
 
 exit 0
 #endregion Check
-

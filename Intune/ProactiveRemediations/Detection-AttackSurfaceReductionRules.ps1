@@ -22,6 +22,23 @@
 [CmdletBinding(ConfirmImpact = 'None')]
 param ()
 
+#region ARM64Handling
+# Restart Process using PowerShell 64-bit
+if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
+{
+   try
+   {
+      &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+   }
+   catch
+   {
+      Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+   }
+
+   exit
+}
+#endregion ARM64Handling
+
 #region IntuneWorkaround
 # We do NOT have the CSV for Intune Check/Remediation, so we simulate it
 
@@ -124,4 +141,3 @@ foreach ($RulesId in $RulesIds)
 
 # We are good to go
 exit 0
-

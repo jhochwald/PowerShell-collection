@@ -53,4 +53,3 @@ If (Get-Item -Path ('{0}:\search-ms' -f $RegistryRoot) -ErrorAction $SCT)
 
 exit 0
 #endregion Check
-

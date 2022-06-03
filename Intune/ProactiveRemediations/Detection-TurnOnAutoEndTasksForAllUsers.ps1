@@ -1,3 +1,20 @@
+#region ARM64Handling
+# Restart Process using PowerShell 64-bit
+if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
+{
+   try
+   {
+      &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+   }
+   catch
+   {
+      Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+   }
+
+   exit
+}
+#endregion ARM64Handling
+
 #region Check
 $RegistryPath = 'Registry::\HKEY_USERS\.DEFAULT\Control Panel\Desktop'
 
@@ -20,4 +37,3 @@ catch
 
 exit 0
 #endregion Check
-

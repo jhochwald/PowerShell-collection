@@ -15,25 +15,23 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 }
 #endregion ARM64Handling
 
-#region Check
-$RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore'
+$RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU'
+$RegistryName = 'NoAutoUpdate'
+$RegistryValue = 0
 
 try
 {
-   if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
+   if ((Get-ItemProperty -Path $RegistryPath -Name $RegistryName -ErrorAction Stop | Select-Object -ExpandProperty $RegistryName) -eq $RegistryValue)
    {
-      exit 1
+      exit 0
    }
-
-   if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AutoDownload' -ErrorAction SilentlyContinue) -eq 4))
+   else
    {
       exit 1
    }
 }
 catch
 {
-   exit 1
+   # NoAutoUpdate does not exist (fine)
+   exit 0
 }
-
-exit 0
-#endregion Check

@@ -16,16 +16,9 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 #endregion ARM64Handling
 
 #region Check
-$RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore'
-
 try
 {
-   if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
-   {
-      exit 1
-   }
-
-   if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AutoDownload' -ErrorAction SilentlyContinue) -eq 4))
+   if (-not ((Get-ItemProperty -Path 'HKLM:\Software\policies\Microsoft\Windows NT\DNSClient' -Name 'EnableMulticast' -ErrorAction Stop | Select-Object -ExpandProperty 'EnableMulticast') -eq 0))
    {
       exit 1
    }

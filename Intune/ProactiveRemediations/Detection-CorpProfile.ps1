@@ -15,25 +15,24 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 }
 #endregion ARM64Handling
 
-#region Check
-$RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore'
+$CorpNet = 'CORP-FQDN'
 
 try
 {
-   if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
+   $CorpNetStatus = (Get-NetConnectionProfile -Name $CorpNet).networkcategory
+   if ($CorpNetStatus -eq 'Public')
    {
       exit 1
    }
-
-   if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AutoDownload' -ErrorAction SilentlyContinue) -eq 4))
+   else
    {
-      exit 1
+      exit 0
    }
 }
 catch
 {
+   $errMsg = $_.Exception.Message
+   Write-Error -Message $errMsg
+
    exit 1
 }
-
-exit 0
-#endregion Check
