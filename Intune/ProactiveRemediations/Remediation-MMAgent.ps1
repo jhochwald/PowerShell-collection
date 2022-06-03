@@ -1,25 +1,26 @@
-﻿#region Remediation
+#region Remediation
 $MMAgentSetup = (Get-MMAgent -ErrorAction SilentlyContinue)
 
 If ($MMAgentSetup.ApplicationPreLaunch -ne $true)
 {
-   return $false
+   exit 1
 }
 
 If ($MMAgentSetup.MaxOperationAPIFiles -lt 8192)
 {
-   return $false
+   exit 1
 }
 
 If ($MMAgentSetup.MemoryCompression -ne $true)
 {
-   return $false
+   exit 1
 }
 
 If ($MMAgentSetup.PageCombining -ne $true)
 {
-   return $false
+   exit 1
 }
 
-return $true
+exit 0
 #endregion Remediation
+

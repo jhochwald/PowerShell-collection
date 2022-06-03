@@ -1,12 +1,13 @@
-﻿#region Remediation
+#region Remediation
 $RegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity'
 
-if ((Test-Path -LiteralPath $RegistryPath -ErrorAction) -ne $true)
+if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
 {
-   $null = (New-Item -Path $RegistryPath -Force -Confirm:$false -ErrorAction SilentlyContinue)
+   $null = (New-Item -Path $RegistryPath -Force -Confirm:$false -ErrorAction Stop)
 }
 
-$null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'Enabled' -Value 1 -PropertyType DWord -Force -Confirm:$false -ErrorAction SilentlyContinue)
+$null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'Enabled' -Value 1 -PropertyType DWord -Force -Confirm:$false -ErrorAction Stop)
 
-return $true
+exit 0
 #endregion Remediation
+

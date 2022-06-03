@@ -94,7 +94,7 @@ $RulesActions = (Get-MpPreference -ErrorAction SilentlyContinue | Select-Object 
 # Check if we have them all - More local rules are OK!
 if ($RulesIds.Count -lt $AttackSurfaceReductionRules.Count)
 {
-   return $False
+   exit 1
 }
 
 # Start the counter
@@ -110,7 +110,7 @@ foreach ($RulesId in $RulesIds)
             }).AttackSurfaceReductionRules_Actions)
       {
          # This rule does NOT match the desired state
-         return $false
+         exit 1
       }
 
       # Count up
@@ -123,4 +123,5 @@ foreach ($RulesId in $RulesIds)
 }
 
 # We are good to go
-return $true
+exit 0
+

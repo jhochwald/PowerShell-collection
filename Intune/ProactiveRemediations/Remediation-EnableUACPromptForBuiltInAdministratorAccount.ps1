@@ -1,12 +1,13 @@
-﻿#region Remediation
+#region Remediation
 $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
 
-if ((Test-Path -LiteralPath $RegistryPath) -ne $true)
+if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
 {
-   $null = (New-Item -Path $RegistryPath -Force -Confirm:$false -ErrorAction SilentlyContinue)
+   $null = (New-Item -Path $RegistryPath -Force -Confirm:$false -ErrorAction Stop)
 }
 
-$null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'FilterAdministratorToken' -Value 1 -PropertyType DWord -Force -Confirm:$false -ErrorAction SilentlyContinue)
+$null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'FilterAdministratorToken' -Value 1 -PropertyType DWord -Force -Confirm:$false -ErrorAction Stop)
 
-return $true
+exit 0
 #endregion Remediation
+

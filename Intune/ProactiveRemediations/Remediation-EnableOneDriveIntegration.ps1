@@ -1,4 +1,4 @@
-﻿#region Remediation
+#region Remediation
 $RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive'
 
 if ((Test-Path -LiteralPath $RegistryPath) -ne $true)
@@ -8,5 +8,6 @@ if ((Test-Path -LiteralPath $RegistryPath) -ne $true)
 
 $null = (Remove-ItemProperty -LiteralPath $RegistryPath -Name 'DisableFileSyncNGSC' -Confirm:$false -Force -ErrorAction SilentlyContinue)
 
-return $true
+exit 0
 #endregion Remediation
+

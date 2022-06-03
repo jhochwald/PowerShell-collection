@@ -1,4 +1,4 @@
-﻿#region Remediation
+#region Remediation
 # Registry Path
 $RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\OneDrive'
 
@@ -36,5 +36,6 @@ $null = (New-ItemProperty @paramSplat -Name 'WarningMinDiskSpaceLimitInMB' -Valu
 $null = (New-ItemProperty @paramSplat -Name 'MinDiskSpaceLimitInMB' -Value 768 -PropertyType DWord)
 $null = (New-ItemProperty @paramSplat -Name 'EnableAutomaticUploadBandwidthManagement' -Value 1 -PropertyType DWord)
 
-return $true
+exit 0
 #endregion Remediation
+

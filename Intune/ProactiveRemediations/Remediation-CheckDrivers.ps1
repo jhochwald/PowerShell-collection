@@ -43,9 +43,9 @@ If (-not (Test-Path -Path ('{0}\{1}' -f $Notifications_Reg, $AppID) -ErrorAction
    $null = (New-ItemProperty -Path ('{0}\{1}' -f $Notifications_Reg, $AppID) -Name 'ShowInActionCenter' -Value 1 -PropertyType 'DWORD' -Force -Confirm:$false -ErrorAction SilentlyContinue)
 }
 
-If ((Get-ItemProperty -Path ('{0}\{1}' -f $Notifications_Reg, $AppID) -Name 'ShowInActionCenter' -ErrorAction SilentlyContinue).ShowInActionCenter -ne '1')
+If (((Get-ItemProperty -Path ('{0}\{1}' -f $Notifications_Reg, $AppID) -Name 'ShowInActionCenter' -ErrorAction SilentlyContinue).ShowInActionCenter) -ne '1')
 {
-   $null = New-ItemProperty -Path ('{0}\{1}' -f $Notifications_Reg, $AppID) -Name 'ShowInActionCenter' -Value 1 -PropertyType 'DWORD' -Force -Confirm:$false -ErrorAction SilentlyContinue)
+   $null = (New-ItemProperty -Path ('{0}\{1}' -f $Notifications_Reg, $AppID) -Name 'ShowInActionCenter' -Value 1 -PropertyType 'DWORD' -Force -Confirm:$false -ErrorAction SilentlyContinue)
 }
 # Notification area end
 
@@ -58,4 +58,5 @@ $ToastXml.LoadXml($Toast.OuterXml)
 [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($AppID).Show($ToastXml)
 # Toast creation and display end
 
-return $true
+exit 0
+

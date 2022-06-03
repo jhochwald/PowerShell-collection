@@ -1,22 +1,23 @@
-﻿#region Check
+#region Check
 $RegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling'
 
 try
 {
    if (-not (Test-Path -LiteralPath $RegistryPath))
    {
-      return $false
+      exit 1
    }
 
    if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'PowerThrottlingOff' -ErrorAction SilentlyContinue) -eq 0))
    {
-      return $false
+      exit 1
    }
 }
 catch
 {
-   return $false
+   exit 1
 }
 
-return $true
+exit 0
 #endregion Check
+

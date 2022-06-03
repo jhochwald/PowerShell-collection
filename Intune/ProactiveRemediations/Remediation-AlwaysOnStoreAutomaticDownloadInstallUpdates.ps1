@@ -1,4 +1,4 @@
-﻿#region Remediation
+#region Remediation
 $RegistryPath = 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore'
 
 if ((Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue) -ne $true)
@@ -8,5 +8,6 @@ if ((Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue) -ne $tr
 
 $null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'AutoDownload' -Value 4 -PropertyType DWord -Force -Confirm:$false -ErrorAction SilentlyContinue)
 
-return $true
+exit 0
 #endregion Remediation
+

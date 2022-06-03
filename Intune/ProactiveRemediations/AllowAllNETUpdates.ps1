@@ -1,4 +1,4 @@
-﻿#region AllowAllNETUpdates
+#region AllowAllNETUpdates
 function Get-AllowAllNETUpdates
 {
    <#
@@ -24,20 +24,20 @@ function Get-AllowAllNETUpdates
    {
       if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
       {
-         return $false
+         exit 1
       }
 
       if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AllowAUOnServerOS' -ErrorAction SilentlyContinue) -eq 1))
       {
-         return $false
+         exit 1
       }
    }
    catch
    {
-      return $false
+      exit 1
    }
 
-   return $true
+   exit 0
 }
 
 function Set-AllowAllNETUpdates
@@ -110,20 +110,20 @@ function Get-AllowAllNET6Updates
    {
       if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
       {
-         return $false
+         exit 1
       }
 
       if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AllowAUOnServerOS' -ErrorAction SilentlyContinue) -eq 1))
       {
-         return $false
+         exit 1
       }
    }
    catch
    {
-      return $false
+      exit 1
    }
 
-   return $true
+   exit 0
 }
 
 function Set-AllowAllNET6Updates
@@ -196,20 +196,20 @@ function Get-AllowAllNET5Updates
    {
       if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
       {
-         return $false
+         exit 1
       }
 
       if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AllowAUOnServerOS' -ErrorAction SilentlyContinue) -eq 1))
       {
-         return $false
+         exit 1
       }
    }
    catch
    {
-      return $false
+      rexit 1
    }
 
-   return $true
+   exit 0
 }
 
 function Set-AllowAllNET5Updates
@@ -282,20 +282,20 @@ function Get-AllowAllNET31Updates
    {
       if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
       {
-         return $false
+         exit 1
       }
 
       if (-not ((Get-ItemPropertyValue -LiteralPath $RegistryPath -Name 'AllowAUOnServerOS' -ErrorAction SilentlyContinue) -eq 1))
       {
-         return $false
+         exit 1
       }
    }
    catch
    {
-      return $false
+      exit 1
    }
 
-   return $true
+   exit 0
 }
 
 function Set-AllowAllNET31Updates
@@ -341,3 +341,4 @@ function Set-AllowAllNET31Updates
    $null = (New-ItemProperty @paramNewItemProperty)
 }
 #endregion AllowAllNET31Updates
+

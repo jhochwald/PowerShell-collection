@@ -94,7 +94,7 @@ $RulesActions = (Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceR
 # Check if we have them all - More local rules are OK!
 if ($RulesIds.Count -lt $AttackSurfaceReductionRules.Count)
 {
-   return $False
+   exit 1
 }
 
 # Start the counter
@@ -121,7 +121,7 @@ foreach ($RulesId in $RulesIds)
          {
             Write-Warning -Message 'How can this be the case?'
 
-            return $false
+            exit 1
          }
       }
 
@@ -135,4 +135,6 @@ foreach ($RulesId in $RulesIds)
 }
 
 # We are good to go
-return $true
+exit 0
+
+

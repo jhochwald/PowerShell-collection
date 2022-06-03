@@ -1,3 +1,20 @@
+#region ARM64Handling
+# Restart Process using PowerShell 64-bit
+if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
+{
+   try
+   {
+      &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+   }
+   catch
+   {
+      Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+   }
+
+   exit
+}
+#endregion ARM64Handling
+
 #region Remediation
 #region Defaults
 $STP = 'Stop'
@@ -59,10 +76,11 @@ catch
       Column    = $e.InvocationInfo.OffsetInLine
    }
 
-   Write-Warning -Message $info -WarningAction $STP
+   Write-Warning -Message $info -WarningAction Continue
 
    exit 1
 }
 
-return $true
+exit 0
 #endregion Remediation
+

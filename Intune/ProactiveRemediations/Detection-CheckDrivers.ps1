@@ -1,7 +1,7 @@
 $ProgData = $env:PROGRAMDATA
 $Log_File = ('{0}\Drivers_Error_log.log' -f $ProgData)
 
-Function Write_Log
+function Write_Log
 {
    [CmdletBinding()]
    param(
@@ -15,7 +15,7 @@ Function Write_Log
 
 if (-not (Test-Path -Path $Log_File -ErrorAction SilentlyContinue))
 {
-   $null = (New-Item -Path $Log_File -ItemType file -Force -Confirm:$false -ErrorAction SilentlyContinue)
+   $null = (New-Item -Path $Log_File -ItemType file -Force -Confirm:$false -ErrorAction Stop)
 }
 else
 {
@@ -60,3 +60,5 @@ Else
 
    Exit 0
 }
+
+

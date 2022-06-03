@@ -1,3 +1,20 @@
+#region ARM64Handling
+# Restart Process using PowerShell 64-bit
+if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
+{
+   try
+   {
+      &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
+   }
+   catch
+   {
+      Throw ('Failed to start {0}' -f $PSCOMMANDPATH)
+   }
+
+   exit
+}
+#endregion ARM64Handling
+
 #region Check
 #region Defaults
 $SCT = 'SilentlyContinue'
@@ -31,12 +48,9 @@ if (-not ($RegistryRoot))
 
 If (Get-Item -Path ('{0}:\ms-msdt' -f $RegistryRoot) -ErrorAction $SCT)
 {
-   return $false
-}
-else
-{
-   return $true
+   exit 1
 }
 
-return $true
+exit 0
 #endregion Check
+

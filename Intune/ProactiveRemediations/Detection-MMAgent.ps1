@@ -1,4 +1,4 @@
-﻿#region Check
+#region Check
 $MMAgentSetup = (Get-MMAgent -ErrorAction SilentlyContinue)
 
 If ($MMAgentSetup.ApplicationPreLaunch -ne $true)
@@ -21,5 +21,6 @@ If ($MMAgentSetup.PageCombining -ne $true)
    $null = (Enable-MMAgent -PageCombining -ErrorAction SilentlyContinue)
 }
 
-return $true
+exit 0
 #endregion Check
+

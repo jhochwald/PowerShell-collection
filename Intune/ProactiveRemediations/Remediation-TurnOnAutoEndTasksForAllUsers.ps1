@@ -1,12 +1,13 @@
-﻿#region Remediation
+#region Remediation
 $RegistryPath = 'Registry::\HKEY_USERS\.DEFAULT\Control Panel\Desktop'
 
-if ((Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue) -ne $true)
+if (-not (Test-Path -LiteralPath $RegistryPath -ErrorAction SilentlyContinue))
 {
-   $null = (New-Item -Path $RegistryPath -Force -Confirm:$false -ErrorAction SilentlyContinue )
+   $null = (New-Item -Path $RegistryPath -Force -Confirm:$false -ErrorAction Stop )
 }
 
-$null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'AutoEndTasks' -Value '1' -PropertyType String -Force -Confirm:$false -ErrorAction SilentlyContinue)
+$null = (New-ItemProperty -LiteralPath $RegistryPath -Name 'AutoEndTasks' -Value '1' -PropertyType String -Force -Confirm:$false -ErrorAction Stop)
 
-return $true
+exit 0
 #endregion Remediation
+
