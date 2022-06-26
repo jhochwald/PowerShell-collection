@@ -11,9 +11,9 @@
 [CmdletBinding(ConfirmImpact = 'None')]
 param ()
 
-#region
+#region Defaults
 $STP = 'Stop'
-#endregion
+#endregion Defaults
 
 #region ARM64Handling
 # Restart Process using PowerShell 64-bit
@@ -34,14 +34,7 @@ if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 
 try
 {
-   $Registry = ((Get-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1' -Name 'Timerautomount' -ErrorAction $STP).Timerautomount)
-
-   if ($Registry -eq 1)
-   {
-      exit 0
-   }
-
-   exit 1
+   $null = (New-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\OneDrive\Accounts\Business1' -Name 'Timerautomount' -PropertyType 'QWORD' -Value 1 -Force -Confirm:$false -ErrorAction $STP)
 }
 catch
 {
