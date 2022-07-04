@@ -1,5 +1,5 @@
-# Microsoft Endpoint Manager related stuff
+# Microsoft Endpoint Manager (Intune)
 
-You will find some Microsoft Endpoint Manager (a/k/a Intune, a/k/a MEM) related stuff here.
+This directory is here to keep the old links intact!
 
-I will start to upload a few more things...
+The real (upstream) repository is here: [GitHub - Enatec/MicrosoftEndpointManager: Microsoft Endpoint Manager Related](https://github.com/Enatec/MicrosoftEndpointManager)
