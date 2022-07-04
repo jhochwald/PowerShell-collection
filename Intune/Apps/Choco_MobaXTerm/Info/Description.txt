@@ -1,0 +1,13 @@
+MobaXterm is enhanced terminal for Windows with an X11 server, SSH client, and several other network tools for remote computing (VNC, RDP, telnet, rlogin). MobaXterm brings all the essential Unix commands to Windows desktop, in a single portable exe file which works out of the box.
+
+MobaXterm provides useful features for developers, sysadmins, webmasters and advanced computer users:
+* multitab terminal with embedded Unix commands (ls, cd, cat, sed, grep, awk, rsync, wget, ...)
+* embedded X11 server for easily exporting your Unix/Linux display
+* session manager with several network utilities: SSH, RDP, VNC, Telnet, Rlogin, FTP, SFTP and XDMCP
+* passwords management for SSH, RDP, VNC, SFTP (on demand password saving)
+* easy graphical file transfer using drag and drop during SSH sessions
+* advanced SSH tunnels creation tool (graphical port forwarding builder)
+* tasks automation using scripts or macros
+
+You can also use some of the free plugins in order to extend MobaXterm capabilities!
+

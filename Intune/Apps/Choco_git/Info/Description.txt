@@ -1,0 +1,3 @@
+Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
+
+*The version number does not refelct the GIT Version! The **latest release** will be installed!*

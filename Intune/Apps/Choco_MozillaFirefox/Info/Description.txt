@@ -1,0 +1,13 @@
+Bringing together all kinds of awesomeness to make browsing better for you.
+
+### Features
+* A powerful, new engine that’s built for rapidfire performance.
+* Better, faster page loading that uses less computer memory.
+* Gorgeous design and smart features for intelligent browsing.
+* Instantly import your online info and favorites from any other browser.
+* The most powerful private browsing mode with added tracking protection.
+* Firefox Quantum features: screenshots, pocket, gaming & VR, library.
+* Customization Features - addons & extensions, themes, toolbar.
+* Synced across devices - passwords, bookmarks, tabs and more.
+* Ad tracker blocking.
+* Password manager.

@@ -1,0 +1,10 @@
+Plantronics Hub for Windows/Mac, part of the Plantronics software portfolio, is a client application that allows users to control the settings on their Plantronics audio device. Users can customize their ringtone and ring location, configure presence updates, and more. The software enhances the user experience by providing valuable information about the state of their Plantronics audio device, such as mute and battery status, easily visible at the bottom of the desktop.
+
+### Features
+* Change device settings
+* Visible mute and battery status
+* Device-level call control with call answer/end, mute, and volume adjust
+* Update your headset firmware
+* Change language option for your voice prompts
+
+Some features not available on every device. Download Plantronics Hub to see which features you can customize.

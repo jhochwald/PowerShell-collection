@@ -1,0 +1,21 @@
+The free, PDF24 PDF Creator is a program to create PDF files from almost any application. The PDF creator functions as a virtual PDF printer and provides some PDF editing features.
+
+### Features
+* Freeware
+* Easy to use
+* Multilingual
+* Create PDF files from almost any application
+* Creation of other file types: PDF/A, PDF/X, PS, EPS, PCL, PNG, JPEG, BMP, PCX, TIFF, PSD
+* PDF editor
+* Merge and split PDF
+* Extract pages from a PDF
+* Copy pages from one PDF to another PDF
+* Integrated preview
+* Set PDF information such as author and title
+* PDF watermark and PDF stamp
+* Sign PDF files
+* Secure a PDF with a password
+* Set document properties and permissions
+* Can import images from TWAIN devices
+* PDF screen capture
+* Windows tray icon with useful features

@@ -1,0 +1,21 @@
+Snagit is a image capture program from TechSmith.
+
+### Beyond ordinary screen capture
+Snagit's award-winning screen capture software is the only program with built-in advanced image editing and screen recording.
+
+### Capture anything on your screen
+Snagit makes it easier and more intuitive to capture your screen or record video. Capture your entire desktop, region, window, or scrolling screen.
+
+### Edit with a few clicks
+Get a full suite of editing tools. And create images on your own. Edit screenshots or build custom graphics. Without needing to work with a designer.
+
+### Deliver results
+The human brain processes visuals 60,000 times faster than text. Snagit makes it easy to add videos and images to your email, training materials, documentation, blogs, or social media. Or get a short URL to share your screenshots and recordings with anyone.
+
+### Snagit integrates with the tools you use
+* Microsoft PowerPoint
+* Microsoft Word
+* Microsoft Excel
+* Microsoft OneDrive for Business
+* Google Drive
+* ... and more
