@@ -4,24 +4,7 @@ A collection of PowerShell scripts, tooling, and some of my modules.
 
 Mostly related to some of my projects, my work, or just a post in my [blog](http://hochwald.net).
 
-Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.net).
-
-## Legacy Notice
-
-I no longer run or use on any Premises _Exchange_, _Skype for Business_, or any other _Office-Server_.
-
-This is my personal [reaction](https://hochwald.net/microsoft-rolls-back-decision-to-take-away-internal-usage-rights-from-partners/) to the changes that Microsoft [announced](https://hochwald.net/microsoft-is-going-to-kill-internal-use-rights-benefit-for-partners/) for the Internal Use Rights (IUR) program.
-
-I know that they decided to reverse that changes!
-
-I will _no longer maintain_ the scripts related to Microsoft Office-Servers. They will remain here, but unmaintained. I will not develop any new Microsoft Office-Servers related stuff, but sometimes I might release something I created in a project.
-
-Fork the repository and maintain or extend them if you like to. The [License](https://github.com/jhochwald/PowerShell-collection/blob/master/LICENSE) allows that easily.
-
-My own small consulting business is now cloud native, and I pay the regular price for the Microsoft 365, and Azure services. Like I do for some Amazon AWS services.
-But I also decided to drop the Microsoft Partner Programm (after the old silver status expired and I started my new small consulting business) and let all the certifications expire.
-
-Nothing offensive, nothing against Microsoft! A result of the pressure that the [announcement](https://hochwald.net/microsoft-is-going-to-kill-internal-use-rights-benefit-for-partners/) of Microsoft generated on my old business.
+Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.
 
 ## Please note
 
