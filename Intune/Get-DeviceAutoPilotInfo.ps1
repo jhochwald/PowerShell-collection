@@ -1,4 +1,4 @@
-﻿function Get-DeviceAutoPilotInfo
+function Get-DeviceAutoPilotInfo
 {
    <#
          .SYNOPSIS
@@ -122,3 +122,4 @@
       #endregion Clean-up
    }
 }
+
