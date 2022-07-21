@@ -1,4 +1,4 @@
-﻿<#
+<#
    .SYNOPSIS
    OneDrive for Business Delay Flag (Timerautomount)
 
