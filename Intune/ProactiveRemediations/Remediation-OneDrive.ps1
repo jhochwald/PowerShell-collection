@@ -1,4 +1,4 @@
-﻿<#
+<#
    There following detection script was taken from here
    https://letsconfigmgr.com/mem-automatic-syncing-of-onedrive-shared-libs-via-intune/
 

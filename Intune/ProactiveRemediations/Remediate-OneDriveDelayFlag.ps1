@@ -1,4 +1,4 @@
-﻿#region ARM64Handling
+#region ARM64Handling
 # Restart Process using PowerShell 64-bit
 if ($ENV:PROCESSOR_ARCHITEW6432 -eq 'AMD64')
 {
