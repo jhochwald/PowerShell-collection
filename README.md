@@ -6,6 +6,8 @@ Mostly related to some of my projects, my work, or just a post in my [blog](http
 
 Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.
 
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=jhochwald&repo=PowerShell-collection)](https://github.com/jhochwald/PowerShell-collection)
+
 ## Please note
 
 Some, or better most, of the stuff here was a function.
