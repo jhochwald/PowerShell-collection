@@ -4,7 +4,7 @@ A collection of PowerShell scripts, tooling, and some of my modules.
 
 Mostly related to some of my projects, my work, or just a post in my [blog](http://hochwald.net).
 
-Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.
+Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.net).
 
 [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=jhochwald&repo=PowerShell-collection&theme=transparent)](https://github.com/jhochwald/PowerShell-collection)
 
