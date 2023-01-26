@@ -57,7 +57,7 @@ If you do not specify any other License or Terms, I apply the following default:
 
 ### License Terms
 
-Copyright (c) 2018, enabling Technology <[http://enatec.io](http://enatec.io)>
+Copyright (c) 2023, enabling Technology <[http://enatec.io](http://enatec.io)>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
