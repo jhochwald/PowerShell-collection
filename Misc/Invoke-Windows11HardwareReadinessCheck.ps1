@@ -4,10 +4,10 @@ function Invoke-Windows11HardwareReadinessCheck
 {
    <#
          .SYNOPSIS
-         Is this Computer Ready foe Windows 11?
+         Is this Computer Ready for Windows 11?
 
          .DESCRIPTION
-         Is this Computer Ready foe Windows 11?
+         Is this Computer Ready for Windows 11?
 
          .PARAMETER RequiredSystemDriveSize
          Minimum Diskspace in GB for the Boot Drive
@@ -32,7 +32,7 @@ function Invoke-Windows11HardwareReadinessCheck
          .EXAMPLE
          PS C:\> Invoke-Windows11HardwareReadinessCheck
 
-         Is this Computer Ready foe Windows 11?
+         Is this Computer Ready for Windows 11?
 
          .LINK
          https://support.microsoft.com/en-us/windows/windows-11-system-requirements-86c11283-ea52-4782-9efd-7674389a7ba3
