@@ -27,12 +27,12 @@ try
 
    if (-not ((Get-ItemPropertyValue -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -Name 'LidNotifyReliable' -ErrorAction SilentlyContinue) -eq 0))
    {
-      return Exit 1
+      Exit 1
    }
 }
 catch
 {
-   return Exit 1
+   Exit 1
 }
 
 Exit 0

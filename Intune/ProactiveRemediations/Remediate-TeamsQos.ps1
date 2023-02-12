@@ -34,7 +34,7 @@ try
       $null = (New-NetQosPolicy @paramNewNetQosPolicy)
    }
 
-   if (-not (Get-NetQosPolicy -Name 'Microsoft Teams Video' -ErrorAction Stop))
+   if (-not (Get-NetQosPolicy -Name 'Microsoft Teams Video' -ErrorAction SilentlyContinue))
    {
       $paramNewNetQosPolicy = @{
          AppPathNameMatchCondition    = 'Teams.exe'
@@ -51,7 +51,7 @@ try
       $null = (New-NetQosPolicy @paramNewNetQosPolicy)
    }
 
-   if (-not (Get-NetQosPolicy -Name 'Microsoft Teams AppSharing' -ErrorAction Stop))
+   if (-not (Get-NetQosPolicy -Name 'Microsoft Teams AppSharing' -ErrorAction SilentlyContinue))
    {
       $paramNewNetQosPolicy = @{
          AppPathNameMatchCondition    = 'Teams.exe'
@@ -89,3 +89,5 @@ catch
    
    Exit 1
 }
+
+Exit 0
