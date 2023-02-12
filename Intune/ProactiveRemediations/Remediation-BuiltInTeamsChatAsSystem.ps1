@@ -10,14 +10,31 @@ try
 
    if ($TeamsAppxProvisionedPackage)
    {
-      $null = (Remove-AppxProvisionedPackage -Online -PackageName $TeamsAppxProvisionedPackage.Packagename -AllUsers -ErrorAction Stop)
+      $paramRemoveAppxProvisionedPackage = @{
+         Online        = $true
+         PackageName   = $TeamsAppxProvisionedPackage.Packagename
+         AllUsers      = $true
+         ErrorAction   = 'Stop'
+         WarningAction = 'SilentlyContinue'
+      }
+      $null = (Remove-AppxProvisionedPackage @paramRemoveAppxProvisionedPackage)
    }
 
-   Exit 0
+   $paramNewItemProperty = @{
+      Path          = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Chat'
+      Name          = 'ChatIcon'
+      PropertyType  = 'DWord'
+      Value         = 3
+      Force         = $true
+      Confirm       = $false
+      ErrorAction   = 'SilentlyContinue'
+      WarningAction = 'SilentlyContinue'
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
 }
 catch
 {
-   Exit 1
+   exit 1
 }
 
-Exit 0
+exit 0

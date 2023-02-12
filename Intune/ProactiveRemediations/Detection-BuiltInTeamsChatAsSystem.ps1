@@ -4,20 +4,32 @@ $MSTeams = 'MicrosoftTeams'
 
 try
 {
-   if (Get-AppxProvisionedPackage -Online -ErrorAction Stop | Where-Object -FilterScript {
-         ($_.DisplayName -eq $MSTeams)
-   })
-   {
-      Exit 1
+   $paramGetAppxProvisionedPackage = @{
+      Online        = $true
+      ErrorAction   = 'Stop'
+      WarningAction = 'SilentlyContinue'
    }
-   else
+   if (Get-AppxProvisionedPackage @paramGetAppxProvisionedPackage | Where-Object -FilterScript {
+         ($_.DisplayName -eq $MSTeams)
+      })
    {
-      Exit 0
+      exit 1
+   }
+
+   $paramGetItemProperty = @{
+      Path          = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Chat'
+      Name          = 'ChatIcon'
+      ErrorAction   = 'Stop'
+      WarningAction = 'SilentlyContinue'
+   }
+   if (((Get-ItemProperty @paramGetItemProperty).ChatIcon) -ne 3)
+   {
+      exit 1
    }
 }
 catch
 {
-   Exit 1
+   exit 1
 }
 
-Exit 0
+exit 0

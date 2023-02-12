@@ -4,20 +4,31 @@ $MSTeams = 'MicrosoftTeams'
 
 try
 {
-   if (Get-AppxPackage -ErrorAction Stop | Where-Object -FilterScript {
-         ($_.Name -eq $MSTeams)
-   })
-   {
-      Exit 1
+   $paramGetAppxPackage = @{
+      ErrorAction   = 'Stop'
+      WarningAction = 'SilentlyContinue'
    }
-   else
+   if (Get-AppxPackage @paramGetAppxPackage | Where-Object -FilterScript {
+         ($_.Name -eq $MSTeams)
+      })
    {
-      Exit 0
+      exit 1
+   }
+
+   $paramGetItemProperty = @{
+      Path          = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+      Name          = 'TaskbarMn'
+      ErrorAction   = 'Stop'
+      WarningAction = 'SilentlyContinue'
+   }
+   if (((Get-ItemProperty @paramGetItemProperty).TaskbarMn) -ne 0)
+   {
+      exit 1
    }
 }
 catch
 {
-   Exit 1
+   exit 1
 }
 
-Exit 0
+exit 0

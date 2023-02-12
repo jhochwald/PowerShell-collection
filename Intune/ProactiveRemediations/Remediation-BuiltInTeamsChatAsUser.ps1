@@ -10,14 +10,30 @@ try
 
    if ($TeamsAppxPackage)
    {
-      $null = (Remove-AppxPackage -Package $TeamsAppxPackage.PackageFullName -Confirm:$false -ErrorAction Stop)
+      $paramRemoveAppxPackage = @{
+         Package       = $TeamsAppxPackage.PackageFullName
+         Confirm       = $false
+         ErrorAction   = 'Stop'
+         WarningAction = 'SilentlyContinue'
+      }
+      $null = (Remove-AppxPackage @paramRemoveAppxPackage)
    }
 
-   Exit 0
+   $paramNewItemProperty = @{
+      Path          = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+      Name          = 'TaskbarMn'
+      PropertyType  = 'DWord'
+      Value         = 0
+      Force         = $true
+      Confirm       = $false
+      ErrorAction   = 'SilentlyContinue'
+      WarningAction = 'SilentlyContinue'
+   }
+   $null = (New-ItemProperty @paramNewItemProperty)
 }
 catch
 {
-   Exit 1
+   exit 1
 }
 
-Exit 0
+exit 0
