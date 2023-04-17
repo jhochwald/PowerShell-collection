@@ -59,7 +59,7 @@
          FolderScope = 'Calendar'
          ErrorAction = 'Stop'
       }
-      $CalendarStats = (Get-MailboxFolderStatistics @paramGetMailboxFolderStatistics | Select-Object FolderId, FolderPath)
+      $CalendarStats = (Get-MailboxFolderStatistics @paramGetMailboxFolderStatistics | Select-Object -Property FolderId, FolderPath)
 
       # Create a new variable $CalendarFoldersPermission and initializes it as an array.
       $CalendarFoldersPermission = @()
