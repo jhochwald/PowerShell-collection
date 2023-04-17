@@ -1,31 +1,31 @@
 ﻿function Get-enMailboxFolderPermission
 {
-<#
-.SYNOPSIS
-This function retrieves the permissions of all calendar folders in a mailbox.
+   <#
+         .SYNOPSIS
+         This function retrieves the permissions of all calendar folders in a mailbox.
 
-.DESCRIPTION
-This function retrieves the permissions of all calendar folders in a mailbox, including subfolders.
+         .DESCRIPTION
+         This function retrieves the permissions of all calendar folders in a mailbox, including subfolders.
 
-.PARAMETER EmailAddress
-Defines the mailbox you want to check
+         .PARAMETER EmailAddress
+         Defines the mailbox you want to check
 
-.EXAMPLE
-PS C:\> Get-enMailboxFolderPermission -EmailAddress 'john.doe@contoso.com'
+         .EXAMPLE
+         PS C:\> Get-enMailboxFolderPermission -EmailAddress 'john.doe@contoso.com'
 
-Retrieves the permissions of all calendar folders in a mailbox, including subfolders.
-In this case it's the mailbox of John Doe.
+         Retrieves the permissions of all calendar folders in a mailbox, including subfolders.
+         In this case it's the mailbox of John Doe.
 
-.NOTES
-You need to have the modern Exchange Online PowerShell module installed.
-#>
+         .NOTES
+         You need to have the modern Exchange Online PowerShell module installed.
+   #>
    [CmdletBinding(ConfirmImpact = 'None')]
    [OutputType([PSCustomObject])]
    param
    (
-      [Parameter(Mandatory,HelpMessage='Defines the mailbox you want to check',
-                 ValueFromPipeline,
-                 ValueFromPipelineByPropertyName)]
+      [Parameter(Mandatory,HelpMessage = 'Defines the mailbox you want to check',
+            ValueFromPipeline,
+      ValueFromPipelineByPropertyName)]
       [ValidateNotNullOrEmpty()]
       [Alias('Identity', 'Maibox', 'Mail', 'Address')]
       [string]
@@ -43,7 +43,7 @@ You need to have the modern Exchange Online PowerShell module installed.
       
       # Establishes a connection to Exchange Online.
       $paramConnectExchangeOnline = @{
-         UseMultithreading = $true # This can cause issues for some, set to $false if this is the case
+         UseMultithreading = $true
          ShowProgress      = $false
          ShowBanner        = $false
          ErrorAction       = 'Stop'
@@ -59,7 +59,7 @@ You need to have the modern Exchange Online PowerShell module installed.
          FolderScope = 'Calendar'
          ErrorAction = 'Stop'
       }
-      $CalendarStats = (Get-MailboxFolderStatistics @paramGetMailboxFolderStatistics | Select-Object FolderId,FolderPath)
+      $CalendarStats = (Get-MailboxFolderStatistics @paramGetMailboxFolderStatistics | Select-Object FolderId, FolderPath)
 
       # Create a new variable $CalendarFoldersPermission and initializes it as an array.
       $CalendarFoldersPermission = @()
@@ -75,12 +75,12 @@ You need to have the modern Exchange Online PowerShell module installed.
                Expression = {
                   $EmailAddress
                }
-         }, FolderName, @{
+            }, FolderName, @{
                Name       = 'FolderPath'
                Expression = {
                   $SingleCalendarStats.FolderPath
                }
-         }, User, @{
+            }, User, @{
                Name       = 'AccessRights'
                Expression = {
                   $_.AccessRights
