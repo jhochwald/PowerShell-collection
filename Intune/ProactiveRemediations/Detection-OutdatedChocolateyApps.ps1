@@ -1,5 +1,8 @@
 # Detection for outdated Chocolatey apps
 
+# Dont't display the progress bar
+$ProgressPreference = 'SilentlyContinue'
+
 # Config console output encoding
 $null = & "$env:ComSpec" /c '' # <- Workaround for Windows PowerShell ISE "Exception setting "OutputEncoding": "The handle is invalid.""
 $Script:OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
