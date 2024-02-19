@@ -1,5 +1,10 @@
 # Remediation for outdated WinGet apps
 
+# Use parts of: https://github.com/Romanitho/Winget-AutoUpdate (MIT license)
+
+# Dont't display the progress bar
+$ProgressPreference = 'SilentlyContinue'
+
 # Config console output encoding
 $null = & "$env:ComSpec" /c '' # <- Workaround for Windows PowerShell ISE "Exception setting "OutputEncoding": "The handle is invalid.""
 $Script:OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::new()
@@ -10,7 +15,8 @@ $WingetDirectory = [string](
    $(
       if ([Security.Principal.WindowsIdentity]::GetCurrent().'User'.'Value' -eq 'S-1-5-18')
       {
-         ((Get-Item -Path ('{0}\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe' -f $env:ProgramW6432)).'FullName' | Select-Object -First 1)
+         # This path works for AMD64 and ARM64
+         ((Get-Item -Path ('{0}\WindowsApps\Microsoft.DesktopAppInstaller_*_*__8wekyb3d8bbwe' -f $env:ProgramW6432)).'FullName' | Select-Object -First 1)
       }
       else
       {
