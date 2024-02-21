@@ -1,6 +1,6 @@
 # Remediation for outdated Chocolatey apps
 
-# Dont't display the progress bar
+# Don't display the progress bar
 $ProgressPreference = 'SilentlyContinue'
 
 # Config console output encoding

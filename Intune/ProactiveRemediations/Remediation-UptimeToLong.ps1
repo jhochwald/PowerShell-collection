@@ -1,10 +1,10 @@
-﻿# Remediation-UptimeToLong
+# Remediation-UptimeToLong
 
 # Dont't display the progress bar
 $ProgressPreference = 'SilentlyContinue'
 
 #region InternalFunctions
-function Invoke-DisplayToastNotification() 
+function Invoke-DisplayToastNotification()
 {
    <#
          .SYNOPSIS
@@ -16,12 +16,12 @@ function Invoke-DisplayToastNotification()
          .EXAMPLE
          Invoke-DisplayToastNotification
          Very simple Display Toast Notification function,
-         all reuired data must exist in the matching variables
+         all the data must exist in the matching variables
 
          .NOTES
          Simple function, all parameters are parsed as they are
    #>
-   
+
    process
    {
       try
@@ -49,11 +49,11 @@ function Invoke-DisplayToastNotification()
       $ToastXML.LoadXml($Toast.OuterXml)
 
       # Display the toast notification
-      try 
+      try
       {
          [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($App).Show($ToastXML)
       }
-      catch 
+      catch
       {
          Write-Warning -Message 'Something went wrong when displaying the toast notification'
          Write-Warning -Message 'Make sure the script is running as the logged on user'
@@ -67,7 +67,7 @@ $HeroImageUri = 'https://cdn.enatec.net/assets/img/enablingTechnology.png'
 $HeroImage = "$env:TEMP\ToastHeroImage.png"
 $Uptime = (Get-ComputerInfo | Select-Object -ExpandProperty OSUptime -ErrorAction SilentlyContinue)
 
-# Fetching image from uri
+# Fetching image from URI
 $null = (Invoke-WebRequest -Uri $HeroImageUri -OutFile $HeroImage -ErrorAction SilentlyContinue)
 
 # Defining the Toast notification settings
@@ -81,26 +81,26 @@ $TitleText = ('Your device has not performed a reboot the last {0} days' -f $Upt
 $BodyText1 = 'For performance and stability reasons we suggest a reboot at least once a week.'
 $BodyText2 = 'Please save your work and restart your device today. Thank you in advance.'
 
-# Check for required entries in registry for when using Powershell as application for the toast
+# Check for required entries in registry for when using PowerShell as application for the toast
 # Register the AppID in the registry for use with the Action Center, if required
 $RegPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings'
 $App = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
 
 # Creating registry entries if they don't exists
-if (!(Test-Path -Path ('{0}\{1}' -f $RegPath, $App) -ErrorAction SilentlyContinue)) 
+if (!(Test-Path -Path ('{0}\{1}' -f $RegPath, $App) -ErrorAction SilentlyContinue))
 {
    $null = (New-Item -Path ('{0}\{1}' -f $RegPath, $App) -Force -Confirm:$false -ErrorAction SilentlyContinue)
    $null = (New-ItemProperty -Path ('{0}\{1}' -f $RegPath, $App) -Name 'ShowInActionCenter' -Value 1 -PropertyType 'DWORD' -Force -Confirm:$false -ErrorAction SilentlyContinue)
 }
 
 # Make sure the app used with the action center is enabled
-if ((Get-ItemProperty -Path ('{0}\{1}' -f $RegPath, $App) -Name 'ShowInActionCenter' -ErrorAction SilentlyContinue).ShowInActionCenter -ne '1') 
+if ((Get-ItemProperty -Path ('{0}\{1}' -f $RegPath, $App) -Name 'ShowInActionCenter' -ErrorAction SilentlyContinue).ShowInActionCenter -ne '1')
 {
    $null = (New-ItemProperty -Path ('{0}\{1}' -f $RegPath, $App) -Name 'ShowInActionCenter' -Value 1 -PropertyType 'DWORD' -Force -Confirm:$false -ErrorAction SilentlyContinue)
 }
 
 # No function, just close it
-$DismissButtonContent = $null 
+$DismissButtonContent = $null
 
 # Formatting the toast notification XML
 [xml]$Toast = (@'

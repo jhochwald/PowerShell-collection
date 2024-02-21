@@ -2,7 +2,7 @@
 
 # Use parts of: https://github.com/Romanitho/Winget-AutoUpdate (MIT license)
 
-# Dont't display the progress bar
+# Don't display the progress bar
 $ProgressPreference = 'SilentlyContinue'
 
 # Apps we should ignore
@@ -35,7 +35,7 @@ $WingetDirectory = [string](
 $WingetCliFileName = ([string](
       $(
          [string[]](
-            'AppInstallerCLI.exe', 
+            'AppInstallerCLI.exe',
             'winget.exe'
          )
       ).Where{
@@ -54,28 +54,30 @@ if (!([IO.File]::Exists($WingetCliPath)))
 {
    Write-Error -Exception 'WinGet Binary not found' -Message 'Did not find WinGet Binary.' -Category NotInstalled -TargetObject 'winget.exe' -RecommendedAction 'Install WinGet (From the Microsoft Store or GitHub)' -ErrorAction Stop
 
-   Exit 1
+   exit 1
 }
 #endregion FindWinGetCli
 
 $upgradeResult = & $WingetCliPath upgrade --source winget --accept-source-agreements | Out-String
 
-# Start Convertion of winget format to an array. Check if "-----" exists (Winget Error Handling)
-if (!($upgradeResult -match '-----')) 
+# Start convert the Winget format to an array. Check if "-----" exists (Winget Error Handling)
+if (!($upgradeResult -match '-----'))
 {
-   Write-Host -Object ("An unusual thing happened (maybe all apps are upgraded):`n{0}" -f $upgradeResult)
-   exit 1 # Trigger remediation, just to be sure
+   Write-verbose -Message ("An unusual thing happened (maybe all apps are upgraded):`n{0}" -f $upgradeResult)
+
+   # Ensure we don't do anything stupid, so let us go away here
+   exit 0
 }
 
-# Split winget output to lines
+# Split Winget output to lines
 $lines = $upgradeResult.Split([Environment]::NewLine) | Where-Object -FilterScript {
-   $_ 
+   $_
 }
 
 # Find the line that starts with "------"
 $fl = 0
 
-while (-not $lines[$fl].StartsWith('-----')) 
+while (-not $lines[$fl].StartsWith('-----'))
 {
    $fl++
 }
@@ -83,10 +85,10 @@ while (-not $lines[$fl].StartsWith('-----'))
 # Get header line
 $fl = $fl - 1
 
-# Get header titles [without remove seperator]
+# Get header titles [without remove separator]
 $index = $lines[$fl] -split '(?<=\s)(?!\s)'
 
-# Line $fl has the header, we can find char where we find ID and Version [and manage non latin characters]
+# Line $fl has the header, we can find char where we find ID and Version [and manage non Latin characters]
 $idStart = $($index[0] -replace '[\u4e00-\u9fa5]', '**').Length
 $versionStart = $idStart + $($index[1] -replace '[\u4e00-\u9fa5]', '**').Length
 $availableStart = $versionStart + $($index[2] -replace '[\u4e00-\u9fa5]', '**').Length
@@ -95,16 +97,16 @@ $availableStart = $versionStart + $($index[2] -replace '[\u4e00-\u9fa5]', '**').
 $upgradeList = @()
 
 # Loop over the list of strings
-for ($i = $fl + 2; $i -lt $lines.Length; $i++) 
+for ($i = $fl + 2; $i -lt $lines.Length; $i++)
 {
    $line = $lines[$i] -replace '[\u2026]', ' ' #Fix "..." in long names
 
-   if ($line.StartsWith('-----')) 
+   if ($line.StartsWith('-----'))
    {
       # Get header line
       $fl = $i - 1
 
-      # Get header titles [without remove seperator]
+      # Get header titles [without remove separator]
       $index = $lines[$fl] -split '(?<=\s)(?!\s)'
 
       # Line $fl has the header, we can find char where we find ID and Version [and manage non latin characters]
@@ -114,7 +116,7 @@ for ($i = $fl + 2; $i -lt $lines.Length; $i++)
    }
 
    # (Alphanumeric | Literal . | Alphanumeric) - the only unique thing in common for lines with applications
-   if ($line -match '\w\.\w') 
+   if ($line -match '\w\.\w')
    {
       # Manage non latin characters
       $nameDeclination = $($line.Substring(0, $idStart) -replace '[\u4e00-\u9fa5]', '**').Length - $line.Substring(0, $idStart).Length
@@ -132,7 +134,7 @@ for ($i = $fl + 2; $i -lt $lines.Length; $i++)
 
 # Clean the list, we remove the apps that should be ignored
 $upgradeList = $upgradeList | Where-Object -FilterScript {
-   $NamesToIgnore -notcontains $_ 
+   $NamesToIgnore -notcontains $_
 }
 
 if ($upgradeList)

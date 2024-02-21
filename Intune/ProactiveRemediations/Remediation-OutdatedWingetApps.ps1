@@ -2,7 +2,7 @@
 
 # Use parts of: https://github.com/Romanitho/Winget-AutoUpdate (MIT license)
 
-# Dont't display the progress bar
+# Don't display the progress bar
 $ProgressPreference = 'SilentlyContinue'
 
 # Config console output encoding
