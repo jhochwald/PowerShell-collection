@@ -55,7 +55,8 @@ if (-not ([IO.File]::Exists($WingetCliPath)))
 try
 {
    # upgrade command for ALL
-   $null = ([string[]](& "$env:ComSpec" /c ('"{0}" upgrade --source winget --all --accept-source-agreements --silent --force --uninstall-previous' -f $WingetCliPath)))
+   #$null = ([string[]](& "$env:ComSpec" /c ('"{0}" upgrade --source winget --all --accept-source-agreements --silent --force --uninstall-previous' -f $WingetCliPath)))
+   $null = ([string[]](& "$env:ComSpec" /c ('"{0}" upgrade --source winget --all --accept-source-agreements --silent --force' -f $WingetCliPath)))
    exit 0
 }
 catch
