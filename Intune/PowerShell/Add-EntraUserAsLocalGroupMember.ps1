@@ -30,7 +30,7 @@ param
    ValueFromRemainingArguments = $true)]
    [ValidateNotNullOrEmpty()]
    [string]
-   $MemberUPN = 'dummy',
+   $MemberUPN = 'john.doe@contoso.com',
    [Parameter(ValueFromPipeline,
    ValueFromPipelineByPropertyName)]
    [ValidateNotNullOrEmpty()]
