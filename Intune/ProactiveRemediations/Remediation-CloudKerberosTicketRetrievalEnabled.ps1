@@ -1,38 +1,40 @@
-# Allow retrieving the cloud Kerberos ticket during the logon
-# https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-kerberos
+﻿#requires -Version 1.0
 
-try
+# Remediation: Optimize CloudKerberosTicket for Entra Global Secure Access
+# https://learn.microsoft.com/en-us/entra/global-secure-access/how-to-configure-kerberos-sso
+
+# The main path in the registry
+$RegPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters'
+
+#region CheckMainRegistryPath
+if ((Test-Path -LiteralPath $RegPath -ErrorAction SilentlyContinue) -ne $true)
 {
-   $paramTestPath = @{
-      Path = 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters'
+   $paramNewItem = @{
+      Path        = $RegPath
+      Force       = $true
+      Confirm     = $false
       ErrorAction = 'SilentlyContinue'
-      WarningAction = 'SilentlyContinue'
    }
-   if ((Test-Path @paramTestPath) -ne $true)
-   {
-      $paramNewItem = @{
-         Path = 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters'
-         Force = $True
-         Confirm = $false
-         ErrorAction = 'Stop'
-         WarningAction = 'SilentlyContinue'
-      }
-      $null = (New-Item @paramNewItem)
-   }
+   $null = (New-Item @paramNewItem)
+   $paramNewItem = $null
+}
+#endregion CheckMainRegistryPath
 
-   $paramNewItemProperty = @{
-      Path = 'HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\Kerberos\Parameters'
-      Name = 'CloudKerberosTicketRetrievalEnabled'
-      Value = 1
-      PropertyType = 'DWord'
-      Force = $True
-      Confirm = $false
-      ErrorAction = 'Stop'
-      WarningAction = 'SilentlyContinue'
-   }
-   $null = (New-ItemProperty @paramNewItemProperty)
+#region paramNewItemProperty
+$paramNewItemProperty = @{
+   LiteralPath  = $RegPath
+   PropertyType = 'DWord'
+   Force        = $true
+   Confirm      = $false
+   ErrorAction  = 'SilentlyContinue'
 }
-catch
-{
-   exit 1
-}
+#endregion paramNewItemProperty
+
+# CloudKerberosTicketRetrievalEnabled
+$null = (New-ItemProperty -Name 'CloudKerberosTicketRetrievalEnabled' -Value 1 @paramNewItemProperty)
+
+# FarKdcTimeout
+$null = (New-ItemProperty -Name 'FarKdcTimeout' -Value 0 @paramNewItemProperty)
+
+# Cleanup
+$paramNewItemProperty = $null

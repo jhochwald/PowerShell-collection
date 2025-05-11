@@ -5,17 +5,17 @@ All Microsoft Endpoint Manager related apps
 ## Structure
 
 - **Icon**
-  This directory will contain the App icons. ```icon.xxx``` is the default, that our automated deployment process pickup.
+  This directory will contain the App icons. `icon.xxx` is the default, that our automated deployment process pickup.
 - **Info**
   This directory will contain the plain text files that our automated deployment process pickup.
-  Please note: ```Description.txt``` is required!
+  Please note: `Description.txt` is required!
 - **Output**
-  This directory will contain the ```.intunewin``` file that is used upload to Intune, by our automated deployment process (or manual by you).
+  This directory will contain the `.intunewin` file that is used upload to Intune, by our automated deployment process (or manual by you).
 - **Source**
-  This directory will contain all the necessary sources that the ```intunewinapputil.exe``` which is called by our wrapper ```.\create.ps1```.
-  ```intunewinapputil.exe``` is not included in this repository.
+  This directory will contain all the necessary sources that the `intunewinapputil.exe` which is called by our wrapper `.\create.ps1`.
+  `intunewinapputil.exe` is not included in this repository.
 - **create.ps1**
-  ```.\create.ps1``` is our wrapper, called by our automated deployment process.
+  `.\create.ps1` is our wrapper, called by our automated deployment process.
 
 ## Found a bug or Issue?
 
@@ -37,7 +37,7 @@ In our opinion: All the stuff here should be free, and the license should be as 
 
 ### BSD 3-Clause License
 
-Copyright (c) 2022, enabling Technology GmbH - All rights reserved.
+Copyright (c) 2024, enabling Technology GmbH - All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
