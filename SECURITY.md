@@ -1,11 +1,15 @@
 # Security Policy
 
+We take security very seriously and are committed to ensuring the safety and integrity of the software and tools we provide.
+If you discover any vulnerabilities, we encourage you to report them responsibly.
+
 ## Supported Versions
 
 Latest version only (MASTER).
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please do not open an security related [Issue](https://github.com/Enatec/MicrosoftEndpointManager/issues) here on GitHub, instead please get in touch with us here:
 
-Tell them where to go, how often they can expect to get an update on a reported vulnerability, what to expect if the vulnerability is accepted or declined, etc.
+- Our [Website](https://enatec.io/#contact)
+- Our [Helpdesk](https://enatec.support/) tool

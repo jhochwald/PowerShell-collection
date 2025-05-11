@@ -1,8 +1,8 @@
-20# Contribution Guide
+# Contribution Guide
 
 This is a guide for everyone interested in contributing to our open source projects. It's based on well known community workflows.
 
-I love PowerShell, and I love to share knowledge, you are encouraged to fork all my open source repositories and make adjustments according to your own preferences. If you really want to contribute, you should consider a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls), this will help me to improve and to share this improvement with the community.
+We love automation, and we love to share knowledge, you are encouraged to fork all our open source repositories and make adjustments according to your own preferences. If you really want to contribute, you should consider a [pull request](https://github.com/Enatec/MicrosoftEndpointManager/pulls), this will help me to improve and to share this improvement with the community.
 
 ## General Bug Report
 
@@ -23,7 +23,7 @@ Depending on the nature and urgency of your question, pick one of the following 
 
 - Search the web for it, you've done that already, right?
 - StackOverflow, or other sites
-- GitHub Issues from this and other projects (_The best option in my opinion_)
+- GitHub Issues from this and other projects (_The best option in our opinion_)
 - Search the GitHub Gist repository
 - Use the corresponding Gist and place a comment there, if exists
 - Use the corresponding Blog Post and place a comment there, if exists
@@ -40,12 +40,7 @@ If you want to contribute code, please try to:
 - Write [good commit messages](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html), explain what your patch does, and why it is needed.
 - Keep it simple: Any patch that changes a lot of code or is difficult to understand should be discussed before you put in the effort. We can discuss that right here in the Issue tracker.
 
-Once you have tried the above, create a GitHub [pull request](https://github.com/jhochwald/PowerShell-collection/pulls) to notify me of your changes.
-
-### Code Signing
-
-If you have a valid codesigning certificate, please sign the contributed file within the `signed` directory.
-If you don't have a valid codesigning certificate, just go ahead and contribute. I will take care about the signing for you.
+Once you have tried the above, create a GitHub [pull request](https://github.com/Enatec/MicrosoftEndpointManager/pulls) to notify me of your changes.
 
 ## License
 
@@ -53,11 +48,11 @@ Please specify your license terms! This only applies for new modules and/or scri
 
 Please use a valid license, best one that is approved by the Free Software Foundation.
 
-If you do not specify any other License or Terms, I apply the following default:
+If you do not specify any other License or Terms, we apply the following default:
 
 ### License Terms
 
-Copyright (c) 2023, enabling Technology <[http://enatec.io](http://enatec.io)>
+Copyright (c) 2025, enabling Technology GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -72,11 +67,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND AN
 
 #### BSD-3-Clause
 
-This is the **BSD-3-Clause** license.
+This is the **BSD-3-Clause** [license](https://github.com/Enatec/MicrosoftEndpointManager/blob/main/LICENSE).
 
 ### Your Name
 
-I will publish your name to mention you as the contributor. If you don't want that, please let us know.
+We will publish your name to mention you as the contributor by default. If you don't want that, please let us know.
 
 ## Further reading
 
