@@ -18,7 +18,7 @@ exit 1
       
       $paramGetItemPropertyValue = @{
          LiteralPath = $RegPath
-         Name        = 'BuiltInDnsClientEnabled '
+         Name        = 'BuiltInDnsClientEnabled'
          ErrorAction = 'SilentlyContinue'
       }
       if (!((Get-ItemPropertyValue @paramGetItemPropertyValue) -eq 0))
