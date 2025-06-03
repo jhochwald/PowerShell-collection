@@ -16,6 +16,12 @@ This is because I like functions more (my personal preference). I converted some
 
 You can convert them back if you like.
 
+### No Maintenance Intended
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+Many scripts are dumped here, but they will not be maintained or not be updated. Help yourself, if you see that something isn't working, fork the repository and fix it. If you like, you can raise a [pull request](https://github.com/jhochwald/PowerShell-collection/pulls).
+
 ### Why so detailed?
 
 I was asked why all my scripts contain so many comments, and why they are so well formatted... I hope you do not just download them and let them run (What is dangerous anyway).
