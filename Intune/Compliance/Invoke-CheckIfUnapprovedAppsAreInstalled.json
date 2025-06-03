@@ -1,0 +1,18 @@
+{
+  "Rules": [
+    {
+      "SettingName": "Installation status",
+      "Operator": "IsEquals",
+      "DataType": "String",
+      "Operand": "No unapproved apps installed",
+      "MoreInfoUrl": "https://devicemanagement.microsoft.com/",
+      "RemediationStrings": [
+        {
+          "Language": "en_US",
+          "Title": "Device is running apps that are not approved by the organisation.",
+          "Description": "Please make sure that none of the not approved apps are installed on the device. Those apps are documented in the approved application policy on SharePoint."
+        }
+      ]
+    }
+  ]
+}
