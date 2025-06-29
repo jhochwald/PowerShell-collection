@@ -8,7 +8,7 @@ $RegPath = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan'
 if ((Test-Path -LiteralPath $RegPath -ErrorAction SilentlyContinue) -ne $true)
 {
    # Create the target path
-   @{
+   $paramNewItem = @{
       Path        = $RegPath
       Force       = $true
       Confirm     = $false
