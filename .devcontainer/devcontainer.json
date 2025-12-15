@@ -1,0 +1,30 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {}
+}
+
+{
+  "name": "PowerShell Collection – MHN",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/powershell:1": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.powershell",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "powershell.powerShellDefaultVersion": "pwsh",
+        "terminal.integrated.defaultProfile.linux": "pwsh"
+      }
+    }
+  },
+  "postCreateCommand": "pwsh -File .devcontainer/setup.ps1",
+  "remoteUser": "vscode"
+}
