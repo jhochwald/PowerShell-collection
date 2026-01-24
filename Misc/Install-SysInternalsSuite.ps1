@@ -127,9 +127,10 @@
             $ProgressPreference = 'SilentlyContinue'
             $DownloadURI = 'https://download.sysinternals.com/files/SysinternalsSuite.zip'
             $paramInvokeWebRequest = @{
-               Uri         = $DownloadURI
-               OutFile     = $DownloadFile
-               ErrorAction = 'Stop'
+               Uri             = $DownloadURI
+               OutFile         = $DownloadFile
+               ErrorAction     = 'Stop'
+               UseBasicParsing = $true
             }
             $null = (Invoke-WebRequest @paramInvokeWebRequest)
             $paramExpandArchive = @{

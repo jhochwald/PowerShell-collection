@@ -531,11 +531,12 @@ process
 
       # Download
       $paramInvokeWebRequest = @{
-         Uri         = $ProcessMitigationUri
-         OutFile     = $ProcessMitigationFile
-         Method      = 'Get'
-         ContentType = 'text/xml'
-         ErrorAction = 'Continue'
+         Uri             = $ProcessMitigationUri
+         OutFile         = $ProcessMitigationFile
+         Method          = 'Get'
+         ContentType     = 'text/xml'
+         ErrorAction     = 'Continue'
+         UseBasicParsing = $true
       }
       $null = (Invoke-WebRequest @paramInvokeWebRequest)
    }

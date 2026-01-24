@@ -633,8 +633,9 @@ begin
          {
             # Request the info from the given service / We also extract the IP only
             $paramInvokeWebRequest = @{
-               Uri         = $Service
-               ErrorAction = 'Stop'
+               Uri             = $Service
+               ErrorAction     = 'Stop'
+               UseBasicParsing = $true
             }
             [IPAddress]$Result = ((Invoke-WebRequest @paramInvokeWebRequest).Content).Trim()
          }

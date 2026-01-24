@@ -68,7 +68,7 @@ $HeroImage = "$env:TEMP\ToastHeroImage.png"
 $Uptime = (Get-ComputerInfo | Select-Object -ExpandProperty OSUptime -ErrorAction SilentlyContinue)
 
 # Fetching image from URI
-$null = (Invoke-WebRequest -Uri $HeroImageUri -OutFile $HeroImage -ErrorAction SilentlyContinue)
+$null = (Invoke-WebRequest -Uri $HeroImageUri -OutFile $HeroImage -ErrorAction SilentlyContinue -UseBasicParsing)
 
 # Defining the Toast notification settings
 # ToastNotification Settings

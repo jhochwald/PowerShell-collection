@@ -253,7 +253,7 @@
          $SIDRequestBody = ('response=' + $Challenge + '-' + $(Get-MD5Hash -text ($Code2)) + '&username=' + $FritzBoxUser)
 
          # Do the real Login
-         $SIDRequest = (Invoke-WebRequest -Uri ($FritzBoxHost + $FritzBoxLoginPage) -Method Post -Body $SIDRequestBody -ErrorAction Stop)
+         $SIDRequest = (Invoke-WebRequest -Uri ($FritzBoxHost + $FritzBoxLoginPage) -Method Post -Body $SIDRequestBody -ErrorAction Stop -UseBasicParsing)
 
          # Extract the SID from the Login request
          $SID = ((([xml]($SIDRequest.Content)).ChildNodes).sid)

@@ -124,6 +124,7 @@ process
       OutFile          = $logonBgiFile
       DisableKeepAlive = $true
       ErrorAction      = 'Stop'
+      UseBasicParsing  = $true
    }
    $null = (Invoke-WebRequest @paramInvokeWebRequest)
    

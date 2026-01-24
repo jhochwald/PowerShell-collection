@@ -121,8 +121,9 @@ function Get-MicrosoftCloudTenantInfo
                # Get the Info via regular call and split it
                $paramInvokeWebRequest = $null
                $paramInvokeWebRequest = @{
-                  Uri         = $TenantIDURI
-                  ErrorAction = $ST
+                  Uri             = $TenantIDURI
+                  ErrorAction     = $ST
+                  UseBasicParsing = $true
                }
 
                $TenantID = ((Invoke-WebRequest @paramInvokeWebRequest | ConvertFrom-Json -ErrorAction $ST).token_endpoint.Split('/')[3])
