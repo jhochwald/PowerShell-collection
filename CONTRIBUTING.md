@@ -52,7 +52,7 @@ If you do not specify any other License or Terms, we apply the following default
 
 ### License Terms
 
-Copyright (c) 2025, enabling Technology GmbH
+Copyright (c) 2026, enabling Technology GmbH
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
