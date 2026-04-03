@@ -6,8 +6,6 @@ Mostly related to some of my projects, my work, or just a post in my [blog](http
 
 Most of the stuff here is also available as a [Gist](https://gist.github.com/jhochwald) or on my personal [blog](http://hochwald.net).
 
-[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=jhochwald&repo=PowerShell-collection&theme=transparent)](https://github.com/jhochwald/PowerShell-collection)
-
 ## Please note
 
 Some, or better most, of the stuff here was a function.
@@ -67,7 +65,7 @@ In my opinion: All the stuff here should be free, and the license should be as f
 
 ### BSD 3-Clause License
 
-Copyright (c) 2025, enabling Technology
+Copyright (c) 2026, enabling Technology
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
